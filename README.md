@@ -1,246 +1,321 @@
 # Validiant v2
 
-> **Modern project management and time tracking platform**
-
-A full-stack monorepo application built with TypeScript, featuring a powerful REST API backend and cross-platform mobile/web clients.
-
----
-
-## 🌟 Overview
-
-Validiant v2 is a complete rewrite of the Validiant platform, designed for modern teams to manage projects, track time, and collaborate effectively.
-
-### Key Features
-
-- ✅ **Project Management**: Complete project lifecycle with status tracking
-- ✅ **Task Management**: Advanced task system with subtasks, assignments, and workflows
-- ✅ **Organization Teams**: Multi-tenant organizations with role-based access
-- ✅ **Time Tracking**: Track time spent on tasks and projects *(coming soon)*
-- ✅ **Real-time Collaboration**: Live updates and notifications *(coming soon)*
-- ✅ **Cross-platform**: Web, iOS, and Android support
+<div align="center">
+  <h3>🚀 Full-Stack Project Management Platform</h3>
+  <p>A modern, type-safe monorepo built with React Native, Next.js, Express, and Prisma</p>
+</div>
 
 ---
 
-## 📦 Monorepo Structure
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Development](#development)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## 🎯 Overview
+
+Validiant v2 is a comprehensive full-stack project management platform designed for modern teams. Built as a monorepo, it provides native mobile apps, a responsive web application, and a robust backend API - all sharing common types and validation logic.
+
+### Key Highlights
+
+- 🎨 **Modern UI/UX** - Beautiful, responsive design across all platforms
+- 🔒 **Secure Authentication** - JWT-based auth with password hashing
+- 📱 **Cross-Platform** - iOS, Android, and Web from a single codebase
+- ⚡ **Type-Safe** - End-to-end TypeScript with shared types
+- 🛡️ **Validated** - Zod schemas ensure data integrity
+- 🗄️ **Scalable Database** - PostgreSQL with Prisma ORM
+
+---
+
+## ✨ Features
+
+### User Management
+- ✅ User registration and login
+- ✅ JWT token authentication
+- ✅ Password reset flow
+- ✅ Profile management
+
+### Project Management
+- ✅ Create and manage projects
+- ✅ Project status tracking
+- ✅ Progress monitoring
+- ✅ Team collaboration
+
+### Task Management
+- ✅ Create and assign tasks
+- ✅ Priority levels (Low, Medium, High, Urgent)
+- ✅ Status tracking (Todo, In Progress, Completed)
+- ✅ Due date management
+
+### Organization Management
+- ✅ Create and join organizations
+- ✅ Role-based access control (Owner, Admin, Member)
+- ✅ Team member management
+- ✅ Organization-wide settings
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+| Technology | Purpose |
+|------------|----------|
+| **React Native + Expo** | Cross-platform mobile apps (iOS/Android) |
+| **Next.js 14** | Server-side rendered web application |
+| **TypeScript** | Type-safe development |
+| **Tailwind CSS** | Utility-first styling (Web) |
+| **React Query** | Data fetching and caching |
+| **Zustand** | State management |
+| **React Hook Form** | Form handling |
+| **Zod** | Schema validation |
+
+### Backend
+
+| Technology | Purpose |
+|------------|----------|
+| **Node.js + Express** | RESTful API server |
+| **TypeScript** | Type-safe development |
+| **Prisma** | Database ORM |
+| **PostgreSQL** | Relational database |
+| **JWT** | Authentication tokens |
+| **Bcrypt** | Password hashing |
+
+### DevOps
+
+| Technology | Purpose |
+|------------|----------|
+| **Turbo** | Monorepo build system |
+| **npm Workspaces** | Dependency management |
+| **Prettier** | Code formatting |
+| **ESLint** | Code linting |
+
+---
+
+## 📁 Project Structure
 
 ```
 validiant-v2/
 ├── apps/
-│   ├── api/              # Express REST API backend
-│   └── app/              # React Native mobile app (coming soon)
+│   ├── mobile/           # React Native mobile app (Expo)
+│   ├── web/              # Next.js web application
+│   └── api/              # Express API server
 ├── packages/
-│   └── shared/           # Shared types, schemas, and utilities
-├── migrations/           # Database migrations
-└── docs/                 # Documentation (coming soon)
+│   └── shared/           # Shared types, validation, utilities
+├── turbo.json            # Turbo configuration
+├── package.json          # Root package configuration
+└── README.md             # This file
 ```
 
-### Packages
+### App Details
 
-- **[@validiant/api](./apps/api)**: Production-ready REST API with Express, PostgreSQL, and Redis
-- **[@validiant/shared](./packages/shared)**: Shared TypeScript types, Zod schemas, and constants
-- **@validiant/app** *(coming soon)*: React Native mobile application with Expo
+- **`apps/mobile`** - React Native app with Expo (iOS/Android)
+- **`apps/web`** - Next.js 14 web app with App Router
+- **`apps/api`** - Express API with Prisma and PostgreSQL
+- **`packages/shared`** - Common types, Zod schemas, and utilities
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- PostgreSQL >= 15.0
-- Redis >= 7.0
-- npm >= 9.0.0
+Ensure you have the following installed:
+
+- **Node.js** >= 18.0.0
+- **npm** >= 9.0.0
+- **PostgreSQL** >= 14.0
+- **Git**
 
 ### Installation
 
+1. **Clone the repository**
+
 ```bash
-# Clone the repository
 git clone https://github.com/Final-Crafts78/validiant-v2.git
 cd validiant-v2
+```
 
-# Install all dependencies
+2. **Install dependencies**
+
+```bash
 npm install
+```
 
-# Set up environment variables
+3. **Set up environment variables**
+
+```bash
+# API
 cp apps/api/.env.example apps/api/.env
-# Edit apps/api/.env with your configuration
+# Edit apps/api/.env with your database credentials
+```
 
-# Run database migrations
-npm run migrate
+4. **Set up the database**
 
-# Start development servers
+```bash
+# Generate Prisma client
+npm run api:prisma:generate
+
+# Run migrations
+npm run api:prisma:migrate
+```
+
+5. **Build shared package**
+
+```bash
+npm run shared:build
+```
+
+---
+
+## 💻 Development
+
+### Running All Apps
+
+```bash
+# Start all apps in development mode
 npm run dev
 ```
 
-### Development
+### Running Individual Apps
+
+#### Backend API
 
 ```bash
-# Start all workspaces in development mode
-npm run dev
+# Start API server
+npm run api:dev
 
-# Start API only
-npm run dev:api
+# The API will be available at http://localhost:5000
+```
 
-# Start mobile app only
-npm run dev:app
+#### Web App
 
-# Build all packages
+```bash
+# Start Next.js dev server
+npm run web:dev
+
+# Open http://localhost:3000 in your browser
+```
+
+#### Mobile App
+
+```bash
+# Start Expo
+npm run mobile:start
+
+# Run on iOS
+npm run mobile:ios
+
+# Run on Android
+npm run mobile:android
+```
+
+### Database Management
+
+```bash
+# Open Prisma Studio (database GUI)
+npm run api:prisma:studio
+
+# Create a new migration
+npm run api:prisma:migrate
+
+# Reset database (⚠️ deletes all data)
+npm run api:db:reset
+```
+
+### Code Quality
+
+```bash
+# Lint all packages
+npm run lint
+
+# Type check
+npm run type-check
+
+# Format code
+npm run format
+
+# Check formatting
+npm run format:check
+```
+
+---
+
+## 🏗️ Building for Production
+
+```bash
+# Build all apps
 npm run build
 
-# Run tests
-npm test
-
-# Lint and format
-npm run lint
-npm run format
+# Build specific app
+npm run api:build
+npm run web:build
+npm run shared:build
 ```
 
 ---
 
-## 🏗️ Tech Stack
+## 📝 API Documentation
 
-### Backend (API)
-
-- **Runtime**: Node.js 18+
-- **Language**: TypeScript 5.3
-- **Framework**: Express 4.18
-- **Database**: PostgreSQL 15+
-- **Cache**: Redis 7+
-- **Validation**: Zod
-- **Authentication**: JWT
-- **ORM**: pg-promise
-
-### Frontend (Mobile App)
-
-- **Framework**: React Native
-- **Platform**: Expo
-- **Language**: TypeScript
-- **Navigation**: Expo Router
-- **State**: React Query + Zustand *(coming soon)*
-- **UI**: Custom components + NativeWind *(coming soon)*
-
-### Infrastructure
-
-- **Monorepo**: npm workspaces + Turbo
-- **CI/CD**: GitHub Actions *(coming soon)*
-- **Deployment**: Docker + Docker Compose *(coming soon)*
-- **Monitoring**: Winston logging
-
----
-
-## 📚 Documentation
-
-- [API Documentation](./apps/api/README.md)
-- [Shared Package Documentation](./packages/shared/README.md)
-- API Endpoints Reference: [View in API README](./apps/api/README.md#api-endpoints)
-
----
-
-## 🏛️ Architecture
-
-### Backend Architecture
+### Base URL
 
 ```
-Client Request
-    ↓
-[Middleware Stack]
-    ├── Rate Limiting
-    ├── Authentication
-    ├── Validation
-    └── Sanitization
-    ↓
-[Controllers]
-    ↓
-[Services]
-    ↓
-[Database / Cache]
+http://localhost:5000/api/v1
 ```
 
-### Database Schema
+### Endpoints
 
-**Core Entities:**
-- Users
-- Organizations
-- Projects
-- Tasks
-- Assignments
-- Time Entries *(coming soon)*
-- Comments *(coming soon)*
+#### Authentication
 
-**Features:**
-- Multi-level soft deletes
-- Comprehensive audit trails
-- Role-based access control
-- Optimized indexes
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login user
+- `GET /auth/me` - Get current user (protected)
+- `POST /auth/logout` - Logout user (protected)
 
----
-
-## 🔐 Security
-
-- JWT-based authentication with refresh tokens
-- bcrypt password hashing (12 rounds)
-- Rate limiting (100 req/15min)
-- Input sanitization and validation
-- XSS protection
-- CSRF protection
-- Security headers (Helmet)
-- SQL injection prevention
-
----
-
-## 🧪 Testing
+### Example Request
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
+curl -X POST http://localhost:5000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!",
+    "firstName": "John",
+    "lastName": "Doe"
+  }'
 ```
 
 ---
 
-## 📈 Project Status
+## 🚢 Deployment
 
-### ✅ Completed
+### Backend API
 
-- [x] Backend API (100%)
-  - [x] Authentication system
-  - [x] User management
-  - [x] Organization management
-  - [x] Project management
-  - [x] Task management
-  - [x] Database migrations
-  - [x] Comprehensive documentation
+1. Set up PostgreSQL database on your hosting provider
+2. Configure environment variables
+3. Run migrations: `npm run api:prisma:migrate:prod`
+4. Build: `npm run api:build`
+5. Start: `npm run api:start`
 
-- [x] Shared Package (100%)
-  - [x] TypeScript types
-  - [x] Zod validation schemas
-  - [x] Shared constants
-  - [x] Utility functions
+### Web App
 
-### 🚧 In Progress
+1. Build: `npm run web:build`
+2. Deploy to Vercel/Netlify or any Node.js hosting
 
-- [ ] Mobile App (0%)
-  - [ ] Authentication screens
-  - [ ] Project screens
-  - [ ] Task screens
-  - [ ] Settings screens
+### Mobile App
 
-### 📋 Planned
-
-- [ ] Time Tracking Module
-- [ ] Comments System
-- [ ] File Upload & Storage
-- [ ] Notifications
-- [ ] Real-time Updates (WebSockets)
-- [ ] Analytics Dashboard
-- [ ] Email Service
-- [ ] CI/CD Pipeline
-- [ ] Docker Deployment
+1. Configure app.json for production
+2. Build with EAS: `eas build --platform all`
+3. Submit to app stores
 
 ---
 
@@ -254,43 +329,22 @@ Contributions are welcome! Please follow these guidelines:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Run `npm run lint` before committing
-
 ---
 
-## 📝 License
+## 📄 License
 
-MIT License - see [LICENSE](./LICENSE) file for details
-
----
-
-## 👥 Team
-
-**Validiant Team**
-
-For questions or support, please open an issue on GitHub.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Built with modern best practices
-- Inspired by leading project management tools
+- Built with ❤️ by the Validiant Team
 - Powered by open-source technologies
 
 ---
 
-## 📞 Links
-
-- **Repository**: [github.com/Final-Crafts78/validiant-v2](https://github.com/Final-Crafts78/validiant-v2)
-- **Issues**: [Report a bug or request a feature](https://github.com/Final-Crafts78/validiant-v2/issues)
-
----
-
-**Built with ❤️ using TypeScript, React Native, and Express**
+<div align="center">
+  <p>Made with TypeScript and ☕</p>
+  <p>© 2026 Validiant. All rights reserved.</p>
+</div>
