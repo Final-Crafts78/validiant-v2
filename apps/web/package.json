@@ -1,0 +1,45 @@
+{
+  "name": "@validiant/web",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Validiant Web Application - Next.js frontend",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tanstack/react-query": "^5.28.0",
+    "axios": "^1.6.8",
+    "zustand": "^4.5.2",
+    "zod": "^3.22.4",
+    "react-hook-form": "^7.51.0",
+    "@hookform/resolvers": "^3.3.4",
+    "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.363.0",
+    "@validiant/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
