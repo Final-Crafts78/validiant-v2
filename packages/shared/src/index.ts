@@ -1,7 +1,9 @@
 /**
  * Validiant Shared Package
  * 
- * Shared types, constants, and utilities used across all applications.
+ * Shared types, constants, utilities, and validation schemas
+ * used across all applications.
+ * 
  * This is the main entry point for the @validiant/shared package.
  * 
  * @packageDocumentation
@@ -15,3 +17,6 @@ export * from './constants';
 
 // Export all utilities
 export * from './utils';
+
+// Export all validation schemas
+export * from './schemas';
