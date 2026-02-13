@@ -1,9 +1,22 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 build/
 .next/
-coverage/
-*.log
+out/
+
+# Turbo
+.turbo/
+
+# Prisma
+prisma/migrations/
+
+# Lock files
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Logs
+*.log
