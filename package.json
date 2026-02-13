@@ -1,73 +1,59 @@
 {
-  "name": "validiant-v2",
-  "version": "2.0.0",
+  "name": "validiant-monorepo",
+  "version": "1.0.0",
   "private": true,
-  "description": "Validiant v2 - Modern project management and time tracking platform",
+  "description": "Validiant - Full-stack project management platform",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "turbo run dev",
-    "dev:api": "npm run dev --workspace=@validiant/api",
-    "dev:app": "npm run dev --workspace=@validiant/app",
     "build": "turbo run build",
-    "build:api": "npm run build --workspace=@validiant/api",
-    "build:shared": "npm run build --workspace=@validiant/shared",
+    "start": "turbo run start",
     "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "turbo run type-check",
-    "test": "turbo run test",
-    "test:coverage": "turbo run test:coverage",
-    "clean": "turbo run clean && rm -rf node_modules",
-    "migrate": "npm run migrate --workspace=@validiant/api",
-    "migrate:status": "npm run migrate:status --workspace=@validiant/api",
-    "migrate:rollback": "npm run migrate:rollback --workspace=@validiant/api",
-    "postinstall": "husky install"
+    "api:dev": "npm run dev --workspace=@validiant/api",
+    "api:build": "npm run build --workspace=@validiant/api",
+    "api:start": "npm run start --workspace=@validiant/api",
+    "api:prisma:generate": "npm run prisma:generate --workspace=@validiant/api",
+    "api:prisma:migrate": "npm run prisma:migrate --workspace=@validiant/api",
+    "api:prisma:studio": "npm run prisma:studio --workspace=@validiant/api",
+    "web:dev": "npm run dev --workspace=@validiant/web",
+    "web:build": "npm run build --workspace=@validiant/web",
+    "web:start": "npm run start --workspace=@validiant/web",
+    "mobile:start": "npm run start --workspace=@validiant/mobile",
+    "mobile:android": "npm run android --workspace=@validiant/mobile",
+    "mobile:ios": "npm run ios --workspace=@validiant/mobile",
+    "shared:build": "npm run build --workspace=@validiant/shared",
+    "shared:dev": "npm run dev --workspace=@validiant/shared"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.2",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.1.1",
-    "turbo": "^1.11.3",
+    "@types/node": "^20.11.5",
+    "prettier": "^3.2.4",
+    "turbo": "^1.12.4",
     "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
-  "packageManager": "npm@9.0.0",
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
-  },
+  "keywords": [
+    "monorepo",
+    "project-management",
+    "react-native",
+    "nextjs",
+    "express",
+    "prisma",
+    "typescript"
+  ],
+  "author": "Validiant Team",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Final-Crafts78/validiant-v2.git"
-  },
-  "keywords": [
-    "project-management",
-    "time-tracking",
-    "task-management",
-    "team-collaboration",
-    "monorepo",
-    "typescript",
-    "nodejs",
-    "react-native",
-    "expo"
-  ],
-  "author": "Validiant Team",
-  "license": "MIT"
+  }
 }
