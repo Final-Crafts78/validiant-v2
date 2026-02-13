@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+*.log
+
+# Production
+build/
+dist/
+.next/
+out/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Expo
+.expo/
+.expo-shared/
+
+# Turbo
+.turbo/
+
+# TypeScript
+*.tsbuildinfo
+
+# React Native
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Package Manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Supabase
+.supabase/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+logs/
+*.log
+
+# Database
+*.sqlite
+*.db
