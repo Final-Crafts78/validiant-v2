@@ -1,109 +1,128 @@
 /**
  * Database Migration Runner
  * 
- * Simple migration runner for applying SQL migration files.
- * Run with: ts-node src/scripts/migrate.ts
+ * Handles running SQL migrations for the database schema.
+ * Usage:
+ *   npm run migrate         - Run all pending migrations
+ *   npm run migrate:status  - Check migration status
+ *   npm run migrate:rollback - Rollback last migration
  */
 
 import fs from 'fs';
 import path from 'path';
-import { Pool } from 'pg';
-import { env } from '../config/env.config';
+import { db } from '../config/database.config';
 import { logger } from '../utils/logger';
 
 /**
- * Create database connection pool
+ * Migration record interface
  */
-const createPool = (): Pool => {
-  return new Pool({
-    connectionString: env.DATABASE_URL,
-    ssl: env.DATABASE_SSL
-      ? {
-          rejectUnauthorized: false,
-        }
-      : undefined,
-  });
+interface Migration {
+  id: number;
+  name: string;
+  executed_at: Date;
+}
+
+/**
+ * Migration file interface
+ */
+interface MigrationFile {
+  id: number;
+  name: string;
+  path: string;
+}
+
+/**
+ * Get migrations directory
+ */
+const getMigrationsDir = (): string => {
+  return path.join(__dirname, '../../../migrations');
 };
 
 /**
- * Create migrations table if it doesn't exist
+ * Ensure migrations table exists
  */
-const createMigrationsTable = async (pool: Pool): Promise<void> => {
-  await pool.query(`
+const ensureMigrationsTable = async (): Promise<void> => {
+  await db.raw(`
     CREATE TABLE IF NOT EXISTS migrations (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL UNIQUE,
+      id INTEGER PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
       executed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
     )
   `);
-  logger.info('Migrations table ready');
 };
 
 /**
- * Get list of executed migrations
+ * Get executed migrations from database
  */
-const getExecutedMigrations = async (pool: Pool): Promise<string[]> => {
-  const result = await pool.query('SELECT name FROM migrations ORDER BY id');
-  return result.rows.map((row) => row.name);
-};
-
-/**
- * Get list of pending migrations
- */
-const getPendingMigrations = async (pool: Pool): Promise<string[]> => {
-  const migrationsDir = path.join(__dirname, '../../migrations');
-  
-  if (!fs.existsSync(migrationsDir)) {
-    logger.warn('Migrations directory not found');
-    return [];
-  }
-
-  const allMigrations = fs
-    .readdirSync(migrationsDir)
-    .filter((file) => file.endsWith('.sql'))
-    .sort();
-
-  const executedMigrations = await getExecutedMigrations(pool);
-  
-  return allMigrations.filter(
-    (migration) => !executedMigrations.includes(migration)
+const getExecutedMigrations = async (): Promise<Migration[]> => {
+  return db.any<Migration>(
+    'SELECT id, name, executed_at FROM migrations ORDER BY id ASC'
   );
 };
 
 /**
- * Execute a single migration
+ * Get migration files from filesystem
  */
-const executeMigration = async (pool: Pool, migrationName: string): Promise<void> => {
-  const migrationsDir = path.join(__dirname, '../../migrations');
-  const migrationPath = path.join(migrationsDir, migrationName);
-  
-  logger.info(`Executing migration: ${migrationName}`);
-  
-  const sql = fs.readFileSync(migrationPath, 'utf8');
-  
-  const client = await pool.connect();
-  
+const getMigrationFiles = (): MigrationFile[] => {
+  const migrationsDir = getMigrationsDir();
+
+  if (!fs.existsSync(migrationsDir)) {
+    logger.error(`Migrations directory not found: ${migrationsDir}`);
+    process.exit(1);
+  }
+
+  const files = fs.readdirSync(migrationsDir);
+  const migrations: MigrationFile[] = [];
+
+  for (const file of files) {
+    if (file.endsWith('.sql')) {
+      const match = file.match(/^(\d+)_(.+)\.sql$/);
+      if (match) {
+        migrations.push({
+          id: parseInt(match[1], 10),
+          name: match[2],
+          path: path.join(migrationsDir, file),
+        });
+      }
+    }
+  }
+
+  return migrations.sort((a, b) => a.id - b.id);
+};
+
+/**
+ * Get pending migrations
+ */
+const getPendingMigrations = async (): Promise<MigrationFile[]> => {
+  const executed = await getExecutedMigrations();
+  const executedIds = new Set(executed.map((m) => m.id));
+  const allMigrations = getMigrationFiles();
+
+  return allMigrations.filter((m) => !executedIds.has(m.id));
+};
+
+/**
+ * Run a single migration
+ */
+const runMigration = async (migration: MigrationFile): Promise<void> => {
+  logger.info(`Running migration: ${migration.id}_${migration.name}`);
+
+  const sql = fs.readFileSync(migration.path, 'utf-8');
+
   try {
-    await client.query('BEGIN');
-    
     // Execute migration SQL
-    await client.query(sql);
-    
+    await db.raw(sql);
+
     // Record migration
-    await client.query(
-      'INSERT INTO migrations (name) VALUES ($1)',
-      [migrationName]
+    await db.raw(
+      'INSERT INTO migrations (id, name) VALUES ($1, $2)',
+      [migration.id, migration.name]
     );
-    
-    await client.query('COMMIT');
-    
-    logger.info(`✅ Migration completed: ${migrationName}`);
+
+    logger.info(`✅ Migration completed: ${migration.id}_${migration.name}`);
   } catch (error) {
-    await client.query('ROLLBACK');
-    logger.error(`❌ Migration failed: ${migrationName}`, { error });
+    logger.error(`❌ Migration failed: ${migration.id}_${migration.name}`, { error });
     throw error;
-  } finally {
-    client.release();
   }
 };
 
@@ -111,151 +130,133 @@ const executeMigration = async (pool: Pool, migrationName: string): Promise<void
  * Run all pending migrations
  */
 const runMigrations = async (): Promise<void> => {
-  const pool = createPool();
-  
-  try {
-    logger.info('Starting database migrations...');
-    
-    // Create migrations table
-    await createMigrationsTable(pool);
-    
-    // Get pending migrations
-    const pendingMigrations = await getPendingMigrations(pool);
-    
-    if (pendingMigrations.length === 0) {
-      logger.info('No pending migrations');
-      return;
-    }
-    
-    logger.info(`Found ${pendingMigrations.length} pending migration(s)`);
-    
-    // Execute each migration
-    for (const migration of pendingMigrations) {
-      await executeMigration(pool, migration);
-    }
-    
-    logger.info('✅ All migrations completed successfully');
-  } catch (error) {
-    logger.error('❌ Migration process failed', { error });
-    process.exit(1);
-  } finally {
-    await pool.end();
-  }
-};
+  await ensureMigrationsTable();
 
-/**
- * Rollback last migration (basic implementation)
- */
-const rollbackLastMigration = async (): Promise<void> => {
-  const pool = createPool();
-  
-  try {
-    logger.info('Rolling back last migration...');
-    
-    const result = await pool.query(
-      'SELECT name FROM migrations ORDER BY id DESC LIMIT 1'
-    );
-    
-    if (result.rows.length === 0) {
-      logger.info('No migrations to rollback');
-      return;
-    }
-    
-    const lastMigration = result.rows[0].name;
-    logger.warn(`⚠️  Rolling back: ${lastMigration}`);
-    logger.warn('⚠️  Note: This only removes the migration record.');
-    logger.warn('⚠️  You must manually revert database changes!');
-    
-    await pool.query('DELETE FROM migrations WHERE name = $1', [lastMigration]);
-    
-    logger.info(`✅ Migration record removed: ${lastMigration}`);
-  } catch (error) {
-    logger.error('❌ Rollback failed', { error });
-    process.exit(1);
-  } finally {
-    await pool.end();
+  const pending = await getPendingMigrations();
+
+  if (pending.length === 0) {
+    logger.info('✅ No pending migrations');
+    return;
   }
+
+  logger.info(`Found ${pending.length} pending migration(s)`);
+
+  for (const migration of pending) {
+    await runMigration(migration);
+  }
+
+  logger.info(`✅ All migrations completed successfully`);
 };
 
 /**
  * Show migration status
  */
 const showStatus = async (): Promise<void> => {
-  const pool = createPool();
-  
-  try {
-    await createMigrationsTable(pool);
-    
-    const executedMigrations = await getExecutedMigrations(pool);
-    const pendingMigrations = await getPendingMigrations(pool);
-    
-    logger.info('\n=== Migration Status ===\n');
-    
-    if (executedMigrations.length > 0) {
-      logger.info(`Executed migrations (${executedMigrations.length}):`);
-      executedMigrations.forEach((name) => logger.info(`  ✅ ${name}`));
-    } else {
-      logger.info('No executed migrations');
-    }
-    
-    logger.info('');
-    
-    if (pendingMigrations.length > 0) {
-      logger.info(`Pending migrations (${pendingMigrations.length}):`);
-      pendingMigrations.forEach((name) => logger.info(`  ⏳ ${name}`));
-    } else {
-      logger.info('No pending migrations');
-    }
-    
-    logger.info('\n========================\n');
-  } catch (error) {
-    logger.error('❌ Failed to get migration status', { error });
-    process.exit(1);
-  } finally {
-    await pool.end();
+  await ensureMigrationsTable();
+
+  const executed = await getExecutedMigrations();
+  const allMigrations = getMigrationFiles();
+  const executedIds = new Set(executed.map((m) => m.id));
+
+  console.log('\n' + '='.repeat(60));
+  console.log('DATABASE MIGRATION STATUS');
+  console.log('='.repeat(60) + '\n');
+
+  if (allMigrations.length === 0) {
+    console.log('No migrations found.\n');
+    return;
   }
+
+  for (const migration of allMigrations) {
+    const isExecuted = executedIds.has(migration.id);
+    const status = isExecuted ? '✅ Executed' : '⏳ Pending';
+    const executedMigration = executed.find((m) => m.id === migration.id);
+    const executedAt = executedMigration
+      ? new Date(executedMigration.executed_at).toLocaleString()
+      : '-';
+
+    console.log(`${status}  ${migration.id}_${migration.name}`);
+    if (isExecuted) {
+      console.log(`           Executed at: ${executedAt}`);
+    }
+    console.log('');
+  }
+
+  const pending = allMigrations.filter((m) => !executedIds.has(m.id));
+  console.log('='.repeat(60));
+  console.log(`Total: ${allMigrations.length} migrations`);
+  console.log(`Executed: ${executed.length}`);
+  console.log(`Pending: ${pending.length}`);
+  console.log('='.repeat(60) + '\n');
 };
 
 /**
- * Main execution
+ * Rollback last migration
+ */
+const rollbackMigration = async (): Promise<void> => {
+  await ensureMigrationsTable();
+
+  const executed = await getExecutedMigrations();
+
+  if (executed.length === 0) {
+    logger.info('No migrations to rollback');
+    return;
+  }
+
+  const lastMigration = executed[executed.length - 1];
+  logger.warn(`⚠️  Rolling back migration: ${lastMigration.id}_${lastMigration.name}`);
+
+  // Note: This is a simple rollback that just removes the record.
+  // In a production system, you'd want to have separate rollback SQL files.
+  await db.raw('DELETE FROM migrations WHERE id = $1', [lastMigration.id]);
+
+  logger.info(`✅ Migration rollback completed: ${lastMigration.id}_${lastMigration.name}`);
+  logger.warn('⚠️  Note: This only removed the migration record.');
+  logger.warn('⚠️  You may need to manually revert database changes.');
+};
+
+/**
+ * Main function
  */
 const main = async (): Promise<void> => {
-  const command = process.argv[2];
-  
-  switch (command) {
-    case 'up':
-    case 'migrate':
-      await runMigrations();
-      break;
-    
-    case 'down':
-    case 'rollback':
-      await rollbackLastMigration();
-      break;
-    
-    case 'status':
-      await showStatus();
-      break;
-    
-    default:
-      logger.info('Database Migration Runner');
-      logger.info('\nUsage:');
-      logger.info('  npm run migrate          - Run pending migrations');
-      logger.info('  npm run migrate:status   - Show migration status');
-      logger.info('  npm run migrate:rollback - Rollback last migration');
-      logger.info('');
-      break;
+  const command = process.argv[2] || 'up';
+
+  try {
+    logger.info('Connecting to database...');
+    await db.raw('SELECT 1');
+    logger.info('✅ Database connected');
+
+    switch (command) {
+      case 'up':
+        await runMigrations();
+        break;
+
+      case 'status':
+        await showStatus();
+        break;
+
+      case 'down':
+        await rollbackMigration();
+        break;
+
+      default:
+        logger.error(`Unknown command: ${command}`);
+        logger.info('Available commands: up, status, down');
+        process.exit(1);
+    }
+
+    await db.end();
+    process.exit(0);
+  } catch (error) {
+    logger.error('Migration error', { error });
+    await db.end();
+    process.exit(1);
   }
 };
 
-// Run if called directly
+// Run if executed directly
 if (require.main === module) {
-  main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      logger.error('Migration script error', { error });
-      process.exit(1);
-    });
+  main();
 }
 
-export { runMigrations, rollbackLastMigration, showStatus };
+export { runMigrations, showStatus, rollbackMigration };
