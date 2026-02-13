@@ -3,26 +3,20 @@ node_modules/
 .pnp
 .pnp.js
 
-# Testing
-coverage/
-*.log
-
-# Production
-build/
+# Build outputs
 dist/
+build/
 .next/
 out/
+.expo/
+.expo-shared/
 
-# Misc
-.DS_Store
-*.pem
+# Testing
+coverage/
+*.lcov
+.nyc_output/
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment
+# Environment variables
 .env
 .env.local
 .env.development.local
@@ -35,42 +29,50 @@ yarn-error.log*
 *.swp
 *.swo
 *~
-
-# Expo
-.expo/
-.expo-shared/
-
-# Turbo
-.turbo/
-
-# TypeScript
-*.tsbuildinfo
-
-# React Native
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
-
-# Package Manager
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# Supabase
-.supabase/
-
-# Temporary files
-*.tmp
-*.temp
+.DS_Store
 
 # Logs
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+.tsbuildinfo
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
 
 # Database
-*.sqlite
 *.db
+*.sqlite
+*.sqlite3
+
+# React Native
+.expo/
+.expo-shared/
+web-build/
+
+# Turbo
+.turbo/
+
+# Misc
+*.pem
+*.key
+*.cert
