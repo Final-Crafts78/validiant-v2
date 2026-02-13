@@ -1,197 +1,73 @@
 /**
- * Express Application
+ * Express Application Setup
  * 
- * Main Express app configuration with middleware, routes, and error handling.
+ * Configures Express app with middleware and routes.
  */
 
-import express, { Application, Request, Response, NextFunction } from 'express';
-import helmet from 'helmet';
+import express, { Application } from 'express';
 import cors from 'cors';
-import compression from 'compression';
+import helmet from 'helmet';
 import morgan from 'morgan';
-import { env } from './config/env.config';
-import { logger } from './utils/logger';
-import { errorHandler, notFoundHandler } from './middleware/error.middleware';
-import { rateLimiter } from './middleware/rateLimit.middleware';
-import { requestLogger } from './middleware/logger.middleware';
-import { sanitize } from './middleware/sanitize.middleware';
-
-// Import routes
+import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
+import { config } from './config';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth.routes';
-import userRoutes from './routes/user.routes';
-import organizationRoutes from './routes/organization.routes';
-import projectRoutes from './routes/project.routes';
-import taskRoutes from './routes/task.routes';
 
 /**
  * Create Express application
  */
-const createApp = (): Application => {
+export const createApp = (): Application => {
   const app = express();
 
-  // ============================================================================
-  // Security Middleware
-  // ============================================================================
-
-  // Helmet - Set security HTTP headers
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-        },
-      },
-      crossOriginEmbedderPolicy: false,
-    })
-  );
-
-  // CORS - Cross-Origin Resource Sharing
+  // Security middleware
+  app.use(helmet());
   app.use(
     cors({
-      origin: env.CORS_ORIGIN.split(',').map((origin) => origin.trim()),
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-      exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Per-Page'],
-      maxAge: 86400, // 24 hours
+      origin: config.cors.origin,
+      credentials: config.cors.credentials,
     })
   );
 
-  // ============================================================================
-  // General Middleware
-  // ============================================================================
+  // Rate limiting
+  const limiter = rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.maxRequests,
+    message: 'Too many requests from this IP, please try again later',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+  app.use('/api', limiter);
 
-  // Body parsers
+  // Body parsing middleware
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(cookieParser());
 
-  // Compression
-  app.use(compression());
-
-  // Request sanitization
-  app.use(sanitize);
-
-  // ============================================================================
-  // Logging Middleware
-  // ============================================================================
-
-  // HTTP request logging (only in development)
-  if (env.NODE_ENV === 'development') {
-    app.use(
-      morgan('dev', {
-        stream: {
-          write: (message: string) => logger.http(message.trim()),
-        },
-      })
-    );
+  // Logging middleware
+  if (config.isDevelopment) {
+    app.use(morgan('dev'));
+  } else {
+    app.use(morgan('combined'));
   }
 
-  // Custom request logger
-  app.use(requestLogger);
-
-  // ============================================================================
-  // Rate Limiting
-  // ============================================================================
-
-  // Apply rate limiting to all routes
-  app.use(rateLimiter);
-
-  // ============================================================================
-  // Health Check & Status
-  // ============================================================================
-
-  /**
-   * Health check endpoint
-   */
-  app.get('/health', (req: Request, res: Response) => {
-    res.status(200).json({
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: env.NODE_ENV,
     });
   });
 
-  /**
-   * API info endpoint
-   */
-  app.get('/api', (req: Request, res: Response) => {
-    res.status(200).json({
-      name: 'Validiant API',
-      version: '2.0.0',
-      description: 'Project management and time tracking API',
-      documentation: `${env.API_URL}/docs`,
-      endpoints: {
-        health: '/health',
-        auth: '/api/v1/auth',
-        users: '/api/v1/users',
-        organizations: '/api/v1/organizations',
-        projects: '/api/v1/projects',
-        tasks: '/api/v1/tasks',
-      },
-    });
-  });
+  // API routes
+  app.use('/api/v1/auth', authRoutes);
 
-  // ============================================================================
-  // API Routes
-  // ============================================================================
-
-  const API_PREFIX = '/api/v1';
-
-  // Authentication routes
-  app.use(`${API_PREFIX}/auth`, authRoutes);
-
-  // User routes
-  app.use(`${API_PREFIX}/users`, userRoutes);
-
-  // Organization routes
-  app.use(`${API_PREFIX}/organizations`, organizationRoutes);
-
-  // Project routes
-  app.use(`${API_PREFIX}/projects`, projectRoutes);
-
-  // Task routes
-  app.use(`${API_PREFIX}/tasks`, taskRoutes);
-
-  // Organization projects route (nested)
-  app.use(
-    `${API_PREFIX}/organizations/:organizationId/projects`,
-    (req: Request, res: Response, next: NextFunction) => {
-      // Pass organizationId to project controller
-      req.params.organizationId = req.params.organizationId;
-      next();
-    },
-    projectRoutes
-  );
-
-  // Project tasks route (nested)
-  app.use(
-    `${API_PREFIX}/projects/:projectId/tasks`,
-    (req: Request, res: Response, next: NextFunction) => {
-      // Pass projectId to task controller
-      req.params.projectId = req.params.projectId;
-      next();
-    },
-    taskRoutes
-  );
-
-  // ============================================================================
-  // Error Handling
-  // ============================================================================
-
-  // 404 handler - Must be after all routes
+  // 404 handler
   app.use(notFoundHandler);
 
-  // Global error handler - Must be last
+  // Error handler (must be last)
   app.use(errorHandler);
 
   return app;
 };
-
-/**
- * Export app factory
- */
-export { createApp };
