@@ -21,14 +21,14 @@ const envSchema = z.object({
   PORT: z.string().default('3001').transform(Number),
   API_VERSION: z.string().default('v1'),
   
-  // Database - Supabase PostgreSQL
+  // Database - Supabase PostgreSQL or Neon
   DATABASE_URL: z.string().url('Invalid database URL'),
   DATABASE_POOL_MIN: z.string().default('2').transform(Number),
   DATABASE_POOL_MAX: z.string().default('10').transform(Number),
   
-  // Redis
-  REDIS_URL: z.string().url('Invalid Redis URL'),
-  REDIS_PASSWORD: z.string().optional(),
+  // Redis - Upstash (Edge Compatible)
+  UPSTASH_REDIS_REST_URL: z.string().url('Invalid Upstash Redis REST URL'),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1, 'Upstash Redis REST token is required'),
   
   // JWT
   JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters'),
