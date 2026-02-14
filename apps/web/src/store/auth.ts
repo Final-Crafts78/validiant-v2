@@ -2,13 +2,11 @@
  * Auth Store
  * 
  * Zustand store for authentication state management.
- * Handles user state and auth operations.
+ * Ephemeral state only - no persistence (user data fetched server-side).
  * Tokens are managed via HttpOnly cookies (not in store).
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { STORAGE_KEYS } from '@/lib/config';
 
 /**
  * User interface
@@ -28,7 +26,7 @@ export interface User {
  * Auth state interface
  */
 interface AuthState {
-  // State
+  // Ephemeral state (not persisted)
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -44,88 +42,58 @@ interface AuthState {
 /**
  * Auth Store
  * 
- * Only persists user profile to localStorage.
- * Tokens are stored in HttpOnly cookies by the backend.
+ * IMPORTANT: No persistence middleware.
+ * User data is fetched server-side in dashboard layout and passed to client components.
+ * This store only manages ephemeral client state during the session.
  */
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      // Initial state
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  // Initial state
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+
+  // Set full auth data (login/register)
+  setAuth: ({ user }) => {
+    set({
+      user,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+  },
+
+  // Set user data only
+  setUser: (user) => {
+    set({
+      user,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+  },
+
+  // Update user data partially
+  updateUser: (updates) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      set({
+        user: { ...currentUser, ...updates },
+      });
+    }
+  },
+
+  // Clear auth state (logout)
+  clearAuth: () => {
+    set({
       user: null,
       isAuthenticated: false,
-      isLoading: true,
+      isLoading: false,
+    });
+  },
 
-      // Set full auth data (login/register)
-      setAuth: ({ user }) => {
-        set({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      },
-
-      // Set user data only
-      setUser: (user) => {
-        set({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      },
-
-      // Update user data partially
-      updateUser: (updates) => {
-        const currentUser = get().user;
-        if (currentUser) {
-          set({
-            user: { ...currentUser, ...updates },
-          });
-        }
-      },
-
-      // Clear auth state (logout)
-      clearAuth: () => {
-        // Remove user from localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem(STORAGE_KEYS.USER);
-        }
-
-        set({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-        });
-      },
-
-      // Set loading state
-      setLoading: (isLoading) => {
-        set({ isLoading });
-      },
-    }),
-    {
-      name: STORAGE_KEYS.USER,
-      storage: createJSONStorage(() => {
-        // Use localStorage for web
-        if (typeof window !== 'undefined') {
-          return localStorage;
-        }
-        // Fallback for SSR
-        return {
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        };
-      }),
-      // Only persist user data (safe, non-sensitive information)
-      partialize: (state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      }),
-      // Skip hydration during SSR
-      skipHydration: typeof window === 'undefined',
-    }
-  )
-);
+  // Set loading state
+  setLoading: (isLoading) => {
+    set({ isLoading });
+  },
+}));
 
 /**
  * Auth selectors for optimized re-renders
