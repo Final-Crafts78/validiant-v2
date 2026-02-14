@@ -1,188 +1,152 @@
 /**
- * Redis Configuration
+ * Redis Configuration (Upstash - Edge Compatible)
  * 
- * Redis client setup for caching, session storage, and rate limiting.
- * Provides connection management, caching helpers, and health checks.
+ * HTTP-based Redis client compatible with Cloudflare Workers.
+ * Uses Upstash Redis REST API instead of TCP connections.
+ * 
+ * CRITICAL: This replaces ioredis which is NOT edge-compatible.
+ * 
+ * Environment variables required:
+ * - UPSTASH_REDIS_REST_URL: Your Upstash Redis REST URL
+ * - UPSTASH_REDIS_REST_TOKEN: Your Upstash Redis REST token
  */
 
-import Redis, { RedisOptions } from 'ioredis';
-import { env, isProduction } from './env.config';
+import { Redis } from '@upstash/redis';
+import { env } from './env.config';
 import { logger } from '../utils/logger';
-import { CACHE_TTL } from '@validiant/shared';
 
 /**
- * Redis client instance
+ * Edge-compatible Redis client
+ * Uses HTTP REST API instead of TCP connections
  */
-let redisClient: Redis | null = null;
+let redis: Redis;
+
+try {
+  redis = new Redis({
+    url: env.UPSTASH_REDIS_REST_URL,
+    token: env.UPSTASH_REDIS_REST_TOKEN,
+  });
+
+  logger.info('✅ Upstash Redis client initialized');
+} catch (error) {
+  logger.error('❌ Failed to initialize Upstash Redis client:', error);
+  throw error;
+}
 
 /**
- * Redis connection options
- */
-const redisOptions: RedisOptions = {
-  maxRetriesPerRequest: 3,
-  enableReadyCheck: true,
-  lazyConnect: true,
-  retryStrategy: (times: number) => {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  },
-};
-
-/**
- * Initialize Redis connection
- */
-export const initializeRedis = async (): Promise<void> => {
-  try {
-    redisClient = new Redis(env.REDIS_URL, {
-      ...redisOptions,
-      password: env.REDIS_PASSWORD,
-    });
-
-    // Connect to Redis
-    await redisClient.connect();
-
-    // Test connection
-    const pong = await redisClient.ping();
-    if (pong !== 'PONG') {
-      throw new Error('Redis ping failed');
-    }
-
-    logger.info('✅ Redis connection established');
-
-    // Handle Redis events
-    redisClient.on('error', (err) => {
-      logger.error('❌ Redis client error', { error: err.message });
-    });
-
-    redisClient.on('connect', () => {
-      logger.debug('Redis client connected');
-    });
-
-    redisClient.on('ready', () => {
-      logger.debug('Redis client ready');
-    });
-
-    redisClient.on('reconnecting', () => {
-      logger.warn('Redis client reconnecting...');
-    });
-
-    redisClient.on('close', () => {
-      logger.info('Redis connection closed');
-    });
-  } catch (error) {
-    logger.error('❌ Failed to initialize Redis', { error });
-    throw error;
-  }
-};
-
-/**
- * Get Redis client instance
- */
-export const getRedisClient = (): Redis => {
-  if (!redisClient) {
-    throw new Error('Redis client not initialized. Call initializeRedis() first.');
-  }
-  return redisClient;
-};
-
-/**
- * Cache helper functions
+ * Cache utilities with automatic JSON handling
+ * Compatible with Cloudflare Workers edge runtime
  */
 export const cache = {
   /**
    * Get value from cache
+   * Automatically deserializes JSON
    */
-  get: async <T = any>(key: string): Promise<T | null> => {
+  async get<T = unknown>(key: string): Promise<T | null> {
     try {
-      const value = await getRedisClient().get(key);
-      if (!value) return null;
-      return JSON.parse(value) as T;
+      const value = await redis.get<T>(key);
+      return value;
     } catch (error) {
-      logger.error('Cache get error', { key, error });
+      logger.error('Cache get error:', { key, error });
       return null;
     }
   },
 
   /**
-   * Set value in cache with TTL (seconds)
+   * Set value in cache with optional TTL
+   * Automatically serializes JSON
+   * 
+   * @param key - Cache key
+   * @param value - Value to cache (will be JSON serialized)
+   * @param ttl - Time to live in seconds (optional)
    */
-  set: async (key: string, value: any, ttl: number = CACHE_TTL.MEDIUM): Promise<void> => {
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     try {
-      await getRedisClient().setex(key, ttl, JSON.stringify(value));
+      if (ttl) {
+        await redis.setex(key, ttl, value);
+      } else {
+        await redis.set(key, value);
+      }
     } catch (error) {
-      logger.error('Cache set error', { key, error });
+      logger.error('Cache set error:', { key, ttl, error });
     }
   },
 
   /**
    * Delete value from cache
    */
-  del: async (key: string): Promise<void> => {
+  async del(key: string): Promise<void> {
     try {
-      await getRedisClient().del(key);
+      await redis.del(key);
     } catch (error) {
-      logger.error('Cache delete error', { key, error });
+      logger.error('Cache delete error:', { key, error });
     }
   },
 
   /**
    * Delete all keys matching pattern
+   * Note: KEYS command can be slow, use with caution
    */
-  delPattern: async (pattern: string): Promise<void> => {
+  async delPattern(pattern: string): Promise<void> {
     try {
-      const keys = await getRedisClient().keys(pattern);
+      const keys = await redis.keys(pattern);
       if (keys.length > 0) {
-        await getRedisClient().del(...keys);
+        await redis.del(...keys);
       }
     } catch (error) {
-      logger.error('Cache delete pattern error', { pattern, error });
+      logger.error('Cache delete pattern error:', { pattern, error });
     }
   },
 
   /**
-   * Check if key exists
+   * Check if key exists in cache
    */
-  exists: async (key: string): Promise<boolean> => {
+  async exists(key: string): Promise<boolean> {
     try {
-      const result = await getRedisClient().exists(key);
+      const result = await redis.exists(key);
       return result === 1;
     } catch (error) {
-      logger.error('Cache exists error', { key, error });
+      logger.error('Cache exists error:', { key, error });
       return false;
     }
   },
 
   /**
-   * Get TTL for key (seconds)
+   * Set expiration on existing key
+   * 
+   * @param key - Cache key
+   * @param ttl - Time to live in seconds
    */
-  ttl: async (key: string): Promise<number> => {
+  async expire(key: string, ttl: number): Promise<void> {
     try {
-      return await getRedisClient().ttl(key);
+      await redis.expire(key, ttl);
     } catch (error) {
-      logger.error('Cache TTL error', { key, error });
-      return -1;
+      logger.error('Cache expire error:', { key, ttl, error });
     }
   },
 
   /**
-   * Extend TTL for key
+   * Get remaining TTL for key
+   * 
+   * @returns TTL in seconds, -1 if no expiry, -2 if key doesn't exist
    */
-  expire: async (key: string, ttl: number): Promise<void> => {
+  async ttl(key: string): Promise<number> {
     try {
-      await getRedisClient().expire(key, ttl);
+      return await redis.ttl(key);
     } catch (error) {
-      logger.error('Cache expire error', { key, error });
+      logger.error('Cache TTL error:', { key, error });
+      return -2;
     }
   },
 
   /**
    * Increment value (for counters)
    */
-  incr: async (key: string, by: number = 1): Promise<number> => {
+  async incr(key: string, by: number = 1): Promise<number> {
     try {
-      return await getRedisClient().incrby(key, by);
+      return await redis.incrby(key, by);
     } catch (error) {
-      logger.error('Cache increment error', { key, error });
+      logger.error('Cache increment error:', { key, error });
       return 0;
     }
   },
@@ -190,11 +154,11 @@ export const cache = {
   /**
    * Decrement value
    */
-  decr: async (key: string, by: number = 1): Promise<number> => {
+  async decr(key: string, by: number = 1): Promise<number> {
     try {
-      return await getRedisClient().decrby(key, by);
+      return await redis.decrby(key, by);
     } catch (error) {
-      logger.error('Cache decrement error', { key, error });
+      logger.error('Cache decrement error:', { key, error });
       return 0;
     }
   },
@@ -202,11 +166,11 @@ export const cache = {
   /**
    * Get or set (fetch from cache, or compute and cache)
    */
-  getOrSet: async <T>(
+  async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    ttl: number = CACHE_TTL.MEDIUM
-  ): Promise<T> => {
+    ttl?: number
+  ): Promise<T> {
     const cached = await cache.get<T>(key);
     if (cached !== null) {
       return cached;
@@ -219,39 +183,47 @@ export const cache = {
 };
 
 /**
- * Session helper functions
+ * Session storage utilities
+ * Uses 'session:' prefix for all keys
  */
 export const session = {
   /**
-   * Store session data
+   * Get session data
    */
-  set: async (sessionId: string, data: any, ttl: number = 86400): Promise<void> => {
-    const key = `session:${sessionId}`;
-    await cache.set(key, data, ttl);
+  async get<T = unknown>(sessionId: string): Promise<T | null> {
+    return cache.get<T>(`session:${sessionId}`);
   },
 
   /**
-   * Get session data
+   * Set session data with TTL
+   * 
+   * @param sessionId - Session identifier
+   * @param data - Session data (will be JSON serialized)
+   * @param ttl - Time to live in seconds
    */
-  get: async <T = any>(sessionId: string): Promise<T | null> => {
-    const key = `session:${sessionId}`;
-    return await cache.get<T>(key);
+  async set(sessionId: string, data: unknown, ttl: number): Promise<void> {
+    await cache.set(`session:${sessionId}`, data, ttl);
   },
 
   /**
    * Delete session
    */
-  del: async (sessionId: string): Promise<void> => {
-    const key = `session:${sessionId}`;
-    await cache.del(key);
+  async del(sessionId: string): Promise<void> {
+    await cache.del(`session:${sessionId}`);
+  },
+
+  /**
+   * Check if session exists
+   */
+  async exists(sessionId: string): Promise<boolean> {
+    return cache.exists(`session:${sessionId}`);
   },
 
   /**
    * Extend session TTL
    */
-  extend: async (sessionId: string, ttl: number = 86400): Promise<void> => {
-    const key = `session:${sessionId}`;
-    await cache.expire(key, ttl);
+  async extend(sessionId: string, ttl: number): Promise<void> {
+    await cache.expire(`session:${sessionId}`, ttl);
   },
 };
 
@@ -263,21 +235,20 @@ export const rateLimit = {
    * Check and increment rate limit counter
    * Returns remaining requests or -1 if limit exceeded
    */
-  check: async (
+  async check(
     key: string,
     max: number,
     windowMs: number
-  ): Promise<{ allowed: boolean; remaining: number; reset: number }> => {
+  ): Promise<{ allowed: boolean; remaining: number; reset: number }> {
     try {
-      const client = getRedisClient();
       const windowSeconds = Math.ceil(windowMs / 1000);
-      const count = await client.incr(key);
+      const count = await redis.incr(key);
 
       if (count === 1) {
-        await client.expire(key, windowSeconds);
+        await redis.expire(key, windowSeconds);
       }
 
-      const ttl = await client.ttl(key);
+      const ttl = await redis.ttl(key);
       const reset = Date.now() + (ttl * 1000);
       const remaining = Math.max(0, max - count);
 
@@ -296,9 +267,51 @@ export const rateLimit = {
   /**
    * Reset rate limit for key
    */
-  reset: async (key: string): Promise<void> => {
+  async reset(key: string): Promise<void> {
     await cache.del(key);
   },
+};
+
+/**
+ * Token denylist utilities
+ * Used for logout and token invalidation
+ */
+export const denylist = {
+  /**
+   * Add token to denylist
+   * 
+   * @param token - JWT token or token ID
+   * @param ttl - Time until token naturally expires (seconds)
+   */
+  async add(token: string, ttl: number): Promise<void> {
+    await cache.set(`denylist:${token}`, '1', ttl);
+  },
+
+  /**
+   * Check if token is denied
+   */
+  async isDenied(token: string): Promise<boolean> {
+    return cache.exists(`denylist:${token}`);
+  },
+};
+
+/**
+ * Export raw Redis client for advanced operations
+ */
+export { redis };
+
+/**
+ * Utility to test Redis connection
+ */
+export const testConnection = async (): Promise<boolean> => {
+  try {
+    await redis.ping();
+    logger.info('✅ Redis connection test successful');
+    return true;
+  } catch (error) {
+    logger.error('❌ Redis connection test failed:', error);
+    return false;
+  }
 };
 
 /**
@@ -311,10 +324,7 @@ export const checkRedisHealth = async (): Promise<{
 }> => {
   const start = Date.now();
   try {
-    const pong = await getRedisClient().ping();
-    if (pong !== 'PONG') {
-      throw new Error('Invalid ping response');
-    }
+    await redis.ping();
     const latency = Date.now() - start;
     return { status: 'up', latency };
   } catch (error) {
@@ -324,27 +334,3 @@ export const checkRedisHealth = async (): Promise<{
     };
   }
 };
-
-/**
- * Close Redis connection
- */
-export const closeRedis = async (): Promise<void> => {
-  if (redisClient) {
-    await redisClient.quit();
-    redisClient = null;
-    logger.info('Redis connection closed');
-  }
-};
-
-/**
- * Graceful shutdown handler
- */
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, closing Redis connection...');
-  await closeRedis();
-});
-
-process.on('SIGINT', async () => {
-  logger.info('SIGINT received, closing Redis connection...');
-  await closeRedis();
-});
