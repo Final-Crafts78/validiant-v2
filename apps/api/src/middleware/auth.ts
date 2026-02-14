@@ -3,6 +3,7 @@
  * 
  * Middleware to verify JWT tokens from HttpOnly cookies and protect routes.
  * Includes role-based access control (RBAC) and organization membership checks.
+ * Checks Redis token denylist for revoked tokens.
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -10,6 +11,7 @@ import { verifyToken } from '../utils/jwt';
 import { sendError } from '../utils/response';
 import { HTTP_STATUS, ERROR_CODES } from '@validiant/shared';
 import { prisma } from '../lib/prisma';
+import { cache } from '../config/redis.config';
 
 /**
  * Extend Express Request to include user
@@ -44,12 +46,13 @@ export enum OrganizationRole {
 /**
  * Authenticate middleware
  * Verifies JWT token from HttpOnly cookie (preferred) or Authorization header (fallback)
+ * Checks Redis denylist for revoked tokens
  */
-export const authenticate = (
+export const authenticate = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     let token: string | null = null;
 
@@ -64,6 +67,13 @@ export const authenticate = (
 
     if (!token) {
       sendError(res, 'No token provided', HTTP_STATUS.UNAUTHORIZED);
+      return;
+    }
+
+    // Check if token is in denylist (revoked after logout)
+    const isDenied = await cache.exists(`token:denylist:${token}`);
+    if (isDenied) {
+      sendError(res, 'Token has been revoked', HTTP_STATUS.UNAUTHORIZED);
       return;
     }
 
@@ -90,11 +100,11 @@ export const authenticate = (
  * Optional authentication
  * Attaches user if token exists, but doesn't fail if missing
  */
-export const optionalAuth = (
+export const optionalAuth = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     let token: string | null = null;
 
@@ -108,11 +118,15 @@ export const optionalAuth = (
     }
 
     if (token) {
-      const payload = verifyToken(token);
-      req.user = {
-        userId: payload.userId,
-        email: payload.email,
-      };
+      // Check denylist
+      const isDenied = await cache.exists(`token:denylist:${token}`);
+      if (!isDenied) {
+        const payload = verifyToken(token);
+        req.user = {
+          userId: payload.userId,
+          email: payload.email,
+        };
+      }
     }
 
     next();
