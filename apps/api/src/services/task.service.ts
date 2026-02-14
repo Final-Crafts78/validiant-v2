@@ -1,11 +1,16 @@
 /**
- * Task Service (Drizzle Version)
+ * Task Service (Drizzle Version) - Real-Time Enhanced
  * 
  * Handles task management, assignments, status updates, and task-related business logic.
  * Tasks belong to projects and can be assigned to multiple users.
  * 
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  * THIS IS THE FINAL SERVICE MIGRATION! 🎉
+ * 
+ * Phase 6.3: Added real-time broadcasting via PartyKit WebSockets
+ * - TASK_CREATED, TASK_UPDATED, TASK_DELETED events
+ * - HTTP-to-WebSocket bridge pattern
+ * - Non-blocking broadcasts (fire-and-forget)
  */
 
 import { eq, and, isNull, sql, or, desc, asc, inArray, exists } from 'drizzle-orm';
@@ -19,6 +24,7 @@ import {
   assertExists,
 } from '../utils/errors';
 import { logger } from '../utils/logger';
+import { broadcastTaskEvent, BroadcastEvent } from '../utils/broadcast';
 
 /**
  * Task status enum
@@ -107,6 +113,7 @@ interface TaskAssignee {
 /**
  * Create task
  * ✅ ELITE: Wrapped in transaction for ACID compliance
+ * ✅ REAL-TIME: Broadcasts TASK_CREATED event after successful creation
  */
 export const createTask = async (
   projectId: string,
@@ -187,6 +194,14 @@ export const createTask = async (
   });
 
   logger.info('Task created', { taskId: task.id, projectId, userId });
+
+  // ✅ REAL-TIME: Broadcast to project room
+  // Non-blocking - happens in background
+  await broadcastTaskEvent(projectId, task.id, BroadcastEvent.TASK_CREATED, {
+    status: task.status,
+    priority: task.priority,
+    createdBy: userId,
+  });
 
   return task as Task;
 };
@@ -291,6 +306,7 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
 
 /**
  * Update task
+ * ✅ REAL-TIME: Broadcasts TASK_UPDATED or TASK_STATUS_CHANGED
  */
 export const updateTask = async (
   taskId: string,
@@ -306,6 +322,9 @@ export const updateTask = async (
     customFields?: any;
   }
 ): Promise<Task> => {
+  // Track if status changed for optimized broadcast
+  const statusChanged = data.status !== undefined;
+
   // Build update object with only provided fields
   const updateData: any = {
     updatedAt: new Date(),
@@ -365,19 +384,46 @@ export const updateTask = async (
 
   logger.info('Task updated', { taskId });
 
+  // ✅ REAL-TIME: Broadcast to project room
+  // Use TASK_STATUS_CHANGED for status updates (optimized for frontend)
+  // Use TASK_UPDATED for general updates
+  const eventType = statusChanged
+    ? BroadcastEvent.TASK_STATUS_CHANGED
+    : BroadcastEvent.TASK_UPDATED;
+
+  await broadcastTaskEvent(task.projectId, task.id, eventType, {
+    status: task.status,
+    priority: task.priority,
+  });
+
   return task as Task;
 };
 
 /**
  * Delete task (soft delete)
+ * ✅ REAL-TIME: Broadcasts TASK_DELETED
  */
 export const deleteTask = async (taskId: string): Promise<void> => {
+  // Get task before deletion to get projectId
+  const [task] = await db
+    .select({ projectId: tasks.projectId })
+    .from(tasks)
+    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
+    .limit(1);
+
+  if (!task) {
+    throw new NotFoundError('Task');
+  }
+
   await db.update(tasks).set({ deletedAt: new Date() }).where(eq(tasks.id, taskId));
 
   // Clear cache
   await cache.del(`task:${taskId}`);
 
   logger.info('Task deleted', { taskId });
+
+  // ✅ REAL-TIME: Broadcast to project room
+  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_DELETED);
 };
 
 /**
@@ -597,8 +643,20 @@ export const getUserTasks = async (
 
 /**
  * Assign user to task
+ * ✅ REAL-TIME: Broadcasts TASK_ASSIGNED
  */
 export const assignTask = async (taskId: string, userId: string): Promise<TaskAssignee> => {
+  // Get task to get projectId
+  const [task] = await db
+    .select({ projectId: tasks.projectId })
+    .from(tasks)
+    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
+    .limit(1);
+
+  if (!task) {
+    throw new NotFoundError('Task');
+  }
+
   // Check if already assigned
   const [exists] = await db
     .select({ id: taskAssignees.id })
@@ -634,13 +692,30 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
 
   logger.info('Task assigned', { taskId, userId });
 
+  // ✅ REAL-TIME: Broadcast to project room
+  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_ASSIGNED, {
+    assigneeId: userId,
+  });
+
   return assignee as TaskAssignee;
 };
 
 /**
  * Unassign user from task
+ * ✅ REAL-TIME: Broadcasts TASK_ASSIGNED with removed flag
  */
 export const unassignTask = async (taskId: string, userId: string): Promise<void> => {
+  // Get task to get projectId
+  const [task] = await db
+    .select({ projectId: tasks.projectId })
+    .from(tasks)
+    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
+    .limit(1);
+
+  if (!task) {
+    throw new NotFoundError('Task');
+  }
+
   await db
     .update(taskAssignees)
     .set({ deletedAt: new Date() })
@@ -650,6 +725,12 @@ export const unassignTask = async (taskId: string, userId: string): Promise<void
   await cache.del(`task:${taskId}`);
 
   logger.info('Task unassigned', { taskId, userId });
+
+  // ✅ REAL-TIME: Broadcast to project room
+  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_ASSIGNED, {
+    assigneeId: userId,
+    removed: true,
+  });
 };
 
 /**
