@@ -7,9 +7,10 @@
 import { Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { hashPassword, comparePassword } from '../utils/password';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
+import { generateAccessToken, generateRefreshToken, verifyToken, decodeToken } from '../utils/jwt';
 import { sendSuccess, sendError } from '../utils/response';
 import { HTTP_STATUS, ERROR_CODES } from '@validiant/shared';
+import { cache } from '../config/redis.config';
 import type { AuthRequest } from '../middleware/auth';
 import type { User } from '@validiant/shared';
 
@@ -195,14 +196,24 @@ export const refresh = async (
       return;
     }
 
-    // Verify refresh token (jwt.ts should have a verifyRefreshToken function)
-    const { verifyRefreshToken } = require('../utils/jwt');
-    const decoded = verifyRefreshToken(refreshToken);
+    // Verify refresh token
+    const decoded = verifyToken(refreshToken);
 
     if (!decoded) {
       sendError(
         res,
         'Invalid refresh token',
+        HTTP_STATUS.UNAUTHORIZED
+      );
+      return;
+    }
+
+    // Check if refresh token is in denylist
+    const isDenied = await cache.exists(`token:denylist:${refreshToken}`);
+    if (isDenied) {
+      sendError(
+        res,
+        'Token has been revoked',
         HTTP_STATUS.UNAUTHORIZED
       );
       return;
@@ -275,7 +286,7 @@ export const getMe = async (
 };
 
 /**
- * Logout user
+ * Logout user with Redis token denylist
  */
 export const logout = async (
   req: AuthRequest,
@@ -283,6 +294,39 @@ export const logout = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // Get tokens from cookies
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    // Add tokens to Redis denylist with TTL matching their expiration
+    if (accessToken) {
+      try {
+        const decoded = decodeToken(accessToken);
+        if (decoded && decoded.exp) {
+          const remainingTTL = decoded.exp - Math.floor(Date.now() / 1000);
+          if (remainingTTL > 0) {
+            await cache.set(`token:denylist:${accessToken}`, true, remainingTTL);
+          }
+        }
+      } catch (err) {
+        // Token might be invalid/expired, skip denylist
+      }
+    }
+
+    if (refreshToken) {
+      try {
+        const decoded = decodeToken(refreshToken);
+        if (decoded && decoded.exp) {
+          const remainingTTL = decoded.exp - Math.floor(Date.now() / 1000);
+          if (remainingTTL > 0) {
+            await cache.set(`token:denylist:${refreshToken}`, true, remainingTTL);
+          }
+        }
+      } catch (err) {
+        // Token might be invalid/expired, skip denylist
+      }
+    }
+
     // Clear cookies by setting them to expire immediately
     res.cookie('accessToken', '', {
       ...COOKIE_OPTIONS,
