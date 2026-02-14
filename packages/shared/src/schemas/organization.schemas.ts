@@ -110,7 +110,9 @@ export const updateOrganizationSchema = z.object({
 /**
  * Update organization settings schema
  */
-export const updateOrganizationSettingsSchema = organizationSettingsSchema.partial();
+export const updateOrganizationSettingsSchema = z.object({
+  settings: organizationSettingsSchema.partial(),
+});
 
 /**
  * Organization member invitation schema
@@ -120,6 +122,16 @@ export const inviteOrganizationMemberSchema = z.object({
   role: organizationRoleSchema,
   teamIds: z.array(z.string().uuid()).optional(),
   message: z.string().max(500).optional(),
+});
+
+/**
+ * Add organization member schema (for direct member addition)
+ * ELITE PATTERN: Separate from invitation flow
+ */
+export const addOrganizationMemberSchema = z.object({
+  userId: z.string().uuid('Invalid user ID'),
+  role: organizationRoleSchema,
+  teamIds: z.array(z.string().uuid()).optional(),
 });
 
 /**
@@ -142,6 +154,12 @@ export const bulkInviteOrganizationMembersSchema = z.object({
 export const updateOrganizationMemberRoleSchema = z.object({
   role: organizationRoleSchema,
 });
+
+/**
+ * Update member role schema (shorter alias for backward compatibility)
+ * ELITE PATTERN: Alias for cleaner route definitions
+ */
+export const updateMemberRoleSchema = updateOrganizationMemberRoleSchema;
 
 /**
  * Accept organization invitation schema
@@ -356,6 +374,7 @@ export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>;
 export type UpdateOrganizationSettingsInput = z.infer<typeof updateOrganizationSettingsSchema>;
 export type InviteOrganizationMemberInput = z.infer<typeof inviteOrganizationMemberSchema>;
+export type AddOrganizationMemberInput = z.infer<typeof addOrganizationMemberSchema>;
 export type BulkInviteOrganizationMembersInput = z.infer<typeof bulkInviteOrganizationMembersSchema>;
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export type UpdateTeamInput = z.infer<typeof updateTeamSchema>;
