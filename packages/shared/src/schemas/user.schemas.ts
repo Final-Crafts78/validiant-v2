@@ -179,7 +179,9 @@ export const updateUserProfileSchema = z.object({
 /**
  * User preferences update schema
  */
-export const updateUserPreferencesSchema = userPreferencesSchema.partial();
+export const updateUserPreferencesSchema = z.object({
+  preferences: userPreferencesSchema.partial(),
+});
 
 /**
  * Notification preferences update schema
@@ -230,6 +232,36 @@ export const userFiltersSchema = z.object({
 export const userSortSchema = z.object({
   field: z.enum(['createdAt', 'updatedAt', 'fullName', 'email', 'lastLoginAt']),
   direction: z.enum(['asc', 'desc']),
+});
+
+/**
+ * User list query schema (for GET /users with pagination)
+ * ELITE PATTERN: Comprehensive query validation for list endpoints
+ */
+export const userListQuerySchema = z.object({
+  // Pagination
+  page: z.coerce.number().int().min(1).default(1),
+  perPage: z.coerce.number().int().min(1).max(100).default(20),
+  
+  // Search
+  search: z.string().optional(),
+  
+  // Filters
+  role: userRoleSchema.optional(),
+  status: userStatusSchema.optional(),
+  
+  // Sorting
+  sortBy: z.enum(['createdAt', 'updatedAt', 'fullName', 'email', 'lastLoginAt']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+});
+
+/**
+ * User search query schema (for GET /users/search quick search)
+ * ELITE PATTERN: Lightweight search with minimal parameters
+ */
+export const userSearchQuerySchema = z.object({
+  q: z.string().min(1, 'Search query is required'),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
 /**
@@ -342,3 +374,5 @@ export type DeviceInfoInput = z.infer<typeof deviceInfoSchema>;
 export type UserFiltersInput = z.infer<typeof userFiltersSchema>;
 export type BulkUserActionInput = z.infer<typeof bulkUserActionSchema>;
 export type UserInvitationInput = z.infer<typeof userInvitationSchema>;
+export type UserListQueryInput = z.infer<typeof userListQuerySchema>;
+export type UserSearchQueryInput = z.infer<typeof userSearchQuerySchema>;
