@@ -3,6 +3,8 @@
  * 
  * Validates and exports environment variables for the API server.
  * Uses Zod for runtime validation to ensure all required variables are present.
+ * 
+ * Phase 6.1 Enhancement: OAuth 2.0 configuration
  */
 
 import { z } from 'zod';
@@ -39,14 +41,14 @@ const envSchema = z.object({
   // OAuth - Google
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CALLBACK_URL: z.string().url().optional(),
+  GOOGLE_REDIRECT_URI: z.string().url().optional(),
   
   // OAuth - GitHub
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
-  GITHUB_CALLBACK_URL: z.string().url().optional(),
+  GITHUB_REDIRECT_URI: z.string().url().optional(),
   
-  // OAuth - Microsoft
+  // OAuth - Microsoft (Future)
   MICROSOFT_CLIENT_ID: z.string().optional(),
   MICROSOFT_CLIENT_SECRET: z.string().optional(),
   MICROSOFT_CALLBACK_URL: z.string().url().optional(),
@@ -158,9 +160,9 @@ export const getCorsOrigins = (): string[] => {
 export const isOAuthProviderEnabled = (provider: 'google' | 'github' | 'microsoft'): boolean => {
   switch (provider) {
     case 'google':
-      return !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+      return !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.GOOGLE_REDIRECT_URI);
     case 'github':
-      return !!(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET);
+      return !!(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET && env.GITHUB_REDIRECT_URI);
     case 'microsoft':
       return !!(env.MICROSOFT_CLIENT_ID && env.MICROSOFT_CLIENT_SECRET);
     default:
