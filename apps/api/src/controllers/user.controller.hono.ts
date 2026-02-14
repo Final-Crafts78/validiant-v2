@@ -6,18 +6,13 @@
  * 
  * Migrated from Express to Hono for edge compatibility.
  * Functions: 16 total (profile, preferences, admin operations, etc.)
+ * 
+ * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
+ * All validation happens at route level via @hono/zod-validator
  */
 
 import { Context } from 'hono';
 import * as userService from '../services/user.service';
-import {
-  updateUserProfileSchema,
-  updateUserPreferencesSchema,
-  updateUserRoleSchema,
-  updateUserStatusSchema,
-  userListQuerySchema,
-  userSearchQuerySchema,
-} from '@validiant/shared';
 
 /**
  * Get current user profile
@@ -60,6 +55,8 @@ export const getCurrentUserProfile = async (c: Context) => {
 /**
  * Update current user profile
  * PUT /api/v1/users/me
+ * 
+ * Payload validated by zValidator(updateUserProfileSchema) at route level
  */
 export const updateCurrentUserProfile = async (c: Context) => {
   try {
@@ -76,8 +73,8 @@ export const updateCurrentUserProfile = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateUserProfileSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const validatedData = c.req.valid('json');
 
     const updatedUser = await userService.updateProfile(user.userId, validatedData);
 
@@ -102,6 +99,8 @@ export const updateCurrentUserProfile = async (c: Context) => {
 /**
  * Update user preferences
  * PUT /api/v1/users/me/preferences
+ * 
+ * Payload validated by zValidator(updateUserPreferencesSchema) at route level
  */
 export const updateUserPreferences = async (c: Context) => {
   try {
@@ -118,12 +117,12 @@ export const updateUserPreferences = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateUserPreferencesSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { preferences } = c.req.valid('json');
 
     const updatedUser = await userService.updatePreferences(
       user.userId,
-      validatedData.preferences
+      preferences
     );
 
     return c.json({
@@ -147,6 +146,8 @@ export const updateUserPreferences = async (c: Context) => {
 /**
  * Update notification preferences
  * PUT /api/v1/users/me/notifications
+ * 
+ * No validation schema yet - accepts raw JSON
  */
 export const updateNotificationPreferences = async (c: Context) => {
   try {
@@ -301,11 +302,13 @@ export const getUserById = async (c: Context) => {
 /**
  * List users with pagination and filters
  * GET /api/v1/users
+ * 
+ * Query validated by zValidator(userListQuerySchema) at route level
  */
 export const listUsers = async (c: Context) => {
   try {
-    const query = c.req.query();
-    const validatedQuery = userListQuerySchema.parse(query);
+    // ELITE PATTERN: Blindly trust pre-validated query
+    const validatedQuery = c.req.valid('query');
 
     const result = await userService.listUsers({
       page: validatedQuery.page,
@@ -337,27 +340,15 @@ export const listUsers = async (c: Context) => {
 /**
  * Search users
  * GET /api/v1/users/search
+ * 
+ * Query validated by zValidator(userSearchQuerySchema) at route level
  */
 export const searchUsers = async (c: Context) => {
   try {
-    const query = c.req.query();
-    const validatedQuery = userSearchQuerySchema.parse(query);
+    // ELITE PATTERN: Blindly trust pre-validated query
+    const { q, limit } = c.req.valid('query');
 
-    if (!validatedQuery.q) {
-      return c.json(
-        {
-          success: false,
-          error: 'Bad Request',
-          message: 'Search query (q) is required',
-        },
-        400
-      );
-    }
-
-    const users = await userService.searchUsers(
-      validatedQuery.q,
-      validatedQuery.limit || 10
-    );
+    const users = await userService.searchUsers(q, limit || 10);
 
     return c.json({
       success: true,
@@ -418,6 +409,8 @@ export const checkEmailAvailability = async (c: Context) => {
 /**
  * Update user profile by ID (admin only)
  * PUT /api/v1/users/:id
+ * 
+ * Payload validated by zValidator(updateUserProfileSchema) at route level
  */
 export const updateUserById = async (c: Context) => {
   try {
@@ -447,8 +440,8 @@ export const updateUserById = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateUserProfileSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const validatedData = c.req.valid('json');
 
     const user = await userService.updateProfile(id, validatedData);
 
@@ -473,6 +466,8 @@ export const updateUserById = async (c: Context) => {
 /**
  * Update user role (admin only)
  * PATCH /api/v1/users/:id/role
+ * 
+ * Payload validated by zValidator(updateUserRoleSchema) at route level
  */
 export const updateUserRole = async (c: Context) => {
   try {
@@ -502,10 +497,10 @@ export const updateUserRole = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateUserRoleSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { role } = c.req.valid('json');
 
-    const user = await userService.updateUserRole(id, validatedData.role);
+    const user = await userService.updateUserRole(id, role);
 
     return c.json({
       success: true,
@@ -528,6 +523,8 @@ export const updateUserRole = async (c: Context) => {
 /**
  * Update user status (admin only)
  * PATCH /api/v1/users/:id/status
+ * 
+ * Payload validated by zValidator(updateUserStatusSchema) at route level
  */
 export const updateUserStatus = async (c: Context) => {
   try {
@@ -557,10 +554,10 @@ export const updateUserStatus = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateUserStatusSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { status } = c.req.valid('json');
 
-    const user = await userService.updateUserStatus(id, validatedData.status);
+    const user = await userService.updateUserStatus(id, status);
 
     return c.json({
       success: true,
@@ -751,6 +748,8 @@ export const getUserActivity = async (c: Context) => {
 /**
  * Bulk delete users (admin only)
  * POST /api/v1/users/bulk-delete
+ * 
+ * No validation schema yet - accepts raw JSON with userIds array
  */
 export const bulkDeleteUsers = async (c: Context) => {
   try {
