@@ -31,13 +31,24 @@ export const generateRefreshToken = (payload: TokenPayload): string => {
 };
 
 /**
- * Verify token
+ * Verify access token
  */
 export const verifyToken = (token: string): TokenPayload => {
   try {
     return jwt.verify(token, config.jwt.secret) as TokenPayload;
   } catch (error) {
     throw new Error('Invalid token');
+  }
+};
+
+/**
+ * Verify refresh token
+ */
+export const verifyRefreshToken = (token: string): TokenPayload => {
+  try {
+    return jwt.verify(token, config.jwt.secret) as TokenPayload;
+  } catch (error) {
+    throw new Error('Invalid refresh token');
   }
 };
 
