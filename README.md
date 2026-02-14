@@ -2,7 +2,7 @@
 
 <div align="center">
   <h3>🚀 Full-Stack Project Management Platform</h3>
-  <p>A modern, type-safe monorepo built with React Native, Next.js, Express, and Prisma</p>
+  <p>A modern, type-safe, edge-native monorepo built with React Native, Next.js, Hono, and Drizzle</p>
 </div>
 
 ---
@@ -23,16 +23,17 @@
 
 ## 🎯 Overview
 
-Validiant v2 is a comprehensive full-stack project management platform designed for modern teams. Built as a monorepo, it provides native mobile apps, a responsive web application, and a robust backend API - all sharing common types and validation logic.
+Validiant v2 is a comprehensive full-stack project management platform designed for modern teams. Built as a monorepo, it provides native mobile apps, a responsive web application, and a robust edge-native API - all sharing common types and validation logic.
 
 ### Key Highlights
 
 - 🎨 **Modern UI/UX** - Beautiful, responsive design across all platforms
-- 🔒 **Secure Authentication** - JWT-based auth with password hashing
+- 🔒 **Secure Authentication** - JWT-based auth with HttpOnly cookies
 - 📱 **Cross-Platform** - iOS, Android, and Web from a single codebase
 - ⚡ **Type-Safe** - End-to-end TypeScript with shared types
 - 🛡️ **Validated** - Zod schemas ensure data integrity
-- 🗄️ **Scalable Database** - PostgreSQL with Prisma ORM
+- 🗄️ **Scalable Database** - PostgreSQL with Drizzle ORM
+- 🌐 **Edge-Native** - Deployed on Cloudflare Workers for global low latency
 
 ---
 
@@ -40,7 +41,7 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 
 ### User Management
 - ✅ User registration and login
-- ✅ JWT token authentication
+- ✅ JWT token authentication (HttpOnly cookies + Bearer tokens)
 - ✅ Password reset flow
 - ✅ Profile management
 
@@ -71,7 +72,7 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 | Technology | Purpose |
 |------------|----------|
 | **React Native + Expo** | Cross-platform mobile apps (iOS/Android) |
-| **Next.js 14** | Server-side rendered web application |
+| **Next.js 15** | Server-side rendered web application |
 | **TypeScript** | Type-safe development |
 | **Tailwind CSS** | Utility-first styling (Web) |
 | **React Query** | Data fetching and caching |
@@ -83,21 +84,24 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 
 | Technology | Purpose |
 |------------|----------|
-| **Node.js + Express** | RESTful API server |
+| **Hono** | Edge-native web framework |
+| **Cloudflare Workers** | Global edge compute platform |
 | **TypeScript** | Type-safe development |
-| **Prisma** | Database ORM |
-| **PostgreSQL** | Relational database |
-| **JWT** | Authentication tokens |
-| **Bcrypt** | Password hashing |
+| **Drizzle ORM** | Type-safe SQL toolkit |
+| **Neon Serverless PostgreSQL** | Edge-compatible database |
+| **Upstash Redis** | Edge-compatible caching (HTTP-based) |
+| **JWT + jose** | Authentication tokens |
+| **bcryptjs** | Password hashing |
 
 ### DevOps
 
 | Technology | Purpose |
 |------------|----------|
 | **Turbo** | Monorepo build system |
-| **npm Workspaces** | Dependency management |
+| **pnpm Workspaces** | Dependency management |
 | **Prettier** | Code formatting |
 | **ESLint** | Code linting |
+| **Wrangler** | Cloudflare Workers CLI |
 
 ---
 
@@ -107,8 +111,8 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 validiant-v2/
 ├── apps/
 │   ├── mobile/           # React Native mobile app (Expo)
-│   ├── web/              # Next.js web application
-│   └── api/              # Express API server
+│   ├── web/              # Next.js 15 web application
+│   └── api/              # Hono edge-native API
 ├── packages/
 │   └── shared/           # Shared types, validation, utilities
 ├── turbo.json            # Turbo configuration
@@ -118,9 +122,9 @@ validiant-v2/
 
 ### App Details
 
-- **`apps/mobile`** - React Native app with Expo (iOS/Android)
-- **`apps/web`** - Next.js 14 web app with App Router
-- **`apps/api`** - Express API with Prisma and PostgreSQL
+- **`apps/mobile`** - React Native app with Expo 50 (iOS/Android)
+- **`apps/web`** - Next.js 15 web app with App Router
+- **`apps/api`** - Hono API on Cloudflare Workers with Drizzle ORM
 - **`packages/shared`** - Common types, Zod schemas, and utilities
 
 ---
@@ -132,9 +136,13 @@ validiant-v2/
 Ensure you have the following installed:
 
 - **Node.js** >= 18.0.0
-- **npm** >= 9.0.0
-- **PostgreSQL** >= 14.0
+- **pnpm** >= 8.0.0
 - **Git**
+
+### External Services Required
+
+- **Neon PostgreSQL** - [Get free account](https://neon.tech)
+- **Upstash Redis** - [Get free account](https://upstash.com)
 
 ### Installation
 
@@ -148,7 +156,7 @@ cd validiant-v2
 2. **Install dependencies**
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. **Set up environment variables**
@@ -156,23 +164,23 @@ npm install
 ```bash
 # API
 cp apps/api/.env.example apps/api/.env
-# Edit apps/api/.env with your database credentials
+# Edit apps/api/.env with your database and Redis credentials
 ```
 
 4. **Set up the database**
 
 ```bash
-# Generate Prisma client
-npm run api:prisma:generate
+# Generate Drizzle schema
+pnpm api:db:generate
 
-# Run migrations
-npm run api:prisma:migrate
+# Push schema to database
+pnpm api:db:push
 ```
 
 5. **Build shared package**
 
 ```bash
-npm run shared:build
+pnpm shared:build
 ```
 
 ---
@@ -183,7 +191,7 @@ npm run shared:build
 
 ```bash
 # Start all apps in development mode
-npm run dev
+pnpm run dev
 ```
 
 ### Running Individual Apps
@@ -191,17 +199,17 @@ npm run dev
 #### Backend API
 
 ```bash
-# Start API server
-npm run api:dev
+# Start API with Wrangler (Cloudflare Workers dev mode)
+pnpm run api:dev
 
-# The API will be available at http://localhost:5000
+# The API will be available at http://localhost:8787
 ```
 
 #### Web App
 
 ```bash
 # Start Next.js dev server
-npm run web:dev
+pnpm run web:dev
 
 # Open http://localhost:3000 in your browser
 ```
@@ -210,66 +218,72 @@ npm run web:dev
 
 ```bash
 # Start Expo
-npm run mobile:start
+pnpm run mobile:start
 
 # Run on iOS
-npm run mobile:ios
+pnpm run mobile:ios
 
 # Run on Android
-npm run mobile:android
+pnpm run mobile:android
 ```
 
 ### Database Management
 
 ```bash
-# Open Prisma Studio (database GUI)
-npm run api:prisma:studio
+# Open Drizzle Studio (database GUI)
+pnpm run api:db:studio
 
-# Create a new migration
-npm run api:prisma:migrate
+# Generate a new migration
+pnpm run api:db:generate
 
-# Reset database (⚠️ deletes all data)
-npm run api:db:reset
+# Push schema changes directly (no migration files)
+pnpm run api:db:push
 ```
 
 ### Code Quality
 
 ```bash
 # Lint all packages
-npm run lint
+pnpm run lint
 
 # Type check
-npm run type-check
+pnpm run type-check
 
 # Format code
-npm run format
+pnpm run format
 
 # Check formatting
-npm run format:check
+pnpm run format:check
 ```
 
 ---
 
-## 🏗️ Building for Production
+## 🏭 Building for Production
 
 ```bash
 # Build all apps
-npm run build
+pnpm run build
 
 # Build specific app
-npm run api:build
-npm run web:build
-npm run shared:build
+pnpm run api:build
+pnpm run web:build
+pnpm run shared:build
 ```
 
 ---
 
 ## 📝 API Documentation
 
-### Base URL
+### Base URL (Production)
 
 ```
-http://localhost:5000/api/v1
+https://api.validiant.workers.dev/api/v1
+```
+
+### Base URL (Development)
+
+```
+http://localhost:8787/api/v1
 ```
 
 ### Endpoints
@@ -278,19 +292,19 @@ http://localhost:5000/api/v1
 
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - Login user
+- `POST /auth/refresh` - Refresh access token
 - `GET /auth/me` - Get current user (protected)
 - `POST /auth/logout` - Logout user (protected)
 
 ### Example Request
 
 ```bash
-curl -X POST http://localhost:5000/api/v1/auth/register \
+curl -X POST https://api.validiant.workers.dev/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
     "password": "SecurePass123!",
-    "firstName": "John",
-    "lastName": "Doe"
+    "fullName": "John Doe"
   }'
 ```
 
@@ -298,17 +312,24 @@ curl -X POST http://localhost:5000/api/v1/auth/register \
 
 ## 🚢 Deployment
 
-### Backend API
+### Backend API (Cloudflare Workers)
 
-1. Set up PostgreSQL database on your hosting provider
-2. Configure environment variables
-3. Run migrations: `npm run api:prisma:migrate:prod`
-4. Build: `npm run api:build`
-5. Start: `npm run api:start`
+1. Install Wrangler CLI: `pnpm add -g wrangler`
+2. Login to Cloudflare: `wrangler login`
+3. Set up secrets:
+   ```bash
+   npx wrangler secret put DATABASE_URL
+   npx wrangler secret put UPSTASH_REDIS_REST_URL
+   npx wrangler secret put UPSTASH_REDIS_REST_TOKEN
+   npx wrangler secret put JWT_SECRET
+   npx wrangler secret put JWT_REFRESH_SECRET
+   npx wrangler secret put SESSION_SECRET
+   ```
+4. Deploy: `pnpm run api:deploy`
 
-### Web App
+### Web App (Vercel/Netlify)
 
-1. Build: `npm run web:build`
+1. Build: `pnpm run web:build`
 2. Deploy to Vercel/Netlify or any Node.js hosting
 
 ### Mobile App
@@ -341,6 +362,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Built with ❤️ by the Validiant Team
 - Powered by open-source technologies
+- Deployed globally on Cloudflare's edge network
 
 ---
 
