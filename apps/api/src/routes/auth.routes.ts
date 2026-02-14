@@ -33,6 +33,15 @@ router.post(
 );
 
 /**
+ * POST /auth/refresh
+ * Refresh access token using refresh token from cookie
+ */
+router.post(
+  '/refresh',
+  authController.refresh
+);
+
+/**
  * GET /auth/me
  * Get current user
  */
