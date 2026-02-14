@@ -8,7 +8,7 @@
  */
 
 import { serve } from '@hono/node-server';
-import { app } from './hono-app';
+import { app } from './app';
 import { config } from './config';
 import { prisma } from './lib/prisma';
 
