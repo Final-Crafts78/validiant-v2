@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Validiant - Full-stack project management platform",
+  "packageManager": "pnpm@10.29.3",
   "workspaces": [
     "apps/*",
     "packages/*"
