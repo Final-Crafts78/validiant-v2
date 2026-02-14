@@ -13,7 +13,7 @@
  * File size: ~30 lines (minimal by design)
  */
 
-import { app } from './hono-app';
+import { app } from './app';
 
 /**
  * Cloudflare Workers export
