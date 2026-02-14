@@ -9,6 +9,9 @@
  * - Redis token denylist (real logout)
  * - JWT access + refresh tokens
  * - Secure cookie settings
+ * 
+ * ELITE PATTERN: Controllers blindly trust c.req.valid('json')
+ * Validation is enforced at route level via @hono/zod-validator
  */
 
 import { Context } from 'hono';
@@ -53,22 +56,13 @@ const formatUserResponse = (user: User) => ({
 /**
  * Register new user
  * POST /api/v1/auth/register
+ * 
+ * Payload validated by zValidator(registerSchema) at route level
  */
 export const register = async (c: Context) => {
   try {
-    const { email, password, firstName, lastName } = await c.req.json();
-
-    // Validate required fields
-    if (!email || !password || !firstName || !lastName) {
-      return c.json(
-        {
-          success: false,
-          error: 'Missing required fields',
-          message: 'Email, password, firstName, and lastName are required',
-        },
-        400
-      );
-    }
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { email, password, firstName, lastName } = c.req.valid('json');
 
     // Check if user already exists
     const existingUser = await db
@@ -149,22 +143,13 @@ export const register = async (c: Context) => {
 /**
  * Login user
  * POST /api/v1/auth/login
+ * 
+ * Payload validated by zValidator(loginSchema) at route level
  */
 export const login = async (c: Context) => {
   try {
-    const { email, password } = await c.req.json();
-
-    // Validate required fields
-    if (!email || !password) {
-      return c.json(
-        {
-          success: false,
-          error: 'Missing required fields',
-          message: 'Email and password are required',
-        },
-        400
-      );
-    }
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { email, password } = c.req.valid('json');
 
     // Find user
     const [user] = await db
@@ -242,6 +227,8 @@ export const login = async (c: Context) => {
 /**
  * Refresh access token
  * POST /api/v1/auth/refresh
+ * 
+ * No validation needed - reads from cookies only
  */
 export const refresh = async (c: Context) => {
   try {
@@ -319,6 +306,8 @@ export const refresh = async (c: Context) => {
 /**
  * Get current user
  * GET /api/v1/auth/me
+ * 
+ * Requires authentication - user set by auth middleware
  */
 export const getMe = async (c: Context) => {
   try {
