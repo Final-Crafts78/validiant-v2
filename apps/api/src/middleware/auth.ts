@@ -193,6 +193,42 @@ export const requireAdmin = requireRoles(UserRole.ADMIN, UserRole.SUPER_ADMIN);
 export const requireSuperAdmin = requireRoles(UserRole.SUPER_ADMIN);
 
 /**
+ * Require email verification
+ */
+export const requireEmailVerified = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      sendError(res, 'Authentication required', HTTP_STATUS.UNAUTHORIZED);
+      return;
+    }
+
+    // Fetch user with email verification status
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { isEmailVerified: true },
+    });
+
+    if (!user) {
+      sendError(res, 'User not found', HTTP_STATUS.UNAUTHORIZED);
+      return;
+    }
+
+    if (!user.isEmailVerified) {
+      sendError(res, 'Email verification required', HTTP_STATUS.FORBIDDEN);
+      return;
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Require organization membership
  */
 export const requireOrganization = async (
