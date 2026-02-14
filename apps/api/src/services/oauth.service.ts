@@ -1,11 +1,12 @@
 /**
- * OAuth 2.0 Service Layer
+ * OAuth 2.0 Service Layer - SECURITY HARDENED
  * 
  * Handles OAuth authentication flows for:
  * - Google OAuth 2.0
  * - GitHub OAuth 2.0
  * 
- * Features:
+ * Security Enhancements:
+ * - State management via HttpOnly cookies (routes layer)
  * - Automatic user creation for new OAuth users
  * - Account linking (link OAuth to existing email)
  * - Profile data sync (name, avatar)
@@ -16,7 +17,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { eq, and, isNull, or } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
 import { cache } from '../config/redis.config';
@@ -32,16 +33,14 @@ import {
   type OAuthProfile,
 } from '../config/oauth.config';
 import { logger } from '../utils/logger';
-import { BadRequestError, ConflictError, UnauthorizedError } from '../utils/errors';
+import { BadRequestError, UnauthorizedError } from '../utils/errors';
 import { UserRole, UserStatus } from '@validiant/shared';
 
 /**
- * OAuth State Data (stored in Redis)
+ * PKCE data stored in Redis (Google only)
  */
-interface OAuthState {
-  provider: OAuthProvider;
-  redirectUri: string;
-  codeVerifier?: string; // For PKCE (Google)
+interface PKCEData {
+  codeVerifier: string;
   createdAt: number;
 }
 
@@ -63,66 +62,53 @@ interface OAuthResult {
 }
 
 /**
- * Generate OAuth state token and store in Redis
- * 
- * @param provider - OAuth provider
- * @param redirectUri - Client redirect URI
- * @param codeVerifier - PKCE code verifier (optional)
- * @returns State token
+ * OAuth Initiation Result
  */
-const generateOAuthState = async (
-  provider: OAuthProvider,
-  redirectUri: string,
-  codeVerifier?: string
-): Promise<string> => {
-  const state = uuidv4();
-  
-  const stateData: OAuthState = {
-    provider,
-    redirectUri,
+interface OAuthInitResult {
+  authUrl: string;
+  state: string;
+}
+
+/**
+ * Generate PKCE code verifier
+ * 
+ * @returns Code verifier (72 characters)
+ */
+const generateCodeVerifier = (): string => {
+  return uuidv4() + uuidv4(); // 72 characters
+};
+
+/**
+ * Store PKCE data in Redis
+ * 
+ * @param state - OAuth state
+ * @param codeVerifier - PKCE code verifier
+ */
+const storePKCEData = async (state: string, codeVerifier: string): Promise<void> => {
+  const pkceData: PKCEData = {
     codeVerifier,
     createdAt: Date.now(),
   };
   
-  // Store state for 10 minutes
-  await cache.set(`oauth:state:${state}`, stateData, 600);
-  
-  return state;
+  // Store PKCE data for 10 minutes
+  await cache.set(`oauth:pkce:${state}`, pkceData, 600);
 };
 
 /**
- * Validate OAuth state and retrieve data
+ * Retrieve PKCE data from Redis
  * 
- * @param state - State token
- * @returns OAuth state data
+ * @param state - OAuth state
+ * @returns PKCE data
  */
-const validateOAuthState = async (state: string): Promise<OAuthState> => {
-  const stateData = await cache.get<OAuthState>(`oauth:state:${state}`);
+const getPKCEData = async (state: string): Promise<PKCEData | null> => {
+  const pkceData = await cache.get<PKCEData>(`oauth:pkce:${state}`);
   
-  if (!stateData) {
-    throw new UnauthorizedError('Invalid or expired OAuth state');
+  if (pkceData) {
+    // Delete after retrieval (one-time use)
+    await cache.del(`oauth:pkce:${state}`);
   }
   
-  // Delete state after use (one-time use)
-  await cache.del(`oauth:state:${state}`);
-  
-  return stateData;
-};
-
-/**
- * Generate PKCE code verifier and challenge
- * 
- * @returns Code verifier and challenge
- */
-const generatePKCE = (): { verifier: string; challenge: string } => {
-  // Generate random code verifier
-  const verifier = uuidv4() + uuidv4(); // 72 characters
-  
-  // In production, you'd use SHA256 hash
-  // For simplicity, Arctic handles this internally
-  const challenge = verifier;
-  
-  return { verifier, challenge };
+  return pkceData;
 };
 
 /**
@@ -250,70 +236,67 @@ const findOrCreateOAuthUser = async (
 /**
  * Initiate Google OAuth flow
  * 
- * @param redirectUri - Client redirect URI
- * @returns Authorization URL
+ * @returns Authorization URL and state
  */
-export const initiateGoogleOAuth = async (redirectUri: string): Promise<string> => {
+export const initiateGoogleOAuth = async (): Promise<OAuthInitResult> => {
   if (!isOAuthProviderEnabled('google')) {
     throw new BadRequestError('Google OAuth is not configured');
   }
   
-  // Generate PKCE code verifier
-  const { verifier } = generatePKCE();
+  // Generate state
+  const state = uuidv4();
   
-  // Generate and store state
-  const state = await generateOAuthState('google', redirectUri, verifier);
+  // Generate PKCE code verifier
+  const codeVerifier = generateCodeVerifier();
+  
+  // Store PKCE data in Redis (state verification happens in routes via cookie)
+  await storePKCEData(state, codeVerifier);
   
   // Get authorization URL
-  const authUrl = getGoogleAuthUrl(state, verifier);
+  const authUrl = getGoogleAuthUrl(state, codeVerifier);
   
-  return authUrl;
+  return { authUrl, state };
 };
 
 /**
  * Initiate GitHub OAuth flow
  * 
- * @param redirectUri - Client redirect URI
- * @returns Authorization URL
+ * @returns Authorization URL and state
  */
-export const initiateGitHubOAuth = async (redirectUri: string): Promise<string> => {
+export const initiateGitHubOAuth = async (): Promise<OAuthInitResult> => {
   if (!isOAuthProviderEnabled('github')) {
     throw new BadRequestError('GitHub OAuth is not configured');
   }
   
-  // Generate and store state
-  const state = await generateOAuthState('github', redirectUri);
+  // Generate state
+  const state = uuidv4();
   
   // Get authorization URL
   const authUrl = getGitHubAuthUrl(state);
   
-  return authUrl;
+  return { authUrl, state };
 };
 
 /**
  * Handle Google OAuth callback
  * 
  * @param code - Authorization code
- * @param state - State token
- * @returns OAuth result with user and redirect URI
+ * @param state - State token (already verified by routes layer)
+ * @returns OAuth result with user
  */
 export const handleGoogleCallback = async (
   code: string,
   state: string
-): Promise<OAuthResult & { redirectUri: string }> => {
-  // Validate state
-  const stateData = await validateOAuthState(state);
+): Promise<OAuthResult> => {
+  // Retrieve PKCE data
+  const pkceData = await getPKCEData(state);
   
-  if (stateData.provider !== 'google') {
-    throw new BadRequestError('Invalid OAuth provider');
-  }
-  
-  if (!stateData.codeVerifier) {
-    throw new BadRequestError('Missing PKCE code verifier');
+  if (!pkceData) {
+    throw new UnauthorizedError('Missing or expired PKCE data');
   }
   
   // Exchange code for tokens
-  const tokens = await validateGoogleCallback(code, stateData.codeVerifier);
+  const tokens = await validateGoogleCallback(code, pkceData.codeVerifier);
   
   // Fetch user profile
   const profile = await getGoogleProfile(tokens.accessToken);
@@ -321,30 +304,20 @@ export const handleGoogleCallback = async (
   // Find or create user
   const result = await findOrCreateOAuthUser(profile, 'google');
   
-  return {
-    ...result,
-    redirectUri: stateData.redirectUri,
-  };
+  return result;
 };
 
 /**
  * Handle GitHub OAuth callback
  * 
  * @param code - Authorization code
- * @param state - State token
- * @returns OAuth result with user and redirect URI
+ * @param state - State token (already verified by routes layer)
+ * @returns OAuth result with user
  */
 export const handleGitHubCallback = async (
   code: string,
   state: string
-): Promise<OAuthResult & { redirectUri: string }> => {
-  // Validate state
-  const stateData = await validateOAuthState(state);
-  
-  if (stateData.provider !== 'github') {
-    throw new BadRequestError('Invalid OAuth provider');
-  }
-  
+): Promise<OAuthResult> => {
   // Exchange code for token
   const accessToken = await validateGitHubCallback(code);
   
@@ -354,10 +327,7 @@ export const handleGitHubCallback = async (
   // Find or create user
   const result = await findOrCreateOAuthUser(profile, 'github');
   
-  return {
-    ...result,
-    redirectUri: stateData.redirectUri,
-  };
+  return result;
 };
 
 /**
