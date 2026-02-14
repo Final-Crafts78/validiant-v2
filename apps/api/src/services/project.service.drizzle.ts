@@ -96,6 +96,7 @@ interface ProjectMember {
 
 /**
  * Create project
+ * ✅ ELITE: Wrapped in transaction for ACID compliance
  */
 export const createProject = async (
   organizationId: string,
@@ -113,48 +114,54 @@ export const createProject = async (
     icon?: string;
   }
 ): Promise<Project> => {
-  const [project] = await db
-    .insert(projects)
-    .values({
-      organizationId,
-      name: data.name,
-      description: data.description,
-      status: data.status || ProjectStatus.PLANNING,
-      priority: data.priority || ProjectPriority.MEDIUM,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      estimatedHours: data.estimatedHours,
-      budget: data.budget,
-      color: data.color,
-      icon: data.icon,
-      settings: {},
-      createdBy: userId,
-    })
-    .returning({
-      id: projects.id,
-      organizationId: projects.organizationId,
-      name: projects.name,
-      description: projects.description,
-      status: projects.status,
-      priority: projects.priority,
-      startDate: projects.startDate,
-      endDate: projects.endDate,
-      estimatedHours: projects.estimatedHours,
-      actualHours: projects.actualHours,
-      budget: projects.budget,
-      color: projects.color,
-      icon: projects.icon,
-      settings: projects.settings,
-      createdBy: projects.createdBy,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
+  // ✅ ELITE: Use transaction with 'tx' object for all operations
+  const project = await db.transaction(async (tx) => {
+    // Create project using 'tx'
+    const [newProject] = await tx
+      .insert(projects)
+      .values({
+        organizationId,
+        name: data.name,
+        description: data.description,
+        status: data.status || ProjectStatus.PLANNING,
+        priority: data.priority || ProjectPriority.MEDIUM,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        estimatedHours: data.estimatedHours,
+        budget: data.budget,
+        color: data.color,
+        icon: data.icon,
+        settings: {},
+        createdBy: userId,
+      })
+      .returning({
+        id: projects.id,
+        organizationId: projects.organizationId,
+        name: projects.name,
+        description: projects.description,
+        status: projects.status,
+        priority: projects.priority,
+        startDate: projects.startDate,
+        endDate: projects.endDate,
+        estimatedHours: projects.estimatedHours,
+        actualHours: projects.actualHours,
+        budget: projects.budget,
+        color: projects.color,
+        icon: projects.icon,
+        settings: projects.settings,
+        createdBy: projects.createdBy,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+      });
+
+    // Add creator as project member using 'tx'
+    await tx.insert(projectMembers).values({
+      projectId: newProject.id,
+      userId,
+      role: 'owner',
     });
 
-  // Add creator as project member
-  await db.insert(projectMembers).values({
-    projectId: project.id,
-    userId,
-    role: 'owner',
+    return newProject;
   });
 
   logger.info('Project created', { projectId: project.id, organizationId, userId });
