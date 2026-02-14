@@ -13,6 +13,7 @@
  * 
  * Architecture:
  * ✅ Auth routes - Hono + @hono/zod-validator
+ * ✅ OAuth routes - Hono + Arctic (Phase 6.1)
  * ✅ User routes - Hono + @hono/zod-validator
  * ✅ Organization routes - Hono + @hono/zod-validator
  * ✅ Project routes - Hono + @hono/zod-validator
@@ -26,6 +27,7 @@ import { prettyJSON } from 'hono/pretty-json';
 
 // Import all routes
 import authRoutes from './routes/auth.routes';
+import oauthRoutes from './routes/oauth.routes';
 import userRoutes from './routes/user.routes';
 import organizationRoutes from './routes/organization.routes';
 import projectRoutes from './routes/project.routes';
@@ -100,12 +102,14 @@ export const createHonoApp = () => {
    * 
    * All services use Hono with @hono/zod-validator:
    * ✅ /api/v1/auth          → auth.routes.ts
+   * ✅ /api/v1/oauth         → oauth.routes.ts (Phase 6.1)
    * ✅ /api/v1/users         → user.routes.ts
    * ✅ /api/v1/organizations → organization.routes.ts
    * ✅ /api/v1/projects      → project.routes.ts
    * ✅ /api/v1/tasks         → task.routes.ts
    */
   app.route('/api/v1/auth', authRoutes);
+  app.route('/api/v1/oauth', oauthRoutes);
   app.route('/api/v1/users', userRoutes);
   app.route('/api/v1/organizations', organizationRoutes);
   app.route('/api/v1/projects', projectRoutes);
