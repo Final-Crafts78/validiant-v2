@@ -1,12 +1,37 @@
 /**
  * API Service
  * 
- * Configured axios instance for API requests with authentication.
+ * Configured axios instance for API requests with authentication
+ * and refresh token mutex to prevent race conditions.
  */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/auth';
 import { API_URL } from '@/constants/config';
+
+/**
+ * Refresh token state management
+ */
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+/**
+ * Process queued requests after token refresh
+ */
+const processQueue = (error: unknown = null, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
 
 /**
  * Create axios instance
@@ -38,7 +63,7 @@ api.interceptors.request.use(
 );
 
 /**
- * Response interceptor - Handle token refresh
+ * Response interceptor - Handle token refresh with mutex
  */
 api.interceptors.response.use(
   (response) => response,
@@ -47,15 +72,32 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // If 401 and not already retrying, try to refresh token
+    // If 401 and not already retrying, handle token refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Queue this request until refresh completes
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const refreshToken = useAuthStore.getState().refreshToken;
         
         if (!refreshToken) {
-          throw new Error('No refresh token');
+          throw new Error('No refresh token available');
         }
 
         // Call refresh token endpoint
@@ -63,21 +105,30 @@ api.interceptors.response.use(
           refreshToken,
         });
 
-        const { token, refreshToken: newRefreshToken, user } = data.data;
+        const { token: newToken, refreshToken: newRefreshToken, user } = data.data;
 
         // Update stored auth
-        await useAuthStore.getState().setAuth(user, token, newRefreshToken);
+        await useAuthStore.getState().setAuth(user, newToken, newRefreshToken);
+
+        // Process queued requests with new token
+        processQueue(null, newToken);
 
         // Retry original request with new token
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
         
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear auth and redirect to login
+        // Refresh failed, reject all queued requests
+        processQueue(refreshError, null);
+        
+        // Clear auth and force re-login
         await useAuthStore.getState().clearAuth();
+        
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
