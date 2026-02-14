@@ -13,6 +13,10 @@ import rateLimit from 'express-rate-limit';
 import { config } from './config';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import organizationRoutes from './routes/organization.routes';
+import projectRoutes from './routes/project.routes';
+import taskRoutes from './routes/task.routes';
 
 /**
  * Create Express application
@@ -62,6 +66,10 @@ export const createApp = (): Application => {
 
   // API routes
   app.use('/api/v1/auth', authRoutes);
+  app.use('/api/v1/users', userRoutes);
+  app.use('/api/v1/organizations', organizationRoutes);
+  app.use('/api/v1/projects', projectRoutes);
+  app.use('/api/v1/tasks', taskRoutes);
 
   // 404 handler
   app.use(notFoundHandler);
