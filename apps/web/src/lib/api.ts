@@ -1,287 +1,234 @@
 /**
- * API Service
+ * API Client Configuration - HttpOnly Cookie Hardened
  * 
- * Axios-based HTTP client with HttpOnly cookie authentication,
- * refresh token mutex/queue, and error handling.
+ * Axios client configured for HttpOnly cookie authentication.
+ * 
+ * CRITICAL SECURITY FEATURE:
+ * - withCredentials: true enables automatic cookie sending/receiving
+ * - JWTs are stored in HttpOnly cookies (XSS immune)
+ * - Frontend JavaScript CANNOT read the tokens
+ * - Authentication state determined via /api/v1/auth/me endpoint
+ * 
+ * Authentication Flow:
+ * 1. User logs in → Backend sets HttpOnly cookies
+ * 2. All subsequent requests automatically include cookies
+ * 3. Frontend calls /auth/me to get user data
+ * 4. No manual token management needed
+ * 
+ * Edge-Compatible:
+ * - Works with Cloudflare Workers backend
+ * - Supports all modern browsers
+ * - React Native compatible (with cookie manager)
  */
 
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import { API_CONFIG } from './config';
-import { useAuthStore } from '@/store/auth';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /**
- * API Error Response
+ * API Configuration
  */
-export interface ApiError {
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_TIMEOUT = 30000; // 30 seconds
+
+/**
+ * API Error Interface
+ */
+export interface APIError {
+  success: false;
+  error: string;
   message: string;
-  code?: string;
-  statusCode?: number;
-  errors?: Record<string, string[]>;
+  statusCode: number;
+  details?: any;
 }
 
 /**
- * API Response wrapper
+ * API Success Response Interface
  */
-export interface ApiResponse<T = unknown> {
-  data: T;
+export interface APIResponse<T = any> {
+  success: true;
+  data?: T;
   message?: string;
-  meta?: {
-    page?: number;
-    perPage?: number;
-    total?: number;
-    totalPages?: number;
+  pagination?: {
+    total: number;
+    page: number;
+    perPage: number;
+    totalPages: number;
   };
 }
 
 /**
- * Refresh token state management
+ * Create Axios Instance with HttpOnly Cookie Support
+ * 
+ * CRITICAL: withCredentials: true enables cookie-based auth
  */
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void;
-  reject: (reason?: unknown) => void;
-}> = [];
+const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: API_TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  // 🔒 CRITICAL: Enable credentials (cookies) for all requests
+  withCredentials: true,
+});
 
 /**
- * Process queued requests after token refresh
+ * Request Interceptor
+ * 
+ * Logs requests in development.
+ * Future: Could add request signing, rate limiting, etc.
  */
-const processQueue = (error: unknown = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve();
+apiClient.interceptors.request.use(
+  (config) => {
+    // Log requests in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     }
-  });
-
-  failedQueue = [];
-};
-
-/**
- * Create axios instance
- */
-const createApiInstance = (): AxiosInstance => {
-  const instance = axios.create({
-    baseURL: API_CONFIG.BASE_URL,
-    timeout: API_CONFIG.TIMEOUT,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    // Enable cookies for HttpOnly authentication
-    withCredentials: true,
-  });
-
-  // Request interceptor - No token needed (cookies are automatic)
-  instance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-      // Cookies are automatically sent by browser
-      // No manual token handling required
-      return config;
-    },
-    (error: AxiosError) => {
-      return Promise.reject(error);
-    }
-  );
-
-  // Response interceptor - Handle errors with refresh token mutex
-  instance.interceptors.response.use(
-    (response: AxiosResponse) => {
-      return response;
-    },
-    async (error: AxiosError<ApiError>) => {
-      const originalRequest = error.config as InternalAxiosRequestConfig & {
-        _retry?: boolean;
-      };
-
-      // Handle 401 Unauthorized - Token expired
-      if (error.response?.status === 401 && !originalRequest._retry) {
-        if (isRefreshing) {
-          // Queue this request until refresh completes
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          })
-            .then(() => {
-              return instance(originalRequest);
-            })
-            .catch((err) => {
-              return Promise.reject(err);
-            });
-        }
-
-        originalRequest._retry = true;
-        isRefreshing = true;
-
-        try {
-          // Request new access token (refreshToken sent via HttpOnly cookie)
-          await axios.post(
-            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`,
-            {},
-            {
-              withCredentials: true, // Include cookies
-            }
-          );
-
-          // New access token is now in cookie, process queue
-          processQueue();
-
-          // Retry original request
-          return instance(originalRequest);
-        } catch (refreshError) {
-          // Refresh failed, logout user
-          processQueue(refreshError);
-          useAuthStore.getState().clearAuth();
-          
-          if (typeof window !== 'undefined') {
-            window.location.href = '/auth/login';
-          }
-          
-          return Promise.reject(refreshError);
-        } finally {
-          isRefreshing = false;
-        }
-      }
-
-      // Handle other errors
-      return Promise.reject(error);
-    }
-  );
-
-  return instance;
-};
-
-/**
- * API instance
- */
-export const api = createApiInstance();
-
-/**
- * Get error message from API error
- */
-export const getErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const apiError = error.response?.data as ApiError | undefined;
-    
-    // Return API error message if available
-    if (apiError?.message) {
-      return apiError.message;
-    }
-
-    // Return validation errors if available
-    if (apiError?.errors) {
-      const firstError = Object.values(apiError.errors)[0];
-      if (firstError && firstError[0]) {
-        return firstError[0];
-      }
-    }
-
-    // Return generic error based on status code
-    if (error.response?.status) {
-      switch (error.response.status) {
-        case 400:
-          return 'Bad request. Please check your input.';
-        case 401:
-          return 'Unauthorized. Please login again.';
-        case 403:
-          return 'Forbidden. You do not have permission.';
-        case 404:
-          return 'Resource not found.';
-        case 500:
-          return 'Server error. Please try again later.';
-        case 503:
-          return 'Service unavailable. Please try again later.';
-        default:
-          return 'An unexpected error occurred.';
-      }
-    }
-
-    // Network error
-    if (error.message === 'Network Error') {
-      return 'Network error. Please check your connection.';
-    }
-
-    // Timeout error
-    if (error.code === 'ECONNABORTED') {
-      return 'Request timeout. Please try again.';
-    }
+    return config;
+  },
+  (error) => {
+    console.error('[API] Request error:', error);
+    return Promise.reject(error);
   }
+);
 
-  // Unknown error
+/**
+ * Response Interceptor
+ * 
+ * Handles errors globally:
+ * - 401: Redirect to login (session expired)
+ * - 403: Show permission error
+ * - 500: Show server error
+ */
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // Return successful response
+    return response;
+  },
+  (error: AxiosError<APIError>) => {
+    // Handle network errors
+    if (!error.response) {
+      console.error('[API] Network error:', error.message);
+      return Promise.reject({
+        success: false,
+        error: 'NetworkError',
+        message: 'Unable to connect to server. Please check your internet connection.',
+        statusCode: 0,
+      } as APIError);
+    }
+
+    const { response } = error;
+    const statusCode = response.status;
+
+    // Handle authentication errors (401)
+    if (statusCode === 401) {
+      // Check if we're not already on login page to avoid redirect loop
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        console.warn('[API] Authentication required, redirecting to login...');
+        // Redirect to login page
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      }
+    }
+
+    // Handle permission errors (403)
+    if (statusCode === 403) {
+      console.error('[API] Permission denied:', response.data?.message);
+    }
+
+    // Handle server errors (500+)
+    if (statusCode >= 500) {
+      console.error('[API] Server error:', response.data?.message);
+    }
+
+    // Return structured error
+    const apiError: APIError = {
+      success: false,
+      error: response.data?.error || 'UnknownError',
+      message: response.data?.message || error.message || 'An unexpected error occurred',
+      statusCode,
+      details: response.data?.details,
+    };
+
+    return Promise.reject(apiError);
+  }
+);
+
+/**
+ * API Request Helper Functions
+ */
+
+/**
+ * GET request
+ */
+export const get = <T = any>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.get<T>(url, config);
+};
+
+/**
+ * POST request
+ */
+export const post = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.post<T>(url, data, config);
+};
+
+/**
+ * PUT request
+ */
+export const put = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.put<T>(url, data, config);
+};
+
+/**
+ * PATCH request
+ */
+export const patch = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.patch<T>(url, data, config);
+};
+
+/**
+ * DELETE request
+ */
+export const del = <T = any>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.delete<T>(url, config);
+};
+
+/**
+ * Export configured client for custom requests
+ */
+export default apiClient;
+
+/**
+ * Type guard to check if error is APIError
+ */
+export const isAPIError = (error: any): error is APIError => {
+  return error && typeof error === 'object' && 'success' in error && error.success === false;
+};
+
+/**
+ * Get error message from any error type
+ */
+export const getErrorMessage = (error: any): string => {
+  if (isAPIError(error)) {
+    return error.message;
+  }
   if (error instanceof Error) {
     return error.message;
   }
-
-  return 'An unexpected error occurred.';
-};
-
-/**
- * Type-safe API request helper
- */
-export const request = async <T = unknown>(
-  config: AxiosRequestConfig
-): Promise<T> => {
-  try {
-    const response = await api.request<ApiResponse<T>>(config);
-    return response.data.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * GET request helper
- */
-export const get = async <T = unknown>(
-  url: string,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request<T>({ ...config, method: 'GET', url });
-};
-
-/**
- * POST request helper
- */
-export const post = async <T = unknown>(
-  url: string,
-  data?: unknown,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request<T>({ ...config, method: 'POST', url, data });
-};
-
-/**
- * PUT request helper
- */
-export const put = async <T = unknown>(
-  url: string,
-  data?: unknown,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request<T>({ ...config, method: 'PUT', url, data });
-};
-
-/**
- * PATCH request helper
- */
-export const patch = async <T = unknown>(
-  url: string,
-  data?: unknown,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request<T>({ ...config, method: 'PATCH', url, data });
-};
-
-/**
- * DELETE request helper
- */
-export const del = async <T = unknown>(
-  url: string,
-  config?: AxiosRequestConfig
-): Promise<T> => {
-  return request<T>({ ...config, method: 'DELETE', url });
+  return 'An unexpected error occurred';
 };
