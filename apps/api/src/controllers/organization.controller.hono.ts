@@ -6,18 +6,14 @@
  * 
  * Migrated from Express to Hono for edge compatibility.
  * Functions: 17 total (CRUD, members, roles, permissions)
+ * 
+ * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
+ * All validation happens at route level via @hono/zod-validator
  */
 
 import { Context } from 'hono';
 import * as organizationService from '../services/organization.service';
-import {
-  createOrganizationSchema,
-  updateOrganizationSchema,
-  updateOrganizationSettingsSchema,
-  addOrganizationMemberSchema,
-  updateMemberRoleSchema,
-  OrganizationRole,
-} from '@validiant/shared';
+import { OrganizationRole } from '@validiant/shared';
 
 /**
  * Check if user has required role in organization
@@ -40,6 +36,8 @@ const checkOrganizationRole = async (
 /**
  * Create organization
  * POST /api/v1/organizations
+ * 
+ * Payload validated by zValidator(createOrganizationSchema) at route level
  */
 export const createOrganization = async (c: Context) => {
   try {
@@ -56,8 +54,8 @@ export const createOrganization = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = createOrganizationSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const validatedData = c.req.valid('json');
 
     const organization = await organizationService.createOrganization(
       user.userId,
@@ -238,6 +236,8 @@ export const getOrganizationBySlug = async (c: Context) => {
 /**
  * Update organization
  * PUT /api/v1/organizations/:id
+ * 
+ * Payload validated by zValidator(updateOrganizationSchema) at route level
  */
 export const updateOrganization = async (c: Context) => {
   try {
@@ -283,8 +283,8 @@ export const updateOrganization = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateOrganizationSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const validatedData = c.req.valid('json');
 
     const organization = await organizationService.updateOrganization(id, validatedData);
 
@@ -309,6 +309,8 @@ export const updateOrganization = async (c: Context) => {
 /**
  * Update organization settings
  * PATCH /api/v1/organizations/:id/settings
+ * 
+ * Payload validated by zValidator(updateOrganizationSettingsSchema) at route level
  */
 export const updateOrganizationSettings = async (c: Context) => {
   try {
@@ -354,12 +356,12 @@ export const updateOrganizationSettings = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateOrganizationSettingsSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { settings } = c.req.valid('json');
 
     const organization = await organizationService.updateOrganizationSettings(
       id,
-      validatedData.settings
+      settings
     );
 
     return c.json({
@@ -513,6 +515,8 @@ export const getOrganizationMembers = async (c: Context) => {
 /**
  * Add member to organization
  * POST /api/v1/organizations/:id/members
+ * 
+ * Payload validated by zValidator(addOrganizationMemberSchema) at route level
  */
 export const addOrganizationMember = async (c: Context) => {
   try {
@@ -558,8 +562,8 @@ export const addOrganizationMember = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = addOrganizationMemberSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const validatedData = c.req.valid('json');
 
     const member = await organizationService.addOrganizationMember(
       id,
@@ -591,6 +595,8 @@ export const addOrganizationMember = async (c: Context) => {
 /**
  * Update member role
  * PATCH /api/v1/organizations/:id/members/:userId/role
+ * 
+ * Payload validated by zValidator(updateMemberRoleSchema) at route level
  */
 export const updateMemberRole = async (c: Context) => {
   try {
@@ -649,11 +655,11 @@ export const updateMemberRole = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateMemberRoleSchema.parse(body);
+    // ELITE PATTERN: Blindly trust pre-validated payload
+    const { role } = c.req.valid('json');
 
     // Only owners can assign owner role
-    if (validatedData.role === OrganizationRole.OWNER) {
+    if (role === OrganizationRole.OWNER) {
       const ownerCheck = await checkOrganizationRole(id, user.userId, [OrganizationRole.OWNER]);
 
       if (!ownerCheck.hasPermission) {
@@ -668,7 +674,7 @@ export const updateMemberRole = async (c: Context) => {
       }
     }
 
-    const member = await organizationService.updateMemberRole(id, userId, validatedData.role);
+    const member = await organizationService.updateMemberRole(id, userId, role);
 
     return c.json({
       success: true,
@@ -924,6 +930,8 @@ export const checkMembership = async (c: Context) => {
 /**
  * Transfer ownership
  * POST /api/v1/organizations/:id/transfer-ownership
+ * 
+ * No validation schema yet - accepts raw JSON with newOwnerId
  */
 export const transferOwnership = async (c: Context) => {
   try {
