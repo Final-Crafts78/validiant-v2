@@ -2,10 +2,11 @@
  * Drizzle ORM Schema for Validiant v2
  * Converted from Prisma schema with full type safety and edge compatibility
  * 
- * Models: User, Organization, OrganizationMember, Project, Task, PasswordResetToken
+ * Models: User, Organization, OrganizationMember, Project, Task, PasswordResetToken, PasskeyCredential
  * Database: PostgreSQL (Neon Serverless)
  * 
  * Phase 6.1 Enhancement: OAuth 2.0 support (Google, GitHub)
+ * Phase 6.2 Enhancement: WebAuthn Passkeys (FIDO2)
  */
 
 import { relations } from 'drizzle-orm';
@@ -15,13 +16,15 @@ import {
   text,
   timestamp,
   integer,
+  bigint,
   boolean,
+  jsonb,
   unique,
   index,
 } from 'drizzle-orm/pg-core';
 
 // ============================================================================
-// USER TABLE (OAuth-Enhanced)
+// USER TABLE (OAuth & Passkey Enhanced)
 // ============================================================================
 
 export const users = pgTable(
@@ -29,7 +32,7 @@ export const users = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     email: text('email').notNull().unique(),
-    passwordHash: text('password_hash'), // Nullable for OAuth users
+    passwordHash: text('password_hash'), // Nullable for OAuth/Passkey users
     fullName: text('full_name').notNull(),
     firstName: text('first_name'),
     lastName: text('last_name'),
@@ -70,6 +73,62 @@ export const usersRelations = relations(users, ({ many }) => ({
   assignedTasks: many(tasks, { relationName: 'TaskAssignee' }),
   createdTasks: many(tasks, { relationName: 'TaskCreator' }),
   passwordResetTokens: many(passwordResetTokens),
+  passkeyCredentials: many(passkeyCredentials),
+}));
+
+// ============================================================================
+// PASSKEY CREDENTIAL TABLE (Phase 6.2 - WebAuthn/FIDO2)
+// ============================================================================
+
+export const passkeyCredentials = pgTable(
+  'passkey_credentials',
+  {
+    // WebAuthn Credential ID (base64url encoded)
+    credentialID: text('credential_id').primaryKey(),
+    
+    // User Reference
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    
+    // WebAuthn User ID (unique user handle for this credential)
+    webauthnUserID: text('webauthn_user_id').notNull(),
+    
+    // Public Key (base64url encoded)
+    // This is the COSE-encoded public key returned by the authenticator
+    publicKey: text('public_key').notNull(),
+    
+    // Signature Counter (prevents replay attacks)
+    // Incremented by authenticator on each use
+    counter: bigint('counter', { mode: 'number' }).notNull().default(0),
+    
+    // Authenticator Transports
+    // Array of strings: ['usb', 'nfc', 'ble', 'internal', 'hybrid']
+    transports: jsonb('transports').$type<string[]>(),
+    
+    // Device Metadata
+    deviceName: text('device_name'), // User-friendly name (e.g., "iPhone 15 Pro")
+    
+    // Backup Eligibility (can credential be backed up to cloud?)
+    backedUp: boolean('backed_up').notNull().default(false),
+    
+    // Timestamps
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    lastUsedAt: timestamp('last_used_at', { mode: 'date', withTimezone: true }),
+  },
+  (table) => ({
+    userIdIdx: index('passkey_credentials_user_id_idx').on(table.userId),
+    webauthnUserIdIdx: index('passkey_credentials_webauthn_user_id_idx').on(table.webauthnUserID),
+  })
+);
+
+export const passkeyCredentialsRelations = relations(passkeyCredentials, ({ one }) => ({
+  user: one(users, {
+    fields: [passkeyCredentials.userId],
+    references: [users.id],
+  }),
 }));
 
 // ============================================================================
@@ -169,7 +228,7 @@ export const organizationMembers = pgTable(
   })
 );
 
-export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ({
+export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ((
   organization: one(organizations, {
     fields: [organizationMembers.organizationId],
     references: [organizations.id],
@@ -286,6 +345,9 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type PasskeyCredential = typeof passkeyCredentials.$inferSelect;
+export type NewPasskeyCredential = typeof passkeyCredentials.$inferInsert;
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type NewPasswordResetToken = typeof passwordResetTokens.$inferInsert;
