@@ -2,7 +2,8 @@
  * Auth Store
  * 
  * Zustand store for authentication state management.
- * Handles user state, tokens, and auth operations.
+ * Handles user state and auth operations.
+ * Tokens are managed via HttpOnly cookies (not in store).
  */
 
 import { create } from 'zustand';
@@ -17,8 +18,8 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'user' | 'member';
-  isEmailVerified: boolean;
+  role?: 'admin' | 'user' | 'member';
+  isEmailVerified?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,17 +30,11 @@ export interface User {
 interface AuthState {
   // State
   user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 
   // Actions
-  setAuth: (data: {
-    user: User;
-    accessToken: string;
-    refreshToken: string;
-  }) => void;
+  setAuth: (data: { user: User }) => void;
   setUser: (user: User) => void;
   updateUser: (updates: Partial<User>) => void;
   clearAuth: () => void;
@@ -49,29 +44,21 @@ interface AuthState {
 /**
  * Auth Store
  * 
- * Persists to localStorage with encryption for sensitive data.
+ * Only persists user profile to localStorage.
+ * Tokens are stored in HttpOnly cookies by the backend.
  */
-export const useAuthStore = create<AuthState>()(n  persist(
+export const useAuthStore = create<AuthState>()(
+  persist(
     (set, get) => ({
       // Initial state
       user: null,
-      accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
       isLoading: true,
 
       // Set full auth data (login/register)
-      setAuth: ({ user, accessToken, refreshToken }) => {
-        // Store tokens in localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-          localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
-        }
-
+      setAuth: ({ user }) => {
         set({
           user,
-          accessToken,
-          refreshToken,
           isAuthenticated: true,
           isLoading: false,
         });
@@ -98,17 +85,13 @@ export const useAuthStore = create<AuthState>()(n  persist(
 
       // Clear auth state (logout)
       clearAuth: () => {
-        // Remove tokens from localStorage
+        // Remove user from localStorage
         if (typeof window !== 'undefined') {
-          localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-          localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
           localStorage.removeItem(STORAGE_KEYS.USER);
         }
 
         set({
           user: null,
-          accessToken: null,
-          refreshToken: null,
           isAuthenticated: false,
           isLoading: false,
         });
@@ -133,8 +116,8 @@ export const useAuthStore = create<AuthState>()(n  persist(
           removeItem: () => {},
         };
       }),
-      // Only persist user data, not tokens (tokens stored separately)
-      partializeState: (state) => ({
+      // Only persist user data (safe, non-sensitive information)
+      partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
