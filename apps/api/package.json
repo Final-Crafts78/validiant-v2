@@ -12,18 +12,23 @@
     "db:generate": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "deploy": "wrangler deploy",
+    "wrangler": "wrangler"
   },
   "keywords": [
     "api",
     "backend",
     "hono",
     "drizzle",
-    "postgresql"
+    "postgresql",
+    "cloudflare-workers",
+    "edge"
   ],
   "author": "Validiant Team",
   "license": "MIT",
   "dependencies": {
+    "@hono/node-server": "^1.8.2",
     "@neondatabase/serverless": "^0.9.0",
     "@validiant/shared": "workspace:*",
     "bcrypt": "^5.1.1",
@@ -34,11 +39,13 @@
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
+    "hono": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.6",
     "@types/cors": "^2.8.17",
@@ -49,7 +56,8 @@
     "drizzle-kit": "^0.20.13",
     "nodemon": "^3.0.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "wrangler": "^3.28.2"
   },
   "engines": {
     "node": ">=18.0.0",
