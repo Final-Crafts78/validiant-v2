@@ -10,7 +10,12 @@
  * - No need for body-parser (automatic JSON parsing)
  * - No need for cookie-parser (built-in cookie support)
  * 
- * File size: ~120 lines (well within 2000-2500 limit)
+ * Migration Status (Phase 4):
+ * ✅ Auth routes - MIGRATED to Hono + @hono/zod-validator
+ * ⏳ User routes - Pending migration
+ * ⏳ Organization routes - Pending migration
+ * ⏳ Project routes - Pending migration
+ * ⏳ Task routes - Pending migration
  */
 
 import { Hono } from 'hono';
@@ -18,8 +23,10 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
 
-// Import existing routes (will be migrated in Phase 5)
-import authRoutes from './routes/auth.routes';
+// Migrated Hono routes
+import authRoutes from './routes/auth.routes.hono';
+
+// Legacy Express routes (to be migrated)
 import userRoutes from './routes/user.routes';
 import organizationRoutes from './routes/organization.routes';
 import projectRoutes from './routes/project.routes';
@@ -91,14 +98,13 @@ export const createHonoApp = () => {
 
   /**
    * Mount all API routes under /api/v1
-   * Routes will be migrated to Hono in Phase 5
    * 
-   * Current structure (Express-based):
-   * - /api/v1/auth          → Authentication (login, register, logout, refresh)
-   * - /api/v1/users         → User management
-   * - /api/v1/organizations → Organization management
-   * - /api/v1/projects      → Project management
-   * - /api/v1/tasks         → Task management
+   * Migration Progress:
+   * ✅ /api/v1/auth          → Hono routes (auth.routes.hono.ts)
+   * ⏳ /api/v1/users         → Express routes (pending migration)
+   * ⏳ /api/v1/organizations → Express routes (pending migration)
+   * ⏳ /api/v1/projects      → Express routes (pending migration)
+   * ⏳ /api/v1/tasks         → Express routes (pending migration)
    */
   app.route('/api/v1/auth', authRoutes);
   app.route('/api/v1/users', userRoutes);
