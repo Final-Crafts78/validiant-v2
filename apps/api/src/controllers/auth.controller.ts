@@ -1,7 +1,7 @@
 /**
  * Auth Controller
  * 
- * Handles authentication-related requests.
+ * Handles authentication-related requests with HttpOnly cookie-based security.
  */
 
 import { Response, NextFunction } from 'express';
@@ -11,7 +11,20 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { sendSuccess, sendError } from '../utils/response';
 import { HTTP_STATUS, ERROR_CODES } from '@validiant/shared';
 import type { AuthRequest } from '../middleware/auth';
-import type { AuthResponse, User } from '@validiant/shared';
+import type { User } from '@validiant/shared';
+
+/**
+ * Cookie configuration for secure token storage
+ */
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  path: '/',
+};
+
+const ACCESS_TOKEN_MAX_AGE = 15 * 60 * 1000; // 15 minutes
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 /**
  * Register new user
@@ -61,7 +74,18 @@ export const register = async (
       email: user.email,
     });
 
-    // Prepare response (exclude password)
+    // Set tokens as HttpOnly cookies
+    res.cookie('accessToken', accessToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
+    });
+
+    // Prepare response (NO TOKENS in body)
     const userResponse: User = {
       id: user.id,
       email: user.email,
@@ -71,13 +95,7 @@ export const register = async (
       updatedAt: user.updatedAt.toISOString(),
     };
 
-    const response: AuthResponse = {
-      user: userResponse,
-      accessToken,
-      refreshToken,
-    };
-
-    sendSuccess(res, response, HTTP_STATUS.CREATED);
+    sendSuccess(res, { user: userResponse }, HTTP_STATUS.CREATED);
   } catch (error) {
     next(error);
   }
@@ -130,7 +148,18 @@ export const login = async (
       email: user.email,
     });
 
-    // Prepare response
+    // Set tokens as HttpOnly cookies
+    res.cookie('accessToken', accessToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
+    });
+
+    // Prepare response (NO TOKENS in body)
     const userResponse: User = {
       id: user.id,
       email: user.email,
@@ -140,13 +169,58 @@ export const login = async (
       updatedAt: user.updatedAt.toISOString(),
     };
 
-    const response: AuthResponse = {
-      user: userResponse,
-      accessToken,
-      refreshToken,
-    };
+    sendSuccess(res, { user: userResponse });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    sendSuccess(res, response);
+/**
+ * Refresh access token
+ */
+export const refresh = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      sendError(
+        res,
+        'Refresh token not found',
+        HTTP_STATUS.UNAUTHORIZED
+      );
+      return;
+    }
+
+    // Verify refresh token (jwt.ts should have a verifyRefreshToken function)
+    const { verifyRefreshToken } = require('../utils/jwt');
+    const decoded = verifyRefreshToken(refreshToken);
+
+    if (!decoded) {
+      sendError(
+        res,
+        'Invalid refresh token',
+        HTTP_STATUS.UNAUTHORIZED
+      );
+      return;
+    }
+
+    // Generate new access token
+    const newAccessToken = generateAccessToken({
+      userId: decoded.userId,
+      email: decoded.email,
+    });
+
+    // Set new access token cookie
+    res.cookie('accessToken', newAccessToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
+    });
+
+    sendSuccess(res, { message: 'Token refreshed successfully' });
   } catch (error) {
     next(error);
   }
@@ -209,8 +283,17 @@ export const logout = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // In a production app, you would invalidate the refresh token here
-    // For now, just send success
+    // Clear cookies by setting them to expire immediately
+    res.cookie('accessToken', '', {
+      ...COOKIE_OPTIONS,
+      maxAge: 0,
+    });
+
+    res.cookie('refreshToken', '', {
+      ...COOKIE_OPTIONS,
+      maxAge: 0,
+    });
+
     sendSuccess(res, { message: 'Logged out successfully' });
   } catch (error) {
     next(error);
