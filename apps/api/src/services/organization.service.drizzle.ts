@@ -94,6 +94,7 @@ const generateSlug = async (name: string): Promise<string> => {
 
 /**
  * Create organization
+ * ✅ ELITE: Wrapped in transaction for ACID compliance
  */
 export const createOrganization = async (
   userId: string,
@@ -108,37 +109,42 @@ export const createOrganization = async (
   // Generate unique slug
   const slug = await generateSlug(data.name);
 
-  // Create organization
-  const [organization] = await db
-    .insert(organizations)
-    .values({
-      name: data.name,
-      slug,
-      description: data.description,
-      website: data.website,
-      industry: data.industry,
-      size: data.size,
-      settings: {},
-    })
-    .returning({
-      id: organizations.id,
-      name: organizations.name,
-      slug: organizations.slug,
-      description: organizations.description,
-      website: organizations.website,
-      industry: organizations.industry,
-      size: organizations.size,
-      logoUrl: organizations.logoUrl,
-      settings: organizations.settings,
-      createdAt: organizations.createdAt,
-      updatedAt: organizations.updatedAt,
+  // ✅ ELITE: Use transaction with 'tx' object for all operations
+  const organization = await db.transaction(async (tx) => {
+    // Create organization using 'tx'
+    const [newOrg] = await tx
+      .insert(organizations)
+      .values({
+        name: data.name,
+        slug,
+        description: data.description,
+        website: data.website,
+        industry: data.industry,
+        size: data.size,
+        settings: {},
+      })
+      .returning({
+        id: organizations.id,
+        name: organizations.name,
+        slug: organizations.slug,
+        description: organizations.description,
+        website: organizations.website,
+        industry: organizations.industry,
+        size: organizations.size,
+        logoUrl: organizations.logoUrl,
+        settings: organizations.settings,
+        createdAt: organizations.createdAt,
+        updatedAt: organizations.updatedAt,
+      });
+
+    // Add creator as owner using 'tx'
+    await tx.insert(organizationMembers).values({
+      organizationId: newOrg.id,
+      userId,
+      role: OrganizationRole.OWNER,
     });
 
-  // Add creator as owner
-  await db.insert(organizationMembers).values({
-    organizationId: organization.id,
-    userId,
-    role: OrganizationRole.OWNER,
+    return newOrg;
   });
 
   logger.info('Organization created', {
