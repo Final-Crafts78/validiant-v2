@@ -5,6 +5,7 @@
  * Uses Zod for runtime validation to ensure all required variables are present.
  * 
  * Phase 6.1 Enhancement: OAuth 2.0 configuration
+ * Phase 6.3 Enhancement: PartyKit WebSocket configuration
  */
 
 import { z } from 'zod';
@@ -52,6 +53,9 @@ const envSchema = z.object({
   MICROSOFT_CLIENT_ID: z.string().optional(),
   MICROSOFT_CLIENT_SECRET: z.string().optional(),
   MICROSOFT_CALLBACK_URL: z.string().url().optional(),
+  
+  // PartyKit - Real-Time WebSockets
+  PARTYKIT_URL: z.string().url().optional(), // e.g., https://validiant-realtime.partykit.dev
   
   // Email - SendGrid
   SENDGRID_API_KEY: z.string().optional(),
@@ -168,6 +172,15 @@ export const isOAuthProviderEnabled = (provider: 'google' | 'github' | 'microsof
     default:
       return false;
   }
+};
+
+/**
+ * Helper to check if PartyKit (real-time WebSockets) is configured
+ */
+export const isPartyKitEnabled = (): boolean => {
+  // In development, PartyKit runs on localhost:1999 by default
+  // In production, PARTYKIT_URL must be set
+  return isDevelopment || !!env.PARTYKIT_URL;
 };
 
 /**
