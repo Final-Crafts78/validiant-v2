@@ -6,7 +6,7 @@
 
 import { Router } from 'express';
 import * as projectController from '../controllers/project.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth';
 import { validate } from '../middleware';
 import {
   createProjectSchema,
