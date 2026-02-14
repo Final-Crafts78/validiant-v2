@@ -106,6 +106,7 @@ interface TaskAssignee {
 
 /**
  * Create task
+ * ✅ ELITE: Wrapped in transaction for ACID compliance
  */
 export const createTask = async (
   projectId: string,
@@ -123,62 +124,67 @@ export const createTask = async (
     assigneeIds?: string[];
   }
 ): Promise<Task> => {
-  // Get next position
-  const [{ maxPosition }] = await db
-    .select({
-      maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`::int,
-    })
-    .from(tasks)
-    .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
+  // ✅ ELITE: Use transaction with 'tx' object for all operations
+  const task = await db.transaction(async (tx) => {
+    // Get next position using 'tx'
+    const [{ maxPosition }] = await tx
+      .select({
+        maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`::int,
+      })
+      .from(tasks)
+      .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
 
-  const position = Number(maxPosition) + 1;
+    const position = Number(maxPosition) + 1;
 
-  // Create task
-  const [task] = await db
-    .insert(tasks)
-    .values({
-      projectId,
-      title: data.title,
-      description: data.description,
-      status: data.status || TaskStatus.TODO,
-      priority: data.priority || TaskPriority.MEDIUM,
-      dueDate: data.dueDate,
-      estimatedHours: data.estimatedHours,
-      parentTaskId: data.parentTaskId,
-      position,
-      tags: data.tags || [],
-      customFields: data.customFields || {},
-      createdBy: userId,
-    })
-    .returning({
-      id: tasks.id,
-      projectId: tasks.projectId,
-      title: tasks.title,
-      description: tasks.description,
-      status: tasks.status,
-      priority: tasks.priority,
-      dueDate: tasks.dueDate,
-      estimatedHours: tasks.estimatedHours,
-      actualHours: tasks.actualHours,
-      parentTaskId: tasks.parentTaskId,
-      position: tasks.position,
-      tags: tasks.tags,
-      customFields: tasks.customFields,
-      createdBy: tasks.createdBy,
-      createdAt: tasks.createdAt,
-      updatedAt: tasks.updatedAt,
-      completedAt: tasks.completedAt,
-    });
+    // Create task using 'tx'
+    const [newTask] = await tx
+      .insert(tasks)
+      .values({
+        projectId,
+        title: data.title,
+        description: data.description,
+        status: data.status || TaskStatus.TODO,
+        priority: data.priority || TaskPriority.MEDIUM,
+        dueDate: data.dueDate,
+        estimatedHours: data.estimatedHours,
+        parentTaskId: data.parentTaskId,
+        position,
+        tags: data.tags || [],
+        customFields: data.customFields || {},
+        createdBy: userId,
+      })
+      .returning({
+        id: tasks.id,
+        projectId: tasks.projectId,
+        title: tasks.title,
+        description: tasks.description,
+        status: tasks.status,
+        priority: tasks.priority,
+        dueDate: tasks.dueDate,
+        estimatedHours: tasks.estimatedHours,
+        actualHours: tasks.actualHours,
+        parentTaskId: tasks.parentTaskId,
+        position: tasks.position,
+        tags: tasks.tags,
+        customFields: tasks.customFields,
+        createdBy: tasks.createdBy,
+        createdAt: tasks.createdAt,
+        updatedAt: tasks.updatedAt,
+        completedAt: tasks.completedAt,
+      });
 
-  // Assign users if provided
-  if (data.assigneeIds && data.assigneeIds.length > 0) {
-    const assigneeValues = data.assigneeIds.map((assigneeId) => ({
-      taskId: task.id,
-      userId: assigneeId,
-    }));
+    // Assign users if provided using 'tx'
+    if (data.assigneeIds && data.assigneeIds.length > 0) {
+      const assigneeValues = data.assigneeIds.map((assigneeId) => ({
+        taskId: newTask.id,
+        userId: assigneeId,
+      }));
 
-    await db.insert(taskAssignees).values(assigneeValues);
-  }
+      await tx.insert(taskAssignees).values(assigneeValues);
+    }
+
+    return newTask;
+  });
 
   logger.info('Task created', { taskId: task.id, projectId, userId });
 
@@ -436,9 +442,9 @@ export const listProjectTasks = async (
     );
   }
 
-  // Filter by tags using JSONB contains operator
+  // ✅ ELITE: Filter by tags with explicit ::jsonb cast for GIN index optimization
   if (params?.tags && params.tags.length > 0) {
-    conditions.push(sql`${tasks.tags} @> ${JSON.stringify(params.tags)}`);
+    conditions.push(sql`${tasks.tags} @> ${JSON.stringify(params.tags)}::jsonb`);
   }
 
   const whereClause = and(...conditions);
