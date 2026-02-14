@@ -228,7 +228,7 @@ export const organizationMembers = pgTable(
   })
 );
 
-export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ((
+export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ({
   organization: one(organizations, {
     fields: [organizationMembers.organizationId],
     references: [organizations.id],
