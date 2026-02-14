@@ -5,6 +5,8 @@
  * JWT token generation, password management, and session handling.
  * 
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
+ * 
+ * Phase 6.1 Enhancement: OAuth token generation support
  */
 
 import bcrypt from 'bcryptjs';
@@ -41,7 +43,7 @@ interface User {
 /**
  * JWT tokens interface
  */
-interface Tokens {
+export interface Tokens {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
@@ -117,8 +119,10 @@ const generateRefreshToken = (userId: string, sessionId: string): string => {
 
 /**
  * Generate both access and refresh tokens
+ * 
+ * Exported for use in OAuth flows
  */
-const generateTokens = async (
+export const generateTokens = async (
   userId: string,
   email: string,
   role: UserRole,
@@ -239,7 +243,7 @@ export const login = async (data: {
   }
 
   // Verify password
-  const isPasswordValid = await verifyPassword(password, userWithPassword.passwordHash);
+  const isPasswordValid = await verifyPassword(password, userWithPassword.passwordHash!);
 
   if (!isPasswordValid) {
     // Log failed login attempt
@@ -475,6 +479,10 @@ export const changePassword = async (
 
   if (!user) {
     throw new NotFoundError('User');
+  }
+
+  if (!user.passwordHash) {
+    throw new BadRequestError('User has no password set (OAuth user)');
   }
 
   // Verify current password
