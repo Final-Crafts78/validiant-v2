@@ -1,8 +1,8 @@
 /**
  * API Service
  * 
- * Axios-based HTTP client with request/response interceptors,
- * token management, and error handling.
+ * Axios-based HTTP client with HttpOnly cookie authentication,
+ * refresh token mutex/queue, and error handling.
  */
 
 import axios, {
@@ -12,7 +12,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import { API_CONFIG, STORAGE_KEYS } from './config';
+import { API_CONFIG } from './config';
 import { useAuthStore } from '@/store/auth';
 
 /**
@@ -40,6 +40,30 @@ export interface ApiResponse<T = unknown> {
 }
 
 /**
+ * Refresh token state management
+ */
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+/**
+ * Process queued requests after token refresh
+ */
+const processQueue = (error: unknown = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve();
+    }
+  });
+
+  failedQueue = [];
+};
+
+/**
  * Create axios instance
  */
 const createApiInstance = (): AxiosInstance => {
@@ -49,22 +73,15 @@ const createApiInstance = (): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
+    // Enable cookies for HttpOnly authentication
+    withCredentials: true,
   });
 
-  // Request interceptor - Add auth token
+  // Request interceptor - No token needed (cookies are automatic)
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      // Get token from localStorage
-      const token =
-        typeof window !== 'undefined'
-          ? localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
-          : null;
-
-      // Add token to headers if available
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
+      // Cookies are automatically sent by browser
+      // No manual token handling required
       return config;
     },
     (error: AxiosError) => {
@@ -72,7 +89,7 @@ const createApiInstance = (): AxiosInstance => {
     }
   );
 
-  // Response interceptor - Handle errors and token refresh
+  // Response interceptor - Handle errors with refresh token mutex
   instance.interceptors.response.use(
     (response: AxiosResponse) => {
       return response;
@@ -84,50 +101,49 @@ const createApiInstance = (): AxiosInstance => {
 
       // Handle 401 Unauthorized - Token expired
       if (error.response?.status === 401 && !originalRequest._retry) {
+        if (isRefreshing) {
+          // Queue this request until refresh completes
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+            .then(() => {
+              return instance(originalRequest);
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
+        }
+
         originalRequest._retry = true;
+        isRefreshing = true;
 
         try {
-          // Get refresh token
-          const refreshToken =
-            typeof window !== 'undefined'
-              ? localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
-              : null;
-
-          if (!refreshToken) {
-            // No refresh token, logout
-            useAuthStore.getState().clearAuth();
-            if (typeof window !== 'undefined') {
-              window.location.href = '/auth/login';
+          // Request new access token (refreshToken sent via HttpOnly cookie)
+          await axios.post(
+            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`,
+            {},
+            {
+              withCredentials: true, // Include cookies
             }
-            return Promise.reject(error);
-          }
+          );
 
-          // Request new access token
-          const response = await axios.post<
-            ApiResponse<{ accessToken: string }>
-          >(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`, {
-            refreshToken,
-          });
+          // New access token is now in cookie, process queue
+          processQueue();
 
-          const { accessToken } = response.data.data;
-
-          // Save new token
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-          }
-
-          // Retry original request with new token
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          }
+          // Retry original request
           return instance(originalRequest);
         } catch (refreshError) {
-          // Refresh failed, logout
+          // Refresh failed, logout user
+          processQueue(refreshError);
           useAuthStore.getState().clearAuth();
+          
           if (typeof window !== 'undefined') {
             window.location.href = '/auth/login';
           }
+          
           return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
         }
       }
 
