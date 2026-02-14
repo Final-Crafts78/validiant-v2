@@ -1,0 +1,11 @@
+{
+  "name": "validiant-realtime",
+  "main": "src/party/server.ts",
+  "compatibilityDate": "2024-01-01",
+  "parties": {
+    "main": "src/party/server.ts"
+  },
+  "serve": {
+    "path": "./public"
+  }
+}
