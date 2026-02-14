@@ -1,11 +1,19 @@
 /**
- * Auth Controller
+ * Auth Controller - Dual-Auth Pattern
  * 
- * Handles authentication-related requests with HttpOnly cookie-based security.
- * Edge-compatible Hono implementation.
+ * Handles authentication-related requests with dual-platform support:
+ * - Web: HttpOnly cookies (XSS-proof)
+ * - Mobile: JSON tokens (SecureStore)
+ * 
+ * DUAL-AUTH TRAP PATTERN:
+ * - Sets HttpOnly cookies for web app
+ * - Returns tokens in JSON payload for mobile app
+ * - Web app ignores JSON tokens (uses cookies)
+ * - Mobile app uses JSON tokens (stores in SecureStore)
  * 
  * Security features:
- * - HttpOnly cookies (XSS-proof)
+ * - HttpOnly cookies (XSS-proof for web)
+ * - SecureStore tokens (encrypted for mobile)
  * - Redis token denylist (real logout)
  * - JWT access + refresh tokens
  * - Secure cookie settings
@@ -49,6 +57,10 @@ const formatUserResponse = (user: User) => ({
   email: user.email,
   firstName: user.firstName,
   lastName: user.lastName,
+  fullName: `${user.firstName} ${user.lastName}`,
+  avatarUrl: user.avatarUrl,
+  emailVerified: user.emailVerified,
+  twoFactorEnabled: user.twoFactorEnabled,
   createdAt: user.createdAt.toISOString(),
   updatedAt: user.updatedAt.toISOString(),
 });
@@ -58,6 +70,8 @@ const formatUserResponse = (user: User) => ({
  * POST /api/v1/auth/register
  * 
  * Payload validated by zValidator(registerSchema) at route level
+ * 
+ * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const register = async (c: Context) => {
   try {
@@ -106,7 +120,7 @@ export const register = async (c: Context) => {
       email: user.email,
     });
 
-    // Set tokens as HttpOnly cookies
+    // Set tokens as HttpOnly cookies (for web)
     c.cookie('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
@@ -117,12 +131,16 @@ export const register = async (c: Context) => {
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
-    // Return user response (NO TOKENS in body)
+    // ✅ DUAL-AUTH: Return tokens in JSON (for mobile)
+    // Web app will ignore these (uses cookies)
+    // Mobile app will use these (stores in SecureStore)
     return c.json(
       {
         success: true,
         data: {
           user: formatUserResponse(user),
+          accessToken,   // ← Mobile app needs this
+          refreshToken,  // ← Mobile app needs this
         },
       },
       201
@@ -145,6 +163,8 @@ export const register = async (c: Context) => {
  * POST /api/v1/auth/login
  * 
  * Payload validated by zValidator(loginSchema) at route level
+ * 
+ * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const login = async (c: Context) => {
   try {
@@ -193,7 +213,7 @@ export const login = async (c: Context) => {
       email: user.email,
     });
 
-    // Set tokens as HttpOnly cookies
+    // Set tokens as HttpOnly cookies (for web)
     c.cookie('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
@@ -204,11 +224,15 @@ export const login = async (c: Context) => {
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
-    // Return user response (NO TOKENS in body)
+    // ✅ DUAL-AUTH: Return tokens in JSON (for mobile)
+    // Web app will ignore these (uses cookies)
+    // Mobile app will use these (stores in SecureStore)
     return c.json({
       success: true,
       data: {
         user: formatUserResponse(user),
+        accessToken,   // ← Mobile app needs this
+        refreshToken,  // ← Mobile app needs this
       },
     });
   } catch (error) {
@@ -228,11 +252,22 @@ export const login = async (c: Context) => {
  * Refresh access token
  * POST /api/v1/auth/refresh
  * 
- * No validation needed - reads from cookies only
+ * DUAL-AUTH:
+ * - Web: Reads refresh token from cookie, sets new access token cookie
+ * - Mobile: Reads refresh token from Authorization header, returns new access token in JSON
  */
 export const refresh = async (c: Context) => {
   try {
-    const refreshToken = c.req.cookie('refreshToken');
+    // Try to get refresh token from cookie (web) or Authorization header (mobile)
+    let refreshToken = c.req.cookie('refreshToken');
+    
+    // If no cookie, try Authorization header (mobile)
+    if (!refreshToken) {
+      const authHeader = c.req.header('Authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        refreshToken = authHeader.substring(7);
+      }
+    }
 
     if (!refreshToken) {
       return c.json(
@@ -278,15 +313,17 @@ export const refresh = async (c: Context) => {
       email: decoded.email,
     });
 
-    // Set new access token cookie
+    // Set new access token cookie (for web)
     c.cookie('accessToken', newAccessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
+    // ✅ DUAL-AUTH: Return new access token in JSON (for mobile)
     return c.json({
       success: true,
       data: {
+        accessToken: newAccessToken,  // ← Mobile app needs this
         message: 'Token refreshed successfully',
       },
     });
@@ -308,6 +345,7 @@ export const refresh = async (c: Context) => {
  * GET /api/v1/auth/me
  * 
  * Requires authentication - user set by auth middleware
+ * Works for both web (cookie) and mobile (Authorization header)
  */
 export const getMe = async (c: Context) => {
   try {
@@ -345,7 +383,9 @@ export const getMe = async (c: Context) => {
 
     return c.json({
       success: true,
-      data: formatUserResponse(dbUser),
+      data: {
+        user: formatUserResponse(dbUser),
+      },
     });
   } catch (error) {
     console.error('Get me error:', error);
@@ -365,12 +405,24 @@ export const getMe = async (c: Context) => {
  * POST /api/v1/auth/logout
  * 
  * CRITICAL SECURITY: Adds tokens to Redis denylist to prevent reuse
+ * 
+ * DUAL-AUTH:
+ * - Web: Clears cookies
+ * - Mobile: Client should delete tokens from SecureStore
  */
 export const logout = async (c: Context) => {
   try {
-    // Get tokens from cookies
-    const accessToken = c.req.cookie('accessToken');
-    const refreshToken = c.req.cookie('refreshToken');
+    // Get tokens from cookies (web) or Authorization header (mobile)
+    let accessToken = c.req.cookie('accessToken');
+    let refreshToken = c.req.cookie('refreshToken');
+    
+    // If no cookies, try Authorization header (mobile)
+    if (!accessToken) {
+      const authHeader = c.req.header('Authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        accessToken = authHeader.substring(7);
+      }
+    }
 
     // Add access token to Redis denylist with TTL matching its expiration
     if (accessToken) {
@@ -404,7 +456,7 @@ export const logout = async (c: Context) => {
       }
     }
 
-    // Clear cookies by setting maxAge to 0
+    // Clear cookies by setting maxAge to 0 (for web)
     c.cookie('accessToken', '', {
       ...COOKIE_OPTIONS,
       maxAge: 0,
