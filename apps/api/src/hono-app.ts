@@ -13,7 +13,7 @@
  * Migration Status (Phase 4):
  * ✅ Auth routes - MIGRATED to Hono + @hono/zod-validator
  * ✅ User routes - MIGRATED to Hono + @hono/zod-validator
- * ⏳ Organization routes - Pending migration
+ * ✅ Organization routes - MIGRATED to Hono + @hono/zod-validator
  * ⏳ Project routes - Pending migration
  * ⏳ Task routes - Pending migration
  */
@@ -26,9 +26,9 @@ import { prettyJSON } from 'hono/pretty-json';
 // Migrated Hono routes
 import authRoutes from './routes/auth.routes.hono';
 import userRoutes from './routes/user.routes.hono';
+import organizationRoutes from './routes/organization.routes.hono';
 
 // Legacy Express routes (to be migrated)
-import organizationRoutes from './routes/organization.routes';
 import projectRoutes from './routes/project.routes';
 import taskRoutes from './routes/task.routes';
 
@@ -102,7 +102,7 @@ export const createHonoApp = () => {
    * Migration Progress (Phase 4):
    * ✅ /api/v1/auth          → Hono routes (auth.routes.hono.ts)
    * ✅ /api/v1/users         → Hono routes (user.routes.hono.ts)
-   * ⏳ /api/v1/organizations → Express routes (pending migration)
+   * ✅ /api/v1/organizations → Hono routes (organization.routes.hono.ts)
    * ⏳ /api/v1/projects      → Express routes (pending migration)
    * ⏳ /api/v1/tasks         → Express routes (pending migration)
    */
