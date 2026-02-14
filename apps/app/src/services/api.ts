@@ -1,81 +1,191 @@
 /**
- * API Service
+ * Mobile API Client - JWT Token Management
  * 
- * Configured axios instance for API requests with authentication
- * and refresh token mutex to prevent race conditions.
+ * Axios client configured for mobile JWT authentication.
+ * 
+ * CRITICAL FEATURES:
+ * - Automatic token injection from SecureStore
+ * - Automatic token refresh on 401
+ * - Retry failed requests after refresh
+ * 
+ * AUTHENTICATION FLOW:
+ * 1. User logs in → Backend returns { accessToken, refreshToken }
+ * 2. Mobile saves tokens to SecureStore (encrypted)
+ * 3. All API requests automatically inject: Authorization: Bearer <accessToken>
+ * 4. If 401 → Try refresh token → Get new accessToken → Retry request
+ * 5. If refresh fails → Logout user
+ * 
+ * TOKEN REFRESH FLOW:
+ * ```
+ * API Request (401)
+ *   ↓
+ * Get refreshToken from SecureStore
+ *   ↓
+ * POST /api/v1/auth/refresh with Bearer <refreshToken>
+ *   ↓
+ * Backend returns { accessToken }
+ *   ↓
+ * Save new accessToken to SecureStore
+ *   ↓
+ * Retry original request with new accessToken
+ * ```
+ * 
+ * SECURITY:
+ * - Tokens stored in SecureStore (hardware-backed encryption)
+ * - No tokens in AsyncStorage or memory
+ * - Automatic token rotation
+ * - Token denylist (backend Redis)
  */
 
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '@/store/auth';
-import { API_URL } from '@/constants/config';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import Constants from 'expo-constants';
+import {
+  getAccessToken,
+  getRefreshToken,
+  saveAccessToken,
+  clearTokens,
+} from '../utils/storage';
 
 /**
- * Refresh token state management
+ * API Configuration
+ */
+const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3001';
+const API_TIMEOUT = 30000; // 30 seconds
+
+/**
+ * API Error Interface
+ */
+export interface APIError {
+  success: false;
+  error: string;
+  message: string;
+  statusCode: number;
+  details?: any;
+}
+
+/**
+ * API Success Response Interface
+ */
+export interface APIResponse<T = any> {
+  success: true;
+  data?: T;
+  message?: string;
+  pagination?: {
+    total: number;
+    page: number;
+    perPage: number;
+    totalPages: number;
+  };
+}
+
+/**
+ * Create Axios Instance
+ * 
+ * Note: Does NOT set withCredentials (cookies not used in mobile)
+ */
+const apiClient: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: API_TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  // No withCredentials - mobile uses JWT tokens, not cookies
+});
+
+/**
+ * Flag to prevent infinite refresh loops
  */
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: (value?: unknown) => void;
-  reject: (reason?: unknown) => void;
+  resolve: (value?: any) => void;
+  reject: (reason?: any) => void;
 }> = [];
 
 /**
  * Process queued requests after token refresh
  */
-const processQueue = (error: unknown = null, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+const processQueue = (error: any = null, token: string | null = null) => {
+  failedQueue.forEach((promise) => {
     if (error) {
-      prom.reject(error);
+      promise.reject(error);
     } else {
-      prom.resolve(token);
+      promise.resolve(token);
     }
   });
-
   failedQueue = [];
 };
 
 /**
- * Create axios instance
+ * Request Interceptor - Inject JWT Token
+ * 
+ * Retrieves accessToken from SecureStore and adds to Authorization header.
  */
-export const api = axios.create({
-  baseURL: API_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+apiClient.interceptors.request.use(
+  async (config) => {
+    // Get access token from SecureStore
+    const accessToken = await getAccessToken();
 
-/**
- * Request interceptor - Add auth token
- */
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = useAuthStore.getState().token;
-    
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Inject token into Authorization header
+    if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    
+
+    // Log requests in development
+    if (__DEV__) {
+      console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+    }
+
     return config;
   },
   (error) => {
+    console.error('[API] Request error:', error);
     return Promise.reject(error);
   }
 );
 
 /**
- * Response interceptor - Handle token refresh with mutex
+ * Response Interceptor - Handle 401 with Auto-Refresh
+ * 
+ * If request fails with 401:
+ * 1. Try to refresh token
+ * 2. Retry original request with new token
+ * 3. If refresh fails, logout user
  */
-api.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
+apiClient.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // Return successful response
+    return response;
+  },
+  async (error: AxiosError<APIError>) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    // If 401 and not already retrying, handle token refresh
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Handle network errors
+    if (!error.response) {
+      console.error('[API] Network error:', error.message);
+      return Promise.reject({
+        success: false,
+        error: 'NetworkError',
+        message: 'Unable to connect to server. Please check your internet connection.',
+        statusCode: 0,
+      } as APIError);
+    }
+
+    const { response } = error;
+    const statusCode = response.status;
+
+    // Handle 401 (Unauthorized) - Try to refresh token
+    if (statusCode === 401 && !originalRequest._retry) {
+      // Prevent refresh endpoint itself from triggering refresh
+      if (originalRequest.url?.includes('/auth/refresh')) {
+        // Refresh failed, logout user
+        console.error('[API] Refresh token expired, logging out');
+        await clearTokens();
+        // TODO: Navigate to login screen
+        return Promise.reject(error.response.data);
+      }
+
+      // If already refreshing, queue this request
       if (isRefreshing) {
-        // Queue this request until refresh completes
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -83,7 +193,7 @@ api.interceptors.response.use(
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
-            return api(originalRequest);
+            return apiClient(originalRequest);
           })
           .catch((err) => {
             return Promise.reject(err);
@@ -94,79 +204,153 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = useAuthStore.getState().refreshToken;
-        
+        // Get refresh token from SecureStore
+        const refreshToken = await getRefreshToken();
+
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
 
-        // Call refresh token endpoint
-        const { data } = await axios.post(`${API_URL}/api/v1/auth/refresh`, {
-          refreshToken,
-        });
+        // Call refresh endpoint with refresh token in Authorization header
+        const refreshResponse = await axios.post<APIResponse<{ accessToken: string }>>(
+          `${API_BASE_URL}/api/v1/auth/refresh`,
+          {},
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${refreshToken}`,
+            },
+          }
+        );
 
-        const { token: newToken, refreshToken: newRefreshToken, user } = data.data;
+        const { accessToken: newAccessToken } = refreshResponse.data.data!;
 
-        // Update stored auth
-        await useAuthStore.getState().setAuth(user, newToken, newRefreshToken);
+        // Save new access token to SecureStore
+        await saveAccessToken(newAccessToken);
+
+        // Update Authorization header
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
 
         // Process queued requests with new token
-        processQueue(null, newToken);
+        processQueue(null, newAccessToken);
 
         // Retry original request with new token
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        }
-        
-        return api(originalRequest);
+        return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, reject all queued requests
+        // Refresh failed, logout user
+        console.error('[API] Token refresh failed:', refreshError);
         processQueue(refreshError, null);
-        
-        // Clear auth and force re-login
-        await useAuthStore.getState().clearAuth();
-        
+        await clearTokens();
+        // TODO: Navigate to login screen
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    return Promise.reject(error);
+    // Handle permission errors (403)
+    if (statusCode === 403) {
+      console.error('[API] Permission denied:', response.data?.message);
+    }
+
+    // Handle server errors (500+)
+    if (statusCode >= 500) {
+      console.error('[API] Server error:', response.data?.message);
+    }
+
+    // Return structured error
+    const apiError: APIError = {
+      success: false,
+      error: response.data?.error || 'UnknownError',
+      message: response.data?.message || error.message || 'An unexpected error occurred',
+      statusCode,
+      details: response.data?.details,
+    };
+
+    return Promise.reject(apiError);
   }
 );
 
 /**
- * API Error type
+ * API Request Helper Functions
  */
-export interface ApiError {
-  message: string;
-  code?: string;
-  field?: string;
-}
 
 /**
- * Extract error message from API error
+ * GET request
  */
-export const getErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const apiError = error.response?.data as ApiError | undefined;
-    return apiError?.message || error.message || 'An error occurred';
-  }
-  
-  if (error instanceof Error) {
-    return error.message;
-  }
-  
-  return 'An unknown error occurred';
+export const get = <T = any>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.get<T>(url, config);
 };
 
 /**
- * Check if error is network error
+ * POST request
  */
-export const isNetworkError = (error: unknown): boolean => {
-  if (axios.isAxiosError(error)) {
-    return !error.response && error.code === 'ERR_NETWORK';
+export const post = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.post<T>(url, data, config);
+};
+
+/**
+ * PUT request
+ */
+export const put = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.put<T>(url, data, config);
+};
+
+/**
+ * PATCH request
+ */
+export const patch = <T = any, D = any>(
+  url: string,
+  data?: D,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.patch<T>(url, data, config);
+};
+
+/**
+ * DELETE request
+ */
+export const del = <T = any>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<AxiosResponse<T>> => {
+  return apiClient.delete<T>(url, config);
+};
+
+/**
+ * Export configured client for custom requests
+ */
+export default apiClient;
+
+/**
+ * Type guard to check if error is APIError
+ */
+export const isAPIError = (error: any): error is APIError => {
+  return error && typeof error === 'object' && 'success' in error && error.success === false;
+};
+
+/**
+ * Get error message from any error type
+ */
+export const getErrorMessage = (error: any): string => {
+  if (isAPIError(error)) {
+    return error.message;
   }
-  return false;
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'An unexpected error occurred';
 };
