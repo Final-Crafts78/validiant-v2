@@ -23,7 +23,8 @@
     "drizzle",
     "postgresql",
     "cloudflare-workers",
-    "edge"
+    "edge",
+    "oauth"
   ],
   "author": "Validiant Team",
   "license": "MIT",
@@ -32,6 +33,7 @@
     "@neondatabase/serverless": "^0.9.0",
     "@upstash/redis": "^1.28.2",
     "@validiant/shared": "workspace:*",
+    "arctic": "^1.9.2",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
