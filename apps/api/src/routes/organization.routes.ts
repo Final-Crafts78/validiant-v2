@@ -11,7 +11,7 @@ import {
   requireOrganization,
   requireOrganizationRoles,
   requireOrganizationAdmin,
-} from '../middleware/auth.middleware';
+} from '../middleware/auth';
 import { validate } from '../middleware';
 import {
   createOrganizationSchema,
