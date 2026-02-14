@@ -10,7 +10,7 @@ import {
   authenticate,
   requireAdmin,
   requireEmailVerified,
-} from '../middleware/auth.middleware';
+} from '../middleware/auth';
 import { validate } from '../middleware';
 import {
   updateUserProfileSchema,
