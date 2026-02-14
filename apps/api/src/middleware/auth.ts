@@ -1,7 +1,7 @@
 /**
  * Authentication Middleware
  * 
- * Middleware to verify JWT tokens and protect routes.
+ * Middleware to verify JWT tokens from HttpOnly cookies and protect routes.
  */
 
 import { Request, Response, NextFunction } from 'express';
@@ -21,7 +21,7 @@ export interface AuthRequest extends Request {
 
 /**
  * Authenticate middleware
- * Verifies JWT token from Authorization header
+ * Verifies JWT token from HttpOnly cookie (preferred) or Authorization header (fallback)
  */
 export const authenticate = (
   req: AuthRequest,
@@ -29,14 +29,21 @@ export const authenticate = (
   next: NextFunction
 ): void => {
   try {
-    // Get token from header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    let token: string | null = null;
+
+    // First, try to get token from cookie (secure, HttpOnly)
+    if (req.cookies && req.cookies.accessToken) {
+      token = req.cookies.accessToken;
+    }
+    // Fallback: check Authorization header for mobile/API clients
+    else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (!token) {
       sendError(res, 'No token provided', HTTP_STATUS.UNAUTHORIZED);
       return;
     }
-
-    const token = authHeader.substring(7); // Remove 'Bearer '
 
     // Verify token
     const payload = verifyToken(token);
@@ -67,15 +74,25 @@ export const optionalAuth = (
   next: NextFunction
 ): void => {
   try {
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
+    let token: string | null = null;
+
+    // Try cookie first
+    if (req.cookies && req.cookies.accessToken) {
+      token = req.cookies.accessToken;
+    }
+    // Fallback to header
+    else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (token) {
       const payload = verifyToken(token);
       req.user = {
         userId: payload.userId,
         email: payload.email,
       };
     }
+
     next();
   } catch (error) {
     // Continue without user if token is invalid
