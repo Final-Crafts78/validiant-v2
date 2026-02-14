@@ -2,8 +2,10 @@
  * Drizzle ORM Schema for Validiant v2
  * Converted from Prisma schema with full type safety and edge compatibility
  * 
- * Models: User, Organization, OrganizationMember, Project, Task
+ * Models: User, Organization, OrganizationMember, Project, Task, PasswordResetToken
  * Database: PostgreSQL (Neon Serverless)
+ * 
+ * Phase 6.1 Enhancement: OAuth 2.0 support (Google, GitHub)
  */
 
 import { relations } from 'drizzle-orm';
@@ -13,12 +15,13 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
   unique,
   index,
 } from 'drizzle-orm/pg-core';
 
 // ============================================================================
-// USER TABLE
+// USER TABLE (OAuth-Enhanced)
 // ============================================================================
 
 export const users = pgTable(
@@ -26,9 +29,23 @@ export const users = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     email: text('email').notNull().unique(),
-    password: text('password').notNull(),
-    firstName: text('first_name').notNull(),
-    lastName: text('last_name').notNull(),
+    passwordHash: text('password_hash'), // Nullable for OAuth users
+    fullName: text('full_name').notNull(),
+    firstName: text('first_name'),
+    lastName: text('last_name'),
+    avatar: text('avatar'), // Profile picture URL
+    
+    // OAuth Provider IDs
+    googleId: text('google_id'), // Google OAuth ID
+    githubId: text('github_id'), // GitHub OAuth ID
+    
+    // Account Status
+    role: text('role').notNull().default('user'), // 'user' | 'admin' | 'superadmin'
+    status: text('status').notNull().default('active'), // 'active' | 'suspended' | 'deleted'
+    emailVerified: boolean('email_verified').notNull().default(false),
+    
+    // Timestamps
+    lastLoginAt: timestamp('last_login_at', { mode: 'date', withTimezone: true }),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -36,9 +53,13 @@ export const users = pgTable(
       .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     emailIdx: index('users_email_idx').on(table.email),
+    googleIdIdx: index('users_google_id_idx').on(table.googleId),
+    githubIdIdx: index('users_github_id_idx').on(table.githubId),
+    statusIdx: index('users_status_idx').on(table.status),
   })
 );
 
@@ -48,6 +69,38 @@ export const usersRelations = relations(users, ({ many }) => ({
   createdProjects: many(projects, { relationName: 'ProjectOwner' }),
   assignedTasks: many(tasks, { relationName: 'TaskAssignee' }),
   createdTasks: many(tasks, { relationName: 'TaskCreator' }),
+  passwordResetTokens: many(passwordResetTokens),
+}));
+
+// ============================================================================
+// PASSWORD RESET TOKEN TABLE
+// ============================================================================
+
+export const passwordResetTokens = pgTable(
+  'password_reset_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: timestamp('expires_at', { mode: 'date', withTimezone: true }).notNull(),
+    usedAt: timestamp('used_at', { mode: 'date', withTimezone: true }),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('password_reset_tokens_user_id_idx').on(table.userId),
+    expiresAtIdx: index('password_reset_tokens_expires_at_idx').on(table.expiresAt),
+  })
+);
+
+export const passwordResetTokensRelations = relations(passwordResetTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [passwordResetTokens.userId],
+    references: [users.id],
+  }),
 }));
 
 // ============================================================================
@@ -59,7 +112,7 @@ export const organizations = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
-    description: text('description').notNull(),
+    description: text('description'),
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -136,7 +189,7 @@ export const projects = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
-    description: text('description').notNull(),
+    description: text('description'),
     status: text('status').notNull().default('planning'), // 'active' | 'completed' | 'on-hold' | 'planning'
     progress: integer('progress').notNull().default(0),
     organizationId: uuid('organization_id')
@@ -183,7 +236,7 @@ export const tasks = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     title: text('title').notNull(),
-    description: text('description').notNull(),
+    description: text('description'),
     status: text('status').notNull().default('todo'), // 'todo' | 'in-progress' | 'completed'
     priority: text('priority').notNull().default('medium'), // 'low' | 'medium' | 'high' | 'urgent'
     projectId: uuid('project_id')
@@ -233,6 +286,9 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+export type NewPasswordResetToken = typeof passwordResetTokens.$inferInsert;
 
 export type Organization = typeof organizations.$inferSelect;
 export type NewOrganization = typeof organizations.$inferInsert;
