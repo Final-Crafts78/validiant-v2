@@ -94,11 +94,9 @@ export default function RegisterPage() {
   const registerMutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      // Save auth data
+      // Save user data (tokens stored in HttpOnly cookies)
       setAuth({
         user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
       });
 
       // Redirect to dashboard
