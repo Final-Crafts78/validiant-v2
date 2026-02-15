@@ -16,6 +16,14 @@
 import { app } from './app';
 
 /**
+ * Cloudflare Workers environment bindings type
+ */
+export interface Env {
+  // Add environment bindings here as needed
+  // Example: DATABASE_URL: string;
+}
+
+/**
  * Cloudflare Workers export
  * 
  * The Workers runtime expects a default export with a `fetch` method.
