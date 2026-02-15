@@ -199,7 +199,7 @@ export const verifyPasskeyRegistration = async (
   try {
     verification = await verifyRegistrationResponse(opts);
   } catch (error) {
-    logger.error('Passkey registration verification failed:', error);
+    logger.error('Passkey registration verification failed:', error as Error);
     throw new BadRequestError(
       error instanceof Error ? error.message : ErrorMessages.VERIFICATION_FAILED
     );
@@ -390,7 +390,7 @@ export const verifyPasskeyAuthentication = async (
   try {
     verification = await verifyAuthenticationResponse(opts);
   } catch (error) {
-    logger.error('Passkey authentication verification failed:', error);
+    logger.error('Passkey authentication verification failed:', error as Error);
     throw new UnauthorizedError(
       error instanceof Error ? error.message : ErrorMessages.VERIFICATION_FAILED
     );
