@@ -63,7 +63,7 @@ export const createOrganization = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof createOrganizationSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof createOrganizationSchema>;
 
     const organization = await organizationService.createOrganization(
       user.userId,
@@ -292,7 +292,7 @@ export const updateOrganization = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof updateOrganizationSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof updateOrganizationSchema>;
 
     const organization = await organizationService.updateOrganization(id, validatedData);
 
@@ -365,7 +365,7 @@ export const updateOrganizationSettings = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { settings } = c.req.valid('json') as z.infer<typeof updateOrganizationSettingsSchema>;
+    const { settings } = (await c.req.json()) as z.infer<typeof updateOrganizationSettingsSchema>;
 
     const organization = await organizationService.updateOrganizationSettings(
       id,
@@ -571,7 +571,7 @@ export const addOrganizationMember = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof addOrganizationMemberSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof addOrganizationMemberSchema>;
 
     const member = await organizationService.addOrganizationMember(
       id,
@@ -664,7 +664,7 @@ export const updateMemberRole = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { role } = c.req.valid('json') as z.infer<typeof updateMemberRoleSchema>;
+    const { role } = (await c.req.json()) as z.infer<typeof updateMemberRoleSchema>;
 
     // Only owners can assign owner role
     if (role === OrganizationRole.OWNER) {
