@@ -2,7 +2,7 @@
  * Drizzle ORM Schema for Validiant v2
  * Converted from Prisma schema with full type safety and edge compatibility
  * 
- * Models: User, Organization, OrganizationMember, Project, Task, PasswordResetToken, PasskeyCredential
+ * Models: User, Organization, OrganizationMember, Project, ProjectMember, Task, TaskAssignee, PasswordResetToken, PasskeyCredential
  * Database: PostgreSQL (Neon Serverless)
  * 
  * Phase 6.1 Enhancement: OAuth 2.0 support (Google, GitHub)
@@ -83,7 +83,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   ownedOrganizations: many(organizations, { relationName: 'OrganizationOwner' }),
   organizationMemberships: many(organizationMembers),
   createdProjects: many(projects, { relationName: 'ProjectOwner' }),
+  projectMemberships: many(projectMembers),
   assignedTasks: many(tasks, { relationName: 'TaskAssignee' }),
+  taskAssignments: many(taskAssignees),
   createdTasks: many(tasks, { relationName: 'TaskCreator' }),
   passwordResetTokens: many(passwordResetTokens),
   passkeyCredentials: many(passkeyCredentials),
@@ -332,7 +334,55 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
     references: [users.id],
     relationName: 'ProjectCreator',
   }),
+  members: many(projectMembers),
   tasks: many(tasks),
+}));
+
+// ============================================================================
+// PROJECT MEMBER TABLE (Join table with role)
+// ============================================================================
+
+export const projectMembers = pgTable(
+  'project_members',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    role: text('role').notNull(), // 'owner' | 'admin' | 'member' | 'viewer'
+    addedAt: timestamp('added_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    addedBy: uuid('added_by').references(() => users.id),
+  },
+  (table) => ({
+    // Unique constraint: one user can only be a member once per project
+    uniqueProjectUser: unique('project_members_project_user_unique').on(
+      table.projectId,
+      table.userId
+    ),
+    projectIdx: index('project_members_project_id_idx').on(table.projectId),
+    userIdx: index('project_members_user_id_idx').on(table.userId),
+  })
+);
+
+export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectMembers.projectId],
+    references: [projects.id],
+  }),
+  user: one(users, {
+    fields: [projectMembers.userId],
+    references: [users.id],
+  }),
+  addedByUser: one(users, {
+    fields: [projectMembers.addedBy],
+    references: [users.id],
+    relationName: 'ProjectMemberAddedBy',
+  }),
 }));
 
 // ============================================================================
@@ -412,6 +462,53 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
     relationName: 'ParentTask',
   }),
   subtasks: many(tasks, { relationName: 'ParentTask' }),
+  assignees: many(taskAssignees),
+}));
+
+// ============================================================================
+// TASK ASSIGNEE TABLE (Join table for multiple assignees)
+// ============================================================================
+
+export const taskAssignees = pgTable(
+  'task_assignees',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    taskId: uuid('task_id')
+      .notNull()
+      .references(() => tasks.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    assignedAt: timestamp('assigned_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    assignedBy: uuid('assigned_by').references(() => users.id),
+  },
+  (table) => ({
+    // Unique constraint: one user can only be assigned once per task
+    uniqueTaskUser: unique('task_assignees_task_user_unique').on(
+      table.taskId,
+      table.userId
+    ),
+    taskIdx: index('task_assignees_task_id_idx').on(table.taskId),
+    userIdx: index('task_assignees_user_id_idx').on(table.userId),
+  })
+);
+
+export const taskAssigneesRelations = relations(taskAssignees, ({ one }) => ({
+  task: one(tasks, {
+    fields: [taskAssignees.taskId],
+    references: [tasks.id],
+  }),
+  user: one(users, {
+    fields: [taskAssignees.userId],
+    references: [users.id],
+  }),
+  assignedByUser: one(users, {
+    fields: [taskAssignees.assignedBy],
+    references: [users.id],
+    relationName: 'TaskAssigneeAssignedBy',
+  }),
 }));
 
 // ============================================================================
@@ -436,5 +533,11 @@ export type NewOrganizationMember = typeof organizationMembers.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 
+export type ProjectMember = typeof projectMembers.$inferSelect;
+export type NewProjectMember = typeof projectMembers.$inferInsert;
+
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
+
+export type TaskAssignee = typeof taskAssignees.$inferSelect;
+export type NewTaskAssignee = typeof taskAssignees.$inferInsert;
