@@ -71,7 +71,7 @@ interface ProjectMember {
     fullName: string;
     avatarUrl?: string;
   };
-  joinedAt: Date;
+  addedAt: Date;
 }
 
 /**
@@ -101,6 +101,7 @@ export const createProject = async (
       .insert(projects)
       .values({
         organizationId,
+        ownerId: userId,
         name: data.name,
         description: data.description,
         status: data.status || ProjectStatus.PLANNING,
@@ -496,7 +497,7 @@ export const getProjectMembers = async (projectId: string): Promise<ProjectMembe
       projectId: projectMembers.projectId,
       userId: projectMembers.userId,
       role: projectMembers.role,
-      joinedAt: projectMembers.joinedAt,
+      addedAt: projectMembers.addedAt,
       // User data as nested object
       user: {
         id: users.id,
@@ -514,7 +515,7 @@ export const getProjectMembers = async (projectId: string): Promise<ProjectMembe
         isNull(users.deletedAt)
       )
     )
-    .orderBy(projectMembers.joinedAt);
+    .orderBy(projectMembers.addedAt);
 
   return members as ProjectMember[];
 };
@@ -556,7 +557,7 @@ export const addProjectMember = async (
       projectId: projectMembers.projectId,
       userId: projectMembers.userId,
       role: projectMembers.role,
-      joinedAt: projectMembers.joinedAt,
+      addedAt: projectMembers.addedAt,
     });
 
   logger.info('Project member added', { projectId, userId, role });
