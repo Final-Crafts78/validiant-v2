@@ -219,6 +219,15 @@ export const taskListQuerySchema = z.object({
 });
 
 /**
+ * Update task position schema
+ * For drag-and-drop task reordering
+ * CATEGORY 5 FIX: Added for task position updates
+ */
+export const updateTaskPositionSchema = z.object({
+  position: z.number(),
+});
+
+/**
  * Create milestone schema
  */
 export const createMilestoneSchema = z.object({
@@ -453,6 +462,20 @@ export const duplicateProjectSchema = z.object({
 });
 
 /**
+ * Project list query schema
+ * For paginated project listing with filters
+ * CATEGORY 5 FIX: Added for project list pagination
+ */
+export const projectListQuerySchema = z.object({
+  organizationId: z.string().uuid().optional(),
+  status: z.string().optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  sortBy: z.enum(['createdAt', 'updatedAt', 'name', 'priority']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+});
+
+/**
  * Type inference helpers
  */
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
@@ -464,6 +487,7 @@ export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
 export type AssignTaskInput = z.infer<typeof assignTaskSchema>;
 export type BulkAssignTasksInput = z.infer<typeof bulkAssignTasksSchema>;
 export type TaskListQueryInput = z.infer<typeof taskListQuerySchema>;
+export type UpdateTaskPositionInput = z.infer<typeof updateTaskPositionSchema>;
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
 export type CreateLabelInput = z.infer<typeof createLabelSchema>;
@@ -476,3 +500,4 @@ export type AddProjectMemberInput = z.infer<typeof addProjectMemberSchema>;
 export type ProjectFiltersInput = z.infer<typeof projectFiltersSchema>;
 export type TaskFiltersInput = z.infer<typeof taskFiltersSchema>;
 export type BulkUpdateTasksInput = z.infer<typeof bulkUpdateTasksSchema>;
+export type ProjectListQueryInput = z.infer<typeof projectListQuerySchema>;
