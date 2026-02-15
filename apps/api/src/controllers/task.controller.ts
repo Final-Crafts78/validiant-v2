@@ -52,7 +52,7 @@ export const createTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof createTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof createTaskSchema>;
 
     // Check project access
     const hasAccess = await checkProjectAccess(validatedData.projectId, user.userId);
@@ -205,7 +205,7 @@ export const updateTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof updateTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof updateTaskSchema>;
 
     const task = await taskService.updateTask(id, validatedData);
 
@@ -339,7 +339,7 @@ export const listProjectTasks = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedQuery = c.req.valid('query') as z.infer<typeof taskListQuerySchema>;
+    const validatedQuery = c.req.query() as unknown as z.infer<typeof taskListQuerySchema>;
 
     const result = await taskService.listProjectTasks(projectId, {
       status: validatedQuery.status,
@@ -461,7 +461,7 @@ export const assignTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof assignTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof assignTaskSchema>;
 
     // Verify the user being assigned is a project member
     const isProjectMember = await projectService.isProjectMember(
@@ -614,7 +614,7 @@ export const updateTaskPosition = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof updateTaskPositionSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof updateTaskPositionSchema>;
 
     await taskService.updateTaskPosition(id, validatedData.position);
 
