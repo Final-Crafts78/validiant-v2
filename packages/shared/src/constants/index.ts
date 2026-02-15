@@ -5,6 +5,56 @@
  */
 
 /**
+ * Validation constants for input validation
+ */
+export const VALIDATION = {
+  EMAIL: {
+    MIN_LENGTH: 5,
+    MAX_LENGTH: 255,
+  },
+  PASSWORD: {
+    MIN_LENGTH: 8,
+    MAX_LENGTH: 128,
+  },
+  USERNAME: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 30,
+    REGEX: /^[a-zA-Z0-9_-]+$/,
+  },
+  FULL_NAME: {
+    MIN_LENGTH: 2,
+    MAX_LENGTH: 100,
+  },
+  PHONE_NUMBER: {
+    REGEX: /^\+?[1-9]\d{1,14}$/,
+  },
+  ORGANIZATION_NAME: {
+    MIN_LENGTH: 2,
+    MAX_LENGTH: 100,
+  },
+  TEAM_NAME: {
+    MIN_LENGTH: 2,
+    MAX_LENGTH: 100,
+  },
+  PROJECT_NAME: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 100,
+  },
+  PROJECT_KEY: {
+    MIN_LENGTH: 2,
+    MAX_LENGTH: 10,
+    REGEX: /^[A-Z][A-Z0-9]*$/,
+  },
+  TASK_TITLE: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 200,
+  },
+  DESCRIPTION: {
+    MAX_LENGTH: 5000,
+  },
+} as const;
+
+/**
  * API version
  */
 export const API_VERSION = 'v1';
