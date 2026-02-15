@@ -60,6 +60,31 @@ export enum TaskPriority {
 }
 
 /**
+ * Task type enumeration
+ */
+export enum TaskType {
+  TASK = 'task',
+  BUG = 'bug',
+  FEATURE = 'feature',
+  STORY = 'story',
+  EPIC = 'epic',
+  SUBTASK = 'subtask',
+}
+
+/**
+ * Custom field type enumeration
+ */
+export enum CustomFieldType {
+  TEXT = 'text',
+  NUMBER = 'number',
+  DATE = 'date',
+  SELECT = 'select',
+  MULTISELECT = 'multiselect',
+  CHECKBOX = 'checkbox',
+  URL = 'url',
+}
+
+/**
  * Task dependency type
  */
 export enum DependencyType {
