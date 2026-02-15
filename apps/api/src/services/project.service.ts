@@ -96,7 +96,7 @@ export const createProject = async (
   // ✅ ELITE: Use transaction with 'tx' object for all operations
   const project = await db.transaction(async (tx) => {
     // Create project using 'tx'
-    const [newProject] = await tx
+    const newProjectResult = await tx
       .insert(projects)
       .values({
         organizationId,
@@ -133,6 +133,7 @@ export const createProject = async (
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,
       });
+    const newProject = newProjectResult[0];
 
     // Add creator as project member using 'tx'
     await tx.insert(projectMembers).values({
@@ -161,7 +162,7 @@ export const getProjectById = async (projectId: string): Promise<ProjectWithStat
     return cached;
   }
 
-  const [project] = await db
+  const projectResult = await db
     .select({
       id: projects.id,
       organizationId: projects.organizationId,
@@ -204,6 +205,7 @@ export const getProjectById = async (projectId: string): Promise<ProjectWithStat
       )
     )
     .limit(1);
+  const project = projectResult[0];
 
   assertExists(project, 'Project');
 
@@ -257,7 +259,7 @@ export const updateProject = async (
     throw new BadRequestError('No fields to update');
   }
 
-  const [project] = await db
+  const projectResult = await db
     .update(projects)
     .set(updateData)
     .where(and(eq(projects.id, projectId), isNull(projects.deletedAt)))
@@ -280,6 +282,7 @@ export const updateProject = async (
       createdAt: projects.createdAt,
       updatedAt: projects.updatedAt,
     });
+  const project = projectResult[0];
 
   // Clear cache
   await cache.del(`project:${projectId}`);
@@ -296,7 +299,7 @@ export const updateProjectSettings = async (
   projectId: string,
   settings: any
 ): Promise<Project> => {
-  const [project] = await db
+  const projectResult = await db
     .update(projects)
     .set({
       settings,
@@ -322,6 +325,7 @@ export const updateProjectSettings = async (
       createdAt: projects.createdAt,
       updatedAt: projects.updatedAt,
     });
+  const project = projectResult[0];
 
   assertExists(project, 'Project');
 
@@ -386,10 +390,11 @@ export const listOrganizationProjects = async (
   const whereClause = and(...conditions);
 
   // Get total count
-  const [{ count }] = await db
+  const countResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(projects)
     .where(whereClause);
+  const { count } = countResult[0];
 
   const total = Number(count);
 
@@ -528,7 +533,7 @@ export const addProjectMember = async (
   role: string = 'member'
 ): Promise<ProjectMember> => {
   // Check if already a member
-  const [existingMember] = await db
+  const existingMemberResult = await db
     .select({ id: projectMembers.id })
     .from(projectMembers)
     .where(
@@ -539,12 +544,13 @@ export const addProjectMember = async (
       )
     )
     .limit(1);
+  const existingMember = existingMemberResult[0];
 
   if (existingMember) {
     throw new ConflictError('User is already a member of this project');
   }
 
-  const [member] = await db
+  const memberResult = await db
     .insert(projectMembers)
     .values({
       projectId,
@@ -558,6 +564,7 @@ export const addProjectMember = async (
       role: projectMembers.role,
       addedAt: projectMembers.addedAt,
     });
+  const member = memberResult[0];
 
   logger.info('Project member added', { projectId, userId, role });
 
@@ -582,7 +589,7 @@ export const removeProjectMember = async (projectId: string, userId: string): Pr
  * Check if user is project member
  */
 export const isProjectMember = async (projectId: string, userId: string): Promise<boolean> => {
-  const [member] = await db
+  const memberResult = await db
     .select({ id: projectMembers.id })
     .from(projectMembers)
     .where(
@@ -593,6 +600,7 @@ export const isProjectMember = async (projectId: string, userId: string): Promis
       )
     )
     .limit(1);
+  const member = memberResult[0];
 
   return !!member;
 };
