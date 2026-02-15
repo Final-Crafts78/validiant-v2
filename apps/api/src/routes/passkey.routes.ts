@@ -100,9 +100,9 @@ app.post(
   zValidator('json', registrationOptionsSchema),
   async (c) => {
     try {
-      const userId = c.get('userId' as never);
-      const userEmail = c.get('userEmail' as never);
-      const userName = c.get('userName' as never);
+      const userId = c.get('userId' as never) as string;
+      const userEmail = c.get('userEmail' as never) as string;
+      const userName = c.get('userName' as never) as string;
       
       if (!userId || !userEmail) {
         return c.json(
@@ -157,7 +157,7 @@ app.post(
   zValidator('json', registrationVerifySchema),
   async (c) => {
     try {
-      const userId = c.get('userId' as never);
+      const userId = c.get('userId' as never) as string;
       const { response, deviceName } = c.req.valid('json');
       
       if (!userId) {
@@ -357,7 +357,7 @@ app.post(
  */
 app.get('/list', authenticate, async (c) => {
   try {
-    const userId = c.get('userId' as never);
+    const userId = c.get('userId' as never) as string;
     
     if (!userId) {
       return c.json(
@@ -396,7 +396,7 @@ app.get('/list', authenticate, async (c) => {
  */
 app.delete('/:credentialID', authenticate, async (c) => {
   try {
-    const userId = c.get('userId' as never);
+    const userId = c.get('userId' as never) as string;
     const credentialID = c.req.param('credentialID');
     
     if (!userId) {
@@ -440,7 +440,7 @@ app.patch(
   zValidator('json', updateDeviceNameSchema),
   async (c) => {
     try {
-      const userId = c.get('userId' as never);
+      const userId = c.get('userId' as never) as string;
       const credentialID = c.req.param('credentialID');
       const { deviceName } = c.req.valid('json');
       

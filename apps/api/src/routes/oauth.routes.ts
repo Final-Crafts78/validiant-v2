@@ -327,7 +327,7 @@ app.post(
   async (c) => {
     try {
       const { provider } = c.req.valid('param');
-      const userId = c.get('userId' as never);
+      const userId = c.get('userId' as never) as string;
       
       if (!userId) {
         return c.json(
