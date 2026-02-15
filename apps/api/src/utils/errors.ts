@@ -5,7 +5,7 @@
  * Provides consistent error responses across the API.
  */
 
-import { Response } from 'express';
+import type { Context } from 'hono';
 import { ZodError } from 'zod';
 import { logger } from './logger';
 import { ERROR_CODES as API_ERROR_CODES } from '@validiant/shared';
@@ -43,7 +43,7 @@ export class ApiError extends Error {
  */
 export class BadRequestError extends ApiError {
   constructor(message: string = 'Bad request', details?: any) {
-    super(message, 400, API_ERROR_CODES.BAD_REQUEST, true, details);
+    super(message, 400, 'BAD_REQUEST', true, details);
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }
 }
@@ -83,7 +83,7 @@ export class NotFoundError extends ApiError {
  */
 export class ConflictError extends ApiError {
   constructor(message: string = 'Resource already exists', details?: any) {
-    super(message, 409, API_ERROR_CODES.CONFLICT, true, details);
+    super(message, 409, 'CONFLICT', true, details);
     Object.setPrototypeOf(this, ConflictError.prototype);
   }
 }
@@ -103,7 +103,7 @@ export class ValidationError extends ApiError {
  */
 export class RateLimitError extends ApiError {
   constructor(message: string = 'Too many requests', retryAfter?: number) {
-    super(message, 429, API_ERROR_CODES.RATE_LIMIT_EXCEEDED, true, { retryAfter });
+    super(message, 429, 'RATE_LIMIT_EXCEEDED', true, { retryAfter });
     Object.setPrototypeOf(this, RateLimitError.prototype);
   }
 }
@@ -113,7 +113,7 @@ export class RateLimitError extends ApiError {
  */
 export class InternalServerError extends ApiError {
   constructor(message: string = 'Internal server error', details?: any) {
-    super(message, 500, API_ERROR_CODES.INTERNAL_ERROR, true, details);
+    super(message, 500, 'INTERNAL_ERROR', true, details);
     Object.setPrototypeOf(this, InternalServerError.prototype);
   }
 }
@@ -133,7 +133,7 @@ export class ServiceUnavailableError extends ApiError {
  */
 export class DatabaseError extends ApiError {
   constructor(message: string = 'Database error occurred', details?: any) {
-    super(message, 500, API_ERROR_CODES.DATABASE_ERROR, true, details);
+    super(message, 500, 'DATABASE_ERROR', true, details);
     Object.setPrototypeOf(this, DatabaseError.prototype);
   }
 }
@@ -143,7 +143,7 @@ export class DatabaseError extends ApiError {
  */
 export class AuthenticationError extends ApiError {
   constructor(message: string = 'Authentication failed', details?: any) {
-    super(message, 401, API_ERROR_CODES.AUTHENTICATION_FAILED, true, details);
+    super(message, 401, 'AUTHENTICATION_FAILED', true, details);
     Object.setPrototypeOf(this, AuthenticationError.prototype);
   }
 }
@@ -237,7 +237,7 @@ export const formatErrorResponse = (
     success: false,
     error: {
       message: error.message || 'An unexpected error occurred',
-      code: API_ERROR_CODES.INTERNAL_ERROR,
+      code: 'INTERNAL_ERROR',
       statusCode: 500,
       ...(includeStack && { stack: error.stack }),
     },
@@ -245,13 +245,13 @@ export const formatErrorResponse = (
 };
 
 /**
- * Send error response
+ * Send error response (Hono compatible)
  */
 export const sendErrorResponse = (
-  res: Response,
+  c: Context,
   error: Error | ApiError,
   includeStack: boolean = false
-): void => {
+): Response => {
   const errorResponse = formatErrorResponse(error, includeStack);
   
   // Log error
@@ -270,7 +270,7 @@ export const sendErrorResponse = (
     });
   }
 
-  res.status(errorResponse.error.statusCode).json(errorResponse);
+  return c.json(errorResponse, errorResponse.error.statusCode);
 };
 
 /**
