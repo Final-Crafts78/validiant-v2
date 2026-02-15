@@ -15,6 +15,7 @@ export const UserRole = {
   MANAGER: 'manager',
   MEMBER: 'member',
   GUEST: 'guest',
+  USER: 'member', // Alias for backward compatibility
 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
