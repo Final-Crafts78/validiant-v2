@@ -130,7 +130,7 @@ const getPartyKitURL = (projectId: string, userId?: string, userName?: string): 
  *       <h2>Project Board</h2>
  *       <div>
  *         {connectionState === 'Open' && (
- *           <span>🟋️ Connected</span>
+ *           <span>🟢 Connected</span>
  *         )}
  *         {connectionState === 'Connecting' && (
  *           <span>⏳ Connecting...</span>
@@ -159,7 +159,7 @@ export function useProjectRealtime(projectId: string, enabled = true) {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
 
   // Get PartyKit WebSocket URL
-  const wsURL = getPartyKitURL(
+  const _wsURL = getPartyKitURL(
     projectId,
     user?.id,
     user?.fullName
