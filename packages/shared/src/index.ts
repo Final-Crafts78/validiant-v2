@@ -7,8 +7,8 @@
 // Types
 export * from './types';
 
-// Validation
-export * from './validation/schemas';
+// Validation Schemas
+export * from './schemas';
 
 // Utils
 export * from './utils';
