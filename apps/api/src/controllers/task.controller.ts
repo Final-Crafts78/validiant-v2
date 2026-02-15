@@ -70,7 +70,10 @@ export const createTask = async (c: Context) => {
     const task = await taskService.createTask(
       validatedData.projectId,
       user.userId,
-      validatedData
+      {
+        ...validatedData,
+        dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+      }
     );
 
     return c.json(
@@ -207,7 +210,10 @@ export const updateTask = async (c: Context) => {
     // ELITE PATTERN: Explicit type casting for decoupled validation
     const validatedData = (await c.req.json()) as z.infer<typeof updateTaskSchema>;
 
-    const task = await taskService.updateTask(id, validatedData);
+    const task = await taskService.updateTask(id, {
+      ...validatedData,
+      dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+    });
 
     return c.json({
       success: true,
