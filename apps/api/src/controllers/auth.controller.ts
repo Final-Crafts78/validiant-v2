@@ -82,7 +82,7 @@ const formatUserResponse = (user: User) => ({
 export const register = async (c: Context) => {
   try {
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { email, password, fullName } = c.req.valid('json') as z.infer<typeof userRegistrationSchema>;
+    const { email, password, fullName } = (await c.req.json()) as z.infer<typeof userRegistrationSchema>;
 
     // Parse fullName into firstName and lastName
     const nameParts = fullName.trim().split(/\s+/);
@@ -181,7 +181,7 @@ export const register = async (c: Context) => {
 export const login = async (c: Context) => {
   try {
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { email, password } = c.req.valid('json') as z.infer<typeof userLoginSchema>;
+    const { email, password } = (await c.req.json()) as z.infer<typeof userLoginSchema>;
 
     // Find user
     const [user] = await db
