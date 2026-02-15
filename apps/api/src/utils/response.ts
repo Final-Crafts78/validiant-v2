@@ -4,7 +4,7 @@
  * Standardized API response helpers.
  */
 
-import { Response } from 'express';
+import type { Context } from 'hono';
 import { HTTP_STATUS } from '@validiant/shared';
 import type { ApiResponse } from '@validiant/shared';
 
@@ -12,43 +12,43 @@ import type { ApiResponse } from '@validiant/shared';
  * Send success response
  */
 export const sendSuccess = <T>(
-  res: Response,
+  c: Context,
   data: T,
   statusCode: number = HTTP_STATUS.OK
-): void => {
+): Response => {
   const response: ApiResponse<T> = {
     success: true,
     data,
   };
-  res.status(statusCode).json(response);
+  return c.json(response, statusCode);
 };
 
 /**
  * Send error response
  */
 export const sendError = (
-  res: Response,
+  c: Context,
   message: string,
   statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
-): void => {
+): Response => {
   const response: ApiResponse = {
     success: false,
     error: message,
   };
-  res.status(statusCode).json(response);
+  return c.json(response, statusCode);
 };
 
 /**
  * Send validation error response
  */
 export const sendValidationError = (
-  res: Response,
+  c: Context,
   errors: any
-): void => {
+): Response => {
   const response: ApiResponse = {
     success: false,
     error: 'Validation failed',
     message: 'Please check your input',
   };
-  res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json(response);
+  return c.json(response, HTTP_STATUS.UNPROCESSABLE_ENTITY);
 };
