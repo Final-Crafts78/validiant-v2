@@ -138,11 +138,11 @@ const findOrCreateOAuthUser = async (
   
   if (existingUser) {
     // Update profile data (avatarUrl, name) if changed
-    if (existingUser.avatarUrl !== profile.avatar || existingUser.fullName !== profile.name) {
+    if (existingUser.avatarUrl !== profile.avatarUrl || existingUser.fullName !== profile.name) {
       [existingUser] = await db
         .update(users)
         .set({
-          avatarUrl: profile.avatar,
+          avatarUrl: profile.avatarUrl,
           fullName: profile.name,
           lastLoginAt: new Date(),
         })
@@ -186,7 +186,7 @@ const findOrCreateOAuthUser = async (
       .update(users)
       .set({
         [providerIdField]: profile.id,
-        avatarUrl: profile.avatar || existingUser.avatarUrl,
+        avatarUrl: profile.avatarUrl || existingUser.avatarUrl,
         emailVerified: profile.emailVerified || existingUser.emailVerified,
         lastLoginAt: new Date(),
       })
@@ -211,7 +211,7 @@ const findOrCreateOAuthUser = async (
     .values({
       email: profile.email.toLowerCase(),
       fullName: profile.name,
-      avatarUrl: profile.avatar,
+      avatarUrl: profile.avatarUrl,
       [providerIdField]: profile.id,
       role: UserRole.USER,
       status: UserStatus.ACTIVE,
