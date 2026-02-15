@@ -703,19 +703,19 @@ export const getUserActivity = async (c: Context) => {
 
     const offset = (page - 1) * perPage;
 
-    // Import database (will be updated to Drizzle in Phase 3.5)
-    const { db } = await import('../config/database.config');
+    // Import database
+    const { db } = await import('../db/index');
 
     // Get total count
-    const countResult = await db.one<{ count: number }>(
+    const countResult = await db.execute(
       'SELECT COUNT(*) as count FROM user_activity_log WHERE user_id = $1',
       [id]
     );
 
-    const total = countResult?.count || 0;
+    const total = countResult?.rows?.[0]?.count || 0;
 
     // Get activity logs
-    const activities = await db.any(
+    const activities = await db.execute(
       `
         SELECT 
           id, action, entity_type as "entityType", entity_id as "entityId",
@@ -732,12 +732,12 @@ export const getUserActivity = async (c: Context) => {
     return c.json({
       success: true,
       data: {
-        activities,
+        activities: activities.rows || [],
         pagination: {
-          total,
+          total: typeof total === 'number' ? total : parseInt(String(total), 10),
           page,
           perPage,
-          totalPages: Math.ceil(total / perPage),
+          totalPages: Math.ceil((typeof total === 'number' ? total : parseInt(String(total), 10)) / perPage),
         },
       },
     });
