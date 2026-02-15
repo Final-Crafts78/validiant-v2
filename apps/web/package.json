@@ -17,7 +17,7 @@
     "react-dom": "^18.3.0",
     "@tanstack/react-query": "^5.28.0",
     "axios": "^1.6.8",
-    "partysocket": "^0.0.116",
+    "partysocket": "^1.1.13",
     "zustand": "^4.5.2",
     "zod": "^3.22.4",
     "react-hook-form": "^7.51.0",
