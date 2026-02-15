@@ -344,7 +344,7 @@ export const listProjectTasks = async (c: Context) => {
     const result = await taskService.listProjectTasks(projectId, {
       status: validatedQuery.status,
       priority: validatedQuery.priority,
-      assignedTo: validatedQuery.assignedTo,
+      assigneeId: validatedQuery.assigneeId,
       search: validatedQuery.search,
       parentTaskId: validatedQuery.parentTaskId,
       tags: validatedQuery.tags,
