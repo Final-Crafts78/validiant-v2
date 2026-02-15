@@ -38,10 +38,18 @@ export const users = pgTable(
     fullName: text('full_name').notNull(),
     firstName: text('first_name'),
     lastName: text('last_name'),
-    avatar: text('avatar'), // Profile picture URL
+    
+    // Profile fields
+    avatarUrl: text('avatar_url'), // Profile picture URL (renamed from avatar for consistency)
     displayName: text('display_name'),
     bio: text('bio'),
     phoneNumber: varchar('phone_number', { length: 20 }),
+    
+    // User preferences and settings
+    preferences: jsonb('preferences').default({}),
+    notificationPreferences: jsonb('notification_preferences').default({}),
+    
+    // Security
     twoFactorEnabled: boolean('two_factor_enabled').default(false),
     
     // OAuth Provider IDs
@@ -182,7 +190,7 @@ export const organizations = pgTable(
     industry: text('industry'),
     size: text('size'),
     logoUrl: text('logo_url'),
-    settings: jsonb('settings'),
+    settings: jsonb('settings').default({}),
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -227,6 +235,7 @@ export const organizationMembers = pgTable(
     joinedAt: timestamp('joined_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     // Unique constraint: one user can only be a member once per organization
@@ -265,16 +274,34 @@ export const projects = pgTable(
     progress: integer('progress').notNull().default(0),
     color: text('color'),
     icon: text('icon'),
+    
+    // Financial tracking
+    budget: integer('budget'),
+    
+    // Project settings and configuration
+    settings: jsonb('settings').default({}),
+    
+    // Time tracking
+    estimatedHours: integer('estimated_hours'),
+    actualHours: integer('actual_hours').default(0),
+    
+    // References
     organizationId: uuid('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
+    createdBy: uuid('created_by')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    
+    // Dates
     dueDate: timestamp('due_date', { mode: 'date', withTimezone: true }),
     startDate: timestamp('start_date', { mode: 'date', withTimezone: true }),
     endDate: timestamp('end_date', { mode: 'date', withTimezone: true }),
-    estimatedHours: integer('estimated_hours'),
+    
+    // Timestamps
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -300,6 +327,11 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
     references: [users.id],
     relationName: 'ProjectOwner',
   }),
+  creator: one(users, {
+    fields: [projects.createdBy],
+    references: [users.id],
+    relationName: 'ProjectCreator',
+  }),
   tasks: many(tasks),
 }));
 
@@ -315,7 +347,16 @@ export const tasks = pgTable(
     description: text('description'),
     status: text('status').notNull().default('todo'), // 'todo' | 'in-progress' | 'completed'
     priority: text('priority').notNull().default('medium'), // 'low' | 'medium' | 'high' | 'urgent'
-    position: real('position'),
+    position: real('position').default(0),
+    
+    // Task metadata
+    tags: jsonb('tags').$type<string[]>().default([]),
+    customFields: jsonb('custom_fields').default({}),
+    
+    // Task hierarchy (subtasks)
+    parentTaskId: uuid('parent_task_id').references(() => tasks.id, { onDelete: 'cascade' }),
+    
+    // References
     projectId: uuid('project_id')
       .notNull()
       .references(() => projects.id, { onDelete: 'cascade' }),
@@ -323,9 +364,16 @@ export const tasks = pgTable(
     createdById: uuid('created_by_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    dueDate: timestamp('due_date', { mode: 'date', withTimezone: true }),
+    
+    // Time tracking
     estimatedHours: integer('estimated_hours'),
     actualHours: integer('actual_hours'),
+    
+    // Dates
+    dueDate: timestamp('due_date', { mode: 'date', withTimezone: true }),
+    completedAt: timestamp('completed_at', { mode: 'date', withTimezone: true }),
+    
+    // Timestamps
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -337,12 +385,13 @@ export const tasks = pgTable(
   (table) => ({
     projectIdx: index('tasks_project_id_idx').on(table.projectId),
     assigneeIdx: index('tasks_assignee_id_idx').on(table.assigneeId),
+    parentTaskIdx: index('tasks_parent_task_id_idx').on(table.parentTaskId),
     statusIdx: index('tasks_status_idx').on(table.status),
     priorityIdx: index('tasks_priority_idx').on(table.priority),
   })
 );
 
-export const tasksRelations = relations(tasks, ({ one }) => ({
+export const tasksRelations = relations(tasks, ({ one, many }) => ({
   project: one(projects, {
     fields: [tasks.projectId],
     references: [projects.id],
@@ -357,6 +406,12 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
     references: [users.id],
     relationName: 'TaskCreator',
   }),
+  parentTask: one(tasks, {
+    fields: [tasks.parentTaskId],
+    references: [tasks.id],
+    relationName: 'ParentTask',
+  }),
+  subtasks: many(tasks, { relationName: 'ParentTask' }),
 }));
 
 // ============================================================================
