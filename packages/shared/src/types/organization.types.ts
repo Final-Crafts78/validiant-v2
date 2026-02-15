@@ -415,7 +415,6 @@ export const SUBSCRIPTION_LIMITS: Record<SubscriptionTier, {
  * Type guard to check if user is organization owner
  */
 export const isOrganizationOwner = (
-  organizationId: string,
   userId: string,
   organization: Organization
 ): boolean => {
@@ -446,8 +445,29 @@ export const hasReachedLimit = (
   usage: OrganizationUsage,
   resource: 'projects' | 'storage' | 'apiCalls' | 'integrations'
 ): boolean => {
-  const resourceUsage = usage[resource];
-  if (resourceUsage.limit === -1) return false; // unlimited
-  return resourceUsage.current >= resourceUsage.limit || 
-         (resource === 'storage' && resourceUsage.used >= resourceUsage.limit);
+  if (resource === 'projects') {
+    const { total, limit } = usage.projects;
+    if (limit === -1) return false; // unlimited
+    return total >= limit;
+  }
+  
+  if (resource === 'storage') {
+    const { used, limit } = usage.storage;
+    if (limit === -1) return false; // unlimited
+    return used >= limit;
+  }
+  
+  if (resource === 'apiCalls') {
+    const { current, limit } = usage.apiCalls;
+    if (limit === -1) return false; // unlimited
+    return current >= limit;
+  }
+  
+  if (resource === 'integrations') {
+    const { active, limit } = usage.integrations;
+    if (limit === -1) return false; // unlimited
+    return active >= limit;
+  }
+  
+  return false;
 };
