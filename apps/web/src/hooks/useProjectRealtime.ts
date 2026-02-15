@@ -90,25 +90,6 @@ export interface OnlineUser {
  * PartyKit Configuration
  */
 const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_URL || 'localhost:1999';
-const PARTYKIT_PROTOCOL = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
-
-/**
- * Get PartyKit WebSocket URL for project
- */
-const getPartyKitURL = (projectId: string, userId?: string, userName?: string): string => {
-  const baseURL = `${PARTYKIT_PROTOCOL}://${PARTYKIT_HOST}/parties/main/${projectId}`;
-  
-  // Add user info to connection (for presence tracking)
-  if (userId && userName) {
-    const params = new URLSearchParams({
-      userId,
-      userName: encodeURIComponent(userName),
-    });
-    return `${baseURL}?${params.toString()}`;
-  }
-  
-  return baseURL;
-};
 
 /**
  * useProjectRealtime Hook
@@ -157,13 +138,6 @@ export function useProjectRealtime(projectId: string, enabled = true) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
-
-  // Get PartyKit WebSocket URL
-  const _wsURL = getPartyKitURL(
-    projectId,
-    user?.id,
-    user?.fullName
-  );
 
   // 🔌 CRITICAL: Use PartySocket (NOT raw WebSocket)
   // PartySocket provides automatic reconnection with exponential backoff
