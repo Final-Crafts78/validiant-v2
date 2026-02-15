@@ -301,16 +301,16 @@ export const assert = (
 };
 
 /**
- * Assert resource exists (with explicit type annotation for TS2775 fix)
+ * Assert resource exists (function declaration for TS2775 fix)
  */
-export const assertExists = <T>(
+export function assertExists<T>(
   value: T | null | undefined,
   name: string
-): asserts value is NonNullable<T> => {
+): asserts value is NonNullable<T> {
   if (!value) {
     throw new NotFoundError(`${name} not found`);
   }
-};
+}
 
 /**
  * Assert user has permission
