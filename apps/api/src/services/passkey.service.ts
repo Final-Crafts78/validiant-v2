@@ -37,7 +37,6 @@ import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
 import { eq, and, isNull } from 'drizzle-orm';
 import { db } from '../db';
 import { users, passkeyCredentials } from '../db/schema';
-import { cache } from '../config/redis.config';
 import {
   rpName,
   rpID,
@@ -497,7 +496,7 @@ export const deletePasskey = async (userId: string, credentialID: string): Promi
   }
   
   // Delete passkey
-  const result = await db
+  const _result = await db
     .delete(passkeyCredentials)
     .where(
       and(
