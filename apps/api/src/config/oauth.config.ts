@@ -53,7 +53,7 @@ try {
     logger.warn('⚠️  Google OAuth not configured (missing credentials)');
   }
 } catch (error) {
-  logger.error('❌ Failed to initialize Google OAuth:', error);
+  logger.error('❌ Failed to initialize Google OAuth:', error as Error);
 }
 
 /**
@@ -77,7 +77,7 @@ try {
     logger.warn('⚠️  GitHub OAuth not configured (missing credentials)');
   }
 } catch (error) {
-  logger.error('❌ Failed to initialize GitHub OAuth:', error);
+  logger.error('❌ Failed to initialize GitHub OAuth:', error as Error);
 }
 
 /**
