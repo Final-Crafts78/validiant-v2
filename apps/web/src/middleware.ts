@@ -32,18 +32,6 @@ const AUTH_ROUTES = [
 ];
 
 /**
- * Public routes that don't require authentication
- */
-const PUBLIC_ROUTES = [
-  '/',
-  '/about',
-  '/pricing',
-  '/contact',
-  '/terms',
-  '/privacy',
-];
-
-/**
  * Check if path matches any route pattern
  */
 function matchesRoute(pathname: string, routes: string[]): boolean {
@@ -83,7 +71,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(dashboardUrl);
   }
 
-  // Allow request to proceed
+  // Allow request to proceed (default allow pattern)
   return NextResponse.next();
 }
 
