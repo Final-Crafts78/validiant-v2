@@ -12,8 +12,16 @@
  */
 
 import { Context } from 'hono';
+import { z } from 'zod';
 import * as organizationService from '../services/organization.service';
-import { OrganizationRole } from '@validiant/shared';
+import {
+  OrganizationRole,
+  createOrganizationSchema,
+  updateOrganizationSchema,
+  updateOrganizationSettingsSchema,
+  addOrganizationMemberSchema,
+  updateMemberRoleSchema,
+} from '@validiant/shared';
 
 /**
  * Check if user has required role in organization
@@ -22,8 +30,8 @@ import { OrganizationRole } from '@validiant/shared';
 const checkOrganizationRole = async (
   organizationId: string,
   userId: string,
-  requiredRoles: OrganizationRole[]
-): Promise<{ hasPermission: boolean; userRole?: OrganizationRole }> => {
+  requiredRoles: (typeof OrganizationRole)[keyof typeof OrganizationRole][]
+): Promise<{ hasPermission: boolean; userRole?: typeof OrganizationRole[keyof typeof OrganizationRole] }> => {
   const userRole = await organizationService.getUserRole(organizationId, userId);
 
   if (!userRole || !requiredRoles.includes(userRole)) {
@@ -54,8 +62,8 @@ export const createOrganization = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const validatedData = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof createOrganizationSchema>;
 
     const organization = await organizationService.createOrganization(
       user.userId,
@@ -283,8 +291,8 @@ export const updateOrganization = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const validatedData = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateOrganizationSchema>;
 
     const organization = await organizationService.updateOrganization(id, validatedData);
 
@@ -356,8 +364,8 @@ export const updateOrganizationSettings = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { settings } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { settings } = c.req.valid('json') as z.infer<typeof updateOrganizationSettingsSchema>;
 
     const organization = await organizationService.updateOrganizationSettings(
       id,
@@ -562,8 +570,8 @@ export const addOrganizationMember = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const validatedData = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof addOrganizationMemberSchema>;
 
     const member = await organizationService.addOrganizationMember(
       id,
@@ -655,8 +663,8 @@ export const updateMemberRole = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { role } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { role } = c.req.valid('json') as z.infer<typeof updateMemberRoleSchema>;
 
     // Only owners can assign owner role
     if (role === OrganizationRole.OWNER) {

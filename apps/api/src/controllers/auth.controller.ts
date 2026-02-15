@@ -23,6 +23,7 @@
  */
 
 import { Context } from 'hono';
+import { z } from 'zod';
 import { setCookie, getCookie, deleteCookie } from 'hono/cookie';
 import { db, schema } from '../db';
 import { eq } from 'drizzle-orm';
@@ -34,6 +35,10 @@ import {
   decodeToken,
 } from '../utils/jwt';
 import { cache } from '../config/redis.config';
+import {
+  userRegistrationSchema,
+  userLoginSchema,
+} from '@validiant/shared';
 import type { User } from '../db/schema';
 
 /**
@@ -70,14 +75,19 @@ const formatUserResponse = (user: User) => ({
  * Register new user
  * POST /api/v1/auth/register
  * 
- * Payload validated by zValidator(registerSchema) at route level
+ * Payload validated by zValidator(userRegistrationSchema) at route level
  * 
  * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const register = async (c: Context) => {
   try {
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { email, password, firstName, lastName } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { email, password, fullName } = c.req.valid('json') as z.infer<typeof userRegistrationSchema>;
+
+    // Parse fullName into firstName and lastName
+    const nameParts = fullName.trim().split(/\s+/);
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
 
     // Check if user already exists
     const existingUser = await db
@@ -100,7 +110,7 @@ export const register = async (c: Context) => {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    // Create user with fullName field (CATEGORY 6 FIX)
     const [user] = await db
       .insert(schema.users)
       .values({
@@ -108,6 +118,7 @@ export const register = async (c: Context) => {
         passwordHash: hashedPassword,
         firstName,
         lastName,
+        fullName,  // ← CATEGORY 6 FIX: Added fullName field
       })
       .returning();
 
@@ -163,14 +174,14 @@ export const register = async (c: Context) => {
  * Login user
  * POST /api/v1/auth/login
  * 
- * Payload validated by zValidator(loginSchema) at route level
+ * Payload validated by zValidator(userLoginSchema) at route level
  * 
  * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const login = async (c: Context) => {
   try {
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { email, password } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { email, password } = c.req.valid('json') as z.infer<typeof userLoginSchema>;
 
     // Find user
     const [user] = await db
@@ -185,6 +196,18 @@ export const login = async (c: Context) => {
           success: false,
           error: 'Invalid credentials',
           message: 'Email or password is incorrect',
+        },
+        401
+      );
+    }
+
+    // CATEGORY 6 FIX: Add passwordHash null check (OAuth user protection)
+    if (!user.passwordHash) {
+      return c.json(
+        {
+          success: false,
+          error: 'Invalid credentials',
+          message: 'This account uses OAuth authentication',
         },
         401
       );
