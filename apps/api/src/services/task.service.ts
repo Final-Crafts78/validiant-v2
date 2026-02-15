@@ -25,27 +25,7 @@ import {
 } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { broadcastTaskEvent, BroadcastEvent } from '../utils/broadcast';
-
-/**
- * Task status enum
- */
-export enum TaskStatus {
-  TODO = 'todo',
-  IN_PROGRESS = 'in_progress',
-  IN_REVIEW = 'in_review',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
-
-/**
- * Task priority enum
- */
-export enum TaskPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
+import { TaskStatus, TaskPriority } from '@validiant/shared';
 
 /**
  * Task interface
@@ -434,7 +414,7 @@ export const listProjectTasks = async (
   params?: {
     status?: TaskStatus;
     priority?: TaskPriority;
-    assignedTo?: string;
+    assigneeId?: string;
     search?: string;
     parentTaskId?: string | null;
     tags?: string[];
@@ -476,13 +456,13 @@ export const listProjectTasks = async (
   }
 
   // Filter by assigned user using EXISTS subquery
-  if (params?.assignedTo) {
+  if (params?.assigneeId) {
     conditions.push(
       sql`EXISTS (
         SELECT 1
         FROM ${taskAssignees}
         WHERE ${taskAssignees.taskId} = ${tasks.id}
-        AND ${taskAssignees.userId} = ${params.assignedTo}
+        AND ${taskAssignees.userId} = ${params.assigneeId}
         AND ${taskAssignees.deletedAt} IS NULL
       )`
     );
@@ -748,3 +728,6 @@ export const updateTaskPosition = async (taskId: string, newPosition: number): P
   // Clear cache
   await cache.del(`task:${taskId}`);
 };
+
+// ✅ Export TaskStatus and TaskPriority for backward compatibility with controllers
+export { TaskStatus, TaskPriority };
