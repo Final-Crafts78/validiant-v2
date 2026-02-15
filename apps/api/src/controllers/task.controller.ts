@@ -75,7 +75,6 @@ export const createTask = async (c: Context) => {
         ...validatedData,
         dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
         estimatedHours: validatedData.estimatedHours ?? undefined,
-        actualHours: validatedData.actualHours ?? undefined,
       }
     );
 
