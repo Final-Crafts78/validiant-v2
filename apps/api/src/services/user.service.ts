@@ -7,13 +7,11 @@
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  */
 
-import { eq, and, isNull, sql, or, like, desc, asc } from 'drizzle-orm';
+import { eq, and, isNull, sql, or, desc, asc } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
 import { cache } from '../config/redis.config';
 import {
-  NotFoundError,
-  ConflictError,
   BadRequestError,
   assertExists,
 } from '../utils/errors';
