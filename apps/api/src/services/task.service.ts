@@ -13,9 +13,9 @@
  * - Non-blocking broadcasts (fire-and-forget)
  */
 
-import { eq, and, isNull, sql, or, desc, asc, inArray, exists } from 'drizzle-orm';
+import { eq, and, isNull, sql, or, desc, asc, inArray } from 'drizzle-orm';
 import { db } from '../db';
-import { tasks, taskAssignees, projects, organizations, users } from '../db/schema';
+import { tasks, taskAssignees, projects, users } from '../db/schema';
 import { cache } from '../config/redis.config';
 import {
   NotFoundError,
