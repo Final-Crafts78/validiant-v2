@@ -144,7 +144,7 @@ export const broadcastToProject = async (
       });
   } catch (error) {
     // Catch any synchronous errors (shouldn't happen)
-    logger.error('Broadcast setup error:', error);
+    logger.error('Broadcast setup error:', error as Error);
   }
 };
 
