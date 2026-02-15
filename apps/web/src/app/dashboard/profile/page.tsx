@@ -10,11 +10,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { format } from '@/lib/utils';
 import {
-  User,
-  Mail,
-  Calendar,
   Shield,
-  Bell,
   Lock,
   Eye,
   EyeOff,

@@ -19,7 +19,6 @@ import {
   Users,
   Calendar,
   CheckCircle2,
-  Clock,
 } from 'lucide-react';
 
 /**
