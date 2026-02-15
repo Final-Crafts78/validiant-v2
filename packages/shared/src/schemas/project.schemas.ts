@@ -132,8 +132,11 @@ export const projectSettingsSchema = z.object({
 
 /**
  * Update project settings schema
+ * CATEGORY 5 FIX: Wrapped in object with 'settings' property to match controller expectations
  */
-export const updateProjectSettingsSchema = projectSettingsSchema.partial();
+export const updateProjectSettingsSchema = z.object({
+  settings: z.record(z.any()),
+});
 
 /**
  * Create task schema
@@ -209,13 +212,19 @@ export const moveTaskSchema = z.object({
 /**
  * Task list query schema
  * For paginated task listing with optional filters
+ * CATEGORY 5 FIX: Added priority, perPage, search, parentTaskId, tags fields
  */
 export const taskListQuerySchema = z.object({
   projectId: z.string().uuid().optional(),
   status: taskStatusSchema.optional(),
   assigneeId: z.string().uuid().optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
+  perPage: z.coerce.number().min(1).max(100).default(20),
+  search: z.string().optional(),
+  parentTaskId: z.string().uuid().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 /**
@@ -464,15 +473,18 @@ export const duplicateProjectSchema = z.object({
 /**
  * Project list query schema
  * For paginated project listing with filters
- * CATEGORY 5 FIX: Added for project list pagination
+ * CATEGORY 5 FIX: Added perPage, priority, search fields
  */
 export const projectListQuerySchema = z.object({
   organizationId: z.string().uuid().optional(),
-  status: z.string().optional(),
+  status: z.enum(['planning', 'active', 'on-hold', 'completed', 'archived']).optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
+  perPage: z.coerce.number().min(1).max(100).default(20),
   sortBy: z.enum(['createdAt', 'updatedAt', 'name', 'priority']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  search: z.string().optional(),
 });
 
 /**
