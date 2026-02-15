@@ -6,9 +6,13 @@
  * 
  * Edge-compatible Hono implementation.
  * Functions: 15 total (CRUD, members, status operations)
+ * 
+ * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
+ * All validation happens at route level via @hono/zod-validator
  */
 
 import { Context } from 'hono';
+import { z } from 'zod';
 import * as projectService from '../services/project.service';
 import * as organizationService from '../services/organization.service';
 import {
@@ -40,6 +44,8 @@ const checkProjectAccess = async (projectId: string, userId: string): Promise<bo
 /**
  * Create project
  * POST /api/v1/projects
+ * 
+ * Payload validated by zValidator(createProjectSchema) at route level
  */
 export const createProject = async (c: Context) => {
   try {
@@ -56,8 +62,8 @@ export const createProject = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = createProjectSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof createProjectSchema>;
 
     // Check organization access
     const hasAccess = await checkOrganizationAccess(validatedData.organizationId, user.userId);
@@ -203,6 +209,8 @@ export const getProjectById = async (c: Context) => {
 /**
  * Update project
  * PUT /api/v1/projects/:id
+ * 
+ * Payload validated by zValidator(updateProjectSchema) at route level
  */
 export const updateProject = async (c: Context) => {
   try {
@@ -244,8 +252,8 @@ export const updateProject = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateProjectSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateProjectSchema>;
 
     const project = await projectService.updateProject(id, validatedData);
 
@@ -270,6 +278,8 @@ export const updateProject = async (c: Context) => {
 /**
  * Update project settings
  * PATCH /api/v1/projects/:id/settings
+ * 
+ * Payload validated by zValidator(updateProjectSettingsSchema) at route level
  */
 export const updateProjectSettings = async (c: Context) => {
   try {
@@ -311,8 +321,8 @@ export const updateProjectSettings = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateProjectSettingsSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateProjectSettingsSchema>;
 
     const project = await projectService.updateProjectSettings(id, validatedData.settings);
 
@@ -417,6 +427,8 @@ export const deleteProject = async (c: Context) => {
 /**
  * List organization projects
  * GET /api/v1/organizations/:organizationId/projects
+ * 
+ * Query validated by zValidator(projectListQuerySchema) at route level
  */
 export const listOrganizationProjects = async (c: Context) => {
   try {
@@ -458,8 +470,8 @@ export const listOrganizationProjects = async (c: Context) => {
       );
     }
 
-    const query = c.req.query();
-    const validatedQuery = projectListQuerySchema.parse(query);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedQuery = c.req.valid('query') as z.infer<typeof projectListQuerySchema>;
 
     const result = await projectService.listOrganizationProjects(organizationId, {
       status: validatedQuery.status,
@@ -552,6 +564,8 @@ export const getProjectMembers = async (c: Context) => {
 /**
  * Add member to project
  * POST /api/v1/projects/:id/members
+ * 
+ * Payload validated by zValidator(addProjectMemberSchema) at route level
  */
 export const addProjectMember = async (c: Context) => {
   try {
@@ -593,8 +607,8 @@ export const addProjectMember = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = addProjectMemberSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof addProjectMemberSchema>;
 
     // Verify user is in the same organization
     const project = await projectService.getProjectById(id);
