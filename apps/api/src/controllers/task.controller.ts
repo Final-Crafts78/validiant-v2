@@ -7,10 +7,12 @@
  * Edge-compatible Hono implementation.
  * Functions: 18 total (CRUD, assignments, status operations, bulk ops)
  * 
- * FINAL CONTROLLER MIGRATION COMPLETE! 🚀
+ * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
+ * All validation happens at route level via @hono/zod-validator
  */
 
 import { Context } from 'hono';
+import { z } from 'zod';
 import * as taskService from '../services/task.service';
 import * as projectService from '../services/project.service';
 import {
@@ -31,6 +33,8 @@ const checkProjectAccess = async (projectId: string, userId: string): Promise<bo
 /**
  * Create task
  * POST /api/v1/tasks
+ * 
+ * Payload validated by zValidator(createTaskSchema) at route level
  */
 export const createTask = async (c: Context) => {
   try {
@@ -47,8 +51,8 @@ export const createTask = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = createTaskSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof createTaskSchema>;
 
     // Check project access
     const hasAccess = await checkProjectAccess(validatedData.projectId, user.userId);
@@ -156,6 +160,8 @@ export const getTaskById = async (c: Context) => {
 /**
  * Update task
  * PUT /api/v1/tasks/:id
+ * 
+ * Payload validated by zValidator(updateTaskSchema) at route level
  */
 export const updateTask = async (c: Context) => {
   try {
@@ -198,8 +204,8 @@ export const updateTask = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateTaskSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateTaskSchema>;
 
     const task = await taskService.updateTask(id, validatedData);
 
@@ -289,6 +295,8 @@ export const deleteTask = async (c: Context) => {
 /**
  * List project tasks
  * GET /api/v1/projects/:projectId/tasks
+ * 
+ * Query validated by zValidator(taskListQuerySchema) at route level
  */
 export const listProjectTasks = async (c: Context) => {
   try {
@@ -330,8 +338,8 @@ export const listProjectTasks = async (c: Context) => {
       );
     }
 
-    const query = c.req.query();
-    const validatedQuery = taskListQuerySchema.parse(query);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedQuery = c.req.valid('query') as z.infer<typeof taskListQuerySchema>;
 
     const result = await taskService.listProjectTasks(projectId, {
       status: validatedQuery.status,
@@ -408,6 +416,8 @@ export const getMyTasks = async (c: Context) => {
 /**
  * Assign user to task
  * POST /api/v1/tasks/:id/assign
+ * 
+ * Payload validated by zValidator(assignTaskSchema) at route level
  */
 export const assignTask = async (c: Context) => {
   try {
@@ -450,8 +460,8 @@ export const assignTask = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = assignTaskSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof assignTaskSchema>;
 
     // Verify the user being assigned is a project member
     const isProjectMember = await projectService.isProjectMember(
@@ -559,6 +569,8 @@ export const unassignTask = async (c: Context) => {
 /**
  * Update task position
  * PATCH /api/v1/tasks/:id/position
+ * 
+ * Payload validated by zValidator(updateTaskPositionSchema) at route level
  */
 export const updateTaskPosition = async (c: Context) => {
   try {
@@ -601,8 +613,8 @@ export const updateTaskPosition = async (c: Context) => {
       );
     }
 
-    const body = await c.req.json();
-    const validatedData = updateTaskPositionSchema.parse(body);
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateTaskPositionSchema>;
 
     await taskService.updateTaskPosition(id, validatedData.position);
 
