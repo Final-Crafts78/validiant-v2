@@ -85,6 +85,7 @@ export const createProject = async (c: Context) => {
         ...validatedData,
         startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
         endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+        budget: validatedData.budget ?? undefined,
       }
     );
 
@@ -263,6 +264,7 @@ export const updateProject = async (c: Context) => {
       ...validatedData,
       startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
       endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+      budget: validatedData.budget ?? undefined,
     });
 
     return c.json({
@@ -482,8 +484,8 @@ export const listOrganizationProjects = async (c: Context) => {
     const validatedQuery = c.req.query() as unknown as z.infer<typeof projectListQuerySchema>;
 
     const result = await projectService.listOrganizationProjects(organizationId, {
-      status: validatedQuery.status,
-      priority: validatedQuery.priority,
+      status: validatedQuery.status as any,
+      priority: validatedQuery.priority as any,
       search: validatedQuery.search,
       page: validatedQuery.page,
       perPage: validatedQuery.perPage,
