@@ -187,7 +187,7 @@ export const getProjectById = async (projectId: string): Promise<ProjectWithStat
         FROM ${projectMembers}
         WHERE ${projectMembers.projectId} = ${projects.id}
         AND ${projectMembers.deletedAt} IS NULL
-      )`::int,
+      )`,
       // Organization as nested object
       organization: {
         id: organizations.id,
@@ -388,7 +388,7 @@ export const listOrganizationProjects = async (
 
   // Get total count
   const [{ count }] = await db
-    .select({ count: sql<number>`COUNT(*)`::int })
+    .select({ count: sql<number>`COUNT(*)` })
     .from(projects)
     .where(whereClause);
 
@@ -416,7 +416,7 @@ export const listOrganizationProjects = async (
         FROM ${projectMembers}
         WHERE ${projectMembers.projectId} = ${projects.id}
         AND ${projectMembers.deletedAt} IS NULL
-      )`::int,
+      )`,
     })
     .from(projects)
     .where(whereClause)
@@ -460,7 +460,7 @@ export const getUserProjects = async (userId: string): Promise<ProjectWithStats[
         FROM ${projectMembers}
         WHERE ${projectMembers.projectId} = ${projects.id}
         AND ${projectMembers.deletedAt} IS NULL
-      )`::int,
+      )`,
       // Organization as nested object
       organization: {
         id: organizations.id,
