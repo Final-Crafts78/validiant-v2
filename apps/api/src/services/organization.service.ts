@@ -368,7 +368,7 @@ export const getUserOrganizations = async (userId: string): Promise<Organization
         FROM ${organizationMembers}
         WHERE ${organizationMembers.organizationId} = ${organizations.id}
         AND ${organizationMembers.deletedAt} IS NULL
-      )`::int,
+      )`,
     })
     .from(organizations)
     .innerJoin(
@@ -492,7 +492,7 @@ export const updateMemberRole = async (
   if (role !== OrganizationRole.OWNER) {
     // Count current owners
     const [{ count: ownerCount }] = await db
-      .select({ count: sql<number>`COUNT(*)`::int })
+      .select({ count: sql<number>`COUNT(*)` })
       .from(organizationMembers)
       .where(
         and(
@@ -567,7 +567,7 @@ export const removeMember = async (organizationId: string, userId: string): Prom
 
   if (member?.role === OrganizationRole.OWNER) {
     const [{ count: ownerCount }] = await db
-      .select({ count: sql<number>`COUNT(*)`::int })
+      .select({ count: sql<number>`COUNT(*)` })
       .from(organizationMembers)
       .where(
         and(
