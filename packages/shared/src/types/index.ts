@@ -1,206 +1,23 @@
 /**
- * Shared Types and Interfaces
+ * Types Barrel Export
  * 
- * Common types used across frontend and backend.
+ * Central export point for all TypeScript type definitions.
  */
 
-/**
- * User related types
- */
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// User types
+export * from './user.types';
 
-export interface AuthResponse {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
-}
+// Organization types
+export * from './organization.types';
 
-/**
- * Project related types
- */
-export type ProjectStatus = 'active' | 'completed' | 'on-hold' | 'planning';
+// Project types
+export * from './project.types';
 
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: ProjectStatus;
-  progress: number;
-  memberCount: number;
-  taskCount: number;
-  organizationId: string;
-  ownerId: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// Notification types
+export * from './notification.types';
 
-export interface CreateProjectInput {
-  name: string;
-  description: string;
-  organizationId: string;
-  dueDate?: string;
-}
+// Time tracking types
+export * from './time-tracking.types';
 
-export interface UpdateProjectInput {
-  name?: string;
-  description?: string;
-  status?: ProjectStatus;
-  progress?: number;
-  dueDate?: string;
-}
-
-/**
- * Task related types
- */
-export type TaskStatus = 'todo' | 'in-progress' | 'completed';
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
-
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  projectId: string;
-  assigneeId: string | null;
-  createdById: string;
-  dueDate: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateTaskInput {
-  title: string;
-  description: string;
-  projectId: string;
-  priority: TaskPriority;
-  assigneeId?: string;
-  dueDate?: string;
-}
-
-export interface UpdateTaskInput {
-  title?: string;
-  description?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  assigneeId?: string;
-  dueDate?: string;
-}
-
-/**
- * Organization related types
- */
-
-/**
- * OrganizationRole as const object (runtime value)
- * Can be used as both type and value
- */
-export const OrganizationRole = {
-  OWNER: 'owner',
-  ADMIN: 'admin',
-  MEMBER: 'member',
-  VIEWER: 'viewer',
-} as const;
-
-/**
- * OrganizationRole type alias
- * Inferred from the const object
- */
-export type OrganizationRole = typeof OrganizationRole[keyof typeof OrganizationRole];
-
-export interface Organization {
-  id: string;
-  name: string;
-  description: string;
-  ownerId: string;
-  memberCount: number;
-  projectCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface OrganizationMember {
-  id: string;
-  organizationId: string;
-  userId: string;
-  role: OrganizationRole;
-  joinedAt: string;
-}
-
-export interface CreateOrganizationInput {
-  name: string;
-  description: string;
-}
-
-export interface UpdateOrganizationInput {
-  name?: string;
-  description?: string;
-}
-
-/**
- * Common pagination types
- */
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasMore: boolean;
-  };
-}
-
-/**
- * API response types
- */
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-export interface ApiError {
-  message: string;
-  code: string;
-  statusCode: number;
-  details?: any;
-}
-
-/**
- * Filter types
- */
-export interface ProjectFilters {
-  status?: ProjectStatus;
-  organizationId?: string;
-  search?: string;
-}
-
-export interface TaskFilters {
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  projectId?: string;
-  assigneeId?: string;
-  search?: string;
-}
-
-export interface OrganizationFilters {
-  role?: OrganizationRole;
-  search?: string;
-}
+// API types
+export * from './api.types';
