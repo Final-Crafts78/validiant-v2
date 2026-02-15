@@ -67,7 +67,7 @@ export const login = async (
   return post<AuthResponse>(
     API_CONFIG.ENDPOINTS.AUTH.LOGIN,
     credentials
-  );
+  ).then((res) => res.data);
 };
 
 /**
@@ -79,14 +79,14 @@ export const register = async (
   return post<AuthResponse>(
     API_CONFIG.ENDPOINTS.AUTH.REGISTER,
     data
-  );
+  ).then((res) => res.data);
 };
 
 /**
  * Logout user
  */
 export const logout = async (): Promise<void> => {
-  return post<void>(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
+  return post<void>(API_CONFIG.ENDPOINTS.AUTH.LOGOUT).then((res) => res.data);
 };
 
 /**
@@ -98,14 +98,14 @@ export const refreshToken = async (
   return post<{ accessToken: string }>(
     API_CONFIG.ENDPOINTS.AUTH.REFRESH,
     { refreshToken }
-  );
+  ).then((res) => res.data);
 };
 
 /**
  * Get current user
  */
 export const getCurrentUser = async (): Promise<User> => {
-  return post<User>(API_CONFIG.ENDPOINTS.AUTH.ME);
+  return post<User>(API_CONFIG.ENDPOINTS.AUTH.ME).then((res) => res.data);
 };
 
 /**
@@ -117,7 +117,7 @@ export const forgotPassword = async (
   return post<{ message: string }>(
     API_CONFIG.ENDPOINTS.AUTH.FORGOT_PASSWORD,
     data
-  );
+  ).then((res) => res.data);
 };
 
 /**
@@ -129,7 +129,7 @@ export const resetPassword = async (
   return post<{ message: string }>(
     API_CONFIG.ENDPOINTS.AUTH.RESET_PASSWORD,
     data
-  );
+  ).then((res) => res.data);
 };
 
 /**
@@ -141,5 +141,5 @@ export const verifyEmail = async (
   return post<{ message: string }>(
     API_CONFIG.ENDPOINTS.AUTH.VERIFY_EMAIL,
     data
-  );
+  ).then((res) => res.data);
 };

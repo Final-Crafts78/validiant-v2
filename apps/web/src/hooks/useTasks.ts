@@ -319,8 +319,8 @@ export function useUpdateTask() {
     },
     
     // ❌ ERROR: Rollback optimistic update
-    onError: (error, variables, context) => {
-      console.error('[useUpdateTask] Update failed, rolling back:', error);
+    onError: (_error, _variables, context) => {
+      console.error('[useUpdateTask] Update failed, rolling back:', _error);
       
       if (context) {
         // Restore previous values
@@ -334,7 +334,7 @@ export function useUpdateTask() {
     },
     
     // ✅ SUCCESS: Invalidate queries to refetch fresh data
-    onSettled: (data, error, variables, context) => {
+    onSettled: (_data, _error, _variables, context) => {
       if (context) {
         queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(context.taskId) });
         queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
@@ -379,9 +379,9 @@ export function useCreateTask() {
       return response.data.data.task;
     },
     
-    onSuccess: (newTask, variables) => {
+    onSuccess: (_newTask, _variables) => {
       // Invalidate tasks list to refetch with new task
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(variables.projectId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(_variables.projectId) });
     },
   });
 }
@@ -420,13 +420,13 @@ export function useDeleteTask() {
       return { previousTasks, taskId, projectId };
     },
     
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       if (context?.previousTasks) {
         setQueryData(queryKeys.projects.tasks(context.projectId), context.previousTasks);
       }
     },
     
-    onSettled: (data, error, variables, context) => {
+    onSettled: (_data, _error, _variables, context) => {
       if (context) {
         queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
       }
@@ -460,7 +460,7 @@ export function useAssignTask() {
       }
     },
     
-    onSettled: (data, error, variables) => {
+    onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(variables.taskId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(variables.projectId) });
     },

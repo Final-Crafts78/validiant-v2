@@ -63,7 +63,6 @@ export function middleware(request: NextRequest) {
   // Check if route is protected
   const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
-  const _isPublicRoute = matchesRoute(pathname, PUBLIC_ROUTES);
 
   // Redirect unauthenticated users from protected routes to login
   if (isProtectedRoute && !isAuthenticated) {
