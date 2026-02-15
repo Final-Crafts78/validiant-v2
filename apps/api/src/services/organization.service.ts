@@ -329,10 +329,10 @@ export const updateOrganizationSettings = async (
     });
   const organization = organizationResult[0];
 
-  assertExists(organization, 'Organization');
-
   // Clear cache
   await cache.del(`organization:${organizationId}`);
+
+  logger.info('Organization settings updated', { organizationId });
 
   return organization as Organization;
 };
@@ -344,7 +344,7 @@ export const deleteOrganization = async (organizationId: string): Promise<void> 
   await db
     .update(organizations)
     .set({ deletedAt: new Date() })
-    .where(eq(organizations.id, organizationId));
+    .where(and(eq(organizations.id, organizationId), isNull(organizations.deletedAt)));
 
   // Clear cache
   await cache.del(`organization:${organizationId}`);
@@ -356,6 +356,7 @@ export const deleteOrganization = async (organizationId: string): Promise<void> 
  * Get user's organizations
  */
 export const getUserOrganizations = async (userId: string): Promise<OrganizationWithRole[]> => {
+  // ✅ CATEGORY 5 FIX: Subquery for member count
   const results = await db
     .select({
       id: organizations.id,
@@ -363,10 +364,13 @@ export const getUserOrganizations = async (userId: string): Promise<Organization
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
+      industry: organizations.industry,
+      size: organizations.size,
       logoUrl: organizations.logoUrl,
-      memberRole: organizationMembers.role,
+      settings: organizations.settings,
       createdAt: organizations.createdAt,
-      // Subquery for member count
+      updatedAt: organizations.updatedAt,
+      memberRole: organizationMembers.role,
       memberCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${organizationMembers}
@@ -374,23 +378,20 @@ export const getUserOrganizations = async (userId: string): Promise<Organization
         AND ${organizationMembers.deletedAt} IS NULL
       )`,
     })
-    .from(organizations)
-    .innerJoin(
-      organizationMembers,
-      eq(organizations.id, organizationMembers.organizationId)
-    )
+    .from(organizationMembers)
+    .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
     .where(
       and(
         eq(organizationMembers.userId, userId),
-        isNull(organizations.deletedAt),
-        isNull(organizationMembers.deletedAt)
+        isNull(organizationMembers.deletedAt),
+        isNull(organizations.deletedAt)
       )
     )
-    .orderBy(desc(organizationMembers.joinedAt));
+    .orderBy(desc(organizations.createdAt));
 
-  return results.map((r) => ({
-    ...r,
-    memberCount: Number(r.memberCount),
+  return results.map((result) => ({
+    ...result,
+    memberCount: Number(result.memberCount),
   })) as OrganizationWithRole[];
 };
 
@@ -407,7 +408,6 @@ export const getOrganizationMembers = async (
       organizationId: organizationMembers.organizationId,
       role: organizationMembers.role,
       joinedAt: organizationMembers.joinedAt,
-      // User data as nested object
       user: {
         id: users.id,
         email: users.email,
@@ -424,16 +424,7 @@ export const getOrganizationMembers = async (
         isNull(users.deletedAt)
       )
     )
-    .orderBy(
-      // Custom role ordering: owner > admin > member > viewer
-      sql`CASE ${organizationMembers.role}
-        WHEN 'owner' THEN 1
-        WHEN 'admin' THEN 2
-        WHEN 'member' THEN 3
-        WHEN 'viewer' THEN 4
-      END`,
-      asc(organizationMembers.joinedAt)
-    );
+    .orderBy(asc(organizationMembers.joinedAt));
 
   return members as OrganizationMember[];
 };
@@ -444,10 +435,10 @@ export const getOrganizationMembers = async (
 export const addOrganizationMember = async (
   organizationId: string,
   userId: string,
-  role: OrganizationRole = OrganizationRole.MEMBER
+  role: OrganizationRole
 ): Promise<OrganizationMember> => {
-  // Check if already a member
-  const existingMemberResult = await db
+  // Check if user is already a member
+  const existingMember = await db
     .select({ id: organizationMembers.id })
     .from(organizationMembers)
     .where(
@@ -458,13 +449,11 @@ export const addOrganizationMember = async (
       )
     )
     .limit(1);
-  const existingMember = existingMemberResult[0];
 
-  if (existingMember) {
+  if (existingMember.length > 0) {
     throw new ConflictError('User is already a member of this organization');
   }
 
-  // Add member
   const memberResult = await db
     .insert(organizationMembers)
     .values({
@@ -494,45 +483,10 @@ export const updateMemberRole = async (
   userId: string,
   role: OrganizationRole
 ): Promise<OrganizationMember> => {
-  // Prevent removing last owner
-  if (role !== OrganizationRole.OWNER) {
-    // Count current owners
-    const ownerCountResult = await db
-      .select({ count: sql<number>`COUNT(*)` })
-      .from(organizationMembers)
-      .where(
-        and(
-          eq(organizationMembers.organizationId, organizationId),
-          eq(organizationMembers.role, OrganizationRole.OWNER),
-          isNull(organizationMembers.deletedAt)
-        )
-      );
-    const { count: ownerCount } = ownerCountResult[0];
-
-    // Check if current member is owner
-    const currentMemberResult = await db
-      .select({ role: organizationMembers.role })
-      .from(organizationMembers)
-      .where(
-        and(
-          eq(organizationMembers.organizationId, organizationId),
-          eq(organizationMembers.userId, userId),
-          isNull(organizationMembers.deletedAt)
-        )
-      )
-      .limit(1);
-    const currentMember = currentMemberResult[0];
-
-    if (currentMember?.role === OrganizationRole.OWNER && Number(ownerCount) <= 1) {
-      throw new BadRequestError('Cannot remove the last owner from organization');
-    }
-  }
-
   const memberResult = await db
     .update(organizationMembers)
     .set({
       role,
-      updatedAt: new Date(),
     })
     .where(
       and(
@@ -550,19 +504,41 @@ export const updateMemberRole = async (
     });
   const member = memberResult[0];
 
-  assertExists(member, 'Organization member');
-
   logger.info('Member role updated', { organizationId, userId, role });
 
   return member as OrganizationMember;
 };
 
 /**
- * Remove member from organization
+ * Remove member from organization (soft delete)
  */
-export const removeMember = async (organizationId: string, userId: string): Promise<void> => {
-  // Check if user is the last owner
-  const memberResult = await db
+export const removeMember = async (
+  organizationId: string,
+  userId: string
+): Promise<void> => {
+  await db
+    .update(organizationMembers)
+    .set({ deletedAt: new Date() })
+    .where(
+      and(
+        eq(organizationMembers.organizationId, organizationId),
+        eq(organizationMembers.userId, userId),
+        isNull(organizationMembers.deletedAt)
+      )
+    );
+
+  logger.info('Member removed from organization', { organizationId, userId });
+};
+
+/**
+ * Leave organization (user removing themselves)
+ */
+export const leaveOrganization = async (
+  organizationId: string,
+  userId: string
+): Promise<void> => {
+  // Check if user is the owner
+  const member = await db
     .select({ role: organizationMembers.role })
     .from(organizationMembers)
     .where(
@@ -573,37 +549,16 @@ export const removeMember = async (organizationId: string, userId: string): Prom
       )
     )
     .limit(1);
-  const member = memberResult[0];
 
-  if (member?.role === OrganizationRole.OWNER) {
-    const ownerCountResult = await db
-      .select({ count: sql<number>`COUNT(*)` })
-      .from(organizationMembers)
-      .where(
-        and(
-          eq(organizationMembers.organizationId, organizationId),
-          eq(organizationMembers.role, OrganizationRole.OWNER),
-          isNull(organizationMembers.deletedAt)
-        )
-      );
-    const { count: ownerCount } = ownerCountResult[0];
-
-    if (Number(ownerCount) <= 1) {
-      throw new BadRequestError('Cannot remove the last owner from organization');
-    }
+  if (member.length > 0 && member[0].role === OrganizationRole.OWNER) {
+    throw new BadRequestError(
+      'Owner cannot leave organization. Transfer ownership or delete the organization.'
+    );
   }
 
-  await db
-    .update(organizationMembers)
-    .set({ deletedAt: new Date() })
-    .where(
-      and(
-        eq(organizationMembers.organizationId, organizationId),
-        eq(organizationMembers.userId, userId)
-      )
-    );
+  await removeMember(organizationId, userId);
 
-  logger.info('Member removed from organization', { organizationId, userId });
+  logger.info('User left organization', { organizationId, userId });
 };
 
 /**
@@ -626,11 +581,11 @@ export const getUserRole = async (
     .limit(1);
   const member = memberResult[0];
 
-  return (member?.role as OrganizationRole) || null;
+  return member ? (member.role as OrganizationRole) : null;
 };
 
 /**
- * Check if user is member of organization
+ * Check if user is member
  */
 export const isMember = async (organizationId: string, userId: string): Promise<boolean> => {
   const memberResult = await db
@@ -647,14 +602,4 @@ export const isMember = async (organizationId: string, userId: string): Promise<
   const member = memberResult[0];
 
   return !!member;
-};
-
-/**
- * Leave organization
- */
-export const leaveOrganization = async (
-  organizationId: string,
-  userId: string
-): Promise<void> => {
-  await removeMember(organizationId, userId);
 };
