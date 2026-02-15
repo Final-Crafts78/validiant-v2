@@ -25,6 +25,16 @@ export enum TimeEntryStatus {
 }
 
 /**
+ * Timesheet status enumeration
+ */
+export enum TimesheetStatus {
+  DRAFT = 'draft',
+  SUBMITTED = 'submitted',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
+/**
  * Core Time Entry interface
  */
 export interface TimeEntry {
