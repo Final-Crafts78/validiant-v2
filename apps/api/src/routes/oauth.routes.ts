@@ -35,7 +35,7 @@ import {
   unlinkOAuthProvider,
 } from '../services/oauth.service';
 import { generateTokens } from '../services/auth.service';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth';
 import { logger } from '../utils/logger';
 import { env } from '../config/env.config';
 
@@ -105,7 +105,7 @@ app.get('/google', async (c) => {
     // Redirect user to Google
     return c.redirect(authUrl);
   } catch (error) {
-    logger.error('Google OAuth initiation failed:', error);
+    logger.error('Google OAuth initiation failed:', error as Error);
     
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
@@ -179,7 +179,7 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     
     return c.redirect(dashboardUrl);
   } catch (error) {
-    logger.error('Google OAuth callback failed:', error);
+    logger.error('Google OAuth callback failed:', error as Error);
     
     // Delete state cookie on error
     deleteCookie(c, 'oauth_state');
@@ -219,7 +219,7 @@ app.get('/github', async (c) => {
     // Redirect user to GitHub
     return c.redirect(authUrl);
   } catch (error) {
-    logger.error('GitHub OAuth initiation failed:', error);
+    logger.error('GitHub OAuth initiation failed:', error as Error);
     
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
@@ -293,7 +293,7 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
     
     return c.redirect(dashboardUrl);
   } catch (error) {
-    logger.error('GitHub OAuth callback failed:', error);
+    logger.error('GitHub OAuth callback failed:', error as Error);
     
     // Delete state cookie on error
     deleteCookie(c, 'oauth_state');
@@ -347,7 +347,7 @@ app.post(
         message: `${provider} account unlinked successfully`,
       });
     } catch (error) {
-      logger.error('OAuth unlink failed:', error);
+      logger.error('OAuth unlink failed:', error as Error);
       return c.json(
         {
           success: false,
