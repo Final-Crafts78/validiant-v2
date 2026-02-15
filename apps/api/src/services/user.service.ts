@@ -77,7 +77,7 @@ export const getUserById = async (userId: string): Promise<User> => {
   }
 
   // Fetch from database
-  const [user] = await db
+  const userResult = await db
     .select({
       id: users.id,
       email: users.email,
@@ -99,6 +99,7 @@ export const getUserById = async (userId: string): Promise<User> => {
     .from(users)
     .where(and(eq(users.id, userId), isNull(users.deletedAt)))
     .limit(1);
+  const user = userResult[0];
 
   assertExists(user, 'User');
 
@@ -112,7 +113,7 @@ export const getUserById = async (userId: string): Promise<User> => {
  * Get user by email
  */
 export const getUserByEmail = async (email: string): Promise<User | null> => {
-  const [user] = await db
+  const userResult = await db
     .select({
       id: users.id,
       email: users.email,
@@ -134,6 +135,7 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     .from(users)
     .where(and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)))
     .limit(1);
+  const user = userResult[0];
 
   return user ? (user as User) : null;
 };
@@ -181,7 +183,7 @@ export const updateProfile = async (
     throw new BadRequestError('No fields to update');
   }
 
-  const [user] = await db
+  const userResult = await db
     .update(users)
     .set(updateData)
     .where(and(eq(users.id, userId), isNull(users.deletedAt)))
@@ -203,6 +205,7 @@ export const updateProfile = async (
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     });
+  const user = userResult[0];
 
   // Clear cache
   await cache.del(`user:${userId}`);
@@ -216,7 +219,7 @@ export const updateProfile = async (
  * Update user preferences
  */
 export const updatePreferences = async (userId: string, preferences: any): Promise<User> => {
-  const [user] = await db
+  const userResult = await db
     .update(users)
     .set({
       preferences,
@@ -241,6 +244,7 @@ export const updatePreferences = async (userId: string, preferences: any): Promi
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     });
+  const user = userResult[0];
 
   assertExists(user, 'User');
 
@@ -257,7 +261,7 @@ export const updateNotificationPreferences = async (
   userId: string,
   notificationPreferences: any
 ): Promise<User> => {
-  const [user] = await db
+  const userResult = await db
     .update(users)
     .set({
       notificationPreferences,
@@ -282,6 +286,7 @@ export const updateNotificationPreferences = async (
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     });
+  const user = userResult[0];
 
   assertExists(user, 'User');
 
@@ -332,10 +337,11 @@ export const listUsers = async (params: {
   const whereClause = and(...conditions);
 
   // Get total count
-  const [{ count }] = await db
+  const countResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(users)
     .where(whereClause);
+  const { count } = countResult[0];
 
   const total = Number(count);
 
@@ -400,7 +406,7 @@ export const deleteUser = async (userId: string): Promise<void> => {
  * Admin: Update user role
  */
 export const updateUserRole = async (userId: string, role: UserRole): Promise<User> => {
-  const [user] = await db
+  const userResult = await db
     .update(users)
     .set({
       role,
@@ -425,6 +431,7 @@ export const updateUserRole = async (userId: string, role: UserRole): Promise<Us
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     });
+  const user = userResult[0];
 
   assertExists(user, 'User');
 
@@ -440,7 +447,7 @@ export const updateUserRole = async (userId: string, role: UserRole): Promise<Us
  * Admin: Update user status
  */
 export const updateUserStatus = async (userId: string, status: UserStatus): Promise<User> => {
-  const [user] = await db
+  const userResult = await db
     .update(users)
     .set({
       status,
@@ -465,6 +472,7 @@ export const updateUserStatus = async (userId: string, status: UserStatus): Prom
       updatedAt: users.updatedAt,
       lastLoginAt: users.lastLoginAt,
     });
+  const user = userResult[0];
 
   assertExists(user, 'User');
 
@@ -481,7 +489,7 @@ export const updateUserStatus = async (userId: string, status: UserStatus): Prom
  */
 export const getUserStats = async (): Promise<UserStats> => {
   // Get aggregate stats
-  const [stats] = await db
+  const statsResult = await db
     .select({
       totalUsers: sql<number>`COUNT(*)`,
       activeUsers: sql<number>`COUNT(*) FILTER (WHERE ${users.status} = 'active')`,
@@ -490,6 +498,7 @@ export const getUserStats = async (): Promise<UserStats> => {
     })
     .from(users)
     .where(isNull(users.deletedAt));
+  const stats = statsResult[0];
 
   // Get users by role
   const roleStats = await db
@@ -561,11 +570,12 @@ export const isEmailAvailable = async (
     conditions.push(sql`${users.id} != ${excludeUserId}`);
   }
 
-  const [existingUser] = await db
+  const existingUserResult = await db
     .select({ id: users.id })
     .from(users)
     .where(and(...conditions))
     .limit(1);
+  const existingUser = existingUserResult[0];
 
   return !existingUser;
 };
