@@ -5,7 +5,7 @@
  * Includes task CRUD, assignment management, and task operations.
  * 
  * Edge-compatible Hono implementation.
- * Functions: 18 total (CRUD, assignments, status operations, bulk ops)
+ * Functions: 20 total (includes new completeTask and reopenTask)
  * 
  * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
  * All validation happens at route level via @hono/zod-validator
@@ -15,6 +15,7 @@ import { Context } from 'hono';
 import { z } from 'zod';
 import * as taskService from '../services/task.service';
 import * as projectService from '../services/project.service';
+import { TaskStatus } from '@validiant/shared';
 import {
   createTaskSchema,
   updateTaskSchema,
@@ -73,6 +74,8 @@ export const createTask = async (c: Context) => {
       {
         ...validatedData,
         dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+        estimatedHours: validatedData.estimatedHours ?? undefined,
+        actualHours: validatedData.actualHours ?? undefined,
       }
     );
 
@@ -213,6 +216,8 @@ export const updateTask = async (c: Context) => {
     const task = await taskService.updateTask(id, {
       ...validatedData,
       dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+      estimatedHours: validatedData.estimatedHours ?? undefined,
+      actualHours: validatedData.actualHours ?? undefined,
     });
 
     return c.json({
@@ -348,8 +353,8 @@ export const listProjectTasks = async (c: Context) => {
     const validatedQuery = c.req.query() as unknown as z.infer<typeof taskListQuerySchema>;
 
     const result = await taskService.listProjectTasks(projectId, {
-      status: validatedQuery.status,
-      priority: validatedQuery.priority,
+      status: validatedQuery.status as any,
+      priority: validatedQuery.priority as any,
       assigneeId: validatedQuery.assigneeId,
       search: validatedQuery.search,
       parentTaskId: validatedQuery.parentTaskId,
@@ -468,6 +473,18 @@ export const assignTask = async (c: Context) => {
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
     const validatedData = (await c.req.json()) as z.infer<typeof assignTaskSchema>;
+
+    // Check if userId exists
+    if (!validatedData.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'User ID is required',
+        },
+        400
+      );
+    }
 
     // Verify the user being assigned is a project member
     const isProjectMember = await projectService.isProjectMember(
@@ -688,7 +705,7 @@ export const markAsTodo = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: taskService.TaskStatus.TODO,
+      status: TaskStatus.TODO,
     });
 
     return c.json({
@@ -755,7 +772,7 @@ export const markAsInProgress = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: taskService.TaskStatus.IN_PROGRESS,
+      status: TaskStatus.IN_PROGRESS,
     });
 
     return c.json({
@@ -822,7 +839,7 @@ export const markAsInReview = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: taskService.TaskStatus.IN_REVIEW,
+      status: TaskStatus.IN_REVIEW,
     });
 
     return c.json({
@@ -889,7 +906,7 @@ export const markAsCompleted = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: taskService.TaskStatus.COMPLETED,
+      status: TaskStatus.COMPLETED,
     });
 
     return c.json({
@@ -956,7 +973,7 @@ export const cancelTask = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: taskService.TaskStatus.CANCELLED,
+      status: TaskStatus.CANCELLED,
     });
 
     return c.json({
@@ -1121,6 +1138,79 @@ export const bulkUpdateTasks = async (c: Context) => {
       {
         success: false,
         error: 'Failed to bulk update tasks',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Complete task (alias for markAsCompleted)
+ * POST /api/v1/tasks/:id/complete
+ */
+export const completeTask = markAsCompleted;
+
+/**
+ * Reopen task (marks as TODO)
+ * POST /api/v1/tasks/:id/reopen
+ */
+export const reopenTask = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Task ID is required',
+        },
+        400
+      );
+    }
+
+    // Get task to check project access
+    const existingTask = await taskService.getTaskById(id);
+    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    if (!hasAccess) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'You are not a member of this project',
+        },
+        403
+      );
+    }
+
+    const task = await taskService.updateTask(id, {
+      status: TaskStatus.TODO,
+    });
+
+    return c.json({
+      success: true,
+      message: 'Task reopened',
+      data: { task },
+    });
+  } catch (error) {
+    console.error('Reopen task error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to reopen task',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500
