@@ -271,11 +271,11 @@ export default class ValidiantRealtimeServer implements Party.Server {
   broadcast(message: WSMessage, excludeConnectionIds: string[] = []) {
     const messageStr = JSON.stringify(message);
 
-    this.room.getConnections().forEach((connection) => {
+    for (const connection of this.room.getConnections()) {
       if (!excludeConnectionIds.includes(connection.id)) {
         connection.send(messageStr);
       }
-    });
+    }
   }
 
   /**
