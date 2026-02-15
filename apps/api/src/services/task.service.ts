@@ -116,7 +116,7 @@ export const createTask = async (
     // Get next position using 'tx'
     const [{ maxPosition }] = await tx
       .select({
-        maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`::int,
+        maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`,
       })
       .from(tasks)
       .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
@@ -236,14 +236,14 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
         FROM ${tasks} as subtasks
         WHERE subtasks.parent_task_id = ${tasks.id}
         AND subtasks.deleted_at IS NULL
-      )`::int,
+      )`,
       completedSubtaskCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${tasks} as subtasks
         WHERE subtasks.parent_task_id = ${tasks.id}
         AND subtasks.status = 'completed'
         AND subtasks.deleted_at IS NULL
-      )`::int,
+      )`,
     })
     .from(tasks)
     .innerJoin(projects, eq(tasks.projectId, projects.id))
@@ -477,7 +477,7 @@ export const listProjectTasks = async (
 
   // Get total count
   const [{ count }] = await db
-    .select({ count: sql<number>`COUNT(*)`::int })
+    .select({ count: sql<number>`COUNT(*)` })
     .from(tasks)
     .where(whereClause);
 
@@ -506,7 +506,7 @@ export const listProjectTasks = async (
         FROM ${tasks} as subtasks
         WHERE subtasks.parent_task_id = ${tasks.id}
         AND subtasks.deleted_at IS NULL
-      )`::int,
+      )`,
     })
     .from(tasks)
     .where(whereClause)
