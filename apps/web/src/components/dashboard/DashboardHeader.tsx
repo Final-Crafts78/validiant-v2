@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
-import { api } from '@/lib/api';
+import apiClient from '@/lib/api';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import {
   LayoutDashboard,
@@ -86,7 +86,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     try {
       setIsLoggingOut(true);
       // Call logout API to clear cookies
-      await api.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT, {});
+      await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT, {});
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
