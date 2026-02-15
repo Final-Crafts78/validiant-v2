@@ -19,6 +19,17 @@ export enum SubscriptionTier {
 }
 
 /**
+ * Subscription status enum
+ * Status of organization subscription
+ */
+export enum SubscriptionStatus {
+  ACTIVE = 'active',
+  CANCELED = 'canceled',
+  PAST_DUE = 'past_due',
+  TRIALING = 'trialing',
+}
+
+/**
  * Organization status
  */
 export enum OrganizationStatus {
@@ -49,6 +60,16 @@ export const OrganizationRole = {
 export type OrganizationRole = typeof OrganizationRole[keyof typeof OrganizationRole];
 
 /**
+ * Team role enum
+ * For Zod validation compatibility
+ */
+export enum TeamRole {
+  LEAD = 'lead',
+  MEMBER = 'member',
+  VIEWER = 'viewer',
+}
+
+/**
  * Team member role
  * Specific to team-level permissions
  */
@@ -56,6 +77,17 @@ export enum TeamMemberRole {
   LEAD = 'lead',
   MEMBER = 'member',
   VIEWER = 'viewer',
+}
+
+/**
+ * Invitation status enum
+ * For organization and team invitations
+ */
+export enum InvitationStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+  EXPIRED = 'expired',
 }
 
 /**
