@@ -1,108 +1,32 @@
 /**
- * Logger Utility
+ * Edge-Compatible Logger Utility
  * 
- * Winston-based structured logging with multiple transports.
- * Provides consistent logging across the application with contextual metadata.
+ * Lightweight console-based logging for Cloudflare Workers.
+ * Provides structured logging with metadata support and zero dependencies.
  */
-
-import winston from 'winston';
-import path from 'path';
-import { env, isProduction, isDevelopment } from '../config/env.config';
 
 /**
- * Custom log levels
+ * Log levels
  */
-const logLevels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  debug: 3,
-};
+export enum LogLevel {
+  ERROR = 'error',
+  WARN = 'warn',
+  INFO = 'info',
+  DEBUG = 'debug',
+}
 
 /**
- * Custom colors for log levels
+ * Log metadata interface
  */
-const logColors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  debug: 'blue',
-};
-
-// Add colors to Winston
-winston.addColors(logColors);
-
-/**
- * Custom format for pretty console output in development
- */
-const prettyFormat = winston.format.combine(
-  winston.format.colorize({ all: true }),
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  winston.format.printf((info) => {
-    const { timestamp, level, message, ...meta } = info;
-    const metaStr = Object.keys(meta).length > 0 ? `\n${JSON.stringify(meta, null, 2)}` : '';
-    return `${timestamp} [${level}]: ${message}${metaStr}`;
-  })
-);
-
-/**
- * JSON format for production
- */
-const jsonFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.errors({ stack: true }),
-  winston.format.json()
-);
-
-/**
- * Console transport configuration
- */
-const consoleTransport = new winston.transports.Console({
-  format: env.LOG_FORMAT === 'pretty' ? prettyFormat : jsonFormat,
-});
-
-/**
- * File transports for production
- */
-const fileTransports = isProduction
-  ? [
-      // Error logs
-      new winston.transports.File({
-        filename: path.join(__dirname, '../../logs/error.log'),
-        level: 'error',
-        maxsize: 5242880, // 5MB
-        maxFiles: 5,
-        format: jsonFormat,
-      }),
-      // Combined logs
-      new winston.transports.File({
-        filename: path.join(__dirname, '../../logs/combined.log'),
-        maxsize: 5242880, // 5MB
-        maxFiles: 5,
-        format: jsonFormat,
-      }),
-    ]
-  : [];
-
-/**
- * Winston logger instance
- */
-const winstonLogger = winston.createLogger({
-  level: env.LOG_LEVEL,
-  levels: logLevels,
-  transports: [consoleTransport, ...fileTransports],
-  exitOnError: false,
-});
-
-/**
- * Logger interface with contextual metadata support
- */
-interface LogMetadata {
+export interface LogMetadata {
   [key: string]: any;
 }
 
-interface Logger {
-  error(message: string, meta?: LogMetadata): void;
+/**
+ * Logger interface
+ */
+export interface Logger {
+  error(message: string, meta?: LogMetadata | Error): void;
   warn(message: string, meta?: LogMetadata): void;
   info(message: string, meta?: LogMetadata): void;
   debug(message: string, meta?: LogMetadata): void;
@@ -110,24 +34,62 @@ interface Logger {
 }
 
 /**
+ * Format log entry with timestamp and metadata
+ */
+const formatLogEntry = (
+  level: LogLevel,
+  message: string,
+  meta?: LogMetadata | Error,
+  defaultMeta?: LogMetadata
+): string => {
+  const timestamp = new Date().toISOString();
+  const levelUpper = level.toUpperCase();
+  
+  // Combine default metadata with provided metadata
+  const combinedMeta = { ...defaultMeta };
+  
+  if (meta) {
+    if (meta instanceof Error) {
+      combinedMeta.error = {
+        name: meta.name,
+        message: meta.message,
+        stack: meta.stack,
+      };
+    } else {
+      Object.assign(combinedMeta, meta);
+    }
+  }
+  
+  const metaStr = Object.keys(combinedMeta).length > 0 
+    ? ` ${JSON.stringify(combinedMeta)}`
+    : '';
+  
+  return `${timestamp} [${levelUpper}] ${message}${metaStr}`;
+};
+
+/**
  * Create logger with optional default metadata
  */
 const createLogger = (defaultMeta: LogMetadata = {}): Logger => {
   return {
-    error: (message: string, meta: LogMetadata = {}) => {
-      winstonLogger.error(message, { ...defaultMeta, ...meta });
+    error: (message: string, meta?: LogMetadata | Error) => {
+      const formatted = formatLogEntry(LogLevel.ERROR, message, meta, defaultMeta);
+      console.error(formatted);
     },
 
-    warn: (message: string, meta: LogMetadata = {}) => {
-      winstonLogger.warn(message, { ...defaultMeta, ...meta });
+    warn: (message: string, meta?: LogMetadata) => {
+      const formatted = formatLogEntry(LogLevel.WARN, message, meta, defaultMeta);
+      console.warn(formatted);
     },
 
-    info: (message: string, meta: LogMetadata = {}) => {
-      winstonLogger.info(message, { ...defaultMeta, ...meta });
+    info: (message: string, meta?: LogMetadata) => {
+      const formatted = formatLogEntry(LogLevel.INFO, message, meta, defaultMeta);
+      console.log(formatted);
     },
 
-    debug: (message: string, meta: LogMetadata = {}) => {
-      winstonLogger.debug(message, { ...defaultMeta, ...meta });
+    debug: (message: string, meta?: LogMetadata) => {
+      const formatted = formatLogEntry(LogLevel.DEBUG, message, meta, defaultMeta);
+      console.debug(formatted);
     },
 
     child: (childMeta: LogMetadata) => {
@@ -188,7 +150,7 @@ export const logDatabaseQuery = (
       error: error.message,
       stack: error.stack,
     });
-  } else if (isDevelopment) {
+  } else {
     logger.debug('Database query executed', {
       query: query.substring(0, 200),
       duration: `${duration}ms`,
@@ -305,10 +267,10 @@ export const sanitizeLogData = (data: any): any => {
     'password',
     'token',
     'secret',
-    'apiKey',
-    'accessToken',
-    'refreshToken',
-    'creditCard',
+    'apikey',
+    'accesstoken',
+    'refreshtoken',
+    'creditcard',
     'ssn',
     'authorization',
   ];
@@ -318,7 +280,7 @@ export const sanitizeLogData = (data: any): any => {
   for (const key in sanitized) {
     if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))) {
       sanitized[key] = '[REDACTED]';
-    } else if (typeof sanitized[key] === 'object') {
+    } else if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
       sanitized[key] = sanitizeLogData(sanitized[key]);
     }
   }
