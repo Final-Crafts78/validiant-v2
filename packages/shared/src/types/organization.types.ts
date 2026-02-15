@@ -39,6 +39,15 @@ export enum OrganizationMemberRole {
   GUEST = 'guest',
 }
 
+export const OrganizationRole = {
+  OWNER: 'owner',
+  ADMIN: 'admin',
+  MEMBER: 'member',
+  VIEWER: 'viewer',
+} as const;
+
+export type OrganizationRole = typeof OrganizationRole[keyof typeof OrganizationRole];
+
 /**
  * Team member role
  * Specific to team-level permissions
