@@ -19,7 +19,7 @@
 
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { loginSchema, registerSchema } from '@validiant/shared';
+import { userLoginSchema, userRegistrationSchema } from '@validiant/shared';
 import * as authController from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth';
 
@@ -32,12 +32,12 @@ const app = new Hono();
  * POST /register
  * Register a new user account
  * 
- * Validation: registerSchema (email, password, firstName, lastName)
+ * Validation: userRegistrationSchema (email, password, fullName)
  * Response: 201 Created with user object + HttpOnly cookies
  */
 app.post(
   '/register',
-  zValidator('json', registerSchema),
+  zValidator('json', userRegistrationSchema),
   authController.register
 );
 
@@ -45,12 +45,12 @@ app.post(
  * POST /login
  * Authenticate user with email and password
  * 
- * Validation: loginSchema (email, password)
+ * Validation: userLoginSchema (email, password)
  * Response: 200 OK with user object + HttpOnly cookies
  */
 app.post(
   '/login',
-  zValidator('json', loginSchema),
+  zValidator('json', userLoginSchema),
   authController.login
 );
 
