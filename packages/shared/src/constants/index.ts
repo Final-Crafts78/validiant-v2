@@ -128,7 +128,11 @@ export const ERROR_CODES = {
  * Pagination defaults
  */
 export const PAGINATION = {
+  MIN_PER_PAGE: 1,
   DEFAULT_PAGE: 1,
+  DEFAULT_PER_PAGE: 20,
+  MAX_PER_PAGE: 100,
+  // Legacy aliases for backward compatibility
   DEFAULT_LIMIT: 20,
   MAX_LIMIT: 100,
 } as const;
