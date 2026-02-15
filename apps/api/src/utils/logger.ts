@@ -287,8 +287,3 @@ export const sanitizeLogData = (data: any): any => {
 
   return sanitized;
 };
-
-/**
- * Export logger type
- */
-export type { Logger, LogMetadata };
