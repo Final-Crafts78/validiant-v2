@@ -98,7 +98,23 @@ export interface UpdateTaskInput {
 /**
  * Organization related types
  */
-export type OrganizationRole = 'owner' | 'admin' | 'member';
+
+/**
+ * OrganizationRole as const object (runtime value)
+ * Can be used as both type and value
+ */
+export const OrganizationRole = {
+  OWNER: 'owner',
+  ADMIN: 'admin',
+  MEMBER: 'member',
+  VIEWER: 'viewer',
+} as const;
+
+/**
+ * OrganizationRole type alias
+ * Inferred from the const object
+ */
+export type OrganizationRole = typeof OrganizationRole[keyof typeof OrganizationRole];
 
 export interface Organization {
   id: string;
