@@ -60,7 +60,7 @@ export const validate = {
 
     if (
       VALIDATION.PASSWORD.REQUIRE_SPECIAL &&
-      !/[!@#$%^&*()_+\-=[\]{}; ':"\\|,.<>/?]/.test(password)
+      !/[^a-zA-Z0-9\s]/.test(password)
     ) {
       errors.push('Password must contain at least one special character');
     }
