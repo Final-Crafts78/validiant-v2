@@ -114,17 +114,18 @@ export const createTask = async (
   // ✅ ELITE: Use transaction with 'tx' object for all operations
   const task = await db.transaction(async (tx) => {
     // Get next position using 'tx'
-    const [{ maxPosition }] = await tx
+    const maxPositionResult = await tx
       .select({
         maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`,
       })
       .from(tasks)
       .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
+    const { maxPosition } = maxPositionResult[0];
 
     const position = Number(maxPosition) + 1;
 
     // Create task using 'tx'
-    const [newTask] = await tx
+    const newTaskResult = await tx
       .insert(tasks)
       .values({
         projectId,
@@ -159,6 +160,7 @@ export const createTask = async (
         updatedAt: tasks.updatedAt,
         completedAt: tasks.completedAt,
       });
+    const newTask = newTaskResult[0];
 
     // Assign users if provided using 'tx'
     if (data.assigneeIds && data.assigneeIds.length > 0) {
@@ -199,7 +201,7 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
   }
 
   // Main task query
-  const [task] = await db
+  const taskResult = await db
     .select({
       id: tasks.id,
       projectId: tasks.projectId,
@@ -250,6 +252,7 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
     .innerJoin(users, eq(tasks.createdBy, users.id))
     .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt), isNull(projects.deletedAt)))
     .limit(1);
+  const task = taskResult[0];
 
   assertExists(task, 'Task');
 
@@ -335,7 +338,7 @@ export const updateTask = async (
     throw new BadRequestError('No fields to update');
   }
 
-  const [task] = await db
+  const taskResult = await db
     .update(tasks)
     .set(updateData)
     .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
@@ -358,6 +361,7 @@ export const updateTask = async (
       updatedAt: tasks.updatedAt,
       completedAt: tasks.completedAt,
     });
+  const task = taskResult[0];
 
   // Clear cache
   await cache.del(`task:${taskId}`);
@@ -385,11 +389,12 @@ export const updateTask = async (
  */
 export const deleteTask = async (taskId: string): Promise<void> => {
   // Get task before deletion to get projectId
-  const [task] = await db
+  const taskResult = await db
     .select({ projectId: tasks.projectId })
     .from(tasks)
     .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
     .limit(1);
+  const task = taskResult[0];
 
   if (!task) {
     throw new NotFoundError('Task');
@@ -476,10 +481,11 @@ export const listProjectTasks = async (
   const whereClause = and(...conditions);
 
   // Get total count
-  const [{ count }] = await db
+  const countResult = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(tasks)
     .where(whereClause);
+  const { count } = countResult[0];
 
   const total = Number(count);
 
@@ -627,18 +633,19 @@ export const getUserTasks = async (
  */
 export const assignTask = async (taskId: string, userId: string): Promise<TaskAssignee> => {
   // Get task to get projectId
-  const [task] = await db
+  const taskResult = await db
     .select({ projectId: tasks.projectId })
     .from(tasks)
     .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
     .limit(1);
+  const task = taskResult[0];
 
   if (!task) {
     throw new NotFoundError('Task');
   }
 
   // Check if already assigned
-  const [exists] = await db
+  const existsResult = await db
     .select({ id: taskAssignees.id })
     .from(taskAssignees)
     .where(
@@ -649,12 +656,13 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
       )
     )
     .limit(1);
+  const exists = existsResult[0];
 
   if (exists) {
     throw new ConflictError('User is already assigned to this task');
   }
 
-  const [assignee] = await db
+  const assigneeResult = await db
     .insert(taskAssignees)
     .values({
       taskId,
@@ -666,6 +674,7 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
       userId: taskAssignees.userId,
       assignedAt: taskAssignees.assignedAt,
     });
+  const assignee = assigneeResult[0];
 
   // Clear cache
   await cache.del(`task:${taskId}`);
@@ -686,11 +695,12 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
  */
 export const unassignTask = async (taskId: string, userId: string): Promise<void> => {
   // Get task to get projectId
-  const [task] = await db
+  const taskResult = await db
     .select({ projectId: tasks.projectId })
     .from(tasks)
     .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)))
     .limit(1);
+  const task = taskResult[0];
 
   if (!task) {
     throw new NotFoundError('Task');
