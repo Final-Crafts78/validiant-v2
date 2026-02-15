@@ -429,7 +429,7 @@ export const verifyPasskeyAuthentication = async (
       id: user.id,
       email: user.email,
       fullName: user.fullName,
-      avatar: user.avatar,
+      avatar: user.avatarUrl,
       role: user.role as UserRole,
       status: user.status as UserStatus,
       emailVerified: user.emailVerified,
