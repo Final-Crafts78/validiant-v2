@@ -81,7 +81,11 @@ export const createProject = async (c: Context) => {
     const project = await projectService.createProject(
       validatedData.organizationId,
       user.userId,
-      validatedData
+      {
+        ...validatedData,
+        startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
+        endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+      }
     );
 
     return c.json(
@@ -255,7 +259,11 @@ export const updateProject = async (c: Context) => {
     // ELITE PATTERN: Explicit type casting for decoupled validation
     const validatedData = (await c.req.json()) as z.infer<typeof updateProjectSchema>;
 
-    const project = await projectService.updateProject(id, validatedData);
+    const project = await projectService.updateProject(id, {
+      ...validatedData,
+      startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
+      endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+    });
 
     return c.json({
       success: true,
