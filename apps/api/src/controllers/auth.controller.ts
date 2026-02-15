@@ -64,7 +64,7 @@ const formatUserResponse = (user: User) => ({
   firstName: user.firstName,
   lastName: user.lastName,
   fullName: `${user.firstName} ${user.lastName}`,
-  avatar: user.avatar,
+  avatar: user.avatarUrl,
   emailVerified: user.emailVerified,
   twoFactorEnabled: user.twoFactorEnabled,
   createdAt: user.createdAt.toISOString(),
