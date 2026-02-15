@@ -2,7 +2,8 @@
  * Cloudflare Workers Entry Point
  * 
  * This is the entry point for Cloudflare Workers deployment.
- * It exports the Hono app's fetch handler to handle all incoming requests.
+ * It exports the Hono app directly, which natively implements the
+ * Cloudflare Workers ExportedHandler interface.
  * 
  * Cloudflare Workers architecture:
  * - Runs on V8 isolates (not full Node.js runtime)
@@ -10,32 +11,25 @@
  * - Automatic edge deployment to 275+ cities
  * - No TCP connections (HTTP only)
  * 
- * File size: ~30 lines (minimal by design)
+ * Type Safety:
+ * Hono apps implement ExportedHandler<Env> natively, so we export
+ * the app directly rather than wrapping it in { fetch: app.fetch }.
+ * This ensures proper TypeScript declaration generation.
  */
 
 import { app } from './app';
 
 /**
- * Cloudflare Workers environment bindings type
- */
-export interface Env {
-  // Add environment bindings here as needed
-  // Example: DATABASE_URL: string;
-}
-
-/**
  * Cloudflare Workers export
  * 
- * The Workers runtime expects a default export with a `fetch` method.
- * Hono automatically provides this interface.
+ * Hono automatically provides the ExportedHandler interface.
+ * Direct export ensures type inference works correctly.
  * 
  * Request flow:
  * 1. Cloudflare receives request
  * 2. Routes to nearest edge location
- * 3. Calls this fetch handler
+ * 3. Calls the app's fetch handler
  * 4. Hono processes request through middleware and routes
  * 5. Returns response to client
  */
-export default {
-  fetch: app.fetch,
-};
+export default app;
