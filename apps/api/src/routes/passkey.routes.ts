@@ -32,7 +32,7 @@ import {
   updatePasskeyDeviceName,
 } from '../services/passkey.service';
 import { generateTokens } from '../services/auth.service';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth';
 import { logger } from '../utils/logger';
 import { env } from '../config/env.config';
 import { challengeCookieOptions } from '../config/webauthn.config';
@@ -132,7 +132,7 @@ app.post(
         options,
       });
     } catch (error) {
-      logger.error('Passkey registration options failed:', error);
+      logger.error('Passkey registration options failed:', error as Error);
       return c.json(
         {
           success: false,
@@ -205,7 +205,7 @@ app.post(
       // Delete challenge cookie on error
       deleteCookie(c, 'passkey_challenge');
       
-      logger.error('Passkey registration verification failed:', error);
+      logger.error('Passkey registration verification failed:', error as Error);
       return c.json(
         {
           success: false,
@@ -248,7 +248,7 @@ app.post(
         options,
       });
     } catch (error) {
-      logger.error('Passkey authentication options failed:', error);
+      logger.error('Passkey authentication options failed:', error as Error);
       return c.json(
         {
           success: false,
@@ -333,7 +333,7 @@ app.post(
       // Delete challenge cookie on error
       deleteCookie(c, 'passkey_challenge');
       
-      logger.error('Passkey authentication verification failed:', error);
+      logger.error('Passkey authentication verification failed:', error as Error);
       return c.json(
         {
           success: false,
@@ -377,7 +377,7 @@ app.get('/list', authenticate, async (c) => {
       passkeys,
     });
   } catch (error) {
-    logger.error('Get passkeys failed:', error);
+    logger.error('Get passkeys failed:', error as Error);
     return c.json(
       {
         success: false,
@@ -417,7 +417,7 @@ app.delete('/:credentialID', authenticate, async (c) => {
       message: 'Passkey deleted successfully',
     });
   } catch (error) {
-    logger.error('Delete passkey failed:', error);
+    logger.error('Delete passkey failed:', error as Error);
     return c.json(
       {
         success: false,
@@ -462,7 +462,7 @@ app.patch(
         message: 'Device name updated successfully',
       });
     } catch (error) {
-      logger.error('Update passkey device name failed:', error);
+      logger.error('Update passkey device name failed:', error as Error);
       return c.json(
         {
           success: false,
