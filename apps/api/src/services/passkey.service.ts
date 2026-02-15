@@ -292,9 +292,9 @@ export const generatePasskeyAuthenticationOptions = async (
         .where(eq(passkeyCredentials.userId, user.id));
       
       allowCredentials = credentials.map((cred) => ({
-        id: isoBase64URL.toBuffer(cred.credentialID),
+        id: Buffer.from(isoBase64URL.toBuffer(cred.credentialID)),
         type: 'public-key' as const,
-        transports: cred.transports as string[] | undefined,
+        transports: cred.transports as any,
       }));
     }
   }
@@ -496,7 +496,7 @@ export const deletePasskey = async (userId: string, credentialID: string): Promi
   }
   
   // Delete passkey
-  const _result = await db
+  await db
     .delete(passkeyCredentials)
     .where(
       and(
