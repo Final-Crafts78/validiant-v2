@@ -7,7 +7,6 @@
 
 import type { Context, Next } from 'hono';
 import { verifyToken, extractBearerToken } from '../utils/jwt';
-import { UnauthorizedError } from '../utils/errors';
 
 /**
  * User context type
