@@ -63,7 +63,7 @@ export const createProject = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof createProjectSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof createProjectSchema>;
 
     // Check organization access
     const hasAccess = await checkOrganizationAccess(validatedData.organizationId, user.userId);
@@ -253,7 +253,7 @@ export const updateProject = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof updateProjectSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof updateProjectSchema>;
 
     const project = await projectService.updateProject(id, validatedData);
 
@@ -322,7 +322,7 @@ export const updateProjectSettings = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof updateProjectSettingsSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof updateProjectSettingsSchema>;
 
     const project = await projectService.updateProjectSettings(id, validatedData.settings);
 
@@ -471,7 +471,7 @@ export const listOrganizationProjects = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedQuery = c.req.valid('query') as z.infer<typeof projectListQuerySchema>;
+    const validatedQuery = c.req.query() as unknown as z.infer<typeof projectListQuerySchema>;
 
     const result = await projectService.listOrganizationProjects(organizationId, {
       status: validatedQuery.status,
@@ -608,7 +608,7 @@ export const addProjectMember = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = c.req.valid('json') as z.infer<typeof addProjectMemberSchema>;
+    const validatedData = (await c.req.json()) as z.infer<typeof addProjectMemberSchema>;
 
     // Verify user is in the same organization
     const project = await projectService.getProjectById(id);
