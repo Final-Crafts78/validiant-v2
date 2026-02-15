@@ -163,7 +163,10 @@ const findOrCreateOAuthUser = async (
     });
     
     return {
-      user: existingUser,
+      user: {
+        ...existingUser,
+        role: existingUser.role as UserRole,
+      },
       isNewUser: false,
     };
   }
@@ -200,7 +203,10 @@ const findOrCreateOAuthUser = async (
     });
     
     return {
-      user: existingUser,
+      user: {
+        ...existingUser,
+        role: existingUser.role as UserRole,
+      },
       isNewUser: false,
     };
   }
@@ -228,7 +234,10 @@ const findOrCreateOAuthUser = async (
   });
   
   return {
-    user: newUser,
+    user: {
+      ...newUser,
+      role: newUser.role as UserRole,
+    },
     isNewUser: true,
   };
 };

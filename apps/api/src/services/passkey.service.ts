@@ -243,7 +243,7 @@ export const verifyPasskeyRegistration = async (
     userId,
     webauthnUserID,
     publicKey: publicKeyBase64,
-    counter: BigInt(counter),
+    counter: Number(counter),
     transports,
     deviceName,
     backedUp: credentialBackedUp,
@@ -304,7 +304,7 @@ export const generatePasskeyAuthenticationOptions = async (
     rpID,
     timeout,
     userVerification,
-    allowCredentials,
+    allowCredentials: allowCredentials as any,
   };
   
   const options = await generateAuthenticationOptions(opts);
@@ -408,7 +408,7 @@ export const verifyPasskeyAuthentication = async (
   await db
     .update(passkeyCredentials)
     .set({
-      counter: BigInt(newCounter),
+      counter: Number(newCounter),
       lastUsedAt: new Date(),
     })
     .where(eq(passkeyCredentials.credentialID, credentialIDBase64));

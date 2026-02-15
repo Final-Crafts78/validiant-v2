@@ -92,7 +92,7 @@ const generateAccessToken = (
     },
     env.JWT_SECRET,
     {
-      expiresIn: env.JWT_ACCESS_EXPIRY,
+      expiresIn: env.JWT_ACCESS_EXPIRY as string,
       issuer: 'validiant-api',
       audience: 'validiant-client',
     }
@@ -111,7 +111,7 @@ const generateRefreshToken = (userId: string, sessionId: string): string => {
     },
     env.JWT_REFRESH_SECRET,
     {
-      expiresIn: env.JWT_REFRESH_EXPIRY,
+      expiresIn: env.JWT_REFRESH_EXPIRY as string,
       issuer: 'validiant-api',
     }
   );
@@ -200,8 +200,8 @@ export const register = async (data: {
 
   const user: User = newUser as User;
 
-  // Generate tokens
-  const tokens = await generateTokens(user.id, user.email, user.role);
+  // Generate tokens (cast role to UserRole)
+  const tokens = await generateTokens(user.id, user.email, user.role as UserRole);
 
   // Log registration event
   logAuthEvent('register', user.id, { email: user.email });
@@ -265,8 +265,8 @@ export const login = async (data: {
     .set({ lastLoginAt: new Date() })
     .where(eq(users.id, user.id));
 
-  // Generate tokens
-  const tokens = await generateTokens(user.id, user.email, user.role, deviceInfo);
+  // Generate tokens (cast role to UserRole)
+  const tokens = await generateTokens(user.id, user.email, user.role as UserRole, deviceInfo);
 
   // Log login event
   logAuthEvent('login', user.id, { email: user.email });
@@ -319,11 +319,11 @@ export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> 
       throw new UnauthorizedError(`Account is ${user.status}`);
     }
 
-    // Generate new tokens
+    // Generate new tokens (cast role to UserRole)
     const tokens = await generateTokens(
       user.id,
       user.email,
-      user.role,
+      user.role as UserRole,
       sessionData.deviceInfo
     );
 
