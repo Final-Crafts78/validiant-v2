@@ -8,7 +8,7 @@
 import { Response } from 'express';
 import { ZodError } from 'zod';
 import { logger } from './logger';
-import { API_ERROR_CODES } from '@validiant/shared';
+import { ERROR_CODES as API_ERROR_CODES } from '@validiant/shared';
 
 /**
  * Base API Error class
