@@ -270,7 +270,7 @@ export const sendErrorResponse = (
     });
   }
 
-  return c.json(errorResponse, errorResponse.error.statusCode);
+  return c.json(errorResponse, errorResponse.error.statusCode as any);
 };
 
 /**
@@ -301,14 +301,14 @@ export const assert = (
 };
 
 /**
- * Assert resource exists
+ * Assert resource exists (with explicit type annotation for TS2775 fix)
  */
 export const assertExists = <T>(
-  resource: T | null | undefined,
-  resourceName: string = 'Resource'
-): asserts resource is T => {
-  if (!resource) {
-    throw new NotFoundError(resourceName);
+  value: T | null | undefined,
+  name: string
+): asserts value is NonNullable<T> => {
+  if (!value) {
+    throw new NotFoundError(`${name} not found`);
   }
 };
 
