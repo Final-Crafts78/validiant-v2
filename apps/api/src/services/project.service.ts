@@ -12,7 +12,6 @@ import { db } from '../db';
 import { projects, projectMembers, organizations, users } from '../db/schema';
 import { cache } from '../config/redis.config';
 import {
-  NotFoundError,
   ConflictError,
   BadRequestError,
   assertExists,
