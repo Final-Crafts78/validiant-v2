@@ -6,28 +6,32 @@
  */
 
 /**
- * User role enumeration
+ * User role enumeration (runtime const + type pattern)
  * Defines the hierarchy of user roles in the system
  */
-export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
-  ADMIN = 'admin',
-  MANAGER = 'manager',
-  MEMBER = 'member',
-  GUEST = 'guest',
-}
+export const UserRole = {
+  SUPER_ADMIN: 'super_admin',
+  ADMIN: 'admin',
+  MANAGER: 'manager',
+  MEMBER: 'member',
+  GUEST: 'guest',
+} as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 /**
- * User status enumeration
+ * User status enumeration (runtime const + type pattern)
  * Tracks the current state of a user account
  */
-export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  PENDING = 'pending',
-  SUSPENDED = 'suspended',
-  DELETED = 'deleted',
-}
+export const UserStatus = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  PENDING: 'pending',
+  SUSPENDED: 'suspended',
+  DELETED: 'deleted',
+} as const;
+
+export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
 
 /**
  * OAuth provider enumeration
@@ -250,17 +254,20 @@ export interface UserPermission {
 }
 
 /**
+ * Role hierarchy mapping for permission checks
+ */
+const roleHierarchy: Record<UserRole, number> = {
+  [UserRole.SUPER_ADMIN]: 5,
+  [UserRole.ADMIN]: 4,
+  [UserRole.MANAGER]: 3,
+  [UserRole.MEMBER]: 2,
+  [UserRole.GUEST]: 1,
+};
+
+/**
  * Type guard to check if a user has a specific role
  */
 export const hasRole = (user: User, role: UserRole): boolean => {
-  const roleHierarchy = {
-    [UserRole.SUPER_ADMIN]: 5,
-    [UserRole.ADMIN]: 4,
-    [UserRole.MANAGER]: 3,
-    [UserRole.MEMBER]: 2,
-    [UserRole.GUEST]: 1,
-  };
-  
   return roleHierarchy[user.role] >= roleHierarchy[role];
 };
 
