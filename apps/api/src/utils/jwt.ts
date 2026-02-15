@@ -1,66 +1,108 @@
 /**
  * JWT Utilities
  * 
- * Functions for generating and verifying JWT tokens.
+ * JWT token generation and verification.
+ * Uses jose library for edge-compatible JWT operations.
  */
 
-import jwt from 'jsonwebtoken';
-import { env } from '../config/env.config';
+import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
+import { env } from '../config/env';
 
-export interface TokenPayload {
+/**
+ * JWT payload structure
+ */
+export interface TokenPayload extends JWTPayload {
   userId: string;
   email: string;
-  exp?: number;
-  iat?: number;
+  role?: string;
+  organizationId?: string;
 }
 
 /**
- * Generate access token
+ * Secret key for JWT signing
  */
-export const generateAccessToken = (payload: TokenPayload): string => {
-  return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_ACCESS_EXPIRY,
-  });
+const getSecretKey = (): Uint8Array => {
+  const secret = env.JWT_SECRET;
+  return new TextEncoder().encode(secret);
+};
+
+/**
+ * Generate JWT token
+ */
+export const generateToken = async (
+  payload: Omit<TokenPayload, 'iat' | 'exp'>,
+  expiresIn: string = '7d'
+): Promise<string> => {
+  const secret = getSecretKey();
+
+  return await new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(expiresIn as string)
+    .sign(secret);
+};
+
+/**
+ * Verify JWT token
+ */
+export const verifyToken = async (token: string): Promise<TokenPayload> => {
+  const secret = getSecretKey();
+
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    return payload as TokenPayload;
+  } catch (error) {
+    throw new Error('Invalid or expired token');
+  }
+};
+
+/**
+ * Decode JWT token without verification (use carefully)
+ */
+export const decodeToken = (token: string): TokenPayload | null => {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const payload = JSON.parse(
+      Buffer.from(parts[1], 'base64').toString('utf-8')
+    );
+    return payload as TokenPayload;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Check if token is expired
+ */
+export const isTokenExpired = (token: string): boolean => {
+  const payload = decodeToken(token);
+  if (!payload || !payload.exp) {
+    return true;
+  }
+
+  return Date.now() >= payload.exp * 1000;
+};
+
+/**
+ * Extract token from Authorization header
+ */
+export const extractBearerToken = (authHeader: string | null): string | null => {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+
+  return authHeader.substring(7);
 };
 
 /**
  * Generate refresh token
  */
-export const generateRefreshToken = (payload: TokenPayload): string => {
-  return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_REFRESH_EXPIRY,
-  });
-};
-
-/**
- * Verify access token
- */
-export const verifyToken = (token: string): TokenPayload => {
-  try {
-    return jwt.verify(token, env.JWT_SECRET) as TokenPayload;
-  } catch (error) {
-    throw new Error('Invalid token');
-  }
-};
-
-/**
- * Verify refresh token
- */
-export const verifyRefreshToken = (token: string): TokenPayload => {
-  try {
-    return jwt.verify(token, env.JWT_SECRET) as TokenPayload;
-  } catch (error) {
-    throw new Error('Invalid refresh token');
-  }
-};
-
-/**
- * Decode token without verification
- */
-export const decodeToken = (token: string): TokenPayload | null => {
-  try {
-    return jwt.decode(token) as TokenPayload;
-  } catch {
-    return null;
-  }
+export const generateRefreshToken = async (
+  payload: Omit<TokenPayload, 'iat' | 'exp'>
+): Promise<string> => {
+  return generateToken(payload, '30d');
 };
