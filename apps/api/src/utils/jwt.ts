@@ -6,7 +6,7 @@
  */
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
-import { env } from '../config/env';
+import { env } from '../config/env.config';
 
 /**
  * JWT payload structure
@@ -16,6 +16,7 @@ export interface TokenPayload extends JWTPayload {
   email: string;
   role?: string;
   organizationId?: string;
+  exp?: number;
 }
 
 /**
@@ -90,7 +91,7 @@ export const isTokenExpired = (token: string): boolean => {
 /**
  * Extract token from Authorization header
  */
-export const extractBearerToken = (authHeader: string | null): string | null => {
+export const extractBearerToken = (authHeader: string | undefined | null): string | null => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }
