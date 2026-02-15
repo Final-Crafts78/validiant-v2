@@ -6,32 +6,28 @@
  */
 
 /**
- * User role enumeration (runtime const + type pattern)
+ * User role enumeration
  * Defines the hierarchy of user roles in the system
  */
-export const UserRole = {
-  SUPER_ADMIN: 'super_admin',
-  ADMIN: 'admin',
-  MANAGER: 'manager',
-  MEMBER: 'member',
-  GUEST: 'guest',
-} as const;
-
-export type UserRole = typeof UserRole[keyof typeof UserRole];
+export enum UserRole {
+  SUPER_ADMIN = 'super_admin',
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  MEMBER = 'member',
+  GUEST = 'guest',
+}
 
 /**
- * User status enumeration (runtime const + type pattern)
+ * User status enumeration
  * Tracks the current state of a user account
  */
-export const UserStatus = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  PENDING: 'pending',
-  SUSPENDED: 'suspended',
-  DELETED: 'deleted',
-} as const;
-
-export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  PENDING = 'pending',
+  SUSPENDED = 'suspended',
+  DELETED = 'deleted',
+}
 
 /**
  * OAuth provider enumeration
