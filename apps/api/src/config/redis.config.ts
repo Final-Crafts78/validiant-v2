@@ -29,7 +29,7 @@ try {
 
   logger.info('✅ Upstash Redis client initialized');
 } catch (error) {
-  logger.error('❌ Failed to initialize Upstash Redis client:', error);
+  logger.error('❌ Failed to initialize Upstash Redis client:', error as Error);
   throw error;
 }
 
@@ -309,7 +309,7 @@ export const testConnection = async (): Promise<boolean> => {
     logger.info('✅ Redis connection test successful');
     return true;
   } catch (error) {
-    logger.error('❌ Redis connection test failed:', error);
+    logger.error('❌ Redis connection test failed:', error as Error);
     return false;
   }
 };
