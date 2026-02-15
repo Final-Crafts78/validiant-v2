@@ -497,7 +497,7 @@ export const getUserStats = async (): Promise<UserStats> => {
   const roleStats = await db
     .select({
       role: users.role,
-      count: sql<number>`COUNT(*)`::int,
+      count: sql<number>`COUNT(*)`,
     })
     .from(users)
     .where(isNull(users.deletedAt))
