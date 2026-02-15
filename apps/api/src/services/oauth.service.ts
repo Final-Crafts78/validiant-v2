@@ -9,7 +9,7 @@
  * - State management via HttpOnly cookies (routes layer)
  * - Automatic user creation for new OAuth users
  * - Account linking (link OAuth to existing email)
- * - Profile data sync (name, avatar)
+ * - Profile data sync (name, avatarUrl)
  * - Email verification via OAuth
  * - PKCE support (Google)
  * 
@@ -52,7 +52,7 @@ interface OAuthResult {
     id: string;
     email: string;
     fullName: string;
-    avatar?: string | null;
+    avatarUrl?: string | null;
     role: UserRole;
     status: UserStatus;
     emailVerified: boolean;
@@ -137,12 +137,12 @@ const findOrCreateOAuthUser = async (
     .limit(1);
   
   if (existingUser) {
-    // Update profile data (avatar, name) if changed
-    if (existingUser.avatar !== profile.avatar || existingUser.fullName !== profile.name) {
+    // Update profile data (avatarUrl, name) if changed
+    if (existingUser.avatarUrl !== profile.avatar || existingUser.fullName !== profile.name) {
       [existingUser] = await db
         .update(users)
         .set({
-          avatar: profile.avatar,
+          avatarUrl: profile.avatar,
           fullName: profile.name,
           lastLoginAt: new Date(),
         })
@@ -186,7 +186,7 @@ const findOrCreateOAuthUser = async (
       .update(users)
       .set({
         [providerIdField]: profile.id,
-        avatar: profile.avatar || existingUser.avatar,
+        avatarUrl: profile.avatar || existingUser.avatarUrl,
         emailVerified: profile.emailVerified || existingUser.emailVerified,
         lastLoginAt: new Date(),
       })
@@ -211,7 +211,7 @@ const findOrCreateOAuthUser = async (
     .values({
       email: profile.email.toLowerCase(),
       fullName: profile.name,
-      avatar: profile.avatar,
+      avatarUrl: profile.avatar,
       [providerIdField]: profile.id,
       role: UserRole.USER,
       status: UserStatus.ACTIVE,
