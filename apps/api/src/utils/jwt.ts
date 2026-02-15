@@ -5,7 +5,7 @@
  */
 
 import jwt from 'jsonwebtoken';
-import { config } from '../config';
+import { env } from '../config/env.config';
 
 export interface TokenPayload {
   userId: string;
@@ -18,8 +18,8 @@ export interface TokenPayload {
  * Generate access token
  */
 export const generateAccessToken = (payload: TokenPayload): string => {
-  return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.accessExpiration,
+  return jwt.sign(payload, env.JWT_SECRET, {
+    expiresIn: env.JWT_ACCESS_EXPIRY,
   });
 };
 
@@ -27,8 +27,8 @@ export const generateAccessToken = (payload: TokenPayload): string => {
  * Generate refresh token
  */
 export const generateRefreshToken = (payload: TokenPayload): string => {
-  return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.refreshExpiration,
+  return jwt.sign(payload, env.JWT_SECRET, {
+    expiresIn: env.JWT_REFRESH_EXPIRY,
   });
 };
 
@@ -37,7 +37,7 @@ export const generateRefreshToken = (payload: TokenPayload): string => {
  */
 export const verifyToken = (token: string): TokenPayload => {
   try {
-    return jwt.verify(token, config.jwt.secret) as TokenPayload;
+    return jwt.verify(token, env.JWT_SECRET) as TokenPayload;
   } catch (error) {
     throw new Error('Invalid token');
   }
@@ -48,7 +48,7 @@ export const verifyToken = (token: string): TokenPayload => {
  */
 export const verifyRefreshToken = (token: string): TokenPayload => {
   try {
-    return jwt.verify(token, config.jwt.secret) as TokenPayload;
+    return jwt.verify(token, env.JWT_SECRET) as TokenPayload;
   } catch (error) {
     throw new Error('Invalid refresh token');
   }
