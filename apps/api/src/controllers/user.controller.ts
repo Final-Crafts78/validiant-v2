@@ -12,7 +12,16 @@
  */
 
 import { Context } from 'hono';
+import { z } from 'zod';
 import * as userService from '../services/user.service';
+import {
+  updateUserProfileSchema,
+  updateUserPreferencesSchema,
+  userListQuerySchema,
+  userSearchQuerySchema,
+  updateUserRoleSchema,
+  updateUserStatusSchema,
+} from '@validiant/shared';
 
 /**
  * Get current user profile
@@ -73,8 +82,8 @@ export const updateCurrentUserProfile = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const validatedData = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateUserProfileSchema>;
 
     const updatedUser = await userService.updateProfile(user.userId, validatedData);
 
@@ -117,8 +126,8 @@ export const updateUserPreferences = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { preferences } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { preferences } = c.req.valid('json') as z.infer<typeof updateUserPreferencesSchema>;
 
     const updatedUser = await userService.updatePreferences(
       user.userId,
@@ -307,8 +316,8 @@ export const getUserById = async (c: Context) => {
  */
 export const listUsers = async (c: Context) => {
   try {
-    // ELITE PATTERN: Blindly trust pre-validated query
-    const validatedQuery = c.req.valid('query');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedQuery = c.req.valid('query') as z.infer<typeof userListQuerySchema>;
 
     const result = await userService.listUsers({
       page: validatedQuery.page,
@@ -345,8 +354,8 @@ export const listUsers = async (c: Context) => {
  */
 export const searchUsers = async (c: Context) => {
   try {
-    // ELITE PATTERN: Blindly trust pre-validated query
-    const { q, limit } = c.req.valid('query');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { q, limit } = c.req.valid('query') as z.infer<typeof userSearchQuerySchema>;
 
     const users = await userService.searchUsers(q, limit || 10);
 
@@ -440,8 +449,8 @@ export const updateUserById = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const validatedData = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const validatedData = c.req.valid('json') as z.infer<typeof updateUserProfileSchema>;
 
     const user = await userService.updateProfile(id, validatedData);
 
@@ -497,8 +506,8 @@ export const updateUserRole = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { role } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { role } = c.req.valid('json') as z.infer<typeof updateUserRoleSchema>;
 
     const user = await userService.updateUserRole(id, role);
 
@@ -554,8 +563,8 @@ export const updateUserStatus = async (c: Context) => {
       );
     }
 
-    // ELITE PATTERN: Blindly trust pre-validated payload
-    const { status } = c.req.valid('json');
+    // ELITE PATTERN: Explicit type casting for decoupled validation
+    const { status } = c.req.valid('json') as z.infer<typeof updateUserStatusSchema>;
 
     const user = await userService.updateUserStatus(id, status);
 
