@@ -184,7 +184,7 @@ export const register = async (data: {
       email: email.toLowerCase(),
       passwordHash,
       fullName,
-      role: UserRole.MEMBER,
+      role: UserRole.MEMBER as UserRole,
       status: UserStatus.ACTIVE,
       emailVerified: false,
     })
