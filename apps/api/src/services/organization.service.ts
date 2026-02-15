@@ -626,7 +626,7 @@ export const getUserRole = async (
     .limit(1);
   const member = memberResult[0];
 
-  return member?.role || null;
+  return (member?.role as OrganizationRole) || null;
 };
 
 /**

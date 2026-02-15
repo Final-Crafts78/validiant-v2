@@ -13,6 +13,7 @@
 
 import { Context } from 'hono';
 import { z } from 'zod';
+import { sql } from 'drizzle-orm';
 import * as userService from '../services/user.service';
 import {
   updateUserProfileSchema,
@@ -706,27 +707,25 @@ export const getUserActivity = async (c: Context) => {
     // Import database
     const { db } = await import('../db/index');
 
-    // Get total count
+    // Get total count using SQL template
     const countResult = await db.execute(
-      'SELECT COUNT(*) as count FROM user_activity_log WHERE user_id = $1',
-      [id]
+      sql`SELECT COUNT(*) as count FROM user_activity_log WHERE user_id = ${id}`
     );
 
     const total = countResult?.rows?.[0]?.count || 0;
 
-    // Get activity logs
+    // Get activity logs using SQL template
     const activities = await db.execute(
-      `
+      sql`
         SELECT 
           id, action, entity_type as "entityType", entity_id as "entityId",
           metadata, ip_address as "ipAddress", user_agent as "userAgent",
           created_at as "createdAt"
         FROM user_activity_log
-        WHERE user_id = $1
+        WHERE user_id = ${id}
         ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
-      `,
-      [id, perPage, offset]
+        LIMIT ${perPage} OFFSET ${offset}
+      `
     );
 
     return c.json({
