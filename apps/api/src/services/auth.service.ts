@@ -92,7 +92,7 @@ const generateAccessToken = (
     },
     env.JWT_SECRET,
     {
-      expiresIn: env.JWT_ACCESS_EXPIRY as string,
+      expiresIn: '7d',
       issuer: 'validiant-api',
       audience: 'validiant-client',
     }
@@ -111,7 +111,7 @@ const generateRefreshToken = (userId: string, sessionId: string): string => {
     },
     env.JWT_REFRESH_SECRET,
     {
-      expiresIn: env.JWT_REFRESH_EXPIRY as string,
+      expiresIn: '7d',
       issuer: 'validiant-api',
     }
   );
@@ -149,7 +149,7 @@ export const generateTokens = async (
   return {
     accessToken,
     refreshToken,
-    expiresIn: 3600, // 1 hour in seconds
+    expiresIn: '7d',
   };
 };
 
@@ -510,7 +510,7 @@ export const changePassword = async (
 /**
  * Verify email with token
  */
-export const verifyEmail = async (token: string): Promise<void> => {
+export const verifyEmail = async (_token: string): Promise<void> => {
   // TODO: Implement email verification logic
   // This would typically involve:
   // 1. Verify token from email
@@ -522,7 +522,7 @@ export const verifyEmail = async (token: string): Promise<void> => {
 /**
  * Get active sessions for user
  */
-export const getUserSessions = async (userId: string): Promise<SessionData[]> => {
+export const getUserSessions = async (_userId: string): Promise<SessionData[]> => {
   // This would require maintaining a list of session IDs per user
   // For now, return empty array
   // TODO: Implement session tracking
