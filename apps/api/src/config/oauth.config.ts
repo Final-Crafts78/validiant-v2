@@ -27,7 +27,7 @@ export interface OAuthProfile {
   id: string;
   email: string;
   name: string;
-  avatar?: string;
+  avatarUrl?: string;
   emailVerified: boolean;
 }
 
@@ -184,7 +184,7 @@ export const getGoogleProfile = async (accessToken: string): Promise<OAuthProfil
     id: data.id,
     email: data.email,
     name: data.name,
-    avatar: data.picture,
+    avatarUrl: data.picture,
     emailVerified: data.verified_email,
   };
 };
@@ -243,7 +243,7 @@ export const getGitHubProfile = async (accessToken: string): Promise<OAuthProfil
     id: userData.id.toString(),
     email: primaryEmail.email,
     name: userData.name || userData.login,
-    avatar: userData.avatar_url,
+    avatarUrl: userData.avatar_url,
     emailVerified: primaryEmail.verified,
   };
 };
