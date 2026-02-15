@@ -117,6 +117,7 @@ export const createOrganization = async (
       .values({
         name: data.name,
         slug,
+        ownerId: userId,
         description: data.description,
         website: data.website,
         industry: data.industry,
@@ -261,7 +262,6 @@ export const updateOrganization = async (
   if (data.size !== undefined) {
     updateData.size = data.size;
   }
-
   if (data.logoUrl !== undefined) {
     updateData.logoUrl = data.logoUrl;
   }
