@@ -213,7 +213,7 @@ const findOrCreateOAuthUser = async (
       fullName: profile.name,
       avatarUrl: profile.avatarUrl,
       [providerIdField]: profile.id,
-      role: UserRole.USER,
+      role: UserRole.USER as UserRole,
       status: UserStatus.ACTIVE,
       emailVerified: profile.emailVerified,
       passwordHash: null, // No password for OAuth users
