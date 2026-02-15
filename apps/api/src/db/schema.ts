@@ -357,6 +357,10 @@ export const projectMembers = pgTable(
       .notNull()
       .defaultNow(),
     addedBy: uuid('added_by').references(() => users.id),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     // Unique constraint: one user can only be a member once per project
@@ -389,7 +393,8 @@ export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
 // TASK TABLE
 // ============================================================================
 
-export const tasks = pgTable(
+// Type annotation to avoid circular reference error
+export const tasks: ReturnType<typeof pgTable> = pgTable(
   'tasks',
   {
     id: uuid('id').primaryKey().defaultRandom(),
@@ -403,8 +408,8 @@ export const tasks = pgTable(
     tags: jsonb('tags').$type<string[]>().default([]),
     customFields: jsonb('custom_fields').default({}),
     
-    // Task hierarchy (subtasks)
-    parentTaskId: uuid('parent_task_id').references(() => tasks.id, { onDelete: 'cascade' }),
+    // Task hierarchy (subtasks) - cast to any to avoid circular reference
+    parentTaskId: uuid('parent_task_id').references((): any => tasks.id, { onDelete: 'cascade' }),
     
     // References
     projectId: uuid('project_id')
@@ -483,6 +488,7 @@ export const taskAssignees = pgTable(
       .notNull()
       .defaultNow(),
     assignedBy: uuid('assigned_by').references(() => users.id),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     // Unique constraint: one user can only be assigned once per task
