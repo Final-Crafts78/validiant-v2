@@ -31,7 +31,7 @@ const checkOrganizationRole = async (
   organizationId: string,
   userId: string,
   requiredRoles: (typeof OrganizationRole)[keyof typeof OrganizationRole][]
-): Promise<{ hasPermission: boolean; userRole?: typeof OrganizationRole[keyof typeof OrganizationRole] }> => {
+): Promise<{ hasPermission: boolean; userRole?: typeof OrganizationRole[keyof typeof OrganizationRole] | null }> => {
   const userRole = await organizationService.getUserRole(organizationId, userId);
 
   if (!userRole || !requiredRoles.includes(userRole)) {
