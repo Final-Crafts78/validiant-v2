@@ -16,7 +16,6 @@ import {
   createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
-  taskListQuerySchema,
 } from '@validiant/shared';
 import * as taskController from '../controllers/task.controller';
 import { authenticate } from '../middleware/auth';
