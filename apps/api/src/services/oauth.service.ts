@@ -166,6 +166,7 @@ const findOrCreateOAuthUser = async (
       user: {
         ...existingUser,
         role: existingUser.role as UserRole,
+        status: existingUser.status as UserStatus,
       },
       isNewUser: false,
     };
@@ -206,6 +207,7 @@ const findOrCreateOAuthUser = async (
       user: {
         ...existingUser,
         role: existingUser.role as UserRole,
+        status: existingUser.status as UserStatus,
       },
       isNewUser: false,
     };
@@ -220,7 +222,7 @@ const findOrCreateOAuthUser = async (
       avatarUrl: profile.avatarUrl,
       [providerIdField]: profile.id,
       role: UserRole.USER as UserRole,
-      status: UserStatus.ACTIVE,
+      status: UserStatus.ACTIVE as UserStatus,
       emailVerified: profile.emailVerified,
       passwordHash: null, // No password for OAuth users
       lastLoginAt: new Date(),
@@ -237,6 +239,7 @@ const findOrCreateOAuthUser = async (
     user: {
       ...newUser,
       role: newUser.role as UserRole,
+      status: newUser.status as UserStatus,
     },
     isNewUser: true,
   };
@@ -320,12 +323,12 @@ export const handleGoogleCallback = async (
  * Handle GitHub OAuth callback
  * 
  * @param code - Authorization code
- * @param state - State token (already verified by routes layer)
+ * @param _state - State token (already verified by routes layer)
  * @returns OAuth result with user
  */
 export const handleGitHubCallback = async (
   code: string,
-  state: string
+  _state: string
 ): Promise<OAuthResult> => {
   // Exchange code for token
   const accessToken = await validateGitHubCallback(code);
