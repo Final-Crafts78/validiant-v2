@@ -5,9 +5,10 @@
   "main": "dist/worker.js",
   "scripts": {
     "dev": "wrangler dev",
-    "build": "tsc && wrangler deploy --dry-run",
+    "build": "tsc",
     "start": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --dry-run",
+    "deploy:prod": "wrangler deploy",
     "party:dev": "partykit dev",
     "party:deploy": "partykit deploy",
     "dev:all": "concurrently \"npm run dev\" \"npm run party:dev\"",
