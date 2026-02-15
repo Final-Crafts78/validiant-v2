@@ -11,18 +11,6 @@
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 /**
- * API response wrapper
- * Standardized response format for all API endpoints
- */
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: ApiError;
-  message?: string;
-  timestamp: string;
-}
-
-/**
  * API error structure
  */
 export interface ApiError {
@@ -32,6 +20,27 @@ export interface ApiError {
   field?: string; // For field-specific validation errors
   stack?: string; // Only in development
 }
+
+/**
+ * API response wrapper (discriminated union)
+ * Standardized response format for all API endpoints
+ * 
+ * success: true -> data is guaranteed to exist
+ * success: false -> error is guaranteed to exist
+ */
+export type ApiResponse<T = unknown> =
+  | {
+      success: true;
+      data: T;
+      timestamp: string;
+      message?: string;
+    }
+  | {
+      success: false;
+      error: ApiError;
+      timestamp: string;
+      message?: string;
+    };
 
 /**
  * Validation error
