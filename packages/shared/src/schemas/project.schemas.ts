@@ -186,9 +186,11 @@ export const updateTaskStatusSchema = z.object({
 
 /**
  * Task assignment schema
+ * CATEGORY 5 FIX: Added userId field for controller compatibility
  */
 export const assignTaskSchema = z.object({
   assigneeId: z.string().uuid(),
+  userId: z.string().uuid().optional(),
   notifyAssignee: z.boolean().default(true),
 });
 
