@@ -58,11 +58,9 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // Save auth data
+      // Save user data (tokens are in HttpOnly cookies)
       setAuth({
         user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
       });
 
       // Redirect to dashboard
