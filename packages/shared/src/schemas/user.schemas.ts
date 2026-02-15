@@ -184,9 +184,10 @@ export const updateUserPreferencesSchema = z.object({
 });
 
 /**
- * Notification preferences update schema
+ * User notification preferences update schema
+ * Renamed to avoid conflict with notification.schemas.ts
  */
-export const updateNotificationPreferencesSchema = notificationPreferencesSchema.partial();
+export const userNotificationPreferencesUpdateSchema = notificationPreferencesSchema.partial();
 
 /**
  * Device info schema
@@ -357,7 +358,7 @@ export const partialUserUpdateSchema = z.object({
   phoneNumber: phoneNumberSchema,
   avatarUrl: z.string().url().optional(),
   preferences: updateUserPreferencesSchema.optional(),
-  notificationPreferences: updateNotificationPreferencesSchema.optional(),
+  notificationPreferences: userNotificationPreferencesUpdateSchema.optional(),
 }).strict();
 
 /**
