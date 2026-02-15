@@ -207,6 +207,18 @@ export const moveTaskSchema = z.object({
 });
 
 /**
+ * Task list query schema
+ * For paginated task listing with optional filters
+ */
+export const taskListQuerySchema = z.object({
+  projectId: z.string().uuid().optional(),
+  status: taskStatusSchema.optional(),
+  assigneeId: z.string().uuid().optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+});
+
+/**
  * Create milestone schema
  */
 export const createMilestoneSchema = z.object({
@@ -451,6 +463,7 @@ export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
 export type AssignTaskInput = z.infer<typeof assignTaskSchema>;
 export type BulkAssignTasksInput = z.infer<typeof bulkAssignTasksSchema>;
+export type TaskListQueryInput = z.infer<typeof taskListQuerySchema>;
 export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
 export type UpdateMilestoneInput = z.infer<typeof updateMilestoneSchema>;
 export type CreateLabelInput = z.infer<typeof createLabelSchema>;
