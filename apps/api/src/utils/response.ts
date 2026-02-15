@@ -6,7 +6,7 @@
 
 import type { Context } from 'hono';
 import { HTTP_STATUS } from '@validiant/shared';
-import type { ApiResponse } from '@validiant/shared';
+import type { ApiResponse, ApiError } from '@validiant/shared';
 
 /**
  * Send success response
@@ -19,8 +19,9 @@ export const sendSuccess = <T>(
   const response: ApiResponse<T> = {
     success: true,
     data,
+    timestamp: new Date().toISOString(),
   };
-  return c.json(response, statusCode);
+  return c.json(response, statusCode as any);
 };
 
 /**
@@ -31,11 +32,17 @@ export const sendError = (
   message: string,
   statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR
 ): Response => {
-  const response: ApiResponse = {
-    success: false,
-    error: message,
+  const errorObj: ApiError = {
+    message,
+    code: 'ERROR',
   };
-  return c.json(response, statusCode);
+  
+  const response: ApiResponse<unknown> = {
+    success: false,
+    error: errorObj,
+    timestamp: new Date().toISOString(),
+  };
+  return c.json(response, statusCode as any);
 };
 
 /**
@@ -45,10 +52,16 @@ export const sendValidationError = (
   c: Context,
   errors: any
 ): Response => {
-  const response: ApiResponse = {
-    success: false,
-    error: 'Validation failed',
-    message: 'Please check your input',
+  const errorObj: ApiError = {
+    message: 'Validation failed',
+    code: 'VALIDATION_ERROR',
+    details: errors,
   };
-  return c.json(response, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+  
+  const response: ApiResponse<unknown> = {
+    success: false,
+    error: errorObj,
+    timestamp: new Date().toISOString(),
+  };
+  return c.json(response, HTTP_STATUS.UNPROCESSABLE_ENTITY as any);
 };
