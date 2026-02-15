@@ -113,7 +113,7 @@ export default function RegisterPage() {
   // Handle form submission
   const onSubmit = (data: RegisterFormData) => {
     setErrorMessage(null);
-    const { confirmPassword, terms, ...registerData } = data;
+    const { confirmPassword: _confirmPassword, terms: _terms, ...registerData } = data;
     registerMutation.mutate(registerData);
   };
 

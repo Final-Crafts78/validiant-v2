@@ -7,7 +7,6 @@
 'use client';
 
 import { useAuthStore } from '@/store/auth';
-import { format } from '@/lib/utils';
 import {
   FolderKanban,
   CheckSquare,
