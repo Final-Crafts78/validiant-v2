@@ -29,7 +29,7 @@ import { db, schema } from '../db';
 import { eq } from 'drizzle-orm';
 import { hashPassword, comparePassword } from '../utils/password';
 import {
-  generateAccessToken,
+  generateToken,
   generateRefreshToken,
   verifyToken,
   decodeToken,
@@ -122,12 +122,12 @@ export const register = async (c: Context) => {
       })
       .returning();
 
-    // Generate tokens
-    const accessToken = generateAccessToken({
+    // Generate tokens (PHASE 2 FIX: Added await)
+    const accessToken = await generateToken({
       userId: user.id,
       email: user.email,
     });
-    const refreshToken = generateRefreshToken({
+    const refreshToken = await generateRefreshToken({
       userId: user.id,
       email: user.email,
     });
@@ -150,7 +150,7 @@ export const register = async (c: Context) => {
       {
         success: true,
         data: {
-          user: formatUserResponse(user),
+          user: formatUserResponse(user) as any,
           accessToken,   // ← Mobile app needs this
           refreshToken,  // ← Mobile app needs this
         },
@@ -227,12 +227,12 @@ export const login = async (c: Context) => {
       );
     }
 
-    // Generate tokens
-    const accessToken = generateAccessToken({
+    // Generate tokens (PHASE 2 FIX: Added await)
+    const accessToken = await generateToken({
       userId: user.id,
       email: user.email,
     });
-    const refreshToken = generateRefreshToken({
+    const refreshToken = await generateRefreshToken({
       userId: user.id,
       email: user.email,
     });
@@ -254,7 +254,7 @@ export const login = async (c: Context) => {
     return c.json({
       success: true,
       data: {
-        user: formatUserResponse(user),
+        user: formatUserResponse(user) as any,
         accessToken,   // ← Mobile app needs this
         refreshToken,  // ← Mobile app needs this
       },
@@ -304,8 +304,8 @@ export const refresh = async (c: Context) => {
       );
     }
 
-    // Verify refresh token
-    const decoded = verifyToken(refreshToken);
+    // Verify refresh token (PHASE 2 FIX: Added await)
+    const decoded = await verifyToken(refreshToken);
 
     if (!decoded) {
       return c.json(
@@ -331,8 +331,8 @@ export const refresh = async (c: Context) => {
       );
     }
 
-    // Generate new access token
-    const newAccessToken = generateAccessToken({
+    // Generate new access token (PHASE 2 FIX: Added await)
+    const newAccessToken = await generateToken({
       userId: decoded.userId,
       email: decoded.email,
     });
@@ -408,7 +408,7 @@ export const getMe = async (c: Context) => {
     return c.json({
       success: true,
       data: {
-        user: formatUserResponse(dbUser),
+        user: formatUserResponse(dbUser) as any,
       },
     });
   } catch (error) {
