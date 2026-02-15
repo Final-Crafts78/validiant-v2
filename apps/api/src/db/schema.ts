@@ -9,7 +9,7 @@
  * Phase 6.2 Enhancement: WebAuthn Passkeys (FIDO2)
  */
 
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   pgTable,
   uuid,
@@ -21,6 +21,8 @@ import {
   jsonb,
   unique,
   index,
+  varchar,
+  real,
 } from 'drizzle-orm/pg-core';
 
 // ============================================================================
@@ -37,6 +39,10 @@ export const users = pgTable(
     firstName: text('first_name'),
     lastName: text('last_name'),
     avatar: text('avatar'), // Profile picture URL
+    displayName: text('display_name'),
+    bio: text('bio'),
+    phoneNumber: varchar('phone_number', { length: 20 }),
+    twoFactorEnabled: boolean('two_factor_enabled').default(false),
     
     // OAuth Provider IDs
     googleId: text('google_id'), // Google OAuth ID
@@ -53,9 +59,8 @@ export const users = pgTable(
       .notNull()
       .defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
     deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
@@ -172,6 +177,12 @@ export const organizations = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
     description: text('description'),
+    slug: text('slug').unique(),
+    website: text('website'),
+    industry: text('industry'),
+    size: text('size'),
+    logoUrl: text('logo_url'),
+    settings: jsonb('settings'),
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -179,9 +190,9 @@ export const organizations = pgTable(
       .notNull()
       .defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     ownerIdx: index('organizations_owner_id_idx').on(table.ownerId),
@@ -250,7 +261,10 @@ export const projects = pgTable(
     name: text('name').notNull(),
     description: text('description'),
     status: text('status').notNull().default('planning'), // 'active' | 'completed' | 'on-hold' | 'planning'
+    priority: text('priority'),
     progress: integer('progress').notNull().default(0),
+    color: text('color'),
+    icon: text('icon'),
     organizationId: uuid('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
@@ -258,13 +272,16 @@ export const projects = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     dueDate: timestamp('due_date', { mode: 'date', withTimezone: true }),
+    startDate: timestamp('start_date', { mode: 'date', withTimezone: true }),
+    endDate: timestamp('end_date', { mode: 'date', withTimezone: true }),
+    estimatedHours: integer('estimated_hours'),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     organizationIdx: index('projects_organization_id_idx').on(table.organizationId),
@@ -298,6 +315,7 @@ export const tasks = pgTable(
     description: text('description'),
     status: text('status').notNull().default('todo'), // 'todo' | 'in-progress' | 'completed'
     priority: text('priority').notNull().default('medium'), // 'low' | 'medium' | 'high' | 'urgent'
+    position: real('position'),
     projectId: uuid('project_id')
       .notNull()
       .references(() => projects.id, { onDelete: 'cascade' }),
@@ -306,13 +324,15 @@ export const tasks = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     dueDate: timestamp('due_date', { mode: 'date', withTimezone: true }),
+    estimatedHours: integer('estimated_hours'),
+    actualHours: integer('actual_hours'),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
     projectIdx: index('tasks_project_id_idx').on(table.projectId),

@@ -10,6 +10,7 @@
  */
 
 import { Context, Next } from 'hono';
+import { getCookie } from 'hono/cookie';
 import { verifyToken } from '../utils/jwt';
 import { cache } from '../config/redis.config';
 
@@ -37,7 +38,7 @@ export const authenticate = async (c: Context, next: Next) => {
     let token: string | null = null;
 
     // Try to get token from HttpOnly cookie (secure)
-    token = c.req.cookie('accessToken') || null;
+    token = getCookie(c, 'accessToken') || null;
 
     // Fallback: check Authorization header for mobile/API clients
     if (!token) {
@@ -122,7 +123,7 @@ export const optionalAuth = async (c: Context, next: Next) => {
     let token: string | null = null;
 
     // Try cookie first
-    token = c.req.cookie('accessToken') || null;
+    token = getCookie(c, 'accessToken') || null;
 
     // Fallback to header
     if (!token) {

@@ -23,6 +23,7 @@
  */
 
 import { Context } from 'hono';
+import { setCookie, getCookie, deleteCookie } from 'hono/cookie';
 import { db, schema } from '../db';
 import { eq } from 'drizzle-orm';
 import { hashPassword, comparePassword } from '../utils/password';
@@ -58,7 +59,7 @@ const formatUserResponse = (user: User) => ({
   firstName: user.firstName,
   lastName: user.lastName,
   fullName: `${user.firstName} ${user.lastName}`,
-  avatarUrl: user.avatarUrl,
+  avatar: user.avatar,
   emailVerified: user.emailVerified,
   twoFactorEnabled: user.twoFactorEnabled,
   createdAt: user.createdAt.toISOString(),
@@ -104,7 +105,7 @@ export const register = async (c: Context) => {
       .insert(schema.users)
       .values({
         email,
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         firstName,
         lastName,
       })
@@ -121,12 +122,12 @@ export const register = async (c: Context) => {
     });
 
     // Set tokens as HttpOnly cookies (for web)
-    c.cookie('accessToken', accessToken, {
+    setCookie(c, 'accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
-    c.cookie('refreshToken', refreshToken, {
+    setCookie(c, 'refreshToken', refreshToken, {
       ...COOKIE_OPTIONS,
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
@@ -190,7 +191,7 @@ export const login = async (c: Context) => {
     }
 
     // Verify password
-    const isPasswordValid = await comparePassword(password, user.password);
+    const isPasswordValid = await comparePassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
       return c.json(
@@ -214,12 +215,12 @@ export const login = async (c: Context) => {
     });
 
     // Set tokens as HttpOnly cookies (for web)
-    c.cookie('accessToken', accessToken, {
+    setCookie(c, 'accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
-    c.cookie('refreshToken', refreshToken, {
+    setCookie(c, 'refreshToken', refreshToken, {
       ...COOKIE_OPTIONS,
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
@@ -259,7 +260,7 @@ export const login = async (c: Context) => {
 export const refresh = async (c: Context) => {
   try {
     // Try to get refresh token from cookie (web) or Authorization header (mobile)
-    let refreshToken = c.req.cookie('refreshToken');
+    let refreshToken = getCookie(c, 'refreshToken');
     
     // If no cookie, try Authorization header (mobile)
     if (!refreshToken) {
@@ -314,7 +315,7 @@ export const refresh = async (c: Context) => {
     });
 
     // Set new access token cookie (for web)
-    c.cookie('accessToken', newAccessToken, {
+    setCookie(c, 'accessToken', newAccessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
     });
@@ -413,8 +414,8 @@ export const getMe = async (c: Context) => {
 export const logout = async (c: Context) => {
   try {
     // Get tokens from cookies (web) or Authorization header (mobile)
-    let accessToken = c.req.cookie('accessToken');
-    let refreshToken = c.req.cookie('refreshToken');
+    let accessToken = getCookie(c, 'accessToken');
+    let refreshToken = getCookie(c, 'refreshToken');
     
     // If no cookies, try Authorization header (mobile)
     if (!accessToken) {
@@ -456,15 +457,13 @@ export const logout = async (c: Context) => {
       }
     }
 
-    // Clear cookies by setting maxAge to 0 (for web)
-    c.cookie('accessToken', '', {
+    // Clear cookies using deleteCookie (for web)
+    deleteCookie(c, 'accessToken', {
       ...COOKIE_OPTIONS,
-      maxAge: 0,
     });
 
-    c.cookie('refreshToken', '', {
+    deleteCookie(c, 'refreshToken', {
       ...COOKIE_OPTIONS,
-      maxAge: 0,
     });
 
     return c.json({

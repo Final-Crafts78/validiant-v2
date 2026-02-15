@@ -70,7 +70,7 @@ try {
     githubClient = new GitHub(
       env.GITHUB_CLIENT_ID,
       env.GITHUB_CLIENT_SECRET,
-      env.GITHUB_REDIRECT_URI
+      { redirectURI: env.GITHUB_REDIRECT_URI }
     );
     logger.info('✅ GitHub OAuth configured');
   } else {
@@ -93,7 +93,7 @@ export const getGoogleAuthUrl = (state: string, codeVerifier: string): string =>
   }
 
   const scopes = ['openid', 'profile', 'email'];
-  const url = googleClient.createAuthorizationURL(state, codeVerifier, scopes);
+  const url = googleClient.createAuthorizationURL(state, codeVerifier, { scopes });
   
   return url.toString();
 };
@@ -110,7 +110,7 @@ export const getGitHubAuthUrl = (state: string): string => {
   }
 
   const scopes = ['user:email', 'read:user'];
-  const url = githubClient.createAuthorizationURL(state, scopes);
+  const url = githubClient.createAuthorizationURL(state, { scopes });
   
   return url.toString();
 };
