@@ -18,27 +18,7 @@ import {
   assertExists,
 } from '../utils/errors';
 import { logger } from '../utils/logger';
-
-/**
- * Project status enum
- */
-export enum ProjectStatus {
-  PLANNING = 'planning',
-  ACTIVE = 'active',
-  ON_HOLD = 'on_hold',
-  COMPLETED = 'completed',
-  ARCHIVED = 'archived',
-}
-
-/**
- * Project priority enum
- */
-export enum ProjectPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
+import { ProjectStatus, ProjectPriority } from '@validiant/shared';
 
 /**
  * Project interface
@@ -616,3 +596,6 @@ export const isProjectMember = async (projectId: string, userId: string): Promis
 
   return !!member;
 };
+
+// ✅ Export ProjectStatus and ProjectPriority for backward compatibility with controllers
+export { ProjectStatus, ProjectPriority };
