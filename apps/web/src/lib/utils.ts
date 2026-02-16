@@ -1,6 +1,6 @@
 /**
  * Utility Functions
- * 
+ *
  * Common helper functions for validation, formatting, and data manipulation.
  */
 
@@ -25,7 +25,9 @@ export const validate = {
    */
   email: (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email) && email.length <= VALIDATION.EMAIL.MAX_LENGTH;
+    return (
+      emailRegex.test(email) && email.length <= VALIDATION.EMAIL.MAX_LENGTH
+    );
   },
 
   /**
@@ -92,11 +94,14 @@ export const format = {
    */
   date: (date: string | Date, options?: Intl.DateTimeFormatOptions): string => {
     const d = typeof date === 'string' ? new Date(date) : date;
-    return d.toLocaleDateString('en-US', options || { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    return d.toLocaleDateString(
+      'en-US',
+      options || {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }
+    );
   },
 
   /**
@@ -298,6 +303,8 @@ export const sleep = (ms: number): Promise<void> => {
  * Generate random ID
  */
 export const generateId = (): string => {
-  return Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 };

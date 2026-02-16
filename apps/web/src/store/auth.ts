@@ -7,20 +7,7 @@
  */
 
 import { create } from 'zustand';
-
-/**
- * User interface
- */
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role?: 'admin' | 'user' | 'member';
-  isEmailVerified?: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { User } from '@validiant/shared';
 
 /**
  * Auth state interface
@@ -37,6 +24,7 @@ interface AuthState {
   updateUser: (updates: Partial<User>) => void;
   clearAuth: () => void;
   setLoading: (isLoading: boolean) => void;
+  initialize: () => void;
 }
 
 /**
@@ -47,13 +35,33 @@ interface AuthState {
  * This store only manages ephemeral client state during the session.
  */
 export const useAuthStore = create<AuthState>()((set, get) => ({
-  // Initial state
+  // Initial state - start with loading false since auth is handled server-side
   user: null,
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
+
+  // Initialize store (called on app mount)
+  initialize: () => {
+    try {
+      console.log('[Auth] Store initialized');
+      // Since we use server-side auth, we don't need to fetch anything here
+      // The dashboard layout handles user fetching server-side
+      set({
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('[Auth] Initialization error:', error);
+      set({
+        isLoading: false,
+        isAuthenticated: false,
+        user: null,
+      });
+    }
+  },
 
   // Set full auth data (login/register)
   setAuth: ({ user }) => {
+    console.log('[Auth] Setting auth data', { userId: user.id, email: user.email });
     set({
       user,
       isAuthenticated: true,
@@ -63,6 +71,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set user data only
   setUser: (user) => {
+    console.log('[Auth] Setting user', { userId: user.id, email: user.email });
     set({
       user,
       isAuthenticated: true,
@@ -74,6 +83,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   updateUser: (updates) => {
     const currentUser = get().user;
     if (currentUser) {
+      console.log('[Auth] Updating user', { updates });
       set({
         user: { ...currentUser, ...updates },
       });
@@ -82,6 +92,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Clear auth state (logout)
   clearAuth: () => {
+    console.log('[Auth] Clearing auth state');
     set({
       user: null,
       isAuthenticated: false,
@@ -91,6 +102,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set loading state
   setLoading: (isLoading) => {
+    console.log('[Auth] Setting loading state', { isLoading });
     set({ isLoading });
   },
 }));

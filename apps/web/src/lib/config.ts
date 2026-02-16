@@ -124,16 +124,24 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
 
-  // Protected routes
+  // Protected routes - Dashboard
   DASHBOARD: '/dashboard',
-  PROJECTS: '/projects',
-  PROJECT_DETAIL: (id: string) => `/projects/${id}`,
-  TASKS: '/tasks',
-  TASK_DETAIL: (id: string) => `/tasks/${id}`,
-  ORGANIZATIONS: '/organizations',
-  ORGANIZATION_DETAIL: (id: string) => `/organizations/${id}`,
-  PROFILE: '/profile',
-  SETTINGS: '/settings',
+  
+  // Projects
+  PROJECTS: '/dashboard/projects',
+  PROJECT_DETAIL: (id: string) => `/dashboard/projects/${id}`,
+  
+  // Tasks
+  TASKS: '/dashboard/tasks',
+  TASK_DETAIL: (id: string) => `/dashboard/tasks/${id}`,
+  
+  // Organizations
+  ORGANIZATIONS: '/dashboard/organizations',
+  ORGANIZATION_DETAIL: (id: string) => `/dashboard/organizations/${id}`,
+  
+  // Profile
+  PROFILE: '/dashboard/profile',
+  SETTINGS: '/dashboard/settings',
 } as const;
 
 /**

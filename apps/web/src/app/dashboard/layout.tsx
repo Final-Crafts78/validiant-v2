@@ -9,7 +9,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { API_CONFIG, ROUTES } from '@/lib/config';
-import type { User } from '@/store/auth';
+import type { User } from '@validiant/shared';
 
 /**
  * Fetch user data server-side

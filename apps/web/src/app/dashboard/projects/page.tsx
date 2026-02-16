@@ -1,6 +1,6 @@
 /**
  * Projects Page
- * 
+ *
  * List and manage projects.
  */
 

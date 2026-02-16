@@ -2,7 +2,7 @@
   "name": "@validiant/api",
   "version": "1.0.0",
   "description": "Backend API for Validiant project management platform",
-  "main": "dist/worker.js",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev",
     "build": "tsc",
@@ -45,24 +45,22 @@
     "@validiant/shared": "workspace:*",
     "arctic": "^1.9.2",
     "bcryptjs": "^2.4.3",
-    "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
     "hono": "^4.0.0",
-    "jsonwebtoken": "^9.0.2",
+    "jose": "^5.9.6",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.11.5",
     "@types/uuid": "^9.0.7",
     "concurrently": "^8.2.2",
     "drizzle-kit": "^0.20.13",
     "partykit": "^0.0.111",
     "typescript": "^5.3.3",
-    "wrangler": "^3.28.2"
+    "wrangler": "latest"
   },
   "engines": {
     "node": ">=18.0.0",

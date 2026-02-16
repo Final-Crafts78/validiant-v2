@@ -1,6 +1,6 @@
 /**
  * Root Layout
- * 
+ *
  * Next.js App Router root layout with providers and metadata.
  */
 

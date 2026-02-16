@@ -7,7 +7,7 @@
 
 import { post } from '@/lib/api';
 import { API_CONFIG } from '@/lib/config';
-import type { User } from '@/store/auth';
+import type { User } from '@validiant/shared';
 
 /**
  * Login credentials
@@ -23,8 +23,7 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
 }
 
 /**

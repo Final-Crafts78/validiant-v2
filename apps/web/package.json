@@ -23,6 +23,7 @@
     "react-hook-form": "^7.51.0",
     "@hookform/resolvers": "^3.3.4",
     "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.2",
     "date-fns": "^3.6.0",
     "lucide-react": "^0.363.0",
     "@validiant/shared": "workspace:*"
@@ -37,7 +38,8 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.0",
     "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.19"
+    "autoprefixer": "^10.4.19",
+    "@tanstack/react-query-devtools": "^5.28.0"
   },
   "engines": {
     "node": ">=18.0.0",

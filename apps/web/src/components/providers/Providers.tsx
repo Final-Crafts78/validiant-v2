@@ -9,7 +9,6 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 
 /**
@@ -52,9 +51,16 @@ export function Providers({ children }: ProvidersProps) {
     <QueryClientProvider client={queryClient}>
       {children}
       {/* React Query Devtools - only in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
-      )}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
+}
+
+/**
+ * Lazy-loaded React Query Devtools for development only
+ * This component is tree-shaken in production builds
+ */
+function ReactQueryDevtools() {
+  const { ReactQueryDevtools: DevtoolsComponent } = require('@tanstack/react-query-devtools');
+  return <DevtoolsComponent initialIsOpen={false} buttonPosition="bottom-right" />;
 }

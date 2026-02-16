@@ -23,6 +23,16 @@ const nextConfig = {
     NEXT_PUBLIC_APP_VERSION: '2.0.0',
   },
 
+  // Build configuration
+  eslint: {
+    // Ignore ESLint during builds (we run it separately)
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Keep TypeScript checks enabled to catch type errors
+    ignoreBuildErrors: false,
+  },
+
   // Headers for security
   async headers() {
     return [

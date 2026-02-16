@@ -1,6 +1,6 @@
 /**
  * Home/Landing Page
- * 
+ *
  * Landing page with redirect logic for authenticated users.
  */
 
@@ -228,7 +228,10 @@ export default function HomePage() {
               Join thousands of teams already using Validiant to manage their
               projects better.
             </p>
-            <Link href={ROUTES.REGISTER} className="btn bg-white text-primary-600 hover:bg-gray-50 btn-lg">
+            <Link
+              href={ROUTES.REGISTER}
+              className="btn bg-white text-primary-600 hover:bg-gray-50 btn-lg"
+            >
               <span>Create Free Account</span>
               <ArrowRight className="h-5 w-5" />
             </Link>
@@ -239,9 +242,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="container-custom py-12 border-t border-gray-200">
         <div className="text-center text-gray-600">
-          <p className="text-sm">
-            © 2026 Validiant. All rights reserved.
-          </p>
+          <p className="text-sm">© 2026 Validiant. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -1,6 +1,6 @@
 /**
  * Login Page
- * 
+ *
  * User authentication page with email/password login.
  */
 
@@ -86,9 +86,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome Back
           </h1>
-          <p className="text-gray-600">
-            Sign in to your account to continue
-          </p>
+          <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
 
         {/* Login Card */}

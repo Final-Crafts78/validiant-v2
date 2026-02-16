@@ -1,27 +1,32 @@
 /**
  * API Client Configuration - HttpOnly Cookie Hardened
- * 
+ *
  * Axios client configured for HttpOnly cookie authentication.
- * 
+ *
  * CRITICAL SECURITY FEATURE:
  * - withCredentials: true enables automatic cookie sending/receiving
  * - JWTs are stored in HttpOnly cookies (XSS immune)
  * - Frontend JavaScript CANNOT read the tokens
  * - Authentication state determined via /api/v1/auth/me endpoint
- * 
+ *
  * Authentication Flow:
  * 1. User logs in → Backend sets HttpOnly cookies
  * 2. All subsequent requests automatically include cookies
  * 3. Frontend calls /auth/me to get user data
  * 4. No manual token management needed
- * 
+ *
  * Edge-Compatible:
  * - Works with Cloudflare Workers backend
  * - Supports all modern browsers
  * - React Native compatible (with cookie manager)
  */
 
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 
 /**
  * API Configuration
@@ -57,7 +62,7 @@ export interface APIResponse<T = any> {
 
 /**
  * Create Axios Instance with HttpOnly Cookie Support
- * 
+ *
  * CRITICAL: withCredentials: true enables cookie-based auth
  */
 const apiClient: AxiosInstance = axios.create({
@@ -72,7 +77,7 @@ const apiClient: AxiosInstance = axios.create({
 
 /**
  * Request Interceptor
- * 
+ *
  * Logs requests in development.
  * Future: Could add request signing, rate limiting, etc.
  */
@@ -92,7 +97,7 @@ apiClient.interceptors.request.use(
 
 /**
  * Response Interceptor
- * 
+ *
  * Handles errors globally:
  * - 401: Redirect to login (session expired)
  * - 403: Show permission error
@@ -110,7 +115,8 @@ apiClient.interceptors.response.use(
       return Promise.reject({
         success: false,
         error: 'NetworkError',
-        message: 'Unable to connect to server. Please check your internet connection.',
+        message:
+          'Unable to connect to server. Please check your internet connection.',
         statusCode: 0,
       } as APIError);
     }
@@ -121,10 +127,14 @@ apiClient.interceptors.response.use(
     // Handle authentication errors (401)
     if (statusCode === 401) {
       // Check if we're not already on login page to avoid redirect loop
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+      if (
+        typeof window !== 'undefined' &&
+        !window.location.pathname.includes('/login')
+      ) {
         console.warn('[API] Authentication required, redirecting to login...');
         // Redirect to login page
-        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        window.location.href =
+          '/login?redirect=' + encodeURIComponent(window.location.pathname);
       }
     }
 
@@ -142,7 +152,10 @@ apiClient.interceptors.response.use(
     const apiError: APIError = {
       success: false,
       error: response.data?.error || 'UnknownError',
-      message: response.data?.message || error.message || 'An unexpected error occurred',
+      message:
+        response.data?.message ||
+        error.message ||
+        'An unexpected error occurred',
       statusCode,
       details: response.data?.details,
     };
@@ -217,7 +230,12 @@ export default apiClient;
  * Type guard to check if error is APIError
  */
 export const isAPIError = (error: any): error is APIError => {
-  return error && typeof error === 'object' && 'success' in error && error.success === false;
+  return (
+    error &&
+    typeof error === 'object' &&
+    'success' in error &&
+    error.success === false
+  );
 };
 
 /**

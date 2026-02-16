@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { register as registerUser } from '@/services/auth.service';
+import { register as registerUser, type RegisterData } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth';
 import { getErrorMessage } from '@/lib/api';
 import { ROUTES, VALIDATION } from '@/lib/config';
@@ -111,8 +111,15 @@ export default function RegisterPage() {
   // Handle form submission
   const onSubmit = (data: RegisterFormData) => {
     setErrorMessage(null);
-    const { confirmPassword: _confirmPassword, terms: _terms, ...registerData } = data;
-    registerMutation.mutate(registerData);
+    
+    // Transform firstName and lastName into fullName for API
+    const { firstName, lastName, confirmPassword, terms, ...otherData } = data;
+    const payload: RegisterData = {
+      ...otherData,
+      fullName: `${firstName} ${lastName}`.trim(),
+    };
+    
+    registerMutation.mutate(payload);
   };
 
   return (

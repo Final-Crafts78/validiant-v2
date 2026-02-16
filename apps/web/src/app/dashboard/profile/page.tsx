@@ -6,9 +6,9 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuthStore } from '@/store/auth';
-import { format } from '@/lib/utils';
+import { format } from 'date-fns';
 import {
   Shield,
   Lock,
@@ -27,6 +27,24 @@ export default function ProfilePage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
+  // Split fullName for display and editing
+  const nameComponents = useMemo(() => {
+    if (!user || !user.fullName) return { firstName: '', lastName: '' };
+    const parts = user.fullName.trim().split(' ');
+    const firstName = parts[0] || '';
+    const lastName = parts.slice(1).join(' ') || '';
+    return { firstName, lastName };
+  }, [user]);
+
+  // Get initials from fullName with null-safety
+  const initials = useMemo(() => {
+    if (!user || !user.fullName) return '';
+    const parts = user.fullName.trim().split(' ');
+    const firstInitial = parts[0]?.charAt(0) || '';
+    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
+  }, [user]);
+
   if (!user) return null;
 
   return (
@@ -43,11 +61,19 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-24 h-24 bg-primary-600 rounded-full flex items-center justify-center">
-                <span className="text-3xl font-bold text-white">
-                  {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                </span>
-              </div>
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.fullName}
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-primary-600 rounded-full flex items-center justify-center">
+                  <span className="text-3xl font-bold text-white">
+                    {initials}
+                  </span>
+                </div>
+              )}
               <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
                 <Camera className="h-4 w-4 text-gray-600" />
               </button>
@@ -56,13 +82,16 @@ export default function ProfilePage() {
             {/* User Info */}
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900">
-                {user.firstName} {user.lastName}
+                {user.fullName}
               </h2>
               <p className="text-gray-600 mt-1">{user.email}</p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="badge badge-success">Active</span>
+                {user.emailVerified && (
+                  <span className="badge badge-info">Verified</span>
+                )}
                 <span className="text-sm text-gray-500">
-                  Member since {format.date(user.createdAt, { month: 'long', year: 'numeric' })}
+                  Member since {format(new Date(user.createdAt), 'MMMM yyyy')}
                 </span>
               </div>
             </div>
@@ -122,7 +151,7 @@ export default function ProfilePage() {
                   <input
                     id="firstName"
                     type="text"
-                    defaultValue={user.firstName}
+                    defaultValue={nameComponents.firstName}
                     className="input"
                   />
                 </div>
@@ -133,7 +162,7 @@ export default function ProfilePage() {
                   <input
                     id="lastName"
                     type="text"
-                    defaultValue={user.lastName}
+                    defaultValue={nameComponents.lastName}
                     className="input"
                   />
                 </div>
@@ -158,6 +187,7 @@ export default function ProfilePage() {
                 <textarea
                   id="bio"
                   rows={4}
+                  defaultValue={user.bio || ''}
                   placeholder="Tell us about yourself..."
                   className="input resize-none"
                 />
@@ -308,7 +338,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked
+                      defaultChecked={user.notificationPreferences.projectUpdate}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -323,7 +353,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked
+                      defaultChecked={user.notificationPreferences.taskAssigned}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -338,7 +368,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked
+                      defaultChecked={user.notificationPreferences.projectInvite}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -362,7 +392,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked
+                      defaultChecked={user.notificationPreferences.commentMention}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -377,7 +407,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked
+                      defaultChecked={user.notificationPreferences.taskDueSoon}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>

@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useMemo } from 'react';
 import { useAuthStore } from '@/store/auth';
 import {
   FolderKanban,
@@ -119,6 +120,13 @@ function ActivityItem({
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
 
+  // Extract first name from fullName with null-safety
+  const firstName = useMemo(() => {
+    if (!user || !user.fullName) return '';
+    const parts = user.fullName.trim().split(' ');
+    return parts[0] || user.fullName;
+  }, [user]);
+
   if (!user) return null;
 
   // Current date
@@ -130,7 +138,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
-          {greeting}, {user.firstName}! 👋
+          {greeting}, {firstName}! 👋
         </h1>
         <p className="text-gray-600 mt-1">
           Here's what's happening with your projects today

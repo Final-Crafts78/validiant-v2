@@ -7,10 +7,11 @@
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  * 
  * Phase 6.1 Enhancement: OAuth token generation support
+ * Phase 7.0 Enhancement: Migrated to Edge-native jose library
  */
 
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify, errors as joseErrors } from 'jose';
 import { v4 as uuidv4 } from 'uuid';
 import { eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../db';
@@ -75,46 +76,35 @@ const verifyPassword = async (password: string, hash: string): Promise<boolean> 
 };
 
 /**
- * Generate JWT access token
+ * Generate JWT access token (Edge-native with jose)
  */
-const generateAccessToken = (
+const generateAccessToken = async (
   userId: string,
   email: string,
   role: UserRole,
   sessionId: string
-): string => {
-  return jwt.sign(
-    {
-      userId,
-      email,
-      role,
-      sessionId,
-    },
-    env.JWT_SECRET,
-    {
-      expiresIn: '7d',
-      issuer: 'validiant-api',
-      audience: 'validiant-client',
-    }
-  );
+): Promise<string> => {
+  const secret = new TextEncoder().encode(env.JWT_SECRET);
+  return await new SignJWT({ userId, email, role, sessionId })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .setIssuer('validiant-api')
+    .setAudience('validiant-client')
+    .sign(secret);
 };
 
 /**
- * Generate JWT refresh token
+ * Generate JWT refresh token (Edge-native with jose)
  */
-const generateRefreshToken = (userId: string, sessionId: string): string => {
-  return jwt.sign(
-    {
-      userId,
-      sessionId,
-      type: 'refresh',
-    },
-    env.JWT_REFRESH_SECRET,
-    {
-      expiresIn: '7d',
-      issuer: 'validiant-api',
-    }
-  );
+const generateRefreshToken = async (userId: string, sessionId: string): Promise<string> => {
+  const secret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
+  return await new SignJWT({ userId, sessionId, type: 'refresh' })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .setIssuer('validiant-api')
+    .sign(secret);
 };
 
 /**
@@ -142,9 +132,9 @@ export const generateTokens = async (
   // Store session in Redis (24 hours)
   await session.set(sessionId, sessionData, 86400);
 
-  // Generate tokens
-  const accessToken = generateAccessToken(userId, email, role, sessionId);
-  const refreshToken = generateRefreshToken(userId, sessionId);
+  // Generate tokens (now async with jose)
+  const accessToken = await generateAccessToken(userId, email, role, sessionId);
+  const refreshToken = await generateRefreshToken(userId, sessionId);
 
   return {
     accessToken,
@@ -277,16 +267,14 @@ export const login = async (data: {
 };
 
 /**
- * Refresh access token using refresh token
+ * Refresh access token using refresh token (Edge-native with jose)
  */
 export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> => {
   try {
     // Verify refresh token
-    const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as {
-      userId: string;
-      sessionId: string;
-      type: string;
-    };
+    const secret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
+    const { payload } = await jwtVerify(refreshToken, secret);
+    const decoded = payload as { userId: string; sessionId: string; type: string };
 
     if (decoded.type !== 'refresh') {
       throw new TokenError('Invalid token type');
@@ -334,10 +322,10 @@ export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> 
 
     return tokens;
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    if (error instanceof joseErrors.JWTExpired) {
       throw new TokenError('Refresh token has expired');
     }
-    if (error instanceof jwt.JsonWebTokenError) {
+    if (error instanceof joseErrors.JWTInvalid || error instanceof joseErrors.JWSInvalid) {
       throw new TokenError('Invalid refresh token');
     }
     throw error;

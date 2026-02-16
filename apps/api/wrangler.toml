@@ -1,17 +1,7 @@
 name = "validiant-api"
-main = "src/worker.ts"
-compatibility_date = "2024-02-14"
-
-[build]
-command = "pnpm build"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 
 [observability]
 enabled = true
-
-# Secrets (inject via wrangler CLI, NOT in this file):
-# npx wrangler secret put DATABASE_URL
-# npx wrangler secret put UPSTASH_REDIS_REST_URL
-# npx wrangler secret put UPSTASH_REDIS_REST_TOKEN
-# npx wrangler secret put JWT_SECRET
-# npx wrangler secret put JWT_REFRESH_SECRET
-# npx wrangler secret put SESSION_SECRET

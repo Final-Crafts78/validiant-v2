@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
@@ -22,7 +22,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
-import type { User as UserType } from '@/store/auth';
+import type { User as UserType } from '@validiant/shared';
 
 /**
  * Navigation item type
@@ -80,6 +80,15 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Get initials from fullName with null-safety
+  const initials = useMemo(() => {
+    if (!user?.fullName) return '';
+    const parts = user.fullName.trim().split(' ');
+    const firstInitial = parts[0]?.charAt(0) || '';
+    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
+  }, [user?.fullName]);
 
   // Handle logout
   const handleLogout = async () => {
@@ -141,15 +150,23 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               <div className="hidden md:flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">
-                    {user.firstName} {user.lastName}
+                    {user.fullName}
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-white">
-                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                  </span>
-                </div>
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.fullName}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-white">
+                      {initials}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Logout Button */}
@@ -206,14 +223,22 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
             {/* Mobile User Info */}
             <div className="px-4 py-3 border-t border-gray-200 mt-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-white">
-                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                  </span>
-                </div>
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.fullName}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-semibold text-white">
+                      {initials}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {user.firstName} {user.lastName}
+                    {user.fullName}
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>

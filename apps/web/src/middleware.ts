@@ -1,6 +1,6 @@
 /**
  * Next.js Edge Middleware
- * 
+ *
  * Server-side authentication check that runs before page rendering.
  * Protects routes by verifying HttpOnly cookies at the Edge.
  */
@@ -25,11 +25,7 @@ const PROTECTED_ROUTES = [
  * Auth route patterns
  * These routes should redirect to dashboard if already authenticated
  */
-const AUTH_ROUTES = [
-  '/auth/login',
-  '/auth/register',
-  '/auth/forgot-password',
-];
+const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
 /**
  * Check if path matches any route pattern

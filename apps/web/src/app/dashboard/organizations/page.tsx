@@ -1,6 +1,6 @@
 /**
  * Organizations Page
- * 
+ *
  * List and manage organizations.
  */
 
@@ -141,7 +141,8 @@ function OrganizationCard({ org }: { org: Organization }) {
         {/* Meta */}
         <div className="mt-4">
           <p className="text-xs text-gray-500">
-            Member since {format.date(org.createdAt, { month: 'long', year: 'numeric' })}
+            Member since{' '}
+            {format.date(org.createdAt, { month: 'long', year: 'numeric' })}
           </p>
         </div>
 
@@ -175,8 +176,8 @@ function EmptyState() {
           No organizations yet
         </h3>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Create or join an organization to collaborate with your team and manage
-          projects together.
+          Create or join an organization to collaborate with your team and
+          manage projects together.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button className="btn btn-primary btn-md">

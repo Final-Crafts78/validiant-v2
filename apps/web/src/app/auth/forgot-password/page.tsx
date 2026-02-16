@@ -1,6 +1,6 @@
 /**
  * Forgot Password Page
- * 
+ *
  * Request password reset link via email.
  */
 
@@ -91,8 +91,8 @@ export default function ForgotPasswordPage() {
           </h1>
           <p className="text-gray-600">
             {isSuccess
-              ? 'We\'ve sent you a password reset link'
-              : 'No worries, we\'ll send you reset instructions'}
+              ? "We've sent you a password reset link"
+              : "No worries, we'll send you reset instructions"}
           </p>
         </div>
 
@@ -183,7 +183,9 @@ export default function ForgotPasswordPage() {
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm text-danger-800">{errorMessage}</p>
+                        <p className="text-sm text-danger-800">
+                          {errorMessage}
+                        </p>
                       </div>
                     </div>
                   </div>

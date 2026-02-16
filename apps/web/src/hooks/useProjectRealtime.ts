@@ -1,27 +1,27 @@
 /**
  * useProjectRealtime Hook - PartyKit WebSocket Integration
- * 
+ *
  * Real-time collaboration hook using PartyKit WebSockets.
- * 
+ *
  * CRITICAL: Uses PartySocket (NOT raw WebSocket)
  * - Automatic reconnection with exponential backoff
  * - Connection state management
  * - Built specifically for PartyKit
- * 
+ *
  * REAL-TIME FLOW:
  * 1. Component mounts → Connect to WebSocket
  * 2. Backend updates task → Broadcasts event
  * 3. WebSocket receives event → Invalidates cache
  * 4. React Query refetches → UI updates
  * 5. User sees changes from other users instantly
- * 
+ *
  * EVENT HANDLING:
  * - TASK_CREATED: Refetch task list
  * - TASK_UPDATED: Refetch specific task
  * - TASK_STATUS_CHANGED: Optimized status update
  * - TASK_DELETED: Remove from cache
  * - USER_JOINED/LEFT: Update presence
- * 
+ *
  * PRESENCE TRACKING:
  * - Shows which users are active in project
  * - Updates in real-time as users join/leave
@@ -44,15 +44,15 @@ export enum RealtimeEventType {
   TASK_DELETED = 'TASK_DELETED',
   TASK_STATUS_CHANGED = 'TASK_STATUS_CHANGED',
   TASK_ASSIGNED = 'TASK_ASSIGNED',
-  
+
   // Project Events
   PROJECT_UPDATED = 'PROJECT_UPDATED',
   PROJECT_DELETED = 'PROJECT_DELETED',
-  
+
   // User Presence Events
   USER_JOINED = 'USER_JOINED',
   USER_LEFT = 'USER_LEFT',
-  
+
   // System Events
   PING = 'PING',
   PONG = 'PONG',
@@ -93,19 +93,19 @@ const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_URL || 'localhost:1999';
 
 /**
  * useProjectRealtime Hook
- * 
+ *
  * Connect to PartyKit WebSocket for real-time project updates.
- * 
+ *
  * @param projectId - Project ID to connect to
  * @param enabled - Enable/disable WebSocket connection (default: true)
- * 
+ *
  * @returns Connection state and online users
- * 
+ *
  * @example
  * ```tsx
  * function ProjectBoard({ projectId }: { projectId: string }) {
  *   const { onlineUsers, connectionState } = useProjectRealtime(projectId);
- *   
+ *
  *   return (
  *     <div>
  *       <h2>Project Board</h2>
@@ -120,14 +120,14 @@ const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_URL || 'localhost:1999';
  *           <span>❌ Disconnected</span>
  *         )}
  *       </div>
- *       
+ *
  *       <div>
  *         <h3>Online Users ({onlineUsers.length})</h3>
  *         {onlineUsers.map(user => (
  *           <div key={user.userId}>{user.userName}</div>
  *         ))}
  *       </div>
- *       
+ *
  *       <TaskList projectId={projectId} />
  *     </div>
  *   );
@@ -151,7 +151,7 @@ export function useProjectRealtime(projectId: string, enabled = true) {
           userName: user.fullName,
         }
       : undefined,
-    
+
     // Handle incoming messages
     onMessage: (event) => {
       try {
@@ -161,19 +161,19 @@ export function useProjectRealtime(projectId: string, enabled = true) {
         console.error('[Realtime] Failed to parse message:', error);
       }
     },
-    
+
     // Handle connection open
     onOpen: () => {
       console.log('[Realtime] Connected to project:', projectId);
     },
-    
+
     // Handle connection close
     onClose: () => {
       console.log('[Realtime] Disconnected from project:', projectId);
       // Clear online users
       setOnlineUsers([]);
     },
-    
+
     // Handle connection error
     onError: (error) => {
       console.error('[Realtime] WebSocket error:', error);
@@ -198,13 +198,13 @@ export function useProjectRealtime(projectId: string, enabled = true) {
   return {
     // WebSocket instance (for advanced usage)
     socket,
-    
+
     // Connection state
     connectionState: socket?.readyState,
-    
+
     // Is connected
     isConnected: socket?.readyState === WebSocket.OPEN,
-    
+
     // Online users in project
     onlineUsers,
   };
@@ -212,7 +212,7 @@ export function useProjectRealtime(projectId: string, enabled = true) {
 
 /**
  * Handle incoming WebSocket messages
- * 
+ *
  * Invalidates React Query cache based on event type.
  */
 function handleRealtimeMessage(
@@ -232,34 +232,48 @@ function handleRealtimeMessage(
     case RealtimeEventType.TASK_ASSIGNED:
       // Invalidate task-related queries
       if (payload.taskId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(payload.taskId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.tasks.detail(payload.taskId),
+        });
       }
       if (payload.projectId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(payload.projectId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.tasks.byProject(payload.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(payload.projectId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.tasks.byProject(payload.projectId),
+        });
       }
       break;
 
     case RealtimeEventType.TASK_DELETED:
       // Remove task from cache
       if (payload.taskId) {
-        queryClient.removeQueries({ queryKey: queryKeys.tasks.detail(payload.taskId) });
+        queryClient.removeQueries({
+          queryKey: queryKeys.tasks.detail(payload.taskId),
+        });
       }
       if (payload.projectId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(payload.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(payload.projectId),
+        });
       }
       break;
 
     // Project Events
     case RealtimeEventType.PROJECT_UPDATED:
       if (payload.projectId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.detail(payload.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.detail(payload.projectId),
+        });
       }
       break;
 
     case RealtimeEventType.PROJECT_DELETED:
       if (payload.projectId) {
-        queryClient.removeQueries({ queryKey: queryKeys.projects.detail(payload.projectId) });
+        queryClient.removeQueries({
+          queryKey: queryKeys.projects.detail(payload.projectId),
+        });
       }
       break;
 
@@ -279,7 +293,9 @@ function handleRealtimeMessage(
 
     case RealtimeEventType.USER_LEFT:
       if (payload.userId) {
-        setOnlineUsers((prev) => prev.filter((u) => u.userId !== payload.userId));
+        setOnlineUsers((prev) =>
+          prev.filter((u) => u.userId !== payload.userId)
+        );
       }
       break;
 
@@ -295,11 +311,15 @@ function handleRealtimeMessage(
 
 /**
  * useTaskRealtime Hook
- * 
+ *
  * Connect to real-time updates for a specific task.
  * Useful for task detail pages.
  */
-export function useTaskRealtime(taskId: string, projectId: string, enabled = true) {
+export function useTaskRealtime(
+  taskId: string,
+  projectId: string,
+  enabled = true
+) {
   const queryClient = useQueryClient();
   const { socket } = useProjectRealtime(projectId, enabled);
 
@@ -312,10 +332,12 @@ export function useTaskRealtime(taskId: string, projectId: string, enabled = tru
     const handleMessage = (event: MessageEvent) => {
       try {
         const message: RealtimeMessage = JSON.parse(event.data);
-        
+
         // Only handle messages for this specific task
         if (message.payload.taskId === taskId) {
-          queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(taskId) });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.tasks.detail(taskId),
+          });
         }
       } catch (error) {
         console.error('[TaskRealtime] Failed to parse message:', error);

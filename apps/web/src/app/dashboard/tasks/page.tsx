@@ -1,6 +1,6 @@
 /**
  * Tasks Page
- * 
+ *
  * List and manage tasks.
  */
 
@@ -114,7 +114,9 @@ function PriorityBadge({ priority }: { priority: Task['priority'] }) {
     urgent: 'Urgent',
   };
 
-  return <span className={`badge ${styles[priority]}`}>{labels[priority]}</span>;
+  return (
+    <span className={`badge ${styles[priority]}`}>{labels[priority]}</span>
+  );
 }
 
 /**
@@ -127,7 +129,8 @@ function TaskRow({ task }: { task: Task }) {
     completed: <CheckCircle2 className="h-5 w-5 text-success-600" />,
   };
 
-  const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'completed';
+  const isOverdue =
+    new Date(task.dueDate) < new Date() && task.status !== 'completed';
 
   return (
     <div className="card hover:shadow-md transition-shadow">
@@ -175,7 +178,11 @@ function TaskRow({ task }: { task: Task }) {
               >
                 {isOverdue && <AlertCircle className="h-4 w-4" />}
                 <span>
-                  Due {format.date(task.dueDate, { month: 'short', day: 'numeric' })}
+                  Due{' '}
+                  {format.date(task.dueDate, {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </span>
               </div>
             </div>
@@ -200,7 +207,8 @@ function EmptyState() {
           No tasks yet
         </h3>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Create your first task to start tracking your work and staying organized.
+          Create your first task to start tracking your work and staying
+          organized.
         </p>
         <button className="btn btn-primary btn-md">
           <Plus className="h-5 w-5" />
@@ -251,7 +259,9 @@ export default function TasksPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="card">
               <div className="card-body text-center">
-                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats.total}
+                </p>
                 <p className="text-sm text-gray-600 mt-1">Total</p>
               </div>
             </div>

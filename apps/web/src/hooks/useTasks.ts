@@ -1,23 +1,23 @@
 /**
  * Task Hooks - Optimistic Updates for Zero-Latency UX
- * 
+ *
  * React Query hooks for task management with optimistic updates.
- * 
+ *
  * OPTIMISTIC UPDATE PATTERN:
  * 1. User performs action (drag task, update status)
  * 2. UI updates INSTANTLY (before API response)
  * 3. API request happens in background
  * 4. If success: Changes are kept
  * 5. If error: UI rolls back to previous state
- * 
+ *
  * RESULT: 0ms perceived latency for perfect UX
- * 
+ *
  * KANBAN BOARD EXAMPLE:
  * - User drags task from "TODO" to "IN_PROGRESS"
  * - Task moves instantly in UI
  * - API updates database in background
  * - If API fails, task snaps back to original column
- * 
+ *
  * FEATURES:
  * - Optimistic updates for instant feedback
  * - Automatic rollback on errors
@@ -26,7 +26,12 @@
  * - Real-time integration ready
  */
 
-import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { get, post, patch, del } from '@/lib/api';
 import { queryKeys, getQueryData, setQueryData } from '@/lib/query-client';
 
@@ -72,7 +77,7 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
-  
+
   // Additional fields from API
   project?: {
     id: string;
@@ -132,21 +137,26 @@ interface TaskResponse {
 /**
  * Fetch tasks by project ID
  */
-const fetchTasks = async (projectId: string, filters?: TaskFilters): Promise<Task[]> => {
+const fetchTasks = async (
+  projectId: string,
+  filters?: TaskFilters
+): Promise<Task[]> => {
   const params = new URLSearchParams();
-  
+
   if (filters?.status) params.append('status', filters.status);
   if (filters?.priority) params.append('priority', filters.priority);
   if (filters?.assignedTo) params.append('assignedTo', filters.assignedTo);
   if (filters?.search) params.append('search', filters.search);
-  if (filters?.parentTaskId !== undefined) params.append('parentTaskId', String(filters.parentTaskId));
-  if (filters?.tags) filters.tags.forEach(tag => params.append('tags[]', tag));
+  if (filters?.parentTaskId !== undefined)
+    params.append('parentTaskId', String(filters.parentTaskId));
+  if (filters?.tags)
+    filters.tags.forEach((tag) => params.append('tags[]', tag));
   if (filters?.page) params.append('page', String(filters.page));
   if (filters?.perPage) params.append('perPage', String(filters.perPage));
-  
+
   const queryString = params.toString();
   const url = `/api/v1/projects/${projectId}/tasks${queryString ? `?${queryString}` : ''}`;
-  
+
   const response = await get<TasksResponse>(url);
   return response.data.data.tasks;
 };
@@ -161,13 +171,13 @@ const fetchTask = async (taskId: string): Promise<Task> => {
 
 /**
  * useTasks Hook
- * 
+ *
  * Fetch tasks for a project with optional filters.
- * 
+ *
  * @param projectId - Project ID
  * @param filters - Optional filters
  * @param options - React Query options
- * 
+ *
  * @example
  * ```tsx
  * function TaskList({ projectId }: { projectId: string }) {
@@ -175,10 +185,10 @@ const fetchTask = async (taskId: string): Promise<Task> => {
  *     status: TaskStatus.TODO,
  *     priority: TaskPriority.HIGH,
  *   });
- *   
+ *
  *   if (isLoading) return <Spinner />;
  *   if (error) return <Error error={error} />;
- *   
+ *
  *   return (
  *     <ul>
  *       {tasks.map(task => (
@@ -203,7 +213,7 @@ export function useTasks(
 
 /**
  * useTask Hook
- * 
+ *
  * Fetch single task by ID.
  */
 export function useTask(taskId: string) {
@@ -230,21 +240,21 @@ export interface UpdateTaskData {
 
 /**
  * useUpdateTask Hook
- * 
+ *
  * Update task with OPTIMISTIC UPDATES for instant UI feedback.
- * 
+ *
  * OPTIMISTIC UPDATE FLOW:
  * 1. onMutate: Update cache immediately (before API)
  * 2. User sees instant UI change (0ms latency)
  * 3. API request happens in background
  * 4. onSuccess: Keep changes, invalidate related queries
  * 5. onError: Rollback to previous state
- * 
+ *
  * @example
  * ```tsx
  * function TaskCard({ task }: { task: Task }) {
  *   const updateTask = useUpdateTask();
- *   
+ *
  *   const handleStatusChange = (newStatus: TaskStatus) => {
  *     updateTask.mutate({
  *       taskId: task.id,
@@ -253,7 +263,7 @@ export interface UpdateTaskData {
  *     });
  *     // UI updates INSTANTLY! 🚀
  *   };
- *   
+ *
  *   return (
  *     <div>
  *       <h3>{task.title}</h3>
@@ -279,20 +289,29 @@ export function useUpdateTask() {
       projectId: string;
       data: UpdateTaskData;
     }) => {
-      const response = await patch<TaskResponse>(`/api/v1/tasks/${taskId}`, data);
+      const response = await patch<TaskResponse>(
+        `/api/v1/tasks/${taskId}`,
+        data
+      );
       return response.data.data.task;
     },
-    
+
     // ⚡ OPTIMISTIC UPDATE: Update cache immediately
     onMutate: async ({ taskId, projectId, data }) => {
       // Cancel outgoing refetches (so they don't overwrite optimistic update)
-      await queryClient.cancelQueries({ queryKey: queryKeys.tasks.detail(taskId) });
-      await queryClient.cancelQueries({ queryKey: queryKeys.projects.tasks(projectId) });
-      
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.tasks.detail(taskId),
+      });
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.projects.tasks(projectId),
+      });
+
       // Snapshot previous value for rollback
       const previousTask = getQueryData<Task>(queryKeys.tasks.detail(taskId));
-      const previousTasks = getQueryData<Task[]>(queryKeys.projects.tasks(projectId));
-      
+      const previousTasks = getQueryData<Task[]>(
+        queryKeys.projects.tasks(projectId)
+      );
+
       // Optimistically update task detail
       if (previousTask) {
         setQueryData<Task>(queryKeys.tasks.detail(taskId), {
@@ -301,43 +320,53 @@ export function useUpdateTask() {
           updatedAt: new Date().toISOString(),
         });
       }
-      
+
       // Optimistically update task in list
       if (previousTasks) {
         setQueryData<Task[]>(
           queryKeys.projects.tasks(projectId),
-          previousTasks.map(task =>
+          previousTasks.map((task) =>
             task.id === taskId
               ? { ...task, ...data, updatedAt: new Date().toISOString() }
               : task
           )
         );
       }
-      
+
       // Return context for rollback
       return { previousTask, previousTasks, taskId, projectId };
     },
-    
+
     // ❌ ERROR: Rollback optimistic update
     onError: (_error, _variables, context) => {
       console.error('[useUpdateTask] Update failed, rolling back:', _error);
-      
+
       if (context) {
         // Restore previous values
         if (context.previousTask) {
-          setQueryData(queryKeys.tasks.detail(context.taskId), context.previousTask);
+          setQueryData(
+            queryKeys.tasks.detail(context.taskId),
+            context.previousTask
+          );
         }
         if (context.previousTasks) {
-          setQueryData(queryKeys.projects.tasks(context.projectId), context.previousTasks);
+          setQueryData(
+            queryKeys.projects.tasks(context.projectId),
+            context.previousTasks
+          );
         }
       }
     },
-    
+
     // ✅ SUCCESS: Invalidate queries to refetch fresh data
     onSettled: (_data, _error, _variables, context) => {
       if (context) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(context.taskId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.tasks.detail(context.taskId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(context.projectId),
+        });
       }
     },
   });
@@ -361,7 +390,7 @@ export interface CreateTaskData {
 
 /**
  * useCreateTask Hook
- * 
+ *
  * Create new task with optimistic insertion.
  */
 export function useCreateTask() {
@@ -375,60 +404,69 @@ export function useCreateTask() {
       projectId: string;
       data: CreateTaskData;
     }) => {
-      const response = await post<TaskResponse>(`/api/v1/projects/${projectId}/tasks`, data);
+      const response = await post<TaskResponse>(
+        `/api/v1/projects/${projectId}/tasks`,
+        data
+      );
       return response.data.data.task;
     },
-    
+
     onSuccess: (_newTask, _variables) => {
       // Invalidate tasks list to refetch with new task
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(_variables.projectId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.tasks(_variables.projectId),
+      });
     },
   });
 }
 
 /**
  * useDeleteTask Hook
- * 
+ *
  * Delete task with optimistic removal.
  */
 export function useDeleteTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      taskId,
-    }: {
-      taskId: string;
-      projectId: string;
-    }) => {
+    mutationFn: async ({ taskId }: { taskId: string; projectId: string }) => {
       await del(`/api/v1/tasks/${taskId}`);
     },
-    
+
     // Optimistically remove task from list
     onMutate: async ({ taskId, projectId }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.projects.tasks(projectId) });
-      
-      const previousTasks = getQueryData<Task[]>(queryKeys.projects.tasks(projectId));
-      
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.projects.tasks(projectId),
+      });
+
+      const previousTasks = getQueryData<Task[]>(
+        queryKeys.projects.tasks(projectId)
+      );
+
       if (previousTasks) {
         setQueryData<Task[]>(
           queryKeys.projects.tasks(projectId),
-          previousTasks.filter(task => task.id !== taskId)
+          previousTasks.filter((task) => task.id !== taskId)
         );
       }
-      
+
       return { previousTasks, taskId, projectId };
     },
-    
+
     onError: (_error, _variables, context) => {
       if (context?.previousTasks) {
-        setQueryData(queryKeys.projects.tasks(context.projectId), context.previousTasks);
+        setQueryData(
+          queryKeys.projects.tasks(context.projectId),
+          context.previousTasks
+        );
       }
     },
-    
+
     onSettled: (_data, _error, _variables, context) => {
       if (context) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(context.projectId),
+        });
       }
     },
   });
@@ -436,7 +474,7 @@ export function useDeleteTask() {
 
 /**
  * useAssignTask Hook
- * 
+ *
  * Assign/unassign user to task.
  */
 export function useAssignTask() {
@@ -459,10 +497,14 @@ export function useAssignTask() {
         await del(`/api/v1/tasks/${taskId}/assign/${userId}`);
       }
     },
-    
+
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.tasks.detail(variables.taskId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(variables.projectId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tasks.detail(variables.taskId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.tasks(variables.projectId),
+      });
     },
   });
 }

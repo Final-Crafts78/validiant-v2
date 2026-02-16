@@ -20,15 +20,17 @@ Validiant's Next.js frontend uses modern patterns for authentication, data fetch
 ### Why HttpOnly Cookies?
 
 **❌ Traditional JWT (LocalStorage/SessionStorage):**
+
 ```typescript
 // VULNERABLE TO XSS!
 const token = localStorage.getItem('jwt');
 fetch('/api/data', {
-  headers: { 'Authorization': `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 });
 ```
 
 If attacker injects JavaScript, they can steal the token:
+
 ```javascript
 // Malicious code
 const token = localStorage.getItem('jwt');
@@ -36,16 +38,18 @@ sendToAttacker(token); // ❌ Game over
 ```
 
 **✅ HttpOnly Cookies:**
+
 ```typescript
 // IMMUNE TO XSS! 🔒
 // No token in JavaScript
 // Cookies sent automatically
 fetch('/api/data', {
-  credentials: 'include' // Sends HttpOnly cookies
+  credentials: 'include', // Sends HttpOnly cookies
 });
 ```
 
 Even if attacker injects JavaScript, they CANNOT access the cookie:
+
 ```javascript
 // Malicious code
 const token = document.cookie; // Empty! HttpOnly blocks access
@@ -96,11 +100,11 @@ import { useAuth, useRequireAuth, useOptionalAuth } from '@/hooks/useAuth';
 // Protected Page (redirect if not authenticated)
 function DashboardPage() {
   const { user, isLoading } = useRequireAuth();
-  
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  
+
   // User is guaranteed to be authenticated here
   return (
     <div>
@@ -113,7 +117,7 @@ function DashboardPage() {
 // Public Page (show different content for authenticated users)
 function HomePage() {
   const { user, isAuthenticated } = useOptionalAuth();
-  
+
   return (
     <div>
       <h1>Welcome to Validiant</h1>
@@ -129,7 +133,7 @@ function HomePage() {
 // Manual Auth Check
 function Header() {
   const { user, isAuthenticated, logout, isLoggingOut } = useAuth();
-  
+
   return (
     <header>
       {isAuthenticated ? (
@@ -157,22 +161,26 @@ import { TaskStatus } from '@/hooks/useTasks';
 
 function TaskList({ projectId }: { projectId: string }) {
   // Fetch tasks with React Query
-  const { data: tasks, isLoading, error } = useTasks(projectId, {
+  const {
+    data: tasks,
+    isLoading,
+    error,
+  } = useTasks(projectId, {
     status: TaskStatus.TODO,
     priority: TaskPriority.HIGH,
   });
-  
+
   if (isLoading) {
     return <Spinner />;
   }
-  
+
   if (error) {
     return <ErrorMessage error={error} />;
   }
-  
+
   return (
     <ul>
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <TaskCard key={task.id} task={task} />
       ))}
     </ul>
@@ -187,7 +195,7 @@ import { useCreateTask, useUpdateTask, useDeleteTask } from '@/hooks/useTasks';
 
 function TaskForm({ projectId }: { projectId: string }) {
   const createTask = useCreateTask();
-  
+
   const handleSubmit = (data: CreateTaskData) => {
     createTask.mutate(
       { projectId, data },
@@ -202,7 +210,7 @@ function TaskForm({ projectId }: { projectId: string }) {
       }
     );
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       {/* Form fields */}
@@ -219,6 +227,7 @@ function TaskForm({ projectId }: { projectId: string }) {
 ### The Problem
 
 **Without Optimistic Updates:**
+
 ```
 User drags task → Wait for API → UI updates (500ms delay)
                      ▼
@@ -226,6 +235,7 @@ User drags task → Wait for API → UI updates (500ms delay)
 ```
 
 **With Optimistic Updates:**
+
 ```
 User drags task → UI updates instantly (0ms) → API in background
                      ▼
@@ -241,7 +251,7 @@ import { TaskStatus } from '@/hooks/useTasks';
 function KanbanBoard({ projectId }: { projectId: string }) {
   const { data: tasks } = useTasks(projectId);
   const updateTask = useUpdateTask();
-  
+
   // Handle drag-and-drop
   const handleDrop = (taskId: string, newStatus: TaskStatus) => {
     // UI updates INSTANTLY (before API call)
@@ -254,12 +264,18 @@ function KanbanBoard({ projectId }: { projectId: string }) {
     // ✅ API updates database in background
     // ✅ If API fails, task snaps back (rollback)
   };
-  
+
   return (
     <div className="kanban-board">
-      <Column status="todo" tasks={tasks.filter(t => t.status === 'todo')} />
-      <Column status="in_progress" tasks={tasks.filter(t => t.status === 'in_progress')} />
-      <Column status="completed" tasks={tasks.filter(t => t.status === 'completed')} />
+      <Column status="todo" tasks={tasks.filter((t) => t.status === 'todo')} />
+      <Column
+        status="in_progress"
+        tasks={tasks.filter((t) => t.status === 'in_progress')}
+      />
+      <Column
+        status="completed"
+        tasks={tasks.filter((t) => t.status === 'completed')}
+      />
     </div>
   );
 }
@@ -301,7 +317,7 @@ import { useProjectRealtime } from '@/hooks/useProjectRealtime';
 function ProjectBoard({ projectId }: { projectId: string }) {
   const { data: tasks } = useTasks(projectId);
   const { onlineUsers, isConnected } = useProjectRealtime(projectId);
-  
+
   return (
     <div>
       <header>
@@ -313,15 +329,15 @@ function ProjectBoard({ projectId }: { projectId: string }) {
             <span>⏳ Connecting...</span>
           )}
         </div>
-        
+
         <div>
           <h3>Online Now ({onlineUsers.length})</h3>
-          {onlineUsers.map(user => (
+          {onlineUsers.map((user) => (
             <Avatar key={user.userId} name={user.userName} />
           ))}
         </div>
       </header>
-      
+
       <TaskList tasks={tasks} />
     </div>
   );
@@ -365,6 +381,7 @@ No manual WebSocket code needed! 🚀
 ### 1. Always Use Hooks
 
 ❌ **Don't:**
+
 ```typescript
 // Manual API calls
 const response = await fetch('/api/tasks');
@@ -373,6 +390,7 @@ setTasks(data);
 ```
 
 ✅ **Do:**
+
 ```typescript
 // Use React Query hooks
 const { data: tasks } = useTasks(projectId);
@@ -389,12 +407,14 @@ const { data: task2 } = useTask('task-123'); // Cache hit (no API call)
 ### 3. Optimistic Updates for UX
 
 Use optimistic updates for:
+
 - Drag-and-drop
 - Status changes
 - Priority changes
 - Assignee changes
 
 Don't use for:
+
 - Creating entities (need server-generated ID)
 - Complex validations
 - File uploads
@@ -402,11 +422,13 @@ Don't use for:
 ### 4. Real-Time Only for Presence
 
 Use WebSockets for:
+
 - User presence (who's online)
 - Live collaboration indicators
 - Notification triggers
 
 Don't use for:
+
 - Heavy data transfer (use REST API)
 - Initial data loading (use React Query)
 - File uploads (use direct upload)
@@ -451,6 +473,7 @@ NEXT_PUBLIC_PARTYKIT_URL=validiant-realtime.partykit.dev
 **Problem**: useAuth returns null even after login
 
 **Solution**:
+
 1. Check `withCredentials: true` in API client
 2. Verify CORS headers allow credentials
 3. Check cookies in DevTools (Application tab)
@@ -461,6 +484,7 @@ NEXT_PUBLIC_PARTYKIT_URL=validiant-realtime.partykit.dev
 **Problem**: WebSocket not connecting
 
 **Solution**:
+
 1. Check `NEXT_PUBLIC_PARTYKIT_URL` environment variable
 2. Verify PartyKit server is running (`npm run party:dev`)
 3. Check browser console for WebSocket errors
@@ -469,6 +493,7 @@ NEXT_PUBLIC_PARTYKIT_URL=validiant-realtime.partykit.dev
 **Problem**: Not receiving real-time updates
 
 **Solution**:
+
 1. Check connection state: `isConnected`
 2. Verify user is in the same project room
 3. Check browser console for message parsing errors
@@ -479,6 +504,7 @@ NEXT_PUBLIC_PARTYKIT_URL=validiant-realtime.partykit.dev
 **Problem**: Too many API calls
 
 **Solution**:
+
 1. Increase `staleTime` in React Query config
 2. Use pagination for large lists
 3. Disable `refetchOnWindowFocus` if not needed
