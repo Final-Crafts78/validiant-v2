@@ -65,18 +65,18 @@ export const createHonoApp = () => {
     app.use('*', prettyJSON());
   }
 
-  // CORS middleware
-  app.use(
-    '*',
-    cors({
-      origin: process.env.CORS_ORIGIN || '*',
+  // CORS middleware (Edge-Compatible Dynamic Binding)
+  app.use('*', async (c, next) => {
+    const corsMiddleware = cors({
+      origin: c.env.CORS_ORIGIN || '*',
       credentials: true,
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'Cookie'],
       exposeHeaders: ['Set-Cookie'],
       maxAge: 86400, // 24 hours
-    })
-  );
+    });
+    return corsMiddleware(c, next);
+  });
 
   // ============================================================================
   // HEALTH CHECK
