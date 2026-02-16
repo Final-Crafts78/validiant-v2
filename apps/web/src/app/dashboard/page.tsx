@@ -37,7 +37,7 @@ function StatCard({
   color: 'primary' | 'success' | 'warning' | 'secondary';
 }) {
   return (
-    <div className="card hover:shadow-lg transition-shadow">
+    <div className="card hover:shadow-lg transition-shadow min-w-[260px] md:min-w-0 snap-center">
       <div className="card-body">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -145,8 +145,8 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Swipe Row on Mobile, Grid on Desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 scrollbar-hide">
         <StatCard
           title="Total Projects"
           value={8}
