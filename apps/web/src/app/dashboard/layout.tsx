@@ -70,7 +70,7 @@ export default async function DashboardLayout({
       <DashboardHeader user={user} />
 
       {/* Main Content */}
-      <main className="container-custom py-8">{children}</main>
+      <main className="container-custom py-4 md:py-8 pb-24 md:pb-8">{children}</main>
     </div>
   );
 }
