@@ -11,6 +11,9 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import type { User } from '@validiant/shared';
 
+// Explicitly opt into dynamic rendering
+export const dynamic = 'force-dynamic';
+
 /**
  * Fetch user data server-side
  */
