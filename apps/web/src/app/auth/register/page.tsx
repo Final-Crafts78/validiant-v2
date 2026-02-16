@@ -117,6 +117,7 @@ export default function RegisterPage() {
     const payload: RegisterData = {
       ...otherData,
       fullName: `${firstName} ${lastName}`.trim(),
+      acceptedTerms: terms, // Include acceptedTerms in payload
     };
     
     registerMutation.mutate(payload);
