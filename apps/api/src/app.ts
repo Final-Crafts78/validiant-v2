@@ -57,6 +57,12 @@ export const createHonoApp = () => {
   // MIDDLEWARE
   // ============================================================================
 
+  // Edge Env Injector (Passes Cloudflare secrets to global scope for the DB Proxy)
+  app.use('*', async (c, next) => {
+    (globalThis as any).__ENV__ = c.env;
+    await next();
+  });
+
   // Logger middleware (development and production)
   app.use('*', logger());
 
