@@ -1,21 +1,20 @@
 /**
- * Register Page
+ * Register Page (BFF Pattern)
  * 
- * User registration page with email, password, and name fields.
+ * User registration page using Next.js Server Actions.
+ * Cookies are now set by Next.js (same domain) instead of Cloudflare API.
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { register as registerUser, type RegisterData } from '@/services/auth.service';
+import { registerAction } from '@/actions/auth.actions';
 import { useAuthStore } from '@/store/auth';
-import { getErrorMessage } from '@/lib/api';
 import { ROUTES, VALIDATION } from '@/lib/config';
 import { validate } from '@/lib/utils';
 import { Eye, EyeOff, UserPlus, Loader2, CheckCircle2 } from 'lucide-react';
@@ -67,6 +66,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   // Form setup
   const {
@@ -90,37 +90,44 @@ export default function RegisterPage() {
   const password = watch('password');
   const passwordValidation = password ? validate.password(password) : null;
 
-  // Register mutation
-  const registerMutation = useMutation({
-    mutationFn: registerUser,
-    onSuccess: (data) => {
-      // Save user data (tokens stored in HttpOnly cookies)
-      setAuth({
-        user: data.user,
-      });
-
-      // Redirect to dashboard
-      router.push(ROUTES.DASHBOARD);
-    },
-    onError: (error) => {
-      const message = getErrorMessage(error);
-      setErrorMessage(message);
-    },
-  });
-
-  // Handle form submission
-  const onSubmit = (data: RegisterFormData) => {
+  // Handle form submission with Server Action
+  const onSubmit = async (data: RegisterFormData) => {
     setErrorMessage(null);
     
-    // Transform firstName and lastName into fullName for API
-    const { firstName, lastName, confirmPassword, terms, ...otherData } = data;
-    const payload: RegisterData = {
-      ...otherData,
-      fullName: `${firstName} ${lastName}`.trim(),
-      acceptedTerms: terms, // Include acceptedTerms in payload
-    };
+    // Transform firstName and lastName into fullName
+    const fullName = `${data.firstName} ${data.lastName}`.trim();
     
-    registerMutation.mutate(payload);
+    startTransition(async () => {
+      try {
+        // Call server action (runs on server, sets cookies)
+        const result = await registerAction(
+          data.email,
+          data.password,
+          fullName,
+          data.terms
+        );
+
+        if (!result.success) {
+          setErrorMessage(result.message || 'Registration failed');
+          return;
+        }
+
+        // Update Zustand store with user data
+        if (result.user) {
+          setAuth({
+            user: result.user,
+          });
+        }
+
+        // Redirect to dashboard
+        // Middleware will now detect the cookie and allow access
+        router.push(ROUTES.DASHBOARD);
+        router.refresh(); // Refresh to trigger middleware check
+      } catch (error) {
+        console.error('Registration error:', error);
+        setErrorMessage('An unexpected error occurred. Please try again.');
+      }
+    });
   };
 
   return (
@@ -178,6 +185,7 @@ export default function RegisterPage() {
                     autoComplete="given-name"
                     className={`input ${errors.firstName ? 'input-error' : ''}`}
                     placeholder="John"
+                    disabled={isPending}
                     {...register('firstName')}
                   />
                   {errors.firstName && (
@@ -196,6 +204,7 @@ export default function RegisterPage() {
                     autoComplete="family-name"
                     className={`input ${errors.lastName ? 'input-error' : ''}`}
                     placeholder="Doe"
+                    disabled={isPending}
                     {...register('lastName')}
                   />
                   {errors.lastName && (
@@ -215,6 +224,7 @@ export default function RegisterPage() {
                   autoComplete="email"
                   className={`input ${errors.email ? 'input-error' : ''}`}
                   placeholder="you@example.com"
+                  disabled={isPending}
                   {...register('email')}
                 />
                 {errors.email && (
@@ -234,12 +244,14 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     className={`input pr-10 ${errors.password ? 'input-error' : ''}`}
                     placeholder="Create a strong password"
+                    disabled={isPending}
                     {...register('password')}
                   />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isPending}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -281,12 +293,14 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     className={`input pr-10 ${errors.confirmPassword ? 'input-error' : ''}`}
                     placeholder="Re-enter your password"
+                    disabled={isPending}
                     {...register('confirmPassword')}
                   />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    disabled={isPending}
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -306,6 +320,7 @@ export default function RegisterPage() {
                   <input
                     type="checkbox"
                     className="mt-1 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    disabled={isPending}
                     {...register('terms')}
                   />
                   <span className="text-sm text-gray-600">
@@ -327,10 +342,10 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={registerMutation.isPending}
+                disabled={isPending}
                 className="btn btn-primary btn-lg w-full"
               >
-                {registerMutation.isPending ? (
+                {isPending ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     <span>Creating account...</span>
