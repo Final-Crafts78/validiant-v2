@@ -37,14 +37,47 @@ We were facing a critical authentication issue:
 
 ## Implementation
 
-### 1. Server Actions (`apps/web/src/actions/auth.actions.ts`)
+### 1. Type System (`apps/web/src/types/auth.types.ts`)
+
+**CRITICAL FIX:** The API returns a simplified user object, not the full `User` type from `@validiant/shared`. We created `AuthUser` type to match the actual API response.
+
+```typescript
+/**
+ * Auth User Response
+ * This is what the API actually returns in login/register/me endpoints
+ */
+export interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  fullName: string;
+  avatar?: string; // Note: API returns 'avatar', not 'avatarUrl'
+  emailVerified: boolean;
+  twoFactorEnabled: boolean;
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+}
+```
+
+**Why this matters:**
+- The shared `User` type expects many fields (role, status, preferences, etc.)
+- The API only returns essential auth fields
+- Using the wrong type causes TypeScript errors and runtime issues
+- `AuthUser` matches exactly what `formatUserResponse()` returns in the auth controller
+
+### 2. Server Actions (`apps/web/src/actions/auth.actions.ts`)
 
 ```typescript
 'use server';
 
 import { cookies } from 'next/headers';
+import type { AuthUser } from '@/types/auth.types';
 
-export async function loginAction(email: string, password: string) {
+export async function loginAction(
+  email: string,
+  password: string
+): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
   // 1. Fetch Cloudflare API
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
@@ -64,7 +97,7 @@ export async function loginAction(email: string, password: string) {
   });
   
   // 3. Return user data (no tokens!)
-  return { success: true, user };
+  return { success: true, user: user as AuthUser };
 }
 ```
 
@@ -75,7 +108,7 @@ export async function loginAction(email: string, password: string) {
 - ✅ `logoutAction()` - Clear cookies and denylist tokens
 - ✅ `getCurrentUserAction()` - Fetch user with cookie auth
 
-### 2. Client Components
+### 3. Client Components
 
 #### Login Page
 
@@ -122,7 +155,7 @@ function LogoutButton() {
 }
 ```
 
-### 3. Middleware (`apps/web/src/middleware.ts`)
+### 4. Middleware (`apps/web/src/middleware.ts`)
 
 ```typescript
 export function middleware(request: NextRequest) {
@@ -136,12 +169,13 @@ export function middleware(request: NextRequest) {
 }
 ```
 
-### 4. Dashboard Layout (Server Component)
+### 5. Dashboard Layout (Server Component)
 
 ```typescript
 import { cookies } from 'next/headers';
+import type { AuthUser } from '@/types/auth.types';
 
-async function getCurrentUser() {
+async function getCurrentUser(): Promise<AuthUser | null> {
   const accessToken = cookies().get('accessToken');
   
   const response = await fetch(`${API_URL}/auth/me`, {
@@ -150,13 +184,35 @@ async function getCurrentUser() {
     },
   });
   
-  return response.json();
+  const data = await response.json();
+  return data.data.user as AuthUser;
 }
 
 export default async function DashboardLayout({ children }) {
   const user = await getCurrentUser();
   return <DashboardHeader user={user} />;
 }
+```
+
+### 6. Auth Store (Zustand)
+
+```typescript
+import { create } from 'zustand';
+import type { AuthUser } from '@/types/auth.types';
+
+interface AuthState {
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  setAuth: (data: { user: AuthUser }) => void;
+  clearAuth: () => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  setAuth: ({ user }) => set({ user, isAuthenticated: true }),
+  clearAuth: () => set({ user: null, isAuthenticated: false }),
+}));
 ```
 
 ## Security Benefits
@@ -249,6 +305,8 @@ const COOKIE_OPTIONS = {
 ```
 apps/web/
 ├── src/
+│   ├── types/
+│   │   └── auth.types.ts            ✅ AuthUser type definition
 │   ├── actions/
 │   │   └── auth.actions.ts          ✅ Server Actions (BFF)
 │   ├── app/
@@ -260,6 +318,8 @@ apps/web/
 │   ├── components/
 │   │   └── dashboard/
 │   │       └── DashboardHeader.tsx  ✅ Uses logoutAction
+│   ├── store/
+│   │   └── auth.ts                  ✅ Uses AuthUser type
 │   ├── middleware.ts                ✅ Reads same-domain cookies
 │   └── services/
 │       └── auth.service.ts          ⚠️  Deprecated (client-side)
@@ -269,6 +329,7 @@ apps/web/
 
 ### ✅ Completed
 
+- [x] Created auth types file with AuthUser
 - [x] Created server actions file
 - [x] Implemented loginAction with cookie setting
 - [x] Implemented registerAction with cookie setting
@@ -278,6 +339,8 @@ apps/web/
 - [x] Refactored register page to use server action
 - [x] Refactored logout button to use server action
 - [x] Fixed dashboard layout user fetch
+- [x] Updated auth store to use AuthUser type
+- [x] Updated DashboardHeader to use AuthUser type
 - [x] Verified middleware can read cookies
 
 ### 🔄 Optional Future Improvements
@@ -287,6 +350,56 @@ apps/web/
 - [ ] Add "Remember Me" functionality
 - [ ] Implement OAuth flow with BFF pattern
 - [ ] Add rate limiting to server actions
+
+## Type Safety Fixes
+
+### The Problem
+
+The `User` type from `@validiant/shared` expects **30+ fields**:
+```typescript
+interface User {
+  id: string;
+  email: string;
+  fullName: string;
+  role: UserRole;                    // ❌ Not in API response
+  status: UserStatus;                // ❌ Not in API response
+  preferences: UserPreferences;      // ❌ Not in API response
+  notificationPreferences: {...};    // ❌ Not in API response
+  phoneVerified: boolean;            // ❌ Not in API response
+  // ... many more fields
+}
+```
+
+But the API only returns **9 fields**:
+```typescript
+interface AuthUser {
+  id: string;
+  email: string;
+  fullName: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  emailVerified: boolean;
+  twoFactorEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### The Solution
+
+1. **Created `AuthUser` type** that matches actual API response
+2. **Updated all auth-related code** to use `AuthUser` instead of `User`
+3. **Type-safe** - no runtime errors or missing fields
+4. **Future-proof** - easy to extend when API adds more fields
+
+### Files Updated for Type Safety
+
+- ✅ `apps/web/src/types/auth.types.ts` - New AuthUser type
+- ✅ `apps/web/src/actions/auth.actions.ts` - Uses AuthUser
+- ✅ `apps/web/src/store/auth.ts` - Uses AuthUser
+- ✅ `apps/web/src/app/dashboard/layout.tsx` - Uses AuthUser
+- ✅ `apps/web/src/components/dashboard/DashboardHeader.tsx` - Uses AuthUser
 
 ## Testing
 
@@ -323,6 +436,17 @@ apps/web/
 # 5. Verify /dashboard is accessible
 ```
 
+### 4. Type Safety Test
+
+```bash
+# 1. Run TypeScript compiler
+npm run type-check
+
+# 2. Verify no type errors
+# 3. Check that AuthUser fields match API response
+# 4. Test that components receive correct user data
+```
+
 ## Troubleshooting
 
 ### Issue: Infinite redirect loop
@@ -345,15 +469,26 @@ apps/web/
 **Expected:** HttpOnly cookies don't show value in DevTools (security feature)  
 **Verify:** Check Network tab → Response Headers → `Set-Cookie`
 
+### Issue: TypeScript errors about missing User fields
+
+**Cause:** Using `User` from `@validiant/shared` instead of `AuthUser`  
+**Fix:** Import and use `AuthUser` from `@/types/auth.types`
+
+### Issue: Runtime error - undefined user properties
+
+**Cause:** Accessing fields that don't exist in AuthUser (e.g., `user.role`)  
+**Fix:** Check `AuthUser` interface - only use fields that API returns
+
 ## References
 
 - [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
 - [Next.js Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
 - [HttpOnly Cookies](https://owasp.org/www-community/HttpOnly)
 - [BFF Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)
+- [TypeScript Type Safety](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)
 
 ---
 
 **Last Updated:** February 17, 2026  
-**Status:** ✅ Fully Implemented  
+**Status:** ✅ Fully Implemented with Type Safety  
 **Maintainer:** Validiant Team
