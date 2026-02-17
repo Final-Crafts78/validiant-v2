@@ -20,7 +20,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react';
-import type { User as UserType } from '@validiant/shared';
+import type { AuthUser } from '@/types/auth.types';
 
 /**
  * Navigation item type
@@ -66,7 +66,7 @@ const navItems: NavItem[] = [
  * Dashboard Header Props
  */
 interface DashboardHeaderProps {
-  user: UserType;
+  user: AuthUser;
 }
 
 /**
@@ -157,9 +157,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                {user.avatarUrl ? (
+                {user.avatar ? (
                   <img
-                    src={user.avatarUrl}
+                    src={user.avatar}
                     alt={user.fullName}
                     className="w-10 h-10 rounded-full object-cover"
                   />
