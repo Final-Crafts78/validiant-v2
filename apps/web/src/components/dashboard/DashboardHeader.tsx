@@ -157,6 +157,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
+                {/* CRITICAL FIX: Use user.avatar (not user.avatarUrl) to match AuthUser type */}
                 {user.avatar ? (
                   <img
                     src={user.avatar}
