@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useMemo, useTransition } from 'react';
+import { useMemo, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
