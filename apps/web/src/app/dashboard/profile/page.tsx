@@ -338,7 +338,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences.projectUpdate}
+                      defaultChecked={user.notificationPreferences?.projectUpdate ?? false}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -353,7 +353,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences.taskAssigned}
+                      defaultChecked={user.notificationPreferences?.taskAssigned ?? false}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences.projectInvite}
+                      defaultChecked={user.notificationPreferences?.projectInvite ?? false}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -392,7 +392,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences.commentMention}
+                      defaultChecked={user.notificationPreferences?.commentMention ?? false}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
@@ -407,7 +407,7 @@ export default function ProfilePage() {
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences.taskDueSoon}
+                      defaultChecked={user.notificationPreferences?.taskDueSoon ?? false}
                       className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </label>
