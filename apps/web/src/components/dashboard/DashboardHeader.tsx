@@ -2,9 +2,6 @@
  * Dashboard Header Component (BFF Pattern)
  * 
  * Client component for dashboard navigation with server-side logout.
- * 
- * VERIFIED: Uses user.avatar (matches AuthUser type)
- * Last verified: 2026-02-17 22:45 IST
  */
 
 'use client';
@@ -160,7 +157,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                {/* VERIFIED CORRECT: Use user.avatar to match AuthUser type */}
+                {/* CRITICAL: Must use user.avatar to match AuthUser type */}
                 {user.avatar ? (
                   <img
                     src={user.avatar}
