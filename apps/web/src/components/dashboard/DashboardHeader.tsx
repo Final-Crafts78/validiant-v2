@@ -143,7 +143,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                       <span>{item.name}</span>
                     </Link>
                   );
-                })}
+                });
               </nav>
             </div>
 
@@ -157,10 +157,10 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                {/* CRITICAL: Must use user.avatar to match AuthUser type */}
-                {user.avatar ? (
+                {/* ✅ FIXED: Use user.avatarUrl to match AuthUser type */}
+                {user.avatarUrl ? (
                   <img
-                    src={user.avatar}
+                    src={user.avatarUrl}
                     alt={user.fullName}
                     className="w-10 h-10 rounded-full object-cover"
                   />
