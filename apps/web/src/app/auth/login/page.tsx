@@ -1,21 +1,20 @@
 /**
- * Login Page
+ * Login Page (BFF Pattern)
  *
- * User authentication page with email/password login.
+ * User authentication page using Next.js Server Actions.
+ * Cookies are now set by Next.js (same domain) instead of Cloudflare API.
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { login } from '@/services/auth.service';
+import { loginAction } from '@/actions/auth.actions';
 import { useAuthStore } from '@/store/auth';
-import { getErrorMessage } from '@/lib/api';
 import { ROUTES } from '@/lib/config';
 import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-react';
 
@@ -40,6 +39,7 @@ export default function LoginPage() {
   const setAuth = useAuthStore((state) => state.setAuth);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   // Form setup
   const {
@@ -54,28 +54,36 @@ export default function LoginPage() {
     },
   });
 
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: (data) => {
-      // Save user data (tokens are in HttpOnly cookies)
-      setAuth({
-        user: data.user,
-      });
-
-      // Redirect to dashboard
-      router.push(ROUTES.DASHBOARD);
-    },
-    onError: (error) => {
-      const message = getErrorMessage(error);
-      setErrorMessage(message);
-    },
-  });
-
-  // Handle form submission
-  const onSubmit = (data: LoginFormData) => {
+  // Handle form submission with Server Action
+  const onSubmit = async (data: LoginFormData) => {
     setErrorMessage(null);
-    loginMutation.mutate(data);
+
+    startTransition(async () => {
+      try {
+        // Call server action (runs on server, sets cookies)
+        const result = await loginAction(data.email, data.password);
+
+        if (!result.success) {
+          setErrorMessage(result.message || 'Login failed');
+          return;
+        }
+
+        // Update Zustand store with user data
+        if (result.user) {
+          setAuth({
+            user: result.user,
+          });
+        }
+
+        // Redirect to dashboard
+        // Middleware will now detect the cookie and allow access
+        router.push(ROUTES.DASHBOARD);
+        router.refresh(); // Refresh to trigger middleware check
+      } catch (error) {
+        console.error('Login error:', error);
+        setErrorMessage('An unexpected error occurred. Please try again.');
+      }
+    });
   };
 
   return (
@@ -129,6 +137,7 @@ export default function LoginPage() {
                   autoComplete="email"
                   className={`input ${errors.email ? 'input-error' : ''}`}
                   placeholder="you@example.com"
+                  disabled={isPending}
                   {...register('email')}
                 />
                 {errors.email && (
@@ -148,12 +157,14 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     className={`input pr-10 ${errors.password ? 'input-error' : ''}`}
                     placeholder="Enter your password"
+                    disabled={isPending}
                     {...register('password')}
                   />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isPending}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -180,10 +191,10 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loginMutation.isPending}
+                disabled={isPending}
                 className="btn btn-primary btn-lg w-full"
               >
-                {loginMutation.isPending ? (
+                {isPending ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     <span>Signing in...</span>
