@@ -1,17 +1,17 @@
 /**
- * Dashboard Header Component
+ * Dashboard Header Component (BFF Pattern)
  * 
- * Client component for dashboard navigation with interactive features.
+ * Client component for dashboard navigation with server-side logout.
  */
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
-import apiClient from '@/lib/api';
-import { API_CONFIG, ROUTES } from '@/lib/config';
+import { logoutAction } from '@/actions/auth.actions';
+import { ROUTES } from '@/lib/config';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -76,7 +76,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearAuth = useAuthStore((state) => state.clearAuth);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
@@ -87,20 +87,26 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     return `${firstInitial}${lastInitial}`.toUpperCase();
   }, [user?.fullName]);
 
-  // Handle logout
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      // Call logout API to clear cookies
-      await apiClient.post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT, {});
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Clear client state
-      clearAuth();
-      // Redirect to login
-      router.push(ROUTES.LOGIN);
-    }
+  // Handle logout with Server Action
+  const handleLogout = () => {
+    startTransition(async () => {
+      try {
+        // Call server action to clear cookies
+        await logoutAction();
+        
+        // Clear client-side state
+        clearAuth();
+        
+        // Redirect to login
+        router.push(ROUTES.LOGIN);
+        router.refresh(); // Refresh to clear any cached data
+      } catch (error) {
+        console.error('Logout error:', error);
+        // Still clear client state and redirect on error
+        clearAuth();
+        router.push(ROUTES.LOGIN);
+      }
+    });
   };
 
   return (
@@ -169,11 +175,11 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                disabled={isLoggingOut}
+                disabled={isPending}
                 className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <LogOut className="h-4 w-4" />
-                <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
+                <span>{isPending ? 'Logging out...' : 'Logout'}</span>
               </button>
             </div>
           </div>
