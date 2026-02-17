@@ -8,6 +8,7 @@
 /**
  * Auth User Response
  * This is what the API actually returns in login/register/me endpoints
+ * CRITICAL: Uses avatarUrl to match database schema and @validiant/shared
  */
 export interface AuthUser {
   id: string;
@@ -15,7 +16,7 @@ export interface AuthUser {
   firstName?: string;
   lastName?: string;
   fullName: string;
-  avatar?: string; // Note: API returns 'avatar', not 'avatarUrl'
+  avatarUrl?: string; // ✅ FIXED: Use avatarUrl (matches database)
   emailVerified: boolean;
   twoFactorEnabled: boolean;
   createdAt: string; // ISO string
