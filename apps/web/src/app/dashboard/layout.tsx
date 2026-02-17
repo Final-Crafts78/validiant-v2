@@ -1,8 +1,8 @@
 /**
- * Dashboard Layout
+ * Dashboard Layout (BFF Pattern)
  * 
  * Server Component layout for protected dashboard pages.
- * User data is fetched server-side for optimal performance and SEO.
+ * User data is fetched server-side with proper authentication.
  */
 
 import { cookies } from 'next/headers';
@@ -16,10 +16,11 @@ export const dynamic = 'force-dynamic';
 
 /**
  * Fetch user data server-side
+ * Uses Authorization header with Bearer token for Cloudflare API authentication
  */
 async function getCurrentUser(): Promise<User | null> {
   try {
-    // Get cookies
+    // Get access token from cookies
     const cookieStore = cookies();
     const accessToken = cookieStore.get('accessToken');
 
@@ -28,12 +29,14 @@ async function getCurrentUser(): Promise<User | null> {
       return null;
     }
 
-    // Fetch user from API
+    // Fetch user from Cloudflare API with Authorization header
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'}${API_CONFIG.ENDPOINTS.AUTH.ME}`,
       {
+        method: 'GET',
         headers: {
-          Cookie: `accessToken=${accessToken.value}`,
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json',
         },
         cache: 'no-store', // Always fetch fresh user data
       }
@@ -44,9 +47,15 @@ async function getCurrentUser(): Promise<User | null> {
     }
 
     const data = await response.json();
-    return data.data as User;
+    
+    // Extract user from nested data structure
+    if (data.success && data.data && data.data.user) {
+      return data.data.user as User;
+    }
+    
+    return null;
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('[Dashboard Layout] Error fetching user:', error);
     return null;
   }
 }
