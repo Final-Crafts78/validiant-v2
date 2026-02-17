@@ -7,6 +7,7 @@
  * CRITICAL: Cookie-Clear Safety Net
  * - If API returns 401/403 or fails, cookies MUST be cleared
  * - Prevents infinite redirect loop between middleware and layout
+ * - Uses explicit overwrite method (expires: new Date(0)) to force browser compliance
  */
 
 import { cookies } from 'next/headers';
@@ -20,10 +21,36 @@ export const dynamic = 'force-dynamic';
 
 /**
  * Clear authentication cookies
- * Helper function to prevent infinite redirect loop
+ * 
+ * CRITICAL: Uses explicit overwrite method to force browser compliance.
+ * Some browsers ignore cookies().delete() calls, leaving "ghost cookies" that
+ * cause infinite redirect loops. This method:
+ * 1. Overwrites cookies with empty value and past expiration (new Date(0))
+ * 2. Calls delete() as fallback for Next.js internal state
+ * 
+ * This ensures cookies are actually removed from the browser.
  */
 function clearAuthCookies() {
   const cookieStore = cookies();
+  
+  console.log('[Dashboard Layout] Force clearing cookies with overwrite method');
+  
+  // 1. Force overwrite with empty value and immediate expiration
+  cookieStore.set({
+    name: 'accessToken',
+    value: '',
+    expires: new Date(0), // Expire instantly in the past
+    path: '/',
+  });
+
+  cookieStore.set({
+    name: 'refreshToken',
+    value: '',
+    expires: new Date(0),
+    path: '/',
+  });
+
+  // 2. Also call delete as a fallback for Next.js internal state
   cookieStore.delete('accessToken');
   cookieStore.delete('refreshToken');
 }
