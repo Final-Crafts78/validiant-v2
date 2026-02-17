@@ -4,10 +4,10 @@
  * Server Component layout for protected dashboard pages.
  * User data is fetched server-side with proper authentication.
  * 
- * CRITICAL: Cookie-Clear Safety Net
- * - If API returns 401/403 or fails, cookies MUST be cleared
- * - Prevents infinite redirect loop between middleware and layout
- * - Uses explicit overwrite method (expires: new Date(0)) to force browser compliance
+ * CRITICAL: Server Components CANNOT mutate cookies
+ * - Cookie deletion must happen in Route Handlers
+ * - On auth failure, redirect to /api/auth/session-expired
+ * - Route Handler clears cookies and redirects to login
  */
 
 import { cookies } from 'next/headers';
@@ -20,48 +20,11 @@ import type { AuthUser } from '@/types/auth.types';
 export const dynamic = 'force-dynamic';
 
 /**
- * Clear authentication cookies
- * 
- * CRITICAL: Uses explicit overwrite method to force browser compliance.
- * Some browsers ignore cookies().delete() calls, leaving "ghost cookies" that
- * cause infinite redirect loops. This method:
- * 1. Overwrites cookies with empty value and past expiration (new Date(0))
- * 2. Calls delete() as fallback for Next.js internal state
- * 
- * This ensures cookies are actually removed from the browser.
- */
-function clearAuthCookies() {
-  const cookieStore = cookies();
-  
-  console.log('[Dashboard Layout] Force clearing cookies with overwrite method');
-  
-  // 1. Force overwrite with empty value and immediate expiration
-  cookieStore.set({
-    name: 'accessToken',
-    value: '',
-    expires: new Date(0), // Expire instantly in the past
-    path: '/',
-  });
-
-  cookieStore.set({
-    name: 'refreshToken',
-    value: '',
-    expires: new Date(0),
-    path: '/',
-  });
-
-  // 2. Also call delete as a fallback for Next.js internal state
-  cookieStore.delete('accessToken');
-  cookieStore.delete('refreshToken');
-}
-
-/**
  * Fetch user data server-side
- * Uses Authorization header with Bearer token for Cloudflare API authentication
+ * Uses Authorization header with Bearer token for API authentication
  * 
- * CRITICAL COOKIE-CLEAR SAFETY NET:
- * If the API returns 401/403 or any error, cookies are cleared to prevent
- * infinite redirect loop between middleware (sees cookie) and layout (gets error).
+ * CRITICAL: On auth failure, redirects to Route Handler for cookie cleanup
+ * Server Components cannot mutate cookies - only Route Handlers can.
  */
 async function getCurrentUser(): Promise<AuthUser | null> {
   try {
@@ -78,7 +41,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
     console.log('[Dashboard Layout] Fetching user from:', apiUrl);
 
-    // Fetch user from Cloudflare API with Authorization header
+    // Fetch user from API with Authorization header
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -90,18 +53,16 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 
     console.log('[Dashboard Layout] API response status:', response.status);
 
-    // CRITICAL: If unauthorized or forbidden, clear cookies
+    // CRITICAL: If unauthorized or forbidden, redirect to cleanup route
     if (response.status === 401 || response.status === 403) {
-      console.warn('[Dashboard Layout] Token invalid (401/403), clearing cookies');
-      clearAuthCookies();
-      return null;
+      console.warn('[Dashboard Layout] Token invalid (401/403), redirecting to cleanup route');
+      redirect('/api/auth/session-expired');
     }
 
-    // If response is not OK, clear cookies
+    // If response is not OK, redirect to cleanup route
     if (!response.ok) {
       console.warn('[Dashboard Layout] API returned error status:', response.status);
-      clearAuthCookies();
-      return null;
+      redirect('/api/auth/session-expired');
     }
 
     // Try to parse JSON response
@@ -110,9 +71,8 @@ async function getCurrentUser(): Promise<AuthUser | null> {
       data = await response.json();
     } catch (jsonError) {
       console.error('[Dashboard Layout] Failed to parse JSON response:', jsonError);
-      // Clear cookies if response is malformed
-      clearAuthCookies();
-      return null;
+      // Redirect to cleanup route if response is malformed
+      redirect('/api/auth/session-expired');
     }
 
     // Check if response indicates success and has user data
@@ -122,9 +82,8 @@ async function getCurrentUser(): Promise<AuthUser | null> {
         hasData: !!data.data,
         hasUser: !!(data.data && data.data.user),
       });
-      // Clear cookies if response is invalid
-      clearAuthCookies();
-      return null;
+      // Redirect to cleanup route if response is invalid
+      redirect('/api/auth/session-expired');
     }
 
     console.log('[Dashboard Layout] Successfully fetched user:', data.data.user.email);
@@ -133,9 +92,8 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     return data.data.user as AuthUser;
   } catch (error) {
     console.error('[Dashboard Layout] Error fetching user:', error);
-    // Clear cookies on any exception to prevent infinite redirect
-    clearAuthCookies();
-    return null;
+    // Redirect to cleanup route on any exception
+    redirect('/api/auth/session-expired');
   }
 }
 
@@ -151,7 +109,7 @@ export default async function DashboardLayout({
   const user = await getCurrentUser();
 
   // If no user, redirect to login
-  // Cookies have been cleared by getCurrentUser() if there was an error,
+  // The cleanup route will have cleared cookies if there was an error,
   // so middleware will not redirect back here (breaking infinite loop)
   if (!user) {
     console.log('[Dashboard Layout] No user found, redirecting to login');
