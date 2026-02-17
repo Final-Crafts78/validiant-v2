@@ -37,8 +37,10 @@ import type {
 
 /**
  * API Configuration
+ * FIXED: Ensure /api/v1 prefix is explicitly added to all fetch calls
  */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_VERSION = '/api/v1';
 
 /**
  * Cookie configuration for secure token storage
@@ -99,8 +101,8 @@ export async function loginAction(
   password: string
 ): Promise<LoginActionResult> {
   try {
-    // Make server-side fetch to Cloudflare API
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    // Make server-side fetch to Cloudflare API with explicit /api/v1 prefix
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -171,8 +173,8 @@ export async function registerAction(
   acceptedTerms: boolean
 ): Promise<RegisterActionResult> {
   try {
-    // Make server-side fetch to Cloudflare API
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    // Make server-side fetch to Cloudflare API with explicit /api/v1 prefix
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -245,7 +247,7 @@ export async function logoutAction(): Promise<LogoutActionResult> {
     // Call Cloudflare API logout endpoint to add tokens to denylist
     if (accessToken) {
       try {
-        await fetch(`${API_BASE_URL}/auth/logout`, {
+        await fetch(`${API_BASE_URL}${API_VERSION}/auth/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -296,10 +298,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}/auth/me`);
+    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}${API_VERSION}/auth/me`);
 
-    // Fetch user from Cloudflare API
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    // Fetch user from Cloudflare API with explicit /api/v1 prefix
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
