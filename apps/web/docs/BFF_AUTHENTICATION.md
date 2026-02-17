@@ -1,0 +1,359 @@
+# BFF (Backend-For-Frontend) Authentication Pattern
+
+## Problem Statement
+
+### Cross-Domain Cookie Issue
+
+We were facing a critical authentication issue:
+
+- **Backend API:** Cloudflare Workers (`*.workers.dev`)
+- **Frontend:** Next.js on Vercel (`*.vercel.app`)
+- **Issue:** HttpOnly cookies set by Cloudflare could not be read by Next.js Edge Middleware
+- **Result:** Middleware always saw user as unauthenticated, causing infinite redirects
+
+## Solution: BFF Pattern
+
+### Architecture Overview
+
+```
+┌─────────────┐      ┌──────────────────┐      ┌──────────────────┐
+│   Browser   │─────▶│  Next.js Server  │─────▶│  Cloudflare API  │
+│   (Client)  │◀─────│   (Vercel BFF)   │◀─────│   (Workers.dev)  │
+└─────────────┘      └──────────────────┘      └──────────────────┘
+                            │
+                            ▼
+                    Sets HttpOnly Cookies
+                    (Same Domain as Client)
+```
+
+### How It Works
+
+1. **Client** calls Next.js Server Action (e.g., `loginAction`)
+2. **Next.js Server** proxies request to Cloudflare API
+3. **Cloudflare** returns tokens in JSON: `{ accessToken, refreshToken }`
+4. **Next.js Server** extracts tokens and sets HttpOnly cookies on Vercel domain
+5. **Middleware** can now read cookies (same domain!) and verify authentication
+6. **Client** receives user data (tokens stay in HttpOnly cookies)
+
+## Implementation
+
+### 1. Server Actions (`apps/web/src/actions/auth.actions.ts`)
+
+```typescript
+'use server';
+
+import { cookies } from 'next/headers';
+
+export async function loginAction(email: string, password: string) {
+  // 1. Fetch Cloudflare API
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+  
+  const data = await response.json();
+  const { accessToken, refreshToken, user } = data.data;
+  
+  // 2. Set cookies on Next.js domain
+  cookies().set('accessToken', accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 900, // 15 minutes
+  });
+  
+  // 3. Return user data (no tokens!)
+  return { success: true, user };
+}
+```
+
+#### Available Server Actions
+
+- ✅ `loginAction(email, password)` - Login and set cookies
+- ✅ `registerAction(email, password, fullName, terms)` - Register and set cookies
+- ✅ `logoutAction()` - Clear cookies and denylist tokens
+- ✅ `getCurrentUserAction()` - Fetch user with cookie auth
+
+### 2. Client Components
+
+#### Login Page
+
+```typescript
+'use client';
+
+import { useTransition } from 'react';
+import { loginAction } from '@/actions/auth.actions';
+
+export default function LoginPage() {
+  const [isPending, startTransition] = useTransition();
+  
+  const onSubmit = async (data) => {
+    startTransition(async () => {
+      const result = await loginAction(data.email, data.password);
+      if (result.success) {
+        setAuth({ user: result.user });
+        router.push('/dashboard');
+        router.refresh(); // Trigger middleware check
+      }
+    });
+  };
+}
+```
+
+#### Logout Button
+
+```typescript
+'use client';
+
+import { useTransition } from 'react';
+import { logoutAction } from '@/actions/auth.actions';
+
+function LogoutButton() {
+  const [isPending, startTransition] = useTransition();
+  
+  const handleLogout = () => {
+    startTransition(async () => {
+      await logoutAction();
+      clearAuth();
+      router.push('/login');
+    });
+  };
+}
+```
+
+### 3. Middleware (`apps/web/src/middleware.ts`)
+
+```typescript
+export function middleware(request: NextRequest) {
+  // ✅ Can now read cookie (same domain!)
+  const accessToken = request.cookies.get('accessToken');
+  const isAuthenticated = !!accessToken;
+  
+  if (isProtectedRoute && !isAuthenticated) {
+    return NextResponse.redirect('/auth/login');
+  }
+}
+```
+
+### 4. Dashboard Layout (Server Component)
+
+```typescript
+import { cookies } from 'next/headers';
+
+async function getCurrentUser() {
+  const accessToken = cookies().get('accessToken');
+  
+  const response = await fetch(`${API_URL}/auth/me`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken.value}`,
+    },
+  });
+  
+  return response.json();
+}
+
+export default async function DashboardLayout({ children }) {
+  const user = await getCurrentUser();
+  return <DashboardHeader user={user} />;
+}
+```
+
+## Security Benefits
+
+### ✅ HttpOnly Cookies
+- JavaScript **cannot** access tokens
+- XSS attacks **cannot** steal tokens
+- Tokens stored securely in browser
+
+### ✅ Same-Origin Cookies
+- Middleware can verify authentication
+- No cross-domain cookie issues
+- Better CSRF protection with `SameSite: Lax`
+
+### ✅ Server-Side Token Management
+- Client never sees tokens
+- Tokens only in JSON during initial response
+- All subsequent requests use cookies
+
+### ✅ Token Denylist (Redis)
+- Real logout (not just client-side)
+- Tokens added to Redis denylist on logout
+- Prevents token reuse after logout
+
+## Cookie Configuration
+
+```typescript
+const COOKIE_OPTIONS = {
+  httpOnly: true,          // ✅ XSS protection
+  secure: true,            // ✅ HTTPS only (production)
+  sameSite: 'lax',         // ✅ CSRF protection
+  path: '/',               // ✅ Available site-wide
+  maxAge: 900,             // ✅ 15 min (access) / 7 days (refresh)
+};
+```
+
+### Cookie Lifecycle
+
+| Cookie | Max Age | Purpose |
+|--------|---------|----------|
+| `accessToken` | 15 minutes | Short-lived auth token |
+| `refreshToken` | 7 days | Long-lived renewal token |
+
+## Authentication Flow
+
+### Login Flow
+
+```
+1. User submits login form
+   ↓
+2. Client calls loginAction(email, password)
+   ↓
+3. [Server Side] Next.js fetches Cloudflare API
+   ↓
+4. Cloudflare returns: { success: true, data: { user, tokens } }
+   ↓
+5. [Server Side] Next.js sets HttpOnly cookies
+   ↓
+6. [Server Side] Returns user data (no tokens)
+   ↓
+7. Client updates Zustand store with user
+   ↓
+8. Client redirects to /dashboard
+   ↓
+9. ✅ Middleware sees cookie → Allows access
+```
+
+### Logout Flow
+
+```
+1. User clicks logout button
+   ↓
+2. Client calls logoutAction()
+   ↓
+3. [Server Side] Next.js calls Cloudflare /logout
+   ↓
+4. Cloudflare adds tokens to Redis denylist
+   ↓
+5. [Server Side] Next.js deletes cookies
+   ↓
+6. Client clears Zustand store
+   ↓
+7. Client redirects to /login
+   ↓
+8. ✅ Middleware sees no cookie → Redirects to login
+```
+
+## File Structure
+
+```
+apps/web/
+├── src/
+│   ├── actions/
+│   │   └── auth.actions.ts          ✅ Server Actions (BFF)
+│   ├── app/
+│   │   ├── auth/
+│   │   │   ├── login/page.tsx       ✅ Uses loginAction
+│   │   │   └── register/page.tsx    ✅ Uses registerAction
+│   │   └── dashboard/
+│   │       └── layout.tsx           ✅ Server-side user fetch
+│   ├── components/
+│   │   └── dashboard/
+│   │       └── DashboardHeader.tsx  ✅ Uses logoutAction
+│   ├── middleware.ts                ✅ Reads same-domain cookies
+│   └── services/
+│       └── auth.service.ts          ⚠️  Deprecated (client-side)
+```
+
+## Migration Checklist
+
+### ✅ Completed
+
+- [x] Created server actions file
+- [x] Implemented loginAction with cookie setting
+- [x] Implemented registerAction with cookie setting
+- [x] Implemented logoutAction with cookie clearing
+- [x] Implemented getCurrentUserAction
+- [x] Refactored login page to use server action
+- [x] Refactored register page to use server action
+- [x] Refactored logout button to use server action
+- [x] Fixed dashboard layout user fetch
+- [x] Verified middleware can read cookies
+
+### 🔄 Optional Future Improvements
+
+- [ ] Implement refresh token rotation
+- [ ] Add session management UI
+- [ ] Add "Remember Me" functionality
+- [ ] Implement OAuth flow with BFF pattern
+- [ ] Add rate limiting to server actions
+
+## Testing
+
+### 1. Login Test
+
+```bash
+# 1. Open browser DevTools → Application → Cookies
+# 2. Go to /auth/login
+# 3. Submit valid credentials
+# 4. Verify cookies are set:
+#    - accessToken (HttpOnly, Secure)
+#    - refreshToken (HttpOnly, Secure)
+# 5. Verify redirect to /dashboard
+# 6. Verify middleware allows access
+```
+
+### 2. Logout Test
+
+```bash
+# 1. While logged in, click logout
+# 2. Verify cookies are deleted
+# 3. Verify redirect to /login
+# 4. Try accessing /dashboard
+# 5. Verify middleware redirects to /login
+```
+
+### 3. Middleware Test
+
+```bash
+# 1. Delete cookies manually
+# 2. Try accessing /dashboard
+# 3. Verify immediate redirect to /login
+# 4. Login again
+# 5. Verify /dashboard is accessible
+```
+
+## Troubleshooting
+
+### Issue: Infinite redirect loop
+
+**Cause:** Middleware cannot read cookies  
+**Fix:** Ensure cookies are set by Next.js server actions, not Cloudflare API
+
+### Issue: User data not loading
+
+**Cause:** Dashboard layout using wrong auth header  
+**Fix:** Use `Authorization: Bearer ${token}` not `Cookie:` header
+
+### Issue: Logout not working
+
+**Cause:** Cookies not being deleted  
+**Fix:** Use `cookies().delete()` in logoutAction
+
+### Issue: Cookie not visible in DevTools
+
+**Expected:** HttpOnly cookies don't show value in DevTools (security feature)  
+**Verify:** Check Network tab → Response Headers → `Set-Cookie`
+
+## References
+
+- [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
+- [Next.js Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [HttpOnly Cookies](https://owasp.org/www-community/HttpOnly)
+- [BFF Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)
+
+---
+
+**Last Updated:** February 17, 2026  
+**Status:** ✅ Fully Implemented  
+**Maintainer:** Validiant Team
