@@ -5,6 +5,8 @@
  * The API returns a simplified user object, not the full User type from shared package.
  */
 
+import type { NotificationPreferences } from '@validiant/shared';
+
 /**
  * Auth User Response
  * This is what the API actually returns in login/register/me endpoints
@@ -19,6 +21,8 @@ export interface AuthUser {
   avatarUrl?: string; // ✅ FIXED: Use avatarUrl (matches database)
   emailVerified: boolean;
   twoFactorEnabled: boolean;
+  bio?: string;
+  notificationPreferences?: NotificationPreferences;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }
