@@ -11,6 +11,26 @@ We were facing a critical authentication issue:
 - **Issue:** HttpOnly cookies set by Cloudflare could not be read by Next.js Edge Middleware
 - **Result:** Middleware always saw user as unauthenticated, causing infinite redirects
 
+### Infinite Redirect Loop (307 Ping-Pong)
+
+After implementing BFF pattern, a **new critical issue** emerged:
+
+```
+1. User → /dashboard
+2. Middleware sees accessToken cookie → ✅ Allows access
+3. Dashboard layout fetches user from API
+4. API returns 401 (token expired/invalid)
+5. Layout returns null → redirects to /auth/login
+6. ⚠️ COOKIES NEVER CLEARED! ⚠️
+7. User → /auth/login
+8. Middleware sees accessToken cookie → redirects to /dashboard
+9. Back to step 3... INFINITE 307 REDIRECT LOOP! 🔄
+```
+
+**Root Cause:** When API auth fails, the layout redirects but cookies remain. Middleware sees valid cookies and allows back to dashboard, creating ping-pong.
+
+**Solution:** **Cookie-Clear Safety Net** - Clear cookies immediately when API returns 401/403 or any error.
+
 ## Solution: BFF Pattern
 
 ### Architecture Overview
@@ -34,8 +54,61 @@ We were facing a critical authentication issue:
 4. **Next.js Server** extracts tokens and sets HttpOnly cookies on Vercel domain
 5. **Middleware** can now read cookies (same domain!) and verify authentication
 6. **Client** receives user data (tokens stay in HttpOnly cookies)
+7. **Cookie-Clear Safety Net** ensures invalid tokens are removed immediately
 
 ## Implementation
+
+### 0. Cookie-Clear Safety Net (CRITICAL)
+
+**The Problem:**
+- Expired/invalid tokens in cookies cause infinite redirect loop
+- Middleware sees cookie → allows access
+- Layout gets 401 from API → redirects to login
+- Middleware sees cookie again → allows access
+- **INFINITE LOOP!** 🔄
+
+**The Solution:**
+```typescript
+// Helper function used in both actions and layouts
+function clearAuthCookies() {
+  const cookieStore = cookies();
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
+}
+
+// In getCurrentUser / getCurrentUserAction
+if (response.status === 401 || response.status === 403) {
+  console.warn('Token invalid, clearing cookies');
+  clearAuthCookies(); // ⚠️ CRITICAL: Break the loop!
+  return null;
+}
+
+if (!response.ok) {
+  clearAuthCookies(); // ⚠️ CRITICAL: Clear on any error
+  return null;
+}
+
+try {
+  data = await response.json();
+} catch (jsonError) {
+  clearAuthCookies(); // ⚠️ CRITICAL: Clear on parse error
+  return null;
+}
+
+if (!data.success || !data.data?.user) {
+  clearAuthCookies(); // ⚠️ CRITICAL: Clear on invalid response
+  return null;
+}
+```
+
+**Why This Works:**
+1. User with expired token visits `/dashboard`
+2. Middleware sees cookie → allows access
+3. Layout fetches user → gets 401
+4. **Layout immediately clears cookies** ⚠️
+5. Layout redirects to `/auth/login`
+6. Middleware sees **NO cookie** → allows login page
+7. **Loop broken!** ✅
 
 ### 1. Type System (`apps/web/src/types/auth.types.ts`)
 
@@ -74,30 +147,57 @@ export interface AuthUser {
 import { cookies } from 'next/headers';
 import type { AuthUser } from '@/types/auth.types';
 
-export async function loginAction(
-  email: string,
-  password: string
-): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
-  // 1. Fetch Cloudflare API
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
+// Helper to clear cookies (prevents infinite redirect)
+function clearAuthCookies() {
+  const cookieStore = cookies();
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
+}
+
+export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
+  const cookieStore = cookies();
   
-  const data = await response.json();
-  const { accessToken, refreshToken, user } = data.data;
-  
-  // 2. Set cookies on Next.js domain
-  cookies().set('accessToken', accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 900, // 15 minutes
-  });
-  
-  // 3. Return user data (no tokens!)
-  return { success: true, user: user as AuthUser };
+  try {
+    const accessToken = cookieStore.get('accessToken')?.value;
+
+    if (!accessToken) {
+      return { success: false, error: 'Unauthenticated' };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    // ⚠️ CRITICAL: Clear cookies on 401/403
+    if (response.status === 401 || response.status === 403) {
+      clearAuthCookies();
+      return { success: false, error: 'TokenInvalid' };
+    }
+
+    const data = await response.json();
+
+    // ⚠️ CRITICAL: Clear cookies on any failure
+    if (!response.ok || !data.success) {
+      clearAuthCookies();
+      return { success: false, error: 'Failed to fetch user' };
+    }
+
+    if (!data.data?.user) {
+      clearAuthCookies();
+      return { success: false, error: 'InvalidResponse' };
+    }
+
+    return { success: true, user: data.data.user as AuthUser };
+  } catch (error) {
+    // ⚠️ CRITICAL: Clear cookies on network error
+    clearAuthCookies();
+    return { success: false, error: 'NetworkError' };
+  }
 }
 ```
 
@@ -106,9 +206,73 @@ export async function loginAction(
 - ✅ `loginAction(email, password)` - Login and set cookies
 - ✅ `registerAction(email, password, fullName, terms)` - Register and set cookies
 - ✅ `logoutAction()` - Clear cookies and denylist tokens
-- ✅ `getCurrentUserAction()` - Fetch user with cookie auth
+- ✅ `getCurrentUserAction()` - Fetch user with cookie auth + safety net
 
-### 3. Client Components
+### 3. Dashboard Layout (Server Component)
+
+```typescript
+import { cookies } from 'next/headers';
+import type { AuthUser } from '@/types/auth.types';
+
+// Helper to clear cookies (prevents infinite redirect)
+function clearAuthCookies() {
+  const cookieStore = cookies();
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
+}
+
+async function getCurrentUser(): Promise<AuthUser | null> {
+  try {
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('accessToken');
+
+    if (!accessToken) return null;
+
+    const response = await fetch(`${API_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${accessToken.value}` },
+      cache: 'no-store',
+    });
+
+    // ⚠️ CRITICAL: Clear cookies on 401/403
+    if (response.status === 401 || response.status === 403) {
+      clearAuthCookies();
+      return null;
+    }
+
+    if (!response.ok) {
+      clearAuthCookies();
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (!data.success || !data.data?.user) {
+      clearAuthCookies();
+      return null;
+    }
+
+    return data.data.user as AuthUser;
+  } catch (error) {
+    // ⚠️ CRITICAL: Clear cookies on error
+    clearAuthCookies();
+    return null;
+  }
+}
+
+export default async function DashboardLayout({ children }) {
+  const user = await getCurrentUser();
+  
+  // Cookies cleared by getCurrentUser() if error occurred
+  // Middleware won't redirect back (loop broken)
+  if (!user) {
+    redirect('/auth/login');
+  }
+
+  return <DashboardHeader user={user} />;
+}
+```
+
+### 4. Client Components
 
 #### Login Page
 
@@ -155,7 +319,7 @@ function LogoutButton() {
 }
 ```
 
-### 4. Middleware (`apps/web/src/middleware.ts`)
+### 5. Middleware (`apps/web/src/middleware.ts`)
 
 ```typescript
 export function middleware(request: NextRequest) {
@@ -166,31 +330,6 @@ export function middleware(request: NextRequest) {
   if (isProtectedRoute && !isAuthenticated) {
     return NextResponse.redirect('/auth/login');
   }
-}
-```
-
-### 5. Dashboard Layout (Server Component)
-
-```typescript
-import { cookies } from 'next/headers';
-import type { AuthUser } from '@/types/auth.types';
-
-async function getCurrentUser(): Promise<AuthUser | null> {
-  const accessToken = cookies().get('accessToken');
-  
-  const response = await fetch(`${API_URL}/auth/me`, {
-    headers: {
-      'Authorization': `Bearer ${accessToken.value}`,
-    },
-  });
-  
-  const data = await response.json();
-  return data.data.user as AuthUser;
-}
-
-export default async function DashboardLayout({ children }) {
-  const user = await getCurrentUser();
-  return <DashboardHeader user={user} />;
 }
 ```
 
@@ -236,6 +375,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 - Real logout (not just client-side)
 - Tokens added to Redis denylist on logout
 - Prevents token reuse after logout
+
+### ✅ Cookie-Clear Safety Net
+- **Prevents infinite redirect loops**
+- **Invalid tokens immediately removed**
+- **Graceful degradation on API errors**
+- **User experience preserved**
 
 ## Cookie Configuration
 
@@ -300,6 +445,28 @@ const COOKIE_OPTIONS = {
 8. ✅ Middleware sees no cookie → Redirects to login
 ```
 
+### Infinite Redirect Prevention Flow
+
+```
+1. User with EXPIRED token visits /dashboard
+   ↓
+2. Middleware sees accessToken cookie → ✅ Allows access
+   ↓
+3. Dashboard layout calls getCurrentUser()
+   ↓
+4. API returns 401 (token expired)
+   ↓
+5. ⚠️ CRITICAL: getCurrentUser() CLEARS COOKIES
+   ↓
+6. getCurrentUser() returns null
+   ↓
+7. Layout redirects to /auth/login
+   ↓
+8. Middleware sees NO COOKIE → ✅ Allows login page
+   ↓
+9. ✅ LOOP BROKEN! User stays on login page
+```
+
 ## File Structure
 
 ```
@@ -308,13 +475,13 @@ apps/web/
 │   ├── types/
 │   │   └── auth.types.ts            ✅ AuthUser type definition
 │   ├── actions/
-│   │   └── auth.actions.ts          ✅ Server Actions (BFF)
+│   │   └── auth.actions.ts          ✅ Server Actions (BFF) + Safety Net
 │   ├── app/
 │   │   ├── auth/
 │   │   │   ├── login/page.tsx       ✅ Uses loginAction
 │   │   │   └── register/page.tsx    ✅ Uses registerAction
 │   │   └── dashboard/
-│   │       └── layout.tsx           ✅ Server-side user fetch
+│   │       └── layout.tsx           ✅ Server-side user fetch + Safety Net
 │   ├── components/
 │   │   └── dashboard/
 │   │       └── DashboardHeader.tsx  ✅ Uses logoutAction
@@ -335,13 +502,16 @@ apps/web/
 - [x] Implemented registerAction with cookie setting
 - [x] Implemented logoutAction with cookie clearing
 - [x] Implemented getCurrentUserAction
+- [x] **Added cookie-clear safety net to getCurrentUserAction**
 - [x] Refactored login page to use server action
 - [x] Refactored register page to use server action
 - [x] Refactored logout button to use server action
 - [x] Fixed dashboard layout user fetch
+- [x] **Added cookie-clear safety net to dashboard layout**
 - [x] Updated auth store to use AuthUser type
 - [x] Updated DashboardHeader to use AuthUser type
 - [x] Verified middleware can read cookies
+- [x] **CRITICAL: Prevented infinite redirect loop**
 
 ### 🔄 Optional Future Improvements
 
@@ -447,12 +617,31 @@ npm run type-check
 # 4. Test that components receive correct user data
 ```
 
+### 5. Infinite Redirect Loop Test (CRITICAL)
+
+```bash
+# Test expired token handling:
+# 1. Login successfully
+# 2. Manually expire the token in Redis (or wait 15 minutes)
+# 3. Visit /dashboard
+# 4. Verify:
+#    - API returns 401
+#    - Cookies are cleared automatically
+#    - User redirected to /login ONE TIME
+#    - NO infinite redirect loop
+#    - User stays on /login page
+# 5. Check browser console for logs:
+#    - "Token invalid (401/403), clearing cookies"
+#    - "No user found, redirecting to login"
+```
+
 ## Troubleshooting
 
-### Issue: Infinite redirect loop
+### Issue: Infinite redirect loop (307)
 
-**Cause:** Middleware cannot read cookies  
-**Fix:** Ensure cookies are set by Next.js server actions, not Cloudflare API
+**Cause:** Token expired but cookies not cleared  
+**Fix:** ✅ Cookie-clear safety net now implemented in both `getCurrentUserAction()` and dashboard layout  
+**Verify:** Check server logs for "Token invalid, clearing cookies" message
 
 ### Issue: User data not loading
 
@@ -479,6 +668,39 @@ npm run type-check
 **Cause:** Accessing fields that don't exist in AuthUser (e.g., `user.role`)  
 **Fix:** Check `AuthUser` interface - only use fields that API returns
 
+### Issue: API returns 401 but cookies not cleared
+
+**Cause:** Missing cookie-clear safety net  
+**Fix:** ✅ Now implemented - cookies cleared automatically on 401/403/errors
+
+### Issue: Server logs show "Token invalid" repeatedly
+
+**Cause:** Infinite redirect loop - cookies not being cleared  
+**Fix:** ✅ Now fixed - cookie-clear safety net breaks the loop
+
+## Debugging Logs
+
+The implementation includes comprehensive logging for debugging:
+
+```typescript
+// Server Action Logs
+'[getCurrentUserAction] No access token found'
+'[getCurrentUserAction] Fetching user from API: ...'
+'[getCurrentUserAction] API response status: 401'
+'[getCurrentUserAction] Token invalid (401/403), clearing cookies'
+'[getCurrentUserAction] Successfully fetched user: user@example.com'
+
+// Dashboard Layout Logs
+'[Dashboard Layout] No access token found'
+'[Dashboard Layout] Fetching user from: ...'
+'[Dashboard Layout] API response status: 401'
+'[Dashboard Layout] Token invalid (401/403), clearing cookies'
+'[Dashboard Layout] Successfully fetched user: user@example.com'
+'[Dashboard Layout] No user found, redirecting to login'
+```
+
+Check server console (not browser console) for these logs when debugging auth issues.
+
 ## References
 
 - [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
@@ -486,9 +708,10 @@ npm run type-check
 - [HttpOnly Cookies](https://owasp.org/www-community/HttpOnly)
 - [BFF Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)
 - [TypeScript Type Safety](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)
+- [HTTP 307 Redirects](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/307)
 
 ---
 
 **Last Updated:** February 17, 2026  
-**Status:** ✅ Fully Implemented with Type Safety  
+**Status:** ✅ Fully Implemented with Type Safety + Infinite Redirect Loop Fix  
 **Maintainer:** Validiant Team
