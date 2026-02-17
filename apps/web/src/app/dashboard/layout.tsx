@@ -9,7 +9,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { API_CONFIG, ROUTES } from '@/lib/config';
-import type { User } from '@validiant/shared';
+import type { AuthUser } from '@/types/auth.types';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -18,7 +18,7 @@ export const dynamic = 'force-dynamic';
  * Fetch user data server-side
  * Uses Authorization header with Bearer token for Cloudflare API authentication
  */
-async function getCurrentUser(): Promise<User | null> {
+async function getCurrentUser(): Promise<AuthUser | null> {
   try {
     // Get access token from cookies
     const cookieStore = cookies();
@@ -50,7 +50,7 @@ async function getCurrentUser(): Promise<User | null> {
     
     // Extract user from nested data structure
     if (data.success && data.data && data.data.user) {
-      return data.data.user as User;
+      return data.data.user as AuthUser;
     }
     
     return null;
