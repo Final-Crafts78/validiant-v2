@@ -22,7 +22,13 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import type { User } from '@validiant/shared';
+import type {
+  AuthUser,
+  LoginActionResult,
+  RegisterActionResult,
+  LogoutActionResult,
+  GetCurrentUserActionResult,
+} from '@/types/auth.types';
 
 /**
  * API Configuration
@@ -41,26 +47,6 @@ const COOKIE_OPTIONS = {
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
-
-/**
- * Login Action Response
- */
-export interface LoginActionResult {
-  success: boolean;
-  user?: User;
-  error?: string;
-  message?: string;
-}
-
-/**
- * Register Action Response
- */
-export interface RegisterActionResult {
-  success: boolean;
-  user?: User;
-  error?: string;
-  message?: string;
-}
 
 /**
  * Login Action
@@ -120,7 +106,7 @@ export async function loginAction(
     // Return user data to client
     return {
       success: true,
-      user,
+      user: user as AuthUser,
     };
   } catch (error) {
     console.error('[Server Action] Login error:', error);
@@ -192,7 +178,7 @@ export async function registerAction(
     // Return user data to client
     return {
       success: true,
-      user,
+      user: user as AuthUser,
     };
   } catch (error) {
     console.error('[Server Action] Register error:', error);
@@ -209,7 +195,7 @@ export async function registerAction(
  * 
  * Server-side logout that clears cookies
  */
-export async function logoutAction(): Promise<{ success: boolean }> {
+export async function logoutAction(): Promise<LogoutActionResult> {
   try {
     // Get current cookies to send to API for token denylist
     const cookieStore = cookies();
@@ -249,11 +235,7 @@ export async function logoutAction(): Promise<{ success: boolean }> {
  * 
  * Server-side user fetch using cookie authentication
  */
-export async function getCurrentUserAction(): Promise<{
-  success: boolean;
-  user?: User;
-  error?: string;
-}> {
+export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
   try {
     // Get access token from cookies
     const cookieStore = cookies();
@@ -263,6 +245,7 @@ export async function getCurrentUserAction(): Promise<{
       return {
         success: false,
         error: 'Unauthenticated',
+        message: 'No access token found',
       };
     }
 
@@ -282,18 +265,20 @@ export async function getCurrentUserAction(): Promise<{
       return {
         success: false,
         error: data.error || 'Failed to fetch user',
+        message: data.message || 'Unable to load user data',
       };
     }
 
     return {
       success: true,
-      user: data.data.user,
+      user: data.data.user as AuthUser,
     };
   } catch (error) {
     console.error('[Server Action] Get user error:', error);
     return {
       success: false,
       error: 'NetworkError',
+      message: 'Unable to connect to authentication server',
     };
   }
 }
