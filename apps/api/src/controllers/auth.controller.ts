@@ -57,6 +57,7 @@ const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days (in seconds for Hono)
 
 /**
  * Helper: Format user response (no sensitive data)
+ * CRITICAL: Uses avatarUrl to match database schema and @validiant/shared
  */
 const formatUserResponse = (user: User) => ({
   id: user.id,
@@ -64,7 +65,7 @@ const formatUserResponse = (user: User) => ({
   firstName: user.firstName,
   lastName: user.lastName,
   fullName: `${user.firstName} ${user.lastName}`,
-  avatar: user.avatarUrl,
+  avatarUrl: user.avatarUrl,  // ✅ FIXED: Use avatarUrl (not avatar)
   emailVerified: user.emailVerified,
   twoFactorEnabled: user.twoFactorEnabled,
   createdAt: user.createdAt.toISOString(),
