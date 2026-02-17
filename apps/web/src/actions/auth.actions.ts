@@ -17,6 +17,10 @@
  * - Same-origin cookies (CSRF protection with SameSite)
  * - Server-side validation
  * - No client-side token exposure
+ * 
+ * CRITICAL: Cookie-Clear Safety Net
+ * - If API returns 401/403 or fails, cookies MUST be cleared
+ * - Prevents infinite redirect loop between middleware and layout
  */
 
 'use server';
@@ -47,6 +51,16 @@ const COOKIE_OPTIONS = {
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
+
+/**
+ * Clear authentication cookies
+ * Helper function to prevent code duplication
+ */
+function clearAuthCookies() {
+  const cookieStore = cookies();
+  cookieStore.delete('accessToken');
+  cookieStore.delete('refreshToken');
+}
 
 /**
  * Login Action
@@ -219,13 +233,13 @@ export async function logoutAction(): Promise<LogoutActionResult> {
     }
 
     // Clear cookies on Next.js domain
-    cookieStore.delete('accessToken');
-    cookieStore.delete('refreshToken');
+    clearAuthCookies();
 
     return { success: true };
   } catch (error) {
     console.error('[Server Action] Logout error:', error);
-    // Still return success to clear client state
+    // Still clear cookies even if there was an error
+    clearAuthCookies();
     return { success: true };
   }
 }
@@ -234,20 +248,28 @@ export async function logoutAction(): Promise<LogoutActionResult> {
  * Get Current User Action
  * 
  * Server-side user fetch using cookie authentication
+ * 
+ * CRITICAL COOKIE-CLEAR SAFETY NET:
+ * If the API returns 401/403 or any error, cookies are cleared to prevent
+ * infinite redirect loop between middleware (sees cookie) and layout (gets error).
  */
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
+  const cookieStore = cookies();
+  
   try {
     // Get access token from cookies
-    const cookieStore = cookies();
     const accessToken = cookieStore.get('accessToken')?.value;
 
     if (!accessToken) {
+      console.log('[getCurrentUserAction] No access token found');
       return {
         success: false,
         error: 'Unauthenticated',
         message: 'No access token found',
       };
     }
+
+    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}/auth/me`);
 
     // Fetch user from Cloudflare API
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -257,11 +279,42 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
         'Content-Type': 'application/json',
       },
       credentials: 'include',
+      cache: 'no-store', // Always fetch fresh data
     });
 
-    const data = await response.json();
+    console.log('[getCurrentUserAction] API response status:', response.status);
 
+    // CRITICAL: If unauthorized or forbidden, clear cookies
+    if (response.status === 401 || response.status === 403) {
+      console.warn('[getCurrentUserAction] Token invalid (401/403), clearing cookies');
+      clearAuthCookies();
+      return {
+        success: false,
+        error: 'TokenInvalid',
+        message: 'Authentication token is invalid or expired',
+      };
+    }
+
+    // Try to parse JSON response
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('[getCurrentUserAction] Failed to parse JSON response:', jsonError);
+      // Clear cookies if response is malformed
+      clearAuthCookies();
+      return {
+        success: false,
+        error: 'InvalidResponse',
+        message: 'Server returned invalid response',
+      };
+    }
+
+    // Check if response indicates failure
     if (!response.ok || !data.success) {
+      console.warn('[getCurrentUserAction] API returned error:', data);
+      // Clear cookies on any API failure
+      clearAuthCookies();
       return {
         success: false,
         error: data.error || 'Failed to fetch user',
@@ -269,12 +322,28 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
+    // Verify user data exists in response
+    if (!data.data || !data.data.user) {
+      console.error('[getCurrentUserAction] User data missing from response:', data);
+      // Clear cookies if user data is missing
+      clearAuthCookies();
+      return {
+        success: false,
+        error: 'InvalidResponse',
+        message: 'User data not found in response',
+      };
+    }
+
+    console.log('[getCurrentUserAction] Successfully fetched user:', data.data.user.email);
+
     return {
       success: true,
       user: data.data.user as AuthUser,
     };
   } catch (error) {
-    console.error('[Server Action] Get user error:', error);
+    console.error('[getCurrentUserAction] Network or unexpected error:', error);
+    // Clear cookies on any exception to prevent infinite redirect
+    clearAuthCookies();
     return {
       success: false,
       error: 'NetworkError',
