@@ -143,7 +143,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                       <span>{item.name}</span>
                     </Link>
                   );
-                });
+                })}
               </nav>
             </div>
 
