@@ -1,5 +1,5 @@
 /**
- * Auth Store
+ * Auth Store (BFF Pattern)
  * 
  * Zustand store for authentication state management.
  * Ephemeral state only - no persistence (user data fetched server-side).
@@ -7,21 +7,21 @@
  */
 
 import { create } from 'zustand';
-import type { User } from '@validiant/shared';
+import type { AuthUser } from '@/types/auth.types';
 
 /**
  * Auth state interface
  */
 interface AuthState {
   // Ephemeral state (not persisted)
-  user: User | null;
+  user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 
   // Actions
-  setAuth: (data: { user: User }) => void;
-  setUser: (user: User) => void;
-  updateUser: (updates: Partial<User>) => void;
+  setAuth: (data: { user: AuthUser }) => void;
+  setUser: (user: AuthUser) => void;
+  updateUser: (updates: Partial<AuthUser>) => void;
   clearAuth: () => void;
   setLoading: (isLoading: boolean) => void;
   initialize: () => void;
