@@ -63,11 +63,11 @@ export default function ProfilePage() {
 
   /**
    * Handle profile form submission
+   * CRITICAL: Combines firstName and lastName into fullName before sending to server
    */
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validation
     if (!firstName.trim() || !lastName.trim()) {
       alert('Please enter both first and last name');
       return;
@@ -80,49 +80,35 @@ export default function ProfilePage() {
 
     startTransition(async () => {
       try {
-        console.log('[ProfilePage] Submitting profile update:', { 
-          firstName: firstName.trim(), 
-          lastName: lastName.trim(), 
-          bio: bio.trim() 
-        });
+        // Combine firstName and lastName into fullName
+        const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
 
-        // Call server action
+        console.log('[ProfilePage] Submitting profile update:', { fullName, bio: bio.trim() });
+
+        // Call server action with fullName (matching backend schema)
         const result = await updateProfileAction({
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
+          fullName,
           bio: bio.trim() || undefined,
         });
 
         if (result.success && result.user) {
           console.log('[ProfilePage] Profile updated successfully:', result.user);
           
-          // CRITICAL: Safely merge the updated user data with existing user data
-          // This prevents partial data loss if the API returns only updated fields
+          // Merge updated data with existing user data
           const mergedUserData = {
-            ...user, // Keep all existing user data
-            ...result.user, // Overwrite with updated fields from API
-            // Ensure critical fields are present
+            ...user,
+            ...result.user,
             updatedAt: result.user.updatedAt || new Date().toISOString(),
           };
 
-          console.log('[ProfilePage] Merged user data:', mergedUserData);
-          
-          // Update Zustand store with merged data
           updateUser(mergedUserData);
-
-          // Show success message
-          alert(result.message || 'Profile updated successfully!');
+          alert('Profile updated successfully!');
         } else {
-          console.error('[ProfilePage] Profile update failed:', {
-            success: result.success,
-            error: result.error,
-            message: result.message,
-            hasUser: !!result.user,
-          });
-          alert(result.message || 'Failed to update profile. Please try again.');
+          console.error('[ProfilePage] Profile update failed:', result);
+          alert(result.message || 'Failed to update profile');
         }
       } catch (error) {
-        console.error('[ProfilePage] Unexpected error during profile update:', error);
+        console.error('[ProfilePage] Unexpected error:', error);
         alert('An unexpected error occurred. Please try again.');
       }
     });
