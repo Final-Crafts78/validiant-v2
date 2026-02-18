@@ -65,3 +65,13 @@ export interface GetCurrentUserActionResult {
   error?: string;
   message?: string;
 }
+
+/**
+ * Update Profile Action Result
+ */
+export interface UpdateProfileActionResult {
+  success: boolean;
+  user?: AuthUser;
+  error?: string;
+  message?: string;
+}
