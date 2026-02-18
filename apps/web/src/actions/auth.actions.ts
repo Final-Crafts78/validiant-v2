@@ -238,148 +238,69 @@ export async function registerAction(
 /**
  * Update Profile Action
  * 
- * Server-side profile update that proxies Cloudflare API
- * Uses existing cross-domain token cookies for authentication
- * 
- * CRITICAL: Cache Revalidation
- * - Calls revalidatePath after successful update to clear Next.js cache
- * - Ensures dashboard layout fetches fresh user data on next render
- * - Prevents stale data from causing blank screens
+ * CRITICAL: Accepts fullName directly (not firstName/lastName) to match backend schema.
+ * The backend expects { fullName: string, bio?: string } per updateUserProfileSchema.
  */
 export async function updateProfileAction(payload: {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   bio?: string;
 }): Promise<UpdateProfileActionResult> {
-  try {
-    // Get access token from cookies
-    const cookieStore = cookies();
-    const accessToken = cookieStore.get('accessToken')?.value;
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('accessToken')?.value;
 
-    if (!accessToken) {
-      console.log('[updateProfileAction] No access token found');
-      return {
-        success: false,
-        error: 'Unauthenticated',
-        message: 'No access token found',
-      };
-    }
-
-    // Generate fullName from firstName and lastName
-    const fullName = `${payload.firstName.trim()} ${payload.lastName.trim()}`.trim();
-
-    // Prepare payload for backend
-    const updatePayload = {
-      fullName,
-      bio: payload.bio?.trim() || undefined,
+  if (!accessToken) {
+    console.error('[updateProfileAction] No access token found');
+    return {
+      success: false,
+      error: 'Unauthenticated',
+      message: 'No access token found',
     };
+  }
 
-    console.log('[updateProfileAction] Updating profile:', { 
-      fullName, 
-      hasBio: !!payload.bio,
-      bioLength: payload.bio?.length || 0,
-      payload: updatePayload 
-    });
+  console.log('[updateProfileAction] Payload:', payload);
 
-    // Make PUT request to API
+  try {
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${accessToken}`, // CRITICAL: Auth header required
       },
-      body: JSON.stringify(updatePayload),
-      credentials: 'include',
-      cache: 'no-store', // Don't cache this request
+      body: JSON.stringify(payload), // Backend expects fullName
+      cache: 'no-store',
     });
 
-    console.log('[updateProfileAction] API response status:', response.status);
+    console.log('[updateProfileAction] Response status:', response.status);
 
-    // Handle authentication errors
-    if (response.status === 401 || response.status === 403) {
-      console.warn('[updateProfileAction] Token invalid (401/403)');
-      return {
-        success: false,
-        error: 'TokenInvalid',
-        message: 'Authentication token is invalid or expired',
-      };
-    }
+    const data = await response.json();
 
-    // Try to parse JSON response
-    let data;
-    try {
-      data = await response.json();
-    } catch (jsonError) {
-      console.error('[updateProfileAction] Failed to parse JSON response:', jsonError);
-      // Try to get raw response text for debugging
-      try {
-        const responseText = await response.text();
-        console.error('[updateProfileAction] Raw response text:', responseText);
-      } catch (textError) {
-        console.error('[updateProfileAction] Could not read response text:', textError);
-      }
-      return {
-        success: false,
-        error: 'InvalidResponse',
-        message: 'Server returned invalid response',
-      };
-    }
-
-    // Handle error responses with detailed logging
     if (!response.ok || !data.success) {
-      console.error('[updateProfileAction] API returned error:', {
+      console.error('[updateProfileAction] Profile update failed:', {
         status: response.status,
         statusText: response.statusText,
-        data,
         error: data.error,
         message: data.message,
         details: data.details,
       });
       return {
         success: false,
-        error: data.error || 'Update failed',
+        error: data.error || 'UpdateFailed',
         message: data.message || 'Unable to update profile',
       };
     }
 
-    // Verify user data exists in response
-    if (!data.data || !data.data.user) {
-      console.error('[updateProfileAction] User data missing from response:', {
-        hasData: !!data.data,
-        hasUser: !!(data.data && data.data.user),
-        fullResponse: data,
-      });
-      return {
-        success: false,
-        error: 'InvalidResponse',
-        message: 'User data not found in response',
-      };
-    }
+    console.log('[updateProfileAction] Profile updated successfully');
 
-    console.log('[updateProfileAction] Successfully updated profile:', {
-      email: data.data.user.email,
-      fullName: data.data.user.fullName,
-      bio: data.data.user.bio,
-    });
-
-    // CRITICAL: Revalidate cache to force fresh data fetch on next render
-    console.log('[updateProfileAction] Revalidating cache paths...');
-    try {
-      revalidatePath('/dashboard/profile');
-      revalidatePath('/dashboard', 'layout');
-      console.log('[updateProfileAction] Cache revalidation successful');
-    } catch (revalidateError) {
-      console.error('[updateProfileAction] Cache revalidation error:', revalidateError);
-      // Don't fail the request if revalidation fails
-    }
+    // Force Next.js to dump the old cached data
+    revalidatePath('/dashboard/profile');
+    revalidatePath('/dashboard', 'layout');
 
     return {
       success: true,
       user: data.data.user as AuthUser,
-      message: data.message || 'Profile updated successfully',
     };
   } catch (error) {
-    console.error('[updateProfileAction] Network or unexpected error:', error);
+    console.error('[updateProfileAction] Network error:', error);
     return {
       success: false,
       error: 'NetworkError',
