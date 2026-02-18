@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useMemo, useTransition } from 'react';
+import { useState, useMemo, useTransition, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { updateProfileAction } from '@/actions/auth.actions';
 import { format } from 'date-fns';
@@ -45,6 +45,13 @@ export default function ProfilePage() {
   const [lastName, setLastName] = useState(nameComponents.lastName);
   const [bio, setBio] = useState(user?.bio || '');
 
+  // Update form state when user data changes (e.g., after refresh)
+  useEffect(() => {
+    setFirstName(nameComponents.firstName);
+    setLastName(nameComponents.lastName);
+    setBio(user?.bio || '');
+  }, [user?.fullName, user?.bio, nameComponents.firstName, nameComponents.lastName]);
+
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
     if (!user || !user.fullName) return '';
@@ -66,9 +73,18 @@ export default function ProfilePage() {
       return;
     }
 
+    if (!user) {
+      alert('User data not available');
+      return;
+    }
+
     startTransition(async () => {
       try {
-        console.log('[ProfilePage] Submitting profile update:', { firstName, lastName, bio });
+        console.log('[ProfilePage] Submitting profile update:', { 
+          firstName: firstName.trim(), 
+          lastName: lastName.trim(), 
+          bio: bio.trim() 
+        });
 
         // Call server action
         const result = await updateProfileAction({
@@ -78,19 +94,35 @@ export default function ProfilePage() {
         });
 
         if (result.success && result.user) {
-          console.log('[ProfilePage] Profile updated successfully');
+          console.log('[ProfilePage] Profile updated successfully:', result.user);
           
-          // Update Zustand store with new user data
-          updateUser(result.user);
+          // CRITICAL: Safely merge the updated user data with existing user data
+          // This prevents partial data loss if the API returns only updated fields
+          const mergedUserData = {
+            ...user, // Keep all existing user data
+            ...result.user, // Overwrite with updated fields from API
+            // Ensure critical fields are present
+            updatedAt: result.user.updatedAt || new Date().toISOString(),
+          };
+
+          console.log('[ProfilePage] Merged user data:', mergedUserData);
+          
+          // Update Zustand store with merged data
+          updateUser(mergedUserData);
 
           // Show success message
           alert(result.message || 'Profile updated successfully!');
         } else {
-          console.error('[ProfilePage] Profile update failed:', result);
-          alert(result.message || 'Failed to update profile');
+          console.error('[ProfilePage] Profile update failed:', {
+            success: result.success,
+            error: result.error,
+            message: result.message,
+            hasUser: !!result.user,
+          });
+          alert(result.message || 'Failed to update profile. Please try again.');
         }
       } catch (error) {
-        console.error('[ProfilePage] Unexpected error:', error);
+        console.error('[ProfilePage] Unexpected error during profile update:', error);
         alert('An unexpected error occurred. Please try again.');
       }
     });
