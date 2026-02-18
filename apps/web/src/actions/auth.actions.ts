@@ -27,6 +27,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { revalidatePath } from 'next/cache';
 import type {
   AuthUser,
   LoginActionResult,
@@ -239,6 +240,11 @@ export async function registerAction(
  * 
  * Server-side profile update that proxies Cloudflare API
  * Uses existing cross-domain token cookies for authentication
+ * 
+ * CRITICAL: Cache Revalidation
+ * - Calls revalidatePath after successful update to clear Next.js cache
+ * - Ensures dashboard layout fetches fresh user data on next render
+ * - Prevents stale data from causing blank screens
  */
 export async function updateProfileAction(payload: {
   firstName: string;
@@ -262,13 +268,18 @@ export async function updateProfileAction(payload: {
     // Generate fullName from firstName and lastName
     const fullName = `${payload.firstName.trim()} ${payload.lastName.trim()}`.trim();
 
-    // Prepare payload for backend (maps to updateUserProfileSchema)
+    // Prepare payload for backend
     const updatePayload = {
       fullName,
-      bio: payload.bio || undefined,
+      bio: payload.bio?.trim() || undefined,
     };
 
-    console.log('[updateProfileAction] Updating profile:', { fullName, hasBio: !!payload.bio });
+    console.log('[updateProfileAction] Updating profile:', { 
+      fullName, 
+      hasBio: !!payload.bio,
+      bioLength: payload.bio?.length || 0,
+      payload: updatePayload 
+    });
 
     // Make PUT request to API
     const response = await fetch(`${API_BASE_URL}/users/me`, {
@@ -279,6 +290,7 @@ export async function updateProfileAction(payload: {
       },
       body: JSON.stringify(updatePayload),
       credentials: 'include',
+      cache: 'no-store', // Don't cache this request
     });
 
     console.log('[updateProfileAction] API response status:', response.status);
@@ -299,6 +311,13 @@ export async function updateProfileAction(payload: {
       data = await response.json();
     } catch (jsonError) {
       console.error('[updateProfileAction] Failed to parse JSON response:', jsonError);
+      // Try to get raw response text for debugging
+      try {
+        const responseText = await response.text();
+        console.error('[updateProfileAction] Raw response text:', responseText);
+      } catch (textError) {
+        console.error('[updateProfileAction] Could not read response text:', textError);
+      }
       return {
         success: false,
         error: 'InvalidResponse',
@@ -306,9 +325,16 @@ export async function updateProfileAction(payload: {
       };
     }
 
-    // Handle error responses
+    // Handle error responses with detailed logging
     if (!response.ok || !data.success) {
-      console.warn('[updateProfileAction] API returned error:', data);
+      console.error('[updateProfileAction] API returned error:', {
+        status: response.status,
+        statusText: response.statusText,
+        data,
+        error: data.error,
+        message: data.message,
+        details: data.details,
+      });
       return {
         success: false,
         error: data.error || 'Update failed',
@@ -318,7 +344,11 @@ export async function updateProfileAction(payload: {
 
     // Verify user data exists in response
     if (!data.data || !data.data.user) {
-      console.error('[updateProfileAction] User data missing from response:', data);
+      console.error('[updateProfileAction] User data missing from response:', {
+        hasData: !!data.data,
+        hasUser: !!(data.data && data.data.user),
+        fullResponse: data,
+      });
       return {
         success: false,
         error: 'InvalidResponse',
@@ -326,7 +356,22 @@ export async function updateProfileAction(payload: {
       };
     }
 
-    console.log('[updateProfileAction] Successfully updated profile:', data.data.user.email);
+    console.log('[updateProfileAction] Successfully updated profile:', {
+      email: data.data.user.email,
+      fullName: data.data.user.fullName,
+      bio: data.data.user.bio,
+    });
+
+    // CRITICAL: Revalidate cache to force fresh data fetch on next render
+    console.log('[updateProfileAction] Revalidating cache paths...');
+    try {
+      revalidatePath('/dashboard/profile');
+      revalidatePath('/dashboard', 'layout');
+      console.log('[updateProfileAction] Cache revalidation successful');
+    } catch (revalidateError) {
+      console.error('[updateProfileAction] Cache revalidation error:', revalidateError);
+      // Don't fail the request if revalidation fails
+    }
 
     return {
       success: true,
