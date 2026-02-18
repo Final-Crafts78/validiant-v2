@@ -13,6 +13,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import type { AuthUser } from '@/types/auth.types';
 
@@ -122,6 +123,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* CRITICAL: Initialize Zustand store with server-side user data */}
+      <AuthStoreInitializer user={user} />
+      
       {/* Header with navigation (Client Component for interactivity) */}
       <DashboardHeader user={user} />
 
