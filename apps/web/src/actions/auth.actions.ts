@@ -33,6 +33,7 @@ import type {
   RegisterActionResult,
   LogoutActionResult,
   GetCurrentUserActionResult,
+  UpdateProfileActionResult,
 } from '@/types/auth.types';
 
 /**
@@ -229,6 +230,115 @@ export async function registerAction(
       success: false,
       error: 'NetworkError',
       message: 'Unable to connect to authentication server',
+    };
+  }
+}
+
+/**
+ * Update Profile Action
+ * 
+ * Server-side profile update that proxies Cloudflare API
+ * Uses existing cross-domain token cookies for authentication
+ */
+export async function updateProfileAction(payload: {
+  firstName: string;
+  lastName: string;
+  bio?: string;
+}): Promise<UpdateProfileActionResult> {
+  try {
+    // Get access token from cookies
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('accessToken')?.value;
+
+    if (!accessToken) {
+      console.log('[updateProfileAction] No access token found');
+      return {
+        success: false,
+        error: 'Unauthenticated',
+        message: 'No access token found',
+      };
+    }
+
+    // Generate fullName from firstName and lastName
+    const fullName = `${payload.firstName.trim()} ${payload.lastName.trim()}`.trim();
+
+    // Prepare payload for backend (maps to updateUserProfileSchema)
+    const updatePayload = {
+      fullName,
+      bio: payload.bio || undefined,
+    };
+
+    console.log('[updateProfileAction] Updating profile:', { fullName, hasBio: !!payload.bio });
+
+    // Make PUT request to API
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(updatePayload),
+      credentials: 'include',
+    });
+
+    console.log('[updateProfileAction] API response status:', response.status);
+
+    // Handle authentication errors
+    if (response.status === 401 || response.status === 403) {
+      console.warn('[updateProfileAction] Token invalid (401/403)');
+      return {
+        success: false,
+        error: 'TokenInvalid',
+        message: 'Authentication token is invalid or expired',
+      };
+    }
+
+    // Try to parse JSON response
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.error('[updateProfileAction] Failed to parse JSON response:', jsonError);
+      return {
+        success: false,
+        error: 'InvalidResponse',
+        message: 'Server returned invalid response',
+      };
+    }
+
+    // Handle error responses
+    if (!response.ok || !data.success) {
+      console.warn('[updateProfileAction] API returned error:', data);
+      return {
+        success: false,
+        error: data.error || 'Update failed',
+        message: data.message || 'Unable to update profile',
+      };
+    }
+
+    // Verify user data exists in response
+    if (!data.data || !data.data.user) {
+      console.error('[updateProfileAction] User data missing from response:', data);
+      return {
+        success: false,
+        error: 'InvalidResponse',
+        message: 'User data not found in response',
+      };
+    }
+
+    console.log('[updateProfileAction] Successfully updated profile:', data.data.user.email);
+
+    return {
+      success: true,
+      user: data.data.user as AuthUser,
+      message: data.message || 'Profile updated successfully',
+    };
+  } catch (error) {
+    console.error('[updateProfileAction] Network or unexpected error:', error);
+    return {
+      success: false,
+      error: 'NetworkError',
+      message: 'Unable to connect to server',
     };
   }
 }
