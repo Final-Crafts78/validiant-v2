@@ -29,9 +29,14 @@ import axios, {
 } from 'axios';
 
 /**
- * API Configuration
+ * API Configuration with URL Normalization
+ * Ensures /api/v1 prefix is present and prevents double prefixes
  */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const getBaseUrl = () => {
+  const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+  return raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
+};
+
 const API_TIMEOUT = 30000; // 30 seconds
 
 /**
@@ -66,7 +71,7 @@ export interface APIResponse<T = any> {
  * CRITICAL: withCredentials: true enables cookie-based auth
  */
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getBaseUrl(),
   timeout: API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
