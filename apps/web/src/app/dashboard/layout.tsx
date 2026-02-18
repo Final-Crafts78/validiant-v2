@@ -38,7 +38,11 @@ async function getCurrentUser(): Promise<AuthUser | null> {
       return null;
     }
 
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
+    // Normalize API URL to ensure /api/v1 prefix
+    const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+    const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
+    const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
+    
     console.log('[Dashboard Layout] Fetching user from:', apiUrl);
 
     // Fetch user from API with Authorization header
