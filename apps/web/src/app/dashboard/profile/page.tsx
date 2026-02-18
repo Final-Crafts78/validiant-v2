@@ -6,8 +6,9 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useTransition } from 'react';
 import { useAuthStore } from '@/store/auth';
+import { updateProfileAction } from '@/actions/auth.actions';
 import { format } from 'date-fns';
 import {
   Shield,
@@ -16,6 +17,7 @@ import {
   EyeOff,
   Save,
   Camera,
+  Loader2,
 } from 'lucide-react';
 
 /**
@@ -23,9 +25,11 @@ import {
  */
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Split fullName for display and editing
   const nameComponents = useMemo(() => {
@@ -36,6 +40,11 @@ export default function ProfilePage() {
     return { firstName, lastName };
   }, [user]);
 
+  // Controlled form state for profile tab
+  const [firstName, setFirstName] = useState(nameComponents.firstName);
+  const [lastName, setLastName] = useState(nameComponents.lastName);
+  const [bio, setBio] = useState(user?.bio || '');
+
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
     if (!user || !user.fullName) return '';
@@ -44,6 +53,57 @@ export default function ProfilePage() {
     const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   }, [user]);
+
+  /**
+   * Handle profile form submission
+   */
+  const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validation
+    if (!firstName.trim() || !lastName.trim()) {
+      alert('Please enter both first and last name');
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        console.log('[ProfilePage] Submitting profile update:', { firstName, lastName, bio });
+
+        // Call server action
+        const result = await updateProfileAction({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          bio: bio.trim() || undefined,
+        });
+
+        if (result.success && result.user) {
+          console.log('[ProfilePage] Profile updated successfully');
+          
+          // Update Zustand store with new user data
+          updateUser(result.user);
+
+          // Show success message
+          alert(result.message || 'Profile updated successfully!');
+        } else {
+          console.error('[ProfilePage] Profile update failed:', result);
+          alert(result.message || 'Failed to update profile');
+        }
+      } catch (error) {
+        console.error('[ProfilePage] Unexpected error:', error);
+        alert('An unexpected error occurred. Please try again.');
+      }
+    });
+  };
+
+  /**
+   * Handle cancel - reset form to original values
+   */
+  const handleCancel = () => {
+    setFirstName(nameComponents.firstName);
+    setLastName(nameComponents.lastName);
+    setBio(user?.bio || '');
+  };
 
   if (!user) return null;
 
@@ -142,7 +202,7 @@ export default function ProfilePage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
               Personal Information
             </h3>
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleProfileSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="firstName" className="label">
@@ -151,8 +211,11 @@ export default function ProfilePage() {
                   <input
                     id="firstName"
                     type="text"
-                    defaultValue={nameComponents.firstName}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className="input"
+                    disabled={isPending}
+                    required
                   />
                 </div>
                 <div>
@@ -162,8 +225,11 @@ export default function ProfilePage() {
                   <input
                     id="lastName"
                     type="text"
-                    defaultValue={nameComponents.lastName}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     className="input"
+                    disabled={isPending}
+                    required
                   />
                 </div>
               </div>
@@ -175,9 +241,14 @@ export default function ProfilePage() {
                 <input
                   id="email"
                   type="email"
-                  defaultValue={user.email}
+                  value={user.email}
                   className="input"
+                  disabled
+                  readOnly
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Email address cannot be changed from this page
+                </p>
               </div>
 
               <div>
@@ -187,19 +258,39 @@ export default function ProfilePage() {
                 <textarea
                   id="bio"
                   rows={4}
-                  defaultValue={user.bio || ''}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                   placeholder="Tell us about yourself..."
                   className="input resize-none"
+                  disabled={isPending}
                 />
               </div>
 
               <div className="flex justify-end gap-3">
-                <button type="button" className="btn btn-ghost btn-md">
+                <button 
+                  type="button" 
+                  className="btn btn-ghost btn-md"
+                  onClick={handleCancel}
+                  disabled={isPending}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary btn-md">
-                  <Save className="h-4 w-4" />
-                  <span>Save Changes</span>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary btn-md"
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      <span>Save Changes</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>
