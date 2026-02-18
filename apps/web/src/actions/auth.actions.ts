@@ -36,11 +36,11 @@ import type {
 } from '@/types/auth.types';
 
 /**
- * API Configuration
- * FIXED: Ensure /api/v1 prefix is explicitly added to all fetch calls
+ * API Configuration with URL Normalization
+ * Ensures /api/v1 prefix is present and prevents double prefixes
  */
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const API_VERSION = '/api/v1';
+const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 
 /**
  * Cookie configuration for secure token storage
@@ -101,8 +101,8 @@ export async function loginAction(
   password: string
 ): Promise<LoginActionResult> {
   try {
-    // Make server-side fetch to Cloudflare API with explicit /api/v1 prefix
-    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/login`, {
+    // Make server-side fetch to Cloudflare API (API_BASE_URL already includes /api/v1)
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -173,8 +173,8 @@ export async function registerAction(
   acceptedTerms: boolean
 ): Promise<RegisterActionResult> {
   try {
-    // Make server-side fetch to Cloudflare API with explicit /api/v1 prefix
-    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/register`, {
+    // Make server-side fetch to Cloudflare API (API_BASE_URL already includes /api/v1)
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ export async function logoutAction(): Promise<LogoutActionResult> {
     // Call Cloudflare API logout endpoint to add tokens to denylist
     if (accessToken) {
       try {
-        await fetch(`${API_BASE_URL}${API_VERSION}/auth/logout`, {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -298,10 +298,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}${API_VERSION}/auth/me`);
+    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}/auth/me`);
 
-    // Fetch user from Cloudflare API with explicit /api/v1 prefix
-    const response = await fetch(`${API_BASE_URL}${API_VERSION}/auth/me`, {
+    // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
