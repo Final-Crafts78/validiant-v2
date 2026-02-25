@@ -1,16 +1,16 @@
 /**
  * Application Setup (Edge-Compatible)
- * 
+ *
  * Edge-optimized Hono application for Cloudflare Workers.
  * 4x faster than Express with native edge runtime support.
- * 
+ *
  * Key features:
  * - Hono context (c) with type safety
  * - Built-in edge-compatible middleware
  * - Automatic JSON parsing (no body-parser)
  * - Built-in cookie support (no cookie-parser)
  * - @hono/zod-validator for edge validation
- * 
+ *
  * Architecture:
  * ✅ Auth routes - Hono + @hono/zod-validator
  * ✅ OAuth routes - Hono + Arctic (Phase 6.1)
@@ -48,6 +48,23 @@ interface Env {
 }
 
 /**
+ * Explicitly allowed origins.
+ *
+ * - localhost:3000    → local development
+ * - validiant.in      → apex production domain
+ * - www.validiant.in  → www production domain (primary)
+ *
+ * Both apex and www are listed because browsers send the exact origin
+ * used in the address bar; omitting either would break preflight for that
+ * variant.
+ */
+const allowedOrigins: string[] = [
+  'http://localhost:3000',
+  'https://validiant.in',
+  'https://www.validiant.in',
+];
+
+/**
  * Create Hono application with full type safety
  */
 export const createHonoApp = () => {
@@ -71,15 +88,29 @@ export const createHonoApp = () => {
     app.use('*', prettyJSON());
   }
 
-  // CORS middleware (Edge-Compatible Dynamic Binding)
+  // CORS middleware — dynamic origin allowlist
+  //
+  // origin function contract (Hono / WhatWG Fetch):
+  //   - Return the origin string  → Access-Control-Allow-Origin: <origin>
+  //   - Return '*'                → Access-Control-Allow-Origin: *
+  //   - Return null               → header is omitted (request blocked)
+  //
+  // When `origin` is null/empty (same-origin requests, server-to-server,
+  // or curl without an Origin header) we allow by returning '*' because
+  // credentials are irrelevant in that case and blocking hurts health checks.
   app.use('*', async (c, next) => {
     const corsMiddleware = cors({
-      origin: c.env.CORS_ORIGIN || '*',
-      credentials: true,
+      origin: (origin) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          return origin || '*';
+        }
+        return null; // Reject unknown origins
+      },
+      credentials: true,          // Required for HttpOnly cookie pass-through
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'Cookie'],
       exposeHeaders: ['Set-Cookie'],
-      maxAge: 86400, // 24 hours
+      maxAge: 86400, // 24 hours preflight cache
     });
     return corsMiddleware(c, next);
   });
@@ -107,7 +138,7 @@ export const createHonoApp = () => {
 
   /**
    * Mount all API routes under /api/v1
-   * 
+   *
    * All services use Hono with @hono/zod-validator:
    * ✅ /api/v1/auth          → auth.routes.ts (Email/Password)
    * ✅ /api/v1/oauth         → oauth.routes.ts (Google, GitHub - Phase 6.1)
