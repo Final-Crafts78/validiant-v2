@@ -1,7 +1,9 @@
 /**
  * Forgot Password Page
  *
- * Request password reset link via email.
+ * Corporate Light Theme — Split-Panel Auth Layout
+ * All existing logic (useMutation, forgotPasswordSchema, onSubmit,
+ * handleResend, isSuccess/errorMessage/submittedEmail) preserved verbatim.
  */
 
 'use client';
@@ -15,11 +17,17 @@ import { z } from 'zod';
 import { forgotPassword } from '@/services/auth.service';
 import { getErrorMessage } from '@/lib/api';
 import { ROUTES } from '@/lib/config';
-import { Mail, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import {
+  Mail,
+  ArrowLeft,
+  Loader2,
+  CheckCircle,
+  ShieldCheck,
+} from 'lucide-react';
 
-/**
- * Forgot password form validation schema
- */
+// ---------------------------------------------------------------------------
+// Validation schema — unchanged
+// ---------------------------------------------------------------------------
 const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -29,15 +37,15 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
-/**
- * Forgot Password Page Component
- */
+// ---------------------------------------------------------------------------
+// Forgot Password Page Component
+// ---------------------------------------------------------------------------
 export default function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState('');
 
-  // Form setup
+  // Form setup — unchanged
   const {
     register,
     handleSubmit,
@@ -49,7 +57,7 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  // Forgot password mutation
+  // Forgot password mutation — unchanged
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotPassword,
     onSuccess: (_, variables) => {
@@ -64,13 +72,13 @@ export default function ForgotPasswordPage() {
     },
   });
 
-  // Handle form submission
+  // Handle form submission — unchanged
   const onSubmit = (data: ForgotPasswordFormData) => {
     setErrorMessage(null);
     forgotPasswordMutation.mutate(data);
   };
 
-  // Handle resend
+  // Handle resend — unchanged
   const handleResend = () => {
     if (submittedEmail) {
       setErrorMessage(null);
@@ -78,190 +86,283 @@ export default function ForgotPasswordPage() {
     }
   };
 
+  // ---------------------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50 px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-            <Mail className="h-8 w-8 text-primary-600" />
+    <div className="min-h-screen flex">
+
+      {/* ===================================================================
+          LEFT PANEL — Brand & Trust (desktop only)
+      =================================================================== */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-blue-900 flex-col items-center justify-center px-16 relative overflow-hidden">
+
+        {/* Geometric gradient overlays — identical to login/register */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.25) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.20) 0%, transparent 55%)',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 bg-blue-700 opacity-20 rounded-full"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-24 -right-24 w-80 h-80 bg-indigo-600 opacity-20 rounded-full"
+        />
+
+        {/* Brand content */}
+        <div className="relative z-10 max-w-md text-center">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
+              <ShieldCheck className="h-7 w-7 text-white" />
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-white">
+              Validiant
+            </span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {isSuccess ? 'Check Your Email' : 'Forgot Password?'}
-          </h1>
-          <p className="text-gray-600">
-            {isSuccess
-              ? "We've sent you a password reset link"
-              : "No worries, we'll send you reset instructions"}
+
+          {/* Headline */}
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-snug mb-5">
+            Account Recovery.{' '}
+            <span className="text-blue-300">Secure &amp; Verified.</span>
+          </h2>
+
+          <p className="text-blue-200 text-base leading-relaxed">
+            Regain access to your enterprise workspace quickly. We ensure all
+            password resets meet strict compliance protocols and maintain a
+            full audit trail.
           </p>
+
+          {/* Trust badges */}
+          <div className="mt-12 flex flex-col gap-3 text-left">
+            {[
+              'SOC 2 Type II Certified',
+              'ISO 27001 Aligned',
+              'GDPR & Data Privacy Ready',
+            ].map((badge) => (
+              <div key={badge} className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-blue-400/30 border border-blue-400/40 flex items-center justify-center shrink-0">
+                  <svg
+                    className="w-3 h-3 text-blue-300"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <span className="text-sm text-blue-200">{badge}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ===================================================================
+          RIGHT PANEL — Auth Form
+      =================================================================== */}
+      <div className="flex-1 bg-slate-50 flex flex-col items-center justify-center px-6 py-12 sm:px-12">
+
+        {/* Mobile-only brand mark */}
+        <div className="flex lg:hidden items-center gap-2 mb-8">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <ShieldCheck className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-lg font-bold text-slate-900">Validiant</span>
         </div>
 
-        {/* Content Card */}
-        <div className="card">
-          <div className="card-body">
-            {/* Success View */}
-            {isSuccess ? (
-              <div className="space-y-6">
-                {/* Success Message */}
-                <div className="bg-success-50 border border-success-200 rounded-lg p-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <CheckCircle className="h-5 w-5 text-success-600" />
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-success-800">
-                        Email sent successfully!
-                      </h3>
-                      <div className="mt-2 text-sm text-success-700">
-                        <p>
-                          We've sent a password reset link to{' '}
-                          <span className="font-medium">{submittedEmail}</span>.
-                          Please check your inbox and follow the instructions.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        {/* Auth Card */}
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-lg p-8 sm:p-10">
 
-                {/* Instructions */}
-                <div className="space-y-3">
-                  <p className="text-sm text-gray-600">
-                    <strong>Didn't receive the email?</strong>
+          {/* ================================================================
+              SUCCESS VIEW
+          ================================================================ */}
+          {isSuccess ? (
+            <div className="space-y-6">
+              {/* Card Header */}
+              <div>
+                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                  Check Your Email
+                </h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  Follow the instructions in the email to reset your password.
+                </p>
+              </div>
+
+              {/* Success Banner */}
+              <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4">
+                <CheckCircle className="h-5 w-5 text-emerald-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">
+                    Email sent successfully!
                   </p>
-                  <ul className="text-sm text-gray-600 space-y-2 list-disc list-inside">
-                    <li>Check your spam or junk folder</li>
-                    <li>Make sure the email address is correct</li>
-                    <li>Wait a few minutes and try resending</li>
-                  </ul>
+                  <p className="mt-1 text-sm text-emerald-700">
+                    We&apos;ve sent a password reset link to{' '}
+                    <span className="font-semibold">{submittedEmail}</span>.
+                    Please check your inbox.
+                  </p>
+                </div>
+              </div>
+
+              {/* Helpful hints */}
+              <ul className="space-y-2">
+                {[
+                  'Check your spam or junk folder',
+                  'Make sure the email address is correct',
+                  'Wait a few minutes and try resending',
+                ].map((hint) => (
+                  <li key={hint} className="flex items-start gap-2 text-sm text-slate-500">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
+                    {hint}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Resend Button */}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={forgotPasswordMutation.isPending}
+                className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              >
+                {forgotPasswordMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4" />
+                    Resend Email
+                  </>
+                )}
+              </button>
+
+              {/* Back to Sign In */}
+              <Link
+                href={ROUTES.LOGIN}
+                className="flex items-center justify-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Sign In
+              </Link>
+            </div>
+          ) : (
+            /* ================================================================
+                FORM VIEW
+            ================================================================ */
+            <div>
+              {/* Card Header */}
+              <div className="mb-7">
+                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                  Forgot Password?
+                </h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  No worries, we&apos;ll send you reset instructions.
+                </p>
+              </div>
+
+              {/* Error Banner */}
+              {errorMessage && (
+                <div className="mb-5 flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-md px-4 py-3">
+                  <svg
+                    className="h-4 w-4 mt-0.5 shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              {/* Forgot Password Form */}
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+                className="space-y-5"
+              >
+                {/* Email */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5"
+                  >
+                    Work Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    autoFocus
+                    placeholder="jane@company.com"
+                    {...register('email')}
+                    className={[
+                      'w-full px-3.5 py-2.5 text-sm text-slate-900 bg-white border rounded-lg',
+                      'placeholder:text-slate-400 transition',
+                      'focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent',
+                      errors.email
+                        ? 'border-red-400 focus:ring-red-400'
+                        : 'border-slate-300',
+                    ].join(' ')}
+                  />
+                  {errors.email && (
+                    <p className="mt-1.5 text-xs text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
-                {/* Resend Button */}
+                {/* Submit Button */}
                 <button
-                  onClick={handleResend}
+                  type="submit"
                   disabled={forgotPasswordMutation.isPending}
-                  className="btn btn-outline btn-md w-full"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                 >
                   {forgotPasswordMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Sending...</span>
+                      Sending…
                     </>
                   ) : (
                     <>
                       <Mail className="h-4 w-4" />
-                      <span>Resend Email</span>
+                      Send Reset Link
                     </>
                   )}
                 </button>
+              </form>
 
-                {/* Back to Login */}
+              {/* Back to Login */}
+              <p className="mt-6 text-sm text-slate-500 text-center">
+                Remember your password?{' '}
                 <Link
                   href={ROUTES.LOGIN}
-                  className="btn btn-ghost btn-md w-full"
+                  className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
                 >
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Back to Sign In</span>
+                  Sign in
                 </Link>
-              </div>
-            ) : (
-              <>
-                {/* Error Alert */}
-                {errorMessage && (
-                  <div className="bg-danger-50 border border-danger-200 rounded-lg p-4 mb-6">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <svg
-                          className="h-5 w-5 text-danger-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-danger-800">
-                          {errorMessage}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Forgot Password Form */}
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                  {/* Email Field */}
-                  <div>
-                    <label htmlFor="email" className="label label-required">
-                      Email Address
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      autoFocus
-                      className={`input ${errors.email ? 'input-error' : ''}`}
-                      placeholder="you@example.com"
-                      {...register('email')}
-                    />
-                    {errors.email && (
-                      <p className="error-message">{errors.email.message}</p>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={forgotPasswordMutation.isPending}
-                    className="btn btn-primary btn-lg w-full"
-                  >
-                    {forgotPasswordMutation.isPending ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Mail className="h-5 w-5" />
-                        <span>Send Reset Link</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                {/* Back to Login */}
-                <div className="mt-6">
-                  <Link
-                    href={ROUTES.LOGIN}
-                    className="btn btn-ghost btn-md w-full"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span>Back to Sign In</span>
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
+              </p>
+            </div>
+          )}
         </div>
-
-        {/* Additional Help */}
-        {!isSuccess && (
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Remember your password?{' '}
-              <Link
-                href={ROUTES.LOGIN}
-                className="font-medium text-primary-600 hover:text-primary-700"
-              >
-                Sign in
-              </Link>
-            </p>
-          </div>
-        )}
       </div>
+
     </div>
   );
 }
