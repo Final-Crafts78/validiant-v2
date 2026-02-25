@@ -1,7 +1,8 @@
 /**
- * Dashboard Page
- * 
- * Main dashboard with overview statistics and recent activity.
+ * Dashboard Page — Operations Overview
+ *
+ * Phase 8: Admin & Manager Dashboards
+ * Corporate Light Theme — useAuthStore user consumed via selector.
  */
 
 'use client';
@@ -9,321 +10,268 @@
 import { useMemo } from 'react';
 import { useAuthStore } from '@/store/auth';
 import {
-  FolderKanban,
-  CheckSquare,
-  Users,
+  Activity,
+  ShieldCheck,
+  Target,
+  AlertTriangle,
+  FileText,
+  CheckCircle2,
+  Database,
   Clock,
-  TrendingUp,
-  Calendar,
-  AlertCircle,
+  Plus,
+  Flag,
+  Lock,
+  History,
 } from 'lucide-react';
 
-/**
- * Stat card component
- */
-function StatCard({
-  title,
-  value,
-  change,
-  changeType,
-  icon: Icon,
-  color,
-}: {
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+interface KpiCard {
   title: string;
-  value: string | number;
-  change?: string;
-  changeType?: 'increase' | 'decrease';
+  value: string;
+  trend: string;
+  trendColor: string;
   icon: React.ComponentType<{ className?: string }>;
-  color: 'primary' | 'success' | 'warning' | 'secondary';
-}) {
-  return (
-    <div className="card hover:shadow-lg transition-shadow min-w-[260px] md:min-w-0 snap-center">
-      <div className="card-body">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-            <p className="text-3xl font-bold text-gray-900 mb-2">{value}</p>
-            {change && (
-              <div className="flex items-center gap-1">
-                <TrendingUp
-                  className={`h-4 w-4 ${
-                    changeType === 'increase'
-                      ? 'text-success-600'
-                      : 'text-danger-600'
-                  }`}
-                />
-                <span
-                  className={`text-sm font-medium ${
-                    changeType === 'increase'
-                      ? 'text-success-600'
-                      : 'text-danger-600'
-                  }`}
-                >
-                  {change}
-                </span>
-                <span className="text-sm text-gray-500">vs last month</span>
-              </div>
-            )}
-          </div>
-          <div
-            className={`w-12 h-12 rounded-lg flex items-center justify-center bg-${color}-100`}
-          >
-            <Icon className={`h-6 w-6 text-${color}-600`} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  iconBg: string;
+  iconColor: string;
 }
 
-/**
- * Recent activity item
- */
-function ActivityItem({
-  title,
-  description,
-  time,
-  type,
-}: {
-  title: string;
-  description: string;
+interface ActivityItem {
+  id: number;
+  text: string;
   time: string;
-  type: 'project' | 'task' | 'user';
-}) {
-  const iconColor =
-    type === 'project'
-      ? 'bg-primary-100 text-primary-600'
-      : type === 'task'
-      ? 'bg-success-100 text-success-600'
-      : 'bg-secondary-100 text-secondary-600';
-
-  const Icon =
-    type === 'project' ? FolderKanban : type === 'task' ? CheckSquare : Users;
-
-  return (
-    <div className="flex items-start gap-4 py-4 border-b border-gray-200 last:border-0">
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColor}`}>
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900">{title}</p>
-        <p className="text-sm text-gray-600 mt-0.5">{description}</p>
-        <p className="text-xs text-gray-500 mt-1">{time}</p>
-      </div>
-    </div>
-  );
+  icon: React.ComponentType<{ className?: string }>;
+  iconBg: string;
+  iconColor: string;
 }
 
-/**
- * Dashboard Page Component
- */
+interface QuickAction {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+// ---------------------------------------------------------------------------
+// Static data
+// ---------------------------------------------------------------------------
+const KPI_CARDS: KpiCard[] = [
+  {
+    title: 'Active Workflows',
+    value: '1,248',
+    trend: '+12% this week',
+    trendColor: 'text-emerald-600',
+    icon: Activity,
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+  },
+  {
+    title: 'Pending Verifications',
+    value: '42',
+    trend: 'Needs attention',
+    trendColor: 'text-amber-600',
+    icon: ShieldCheck,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+  },
+  {
+    title: 'Compliance Rate',
+    value: '99.8%',
+    trend: 'Target: 99.9%',
+    trendColor: 'text-slate-500',
+    icon: Target,
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+  },
+  {
+    title: 'System Alerts',
+    value: '0',
+    trend: 'All systems nominal',
+    trendColor: 'text-emerald-600',
+    icon: AlertTriangle,
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-500',
+  },
+];
+
+const ACTIVITY_ITEMS: ActivityItem[] = [
+  {
+    id: 1,
+    text: 'Background check cleared for Candidate ID #892',
+    time: '2 mins ago',
+    icon: CheckCircle2,
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+  },
+  {
+    id: 2,
+    text: 'Workflow #441 marked as urgent by Operations Manager',
+    time: '18 mins ago',
+    icon: Flag,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+  },
+  {
+    id: 3,
+    text: 'System backup completed — all data snapshots verified',
+    time: '1 hr ago',
+    icon: Database,
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+  },
+  {
+    id: 4,
+    text: 'Automated compliance report generated for Q1 2026',
+    time: '3 hrs ago',
+    icon: FileText,
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
+  },
+  {
+    id: 5,
+    text: 'KYC verification initiated for 12 new onboarding requests',
+    time: '5 hrs ago',
+    icon: Clock,
+    iconBg: 'bg-indigo-50',
+    iconColor: 'text-indigo-600',
+  },
+];
+
+const QUICK_ACTIONS: QuickAction[] = [
+  { label: 'Create New Workflow', icon: Plus },
+  { label: 'Review Pending Flags', icon: Flag },
+  { label: 'Manage Access Roles', icon: Lock },
+  { label: 'System Audit Log', icon: History },
+];
+
+// ---------------------------------------------------------------------------
+// Dashboard Page Component
+// ---------------------------------------------------------------------------
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
 
-  // Extract first name from fullName with null-safety
+  // Extract first name from fullName with null-safety — preserved from original
   const firstName = useMemo(() => {
-    if (!user || !user.fullName) return '';
+    if (!user || !user.fullName) return 'Enterprise User';
     const parts = user.fullName.trim().split(' ');
     return parts[0] || user.fullName;
   }, [user]);
 
-  if (!user) return null;
-
-  // Current date
-  const currentDate = new Date();
-  const greeting = `Good ${currentDate.getHours() < 12 ? 'morning' : currentDate.getHours() < 18 ? 'afternoon' : 'evening'}`;
-
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          {greeting}, {firstName}! 👋
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Here's what's happening with your projects today
-        </p>
+
+      {/* ===================================================================
+          PAGE HEADER
+      =================================================================== */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900">
+            Welcome back, {firstName}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Here is your operational overview and compliance status.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors shrink-0"
+        >
+          <FileText className="h-4 w-4" />
+          Generate Report
+        </button>
       </div>
 
-      {/* Stats Swipe Row on Mobile, Grid on Desktop */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0 scrollbar-hide">
-        <StatCard
-          title="Total Projects"
-          value={8}
-          change="+12%"
-          changeType="increase"
-          icon={FolderKanban}
-          color="primary"
-        />
-        <StatCard
-          title="Active Tasks"
-          value={24}
-          change="+8%"
-          changeType="increase"
-          icon={CheckSquare}
-          color="success"
-        />
-        <StatCard
-          title="Team Members"
-          value={12}
-          change="+3"
-          changeType="increase"
-          icon={Users}
-          color="warning"
-        />
-        <StatCard
-          title="Hours Tracked"
-          value="142h"
-          change="+15%"
-          changeType="increase"
-          icon={Clock}
-          color="secondary"
-        />
+      {/* ===================================================================
+          KPI CARDS — 4-Column Grid
+      =================================================================== */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {KPI_CARDS.map(({ title, value, trend, trendColor, icon: Icon, iconBg, iconColor }) => (
+          <div
+            key={title}
+            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col gap-3"
+          >
+            <div className="flex items-start justify-between">
+              <p className="text-sm font-medium text-slate-500">{title}</p>
+              <div
+                className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0`}
+              >
+                <Icon className={`h-4 w-4 ${iconColor}`} />
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-slate-900 leading-none">
+              {value}
+            </p>
+            <p className={`text-xs font-medium ${trendColor}`}>{trend}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Main Content Grid */}
+      {/* ===================================================================
+          LOWER SECTION — Activity + Quick Actions
+      =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <div className="card">
-            <div className="card-body">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Recent Activity
-                </h2>
-                <button className="text-sm font-medium text-primary-600 hover:text-primary-700">
-                  View All
-                </button>
-              </div>
 
-              <div className="space-y-0">
-                <ActivityItem
-                  type="project"
-                  title="New project created"
-                  description='"Website Redesign" has been created'
-                  time="2 hours ago"
-                />
-                <ActivityItem
-                  type="task"
-                  title="Task completed"
-                  description='"Update landing page" marked as complete'
-                  time="4 hours ago"
-                />
-                <ActivityItem
-                  type="user"
-                  title="New team member"
-                  description="John Doe joined the team"
-                  time="5 hours ago"
-                />
-                <ActivityItem
-                  type="project"
-                  title="Project milestone reached"
-                  description='"Mobile App" reached 75% completion'
-                  time="1 day ago"
-                />
-                <ActivityItem
-                  type="task"
-                  title="Task assigned"
-                  description="3 new tasks assigned to you"
-                  time="2 days ago"
-                />
-              </div>
-            </div>
+        {/* -----------------------------------------------------------------
+            LEFT PANEL — Recent Operational Activity (2 columns)
+        ----------------------------------------------------------------- */}
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm">
+          {/* Panel Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+            <h2 className="text-base font-semibold text-slate-900">
+              Recent Operational Activity
+            </h2>
+            <button
+              type="button"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              View All
+            </button>
+          </div>
+
+          {/* Activity List */}
+          <ul className="divide-y divide-slate-100">
+            {ACTIVITY_ITEMS.map(({ id, text, time, icon: Icon, iconBg, iconColor }) => (
+              <li key={id} className="flex items-start gap-4 px-6 py-4">
+                <div
+                  className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0 mt-0.5`}
+                >
+                  <Icon className={`h-4 w-4 ${iconColor}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-slate-700 leading-snug">{text}</p>
+                  <p className="mt-1 text-xs text-slate-400">{time}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* -----------------------------------------------------------------
+            RIGHT PANEL — Quick Actions (1 column)
+        ----------------------------------------------------------------- */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
+          {/* Panel Header */}
+          <div className="px-6 py-4 border-b border-slate-200">
+            <h2 className="text-base font-semibold text-slate-900">
+              Quick Actions
+            </h2>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="p-5 flex flex-col gap-3">
+            {QUICK_ACTIONS.map(({ label, icon: Icon }) => (
+              <button
+                key={label}
+                type="button"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+              >
+                <Icon className="h-4 w-4 text-slate-500 shrink-0" />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Quick Actions */}
-          <div className="card">
-            <div className="card-body">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Quick Actions
-              </h2>
-              <div className="space-y-2">
-                <button className="btn btn-primary btn-sm w-full">
-                  <FolderKanban className="h-4 w-4" />
-                  <span>New Project</span>
-                </button>
-                <button className="btn btn-outline btn-sm w-full">
-                  <CheckSquare className="h-4 w-4" />
-                  <span>New Task</span>
-                </button>
-                <button className="btn btn-outline btn-sm w-full">
-                  <Users className="h-4 w-4" />
-                  <span>Invite Team</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Upcoming Deadlines */}
-          <div className="card">
-            <div className="card-body">
-              <div className="flex items-center gap-2 mb-4">
-                <Calendar className="h-5 w-5 text-gray-600" />
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Upcoming Deadlines
-                </h2>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-danger-500 rounded-full mt-2" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      Website Launch
-                    </p>
-                    <p className="text-xs text-gray-600 mt-0.5">
-                      Due in 2 days
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-warning-500 rounded-full mt-2" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      Client Presentation
-                    </p>
-                    <p className="text-xs text-gray-600 mt-0.5">
-                      Due in 5 days
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-success-500 rounded-full mt-2" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      Budget Review
-                    </p>
-                    <p className="text-xs text-gray-600 mt-0.5">
-                      Due in 1 week
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* System Status */}
-          <div className="card border-warning-200 bg-warning-50">
-            <div className="card-body">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-warning-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-sm font-semibold text-warning-900 mb-1">
-                    Verification Required
-                  </h3>
-                  <p className="text-xs text-warning-800 mb-3">
-                    Please verify your email address to unlock all features.
-                  </p>
-                  <button className="text-xs font-medium text-warning-900 hover:text-warning-950 underline">
-                    Verify Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
