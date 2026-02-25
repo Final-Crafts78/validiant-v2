@@ -1,23 +1,23 @@
 /**
  * Auth Controller - Dual-Auth Pattern
- * 
+ *
  * Handles authentication-related requests with dual-platform support:
  * - Web: HttpOnly cookies (XSS-proof)
  * - Mobile: JSON tokens (SecureStore)
- * 
+ *
  * DUAL-AUTH TRAP PATTERN:
  * - Sets HttpOnly cookies for web app
  * - Returns tokens in JSON payload for mobile app
  * - Web app ignores JSON tokens (uses cookies)
  * - Mobile app uses JSON tokens (stores in SecureStore)
- * 
+ *
  * Security features:
  * - HttpOnly cookies (XSS-proof for web)
  * - SecureStore tokens (encrypted for mobile)
  * - Redis token denylist (real logout)
  * - JWT access + refresh tokens
  * - Secure cookie settings
- * 
+ *
  * ELITE PATTERN: Controllers blindly trust c.req.valid('json')
  * Validation is enforced at route level via @hono/zod-validator
  */
@@ -43,7 +43,6 @@ import type { User } from '../db/schema';
 
 /**
  * Cookie configuration for secure token storage
- * Must match Express version for frontend compatibility
  */
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -52,8 +51,8 @@ const COOKIE_OPTIONS = {
   path: '/',
 };
 
-const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes (in seconds for Hono)
-const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days (in seconds for Hono)
+const ACCESS_TOKEN_MAX_AGE = 15 * 60;          // 15 minutes
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
 /**
  * Helper: Format user response (no sensitive data)
@@ -65,7 +64,7 @@ const formatUserResponse = (user: User) => ({
   firstName: user.firstName,
   lastName: user.lastName,
   fullName: `${user.firstName} ${user.lastName}`,
-  avatarUrl: user.avatarUrl,  // ✅ FIXED: Use avatarUrl (not avatar)
+  avatarUrl: user.avatarUrl,
   emailVerified: user.emailVerified,
   twoFactorEnabled: user.twoFactorEnabled,
   createdAt: user.createdAt.toISOString(),
@@ -75,22 +74,15 @@ const formatUserResponse = (user: User) => ({
 /**
  * Register new user
  * POST /api/v1/auth/register
- * 
- * Payload validated by zValidator(userRegistrationSchema) at route level
- * 
- * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const register = async (c: Context) => {
   try {
-    // ELITE PATTERN: Explicit type casting for decoupled validation
     const { email, password, fullName } = (await c.req.json()) as z.infer<typeof userRegistrationSchema>;
 
-    // Parse fullName into firstName and lastName
     const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || '';
 
-    // Check if user already exists
     const existingUser = await db
       .select()
       .from(schema.users)
@@ -108,10 +100,8 @@ export const register = async (c: Context) => {
       );
     }
 
-    // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user with fullName field (CATEGORY 6 FIX)
     const [user] = await db
       .insert(schema.users)
       .values({
@@ -119,41 +109,23 @@ export const register = async (c: Context) => {
         passwordHash: hashedPassword,
         firstName,
         lastName,
-        fullName,  // ← CATEGORY 6 FIX: Added fullName field
+        fullName,
       })
       .returning();
 
-    // Generate tokens (PHASE 2 FIX: Added await)
-    const accessToken = await generateToken({
-      userId: user.id,
-      email: user.email,
-    });
-    const refreshToken = await generateRefreshToken({
-      userId: user.id,
-      email: user.email,
-    });
+    const accessToken = await generateToken({ userId: user.id, email: user.email });
+    const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
 
-    // Set tokens as HttpOnly cookies (for web)
-    setCookie(c, 'accessToken', accessToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: ACCESS_TOKEN_MAX_AGE,
-    });
+    setCookie(c, 'accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
+    setCookie(c, 'refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: REFRESH_TOKEN_MAX_AGE });
 
-    setCookie(c, 'refreshToken', refreshToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: REFRESH_TOKEN_MAX_AGE,
-    });
-
-    // ✅ DUAL-AUTH: Return tokens in JSON (for mobile)
-    // Web app will ignore these (uses cookies)
-    // Mobile app will use these (stores in SecureStore)
     return c.json(
       {
         success: true,
         data: {
           user: formatUserResponse(user) as any,
-          accessToken,   // ← Mobile app needs this
-          refreshToken,  // ← Mobile app needs this
+          accessToken,
+          refreshToken,
         },
       },
       201
@@ -174,17 +146,11 @@ export const register = async (c: Context) => {
 /**
  * Login user
  * POST /api/v1/auth/login
- * 
- * Payload validated by zValidator(userLoginSchema) at route level
- * 
- * DUAL-AUTH: Returns tokens in JSON + sets HttpOnly cookies
  */
 export const login = async (c: Context) => {
   try {
-    // ELITE PATTERN: Explicit type casting for decoupled validation
     const { email, password } = (await c.req.json()) as z.infer<typeof userLoginSchema>;
 
-    // Find user
     const [user] = await db
       .select()
       .from(schema.users)
@@ -193,71 +159,39 @@ export const login = async (c: Context) => {
 
     if (!user) {
       return c.json(
-        {
-          success: false,
-          error: 'Invalid credentials',
-          message: 'Email or password is incorrect',
-        },
+        { success: false, error: 'Invalid credentials', message: 'Email or password is incorrect' },
         401
       );
     }
 
-    // CATEGORY 6 FIX: Add passwordHash null check (OAuth user protection)
     if (!user.passwordHash) {
       return c.json(
-        {
-          success: false,
-          error: 'Invalid credentials',
-          message: 'This account uses OAuth authentication',
-        },
+        { success: false, error: 'Invalid credentials', message: 'This account uses OAuth authentication' },
         401
       );
     }
 
-    // Verify password
     const isPasswordValid = await comparePassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
       return c.json(
-        {
-          success: false,
-          error: 'Invalid credentials',
-          message: 'Email or password is incorrect',
-        },
+        { success: false, error: 'Invalid credentials', message: 'Email or password is incorrect' },
         401
       );
     }
 
-    // Generate tokens (PHASE 2 FIX: Added await)
-    const accessToken = await generateToken({
-      userId: user.id,
-      email: user.email,
-    });
-    const refreshToken = await generateRefreshToken({
-      userId: user.id,
-      email: user.email,
-    });
+    const accessToken = await generateToken({ userId: user.id, email: user.email });
+    const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
 
-    // Set tokens as HttpOnly cookies (for web)
-    setCookie(c, 'accessToken', accessToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: ACCESS_TOKEN_MAX_AGE,
-    });
+    setCookie(c, 'accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
+    setCookie(c, 'refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: REFRESH_TOKEN_MAX_AGE });
 
-    setCookie(c, 'refreshToken', refreshToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: REFRESH_TOKEN_MAX_AGE,
-    });
-
-    // ✅ DUAL-AUTH: Return tokens in JSON (for mobile)
-    // Web app will ignore these (uses cookies)
-    // Mobile app will use these (stores in SecureStore)
     return c.json({
       success: true,
       data: {
         user: formatUserResponse(user) as any,
-        accessToken,   // ← Mobile app needs this
-        refreshToken,  // ← Mobile app needs this
+        accessToken,
+        refreshToken,
       },
     });
   } catch (error) {
@@ -276,17 +210,11 @@ export const login = async (c: Context) => {
 /**
  * Refresh access token
  * POST /api/v1/auth/refresh
- * 
- * DUAL-AUTH:
- * - Web: Reads refresh token from cookie, sets new access token cookie
- * - Mobile: Reads refresh token from Authorization header, returns new access token in JSON
  */
 export const refresh = async (c: Context) => {
   try {
-    // Try to get refresh token from cookie (web) or Authorization header (mobile)
     let refreshToken = getCookie(c, 'refreshToken');
-    
-    // If no cookie, try Authorization header (mobile)
+
     if (!refreshToken) {
       const authHeader = c.req.header('Authorization');
       if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -296,61 +224,35 @@ export const refresh = async (c: Context) => {
 
     if (!refreshToken) {
       return c.json(
-        {
-          success: false,
-          error: 'Refresh token not found',
-          message: 'No refresh token provided',
-        },
+        { success: false, error: 'Refresh token not found', message: 'No refresh token provided' },
         401
       );
     }
 
-    // Verify refresh token (PHASE 2 FIX: Added await)
     const decoded = await verifyToken(refreshToken);
 
     if (!decoded) {
       return c.json(
-        {
-          success: false,
-          error: 'Invalid refresh token',
-          message: 'Refresh token is invalid or expired',
-        },
+        { success: false, error: 'Invalid refresh token', message: 'Refresh token is invalid or expired' },
         401
       );
     }
 
-    // Check if refresh token is in denylist (CRITICAL SECURITY)
     const isDenied = await cache.exists(`token:denylist:${refreshToken}`);
     if (isDenied) {
       return c.json(
-        {
-          success: false,
-          error: 'Token has been revoked',
-          message: 'This token has been invalidated',
-        },
+        { success: false, error: 'Token has been revoked', message: 'This token has been invalidated' },
         401
       );
     }
 
-    // Generate new access token (PHASE 2 FIX: Added await)
-    const newAccessToken = await generateToken({
-      userId: decoded.userId,
-      email: decoded.email,
-    });
+    const newAccessToken = await generateToken({ userId: decoded.userId, email: decoded.email });
 
-    // Set new access token cookie (for web)
-    setCookie(c, 'accessToken', newAccessToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: ACCESS_TOKEN_MAX_AGE,
-    });
+    setCookie(c, 'accessToken', newAccessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
 
-    // ✅ DUAL-AUTH: Return new access token in JSON (for mobile)
     return c.json({
       success: true,
-      data: {
-        accessToken: newAccessToken,  // ← Mobile app needs this
-        message: 'Token refreshed successfully',
-      },
+      data: { accessToken: newAccessToken, message: 'Token refreshed successfully' },
     });
   } catch (error) {
     console.error('Refresh error:', error);
@@ -368,27 +270,18 @@ export const refresh = async (c: Context) => {
 /**
  * Get current user
  * GET /api/v1/auth/me
- * 
- * Requires authentication - user set by auth middleware
- * Works for both web (cookie) and mobile (Authorization header)
  */
 export const getMe = async (c: Context) => {
   try {
-    // User data is set by auth middleware
     const user = c.get('user');
 
     if (!user || !user.userId) {
       return c.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-          message: 'Authentication required',
-        },
+        { success: false, error: 'Unauthorized', message: 'Authentication required' },
         401
       );
     }
 
-    // Find user in database
     const [dbUser] = await db
       .select()
       .from(schema.users)
@@ -397,20 +290,14 @@ export const getMe = async (c: Context) => {
 
     if (!dbUser) {
       return c.json(
-        {
-          success: false,
-          error: 'User not found',
-          message: 'User account no longer exists',
-        },
+        { success: false, error: 'User not found', message: 'User account no longer exists' },
         404
       );
     }
 
     return c.json({
       success: true,
-      data: {
-        user: formatUserResponse(dbUser) as any,
-      },
+      data: { user: formatUserResponse(dbUser) as any },
     });
   } catch (error) {
     console.error('Get me error:', error);
@@ -428,20 +315,12 @@ export const getMe = async (c: Context) => {
 /**
  * Logout user with Redis token denylist
  * POST /api/v1/auth/logout
- * 
- * CRITICAL SECURITY: Adds tokens to Redis denylist to prevent reuse
- * 
- * DUAL-AUTH:
- * - Web: Clears cookies
- * - Mobile: Client should delete tokens from SecureStore
  */
 export const logout = async (c: Context) => {
   try {
-    // Get tokens from cookies (web) or Authorization header (mobile)
     let accessToken = getCookie(c, 'accessToken');
-    let refreshToken = getCookie(c, 'refreshToken');
-    
-    // If no cookies, try Authorization header (mobile)
+    const refreshToken = getCookie(c, 'refreshToken');
+
     if (!accessToken) {
       const authHeader = c.req.header('Authorization');
       if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -449,7 +328,6 @@ export const logout = async (c: Context) => {
       }
     }
 
-    // Add access token to Redis denylist with TTL matching its expiration
     if (accessToken) {
       try {
         const decoded = decodeToken(accessToken);
@@ -460,12 +338,10 @@ export const logout = async (c: Context) => {
           }
         }
       } catch (err) {
-        // Token might be invalid/expired, skip denylist
         console.warn('Failed to denylist access token:', err);
       }
     }
 
-    // Add refresh token to Redis denylist with TTL matching its expiration
     if (refreshToken) {
       try {
         const decoded = decodeToken(refreshToken);
@@ -476,25 +352,16 @@ export const logout = async (c: Context) => {
           }
         }
       } catch (err) {
-        // Token might be invalid/expired, skip denylist
         console.warn('Failed to denylist refresh token:', err);
       }
     }
 
-    // Clear cookies using deleteCookie (for web)
-    deleteCookie(c, 'accessToken', {
-      ...COOKIE_OPTIONS,
-    });
-
-    deleteCookie(c, 'refreshToken', {
-      ...COOKIE_OPTIONS,
-    });
+    deleteCookie(c, 'accessToken', { ...COOKIE_OPTIONS });
+    deleteCookie(c, 'refreshToken', { ...COOKIE_OPTIONS });
 
     return c.json({
       success: true,
-      data: {
-        message: 'Logged out successfully',
-      },
+      data: { message: 'Logged out successfully' },
     });
   } catch (error) {
     console.error('Logout error:', error);
@@ -502,6 +369,202 @@ export const logout = async (c: Context) => {
       {
         success: false,
         error: 'Logout failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Forgot Password
+ * POST /api/v1/auth/forgot-password
+ *
+ * Security: Email-enumeration safe — always returns 200 regardless of
+ * whether the email exists in the database.
+ *
+ * DETERMINISTIC TOKEN: Uses crypto.randomUUID() stored as a plain string
+ * in the tokenHash column. This allows a direct eq() lookup on retrieval
+ * without any bcrypt comparison (edge-native, O(1) lookup).
+ *
+ * Email delivery: Native fetch() to Resend API (fire-and-forget).
+ * Email failures are logged but never surface as HTTP errors.
+ */
+export const forgotPassword = async (c: Context) => {
+  // Safe success response — returned regardless of whether the user exists
+  const SAFE_RESPONSE = {
+    success: true,
+    data: { message: 'If an account exists with that email, a reset link has been sent.' },
+  } as const;
+
+  try {
+    const { email } = await c.req.json() as { email: string };
+
+    // Look up user — silently exit with 200 if not found (enumeration guard)
+    const [user] = await db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.email, email))
+      .limit(1);
+
+    if (!user) {
+      return c.json(SAFE_RESPONSE, 200);
+    }
+
+    // Generate a cryptographically random token (UUID v4, edge-native)
+    const resetToken = crypto.randomUUID();
+
+    // Insert token record — tokenHash stores the raw token (no bcrypt)
+    // Direct eq() lookup is therefore possible on reset
+    await db.insert(schema.passwordResetTokens).values({
+      userId: user.id,
+      tokenHash: resetToken,
+      expiresAt: new Date(Date.now() + 3_600_000), // 1 hour
+    });
+
+    // Fire-and-forget email via Resend — failure must not block the response
+    try {
+      const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'onboarding@resend.dev',
+          to: email,
+          subject: 'Reset your Validiant password',
+          html: `
+            <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px;">
+              <h2 style="color: #1e293b; margin-bottom: 8px;">Reset your password</h2>
+              <p style="color: #475569; margin-bottom: 24px;">
+                We received a request to reset the password for your Validiant account
+                associated with <strong>${email}</strong>.
+              </p>
+              <a
+                href="${resetUrl}"
+                style="
+                  display: inline-block;
+                  background-color: #2563eb;
+                  color: #ffffff;
+                  text-decoration: none;
+                  padding: 12px 24px;
+                  border-radius: 8px;
+                  font-weight: 600;
+                  font-size: 14px;
+                "
+              >
+                Reset Password
+              </a>
+              <p style="color: #94a3b8; font-size: 12px; margin-top: 32px;">
+                This link expires in 1 hour. If you did not request a password reset,
+                you can safely ignore this email.
+              </p>
+              <p style="color: #cbd5e1; font-size: 12px; margin-top: 8px;">
+                Or paste this URL into your browser:<br />
+                <span style="color: #64748b;">${resetUrl}</span>
+              </p>
+            </div>
+          `,
+        }),
+      });
+    } catch (emailError) {
+      // Non-blocking — log the failure but do not surface it to the caller
+      console.error('Resend email delivery failed:', emailError);
+    }
+
+    return c.json(SAFE_RESPONSE, 200);
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Request failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Reset Password
+ * POST /api/v1/auth/reset-password
+ *
+ * DETERMINISTIC LOOKUP: Queries passwordResetTokens directly via
+ * eq(schema.passwordResetTokens.tokenHash, token) — no bcrypt comparison.
+ *
+ * Guards:
+ * 1. Token not found in DB
+ * 2. Token expired (expiresAt < now)
+ * 3. Token already used (usedAt is not null)
+ *
+ * On success:
+ * - Updates user.passwordHash with bcrypt-hashed new password
+ * - Sets passwordResetTokens.usedAt = now to prevent reuse
+ */
+export const resetPassword = async (c: Context) => {
+  try {
+    const { token, password } = await c.req.json() as { token: string; password: string };
+
+    // Direct deterministic lookup — no bcrypt comparison required
+    const [tokenRecord] = await db
+      .select()
+      .from(schema.passwordResetTokens)
+      .where(eq(schema.passwordResetTokens.tokenHash, token))
+      .limit(1);
+
+    // Guard 1: Token does not exist
+    if (!tokenRecord) {
+      return c.json(
+        { success: false, error: 'Invalid or expired reset token', message: 'This reset link is invalid or has already been used.' },
+        400
+      );
+    }
+
+    // Guard 2: Token has expired
+    if (tokenRecord.expiresAt < new Date()) {
+      return c.json(
+        { success: false, error: 'Invalid or expired reset token', message: 'This reset link has expired. Please request a new one.' },
+        400
+      );
+    }
+
+    // Guard 3: Token already consumed
+    if (tokenRecord.usedAt !== null) {
+      return c.json(
+        { success: false, error: 'Invalid or expired reset token', message: 'This reset link has already been used.' },
+        400
+      );
+    }
+
+    // Hash the new password
+    const newPasswordHash = await hashPassword(password);
+
+    // Update the user's password
+    await db
+      .update(schema.users)
+      .set({ passwordHash: newPasswordHash, updatedAt: new Date() })
+      .where(eq(schema.users.id, tokenRecord.userId));
+
+    // Mark token as used to prevent reuse
+    await db
+      .update(schema.passwordResetTokens)
+      .set({ usedAt: new Date() })
+      .where(eq(schema.passwordResetTokens.tokenHash, token));
+
+    return c.json({
+      success: true,
+      data: { message: 'Your password has been reset successfully. You can now sign in.' },
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Reset failed',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500
