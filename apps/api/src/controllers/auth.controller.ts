@@ -23,6 +23,7 @@
  */
 
 import { Context } from 'hono';
+import { env } from 'hono/adapter';
 import { z } from 'zod';
 import { setCookie, getCookie, deleteCookie } from 'hono/cookie';
 import { db, schema } from '../db';
@@ -389,6 +390,10 @@ export const logout = async (c: Context) => {
  *
  * Email delivery: Native fetch() to Resend API (fire-and-forget).
  * Email failures are logged but never surface as HTTP errors.
+ *
+ * ENV: Variables are extracted via Hono's env(c) adapter — fully
+ * compatible with Cloudflare Workers bindings and wrangler.toml [vars].
+ * No process.env is used inside this function.
  */
 export const forgotPassword = async (c: Context) => {
   // Safe success response — returned regardless of whether the user exists
@@ -398,6 +403,15 @@ export const forgotPassword = async (c: Context) => {
   } as const;
 
   try {
+    // ---------------------------------------------------------------------------
+    // Extract env bindings via Hono's edge-native adapter.
+    // Works with Cloudflare Workers wrangler.toml [vars] and Secrets.
+    // ---------------------------------------------------------------------------
+    const { RESEND_API_KEY, FRONTEND_URL } = env<{
+      RESEND_API_KEY: string;
+      FRONTEND_URL: string;
+    }>(c);
+
     const { email } = await c.req.json() as { email: string };
 
     // Look up user — silently exit with 200 if not found (enumeration guard)
@@ -422,14 +436,27 @@ export const forgotPassword = async (c: Context) => {
       expiresAt: new Date(Date.now() + 3_600_000), // 1 hour
     });
 
+    // ---------------------------------------------------------------------------
+    // Guard: if RESEND_API_KEY is not bound, log a critical error and
+    // return SAFE_RESPONSE — do not crash or leak the misconfiguration.
+    // ---------------------------------------------------------------------------
+    if (!RESEND_API_KEY) {
+      console.error(
+        '[forgotPassword] CRITICAL: RESEND_API_KEY binding is not set. ' +
+        'Add it to wrangler.toml [vars] or as a Cloudflare Secret. ' +
+        'Password reset email was NOT sent for user:', user.id
+      );
+      return c.json(SAFE_RESPONSE, 200);
+    }
+
     // Fire-and-forget email via Resend — failure must not block the response
     try {
-      const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
+      const resetUrl = `${FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
 
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
