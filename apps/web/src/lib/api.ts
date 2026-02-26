@@ -274,15 +274,22 @@ export const getErrorMessage = (error: any): string => {
  * All methods use the shared Axios instance (withCredentials, interceptors)
  * and are typed against the shared @validiant/shared Task types.
  *
+ * Endpoint notes:
+ *   getAll   → GET /tasks/my   (user-scoped task list)
+ *   getById  → GET /tasks/:id
+ *   create   → POST /tasks
+ *   update   → PATCH /tasks/:id
+ *   delete   → DELETE /tasks/:id
+ *
  * Types used:
  *   Task            — full task entity returned by the API
  *   CreateTaskData  — payload for creating a new task
  *   UpdateTaskData  — partial payload for updating an existing task
  */
 export const tasksApi = {
-  /** Fetch all tasks */
+  /** Fetch the current user's tasks */
   getAll: (): Promise<AxiosResponse<APIResponse<Task[]>>> =>
-    get<APIResponse<Task[]>>('/tasks'),
+    get<APIResponse<Task[]>>('/tasks/my'),
 
   /** Fetch a single task by ID */
   getById: (id: string): Promise<AxiosResponse<APIResponse<Task>>> =>
