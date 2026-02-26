@@ -112,7 +112,7 @@ apiClient.interceptors.request.use(
  * Response Interceptor
  *
  * Handles errors globally:
- * - 401: Redirect to login (session expired)
+ * - 401: Redirect to /auth/login (session expired)
  * - 403: Show permission error
  * - 500: Show server error
  */
@@ -142,12 +142,12 @@ apiClient.interceptors.response.use(
       // Check if we're not already on login page to avoid redirect loop
       if (
         typeof window !== 'undefined' &&
-        !window.location.pathname.includes('/login')
+        !window.location.pathname.includes('/auth/login')
       ) {
         console.warn('[API] Authentication required, redirecting to login...');
         // Redirect to login page
         window.location.href =
-          '/login?redirect=' + encodeURIComponent(window.location.pathname);
+          '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
       }
     }
 
