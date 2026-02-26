@@ -54,29 +54,31 @@ export default function LoginPage() {
     },
   });
 
-  // Handle form submission with Server Action — unchanged
-  const onSubmit = async (data: LoginFormData) => {
+  // Handle form submission with Server Action
+  // async removed from both the outer handler and the startTransition callback
+  // to satisfy React 18's TransitionFunction type (no Promise return allowed).
+  const onSubmit = (data: LoginFormData) => {
     setErrorMessage(null);
 
-    startTransition(async () => {
-      try {
-        const result = await loginAction(data.email, data.password);
+    startTransition(() => {
+      loginAction(data.email, data.password)
+        .then((result) => {
+          if (!result.success) {
+            setErrorMessage(result.message || 'Login failed');
+            return;
+          }
 
-        if (!result.success) {
-          setErrorMessage(result.message || 'Login failed');
-          return;
-        }
+          if (result.user) {
+            setAuth({ user: result.user });
+          }
 
-        if (result.user) {
-          setAuth({ user: result.user });
-        }
-
-        router.push(ROUTES.DASHBOARD);
-        router.refresh();
-      } catch (error) {
-        console.error('Login error:', error);
-        setErrorMessage('An unexpected error occurred. Please try again.');
-      }
+          router.push(ROUTES.DASHBOARD);
+          router.refresh();
+        })
+        .catch((error) => {
+          console.error('Login error:', error);
+          setErrorMessage('An unexpected error occurred. Please try again.');
+        });
     });
   };
 
