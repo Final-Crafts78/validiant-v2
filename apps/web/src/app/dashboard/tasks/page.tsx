@@ -8,7 +8,8 @@
  *   tasksApi.getAll()
  *     → AxiosResponse<APIResponse<Task[]>>
  *     → response.data       = APIResponse<Task[]>   (our wrapper)
- *     → response.data.data  = Task[]                (the live array)
+ *     → response.data.data  = { tasks: Task[] }     (the live payload)
+ *     → response.data.data.tasks = Task[]           (the actual array)
  */
 
 'use client';
@@ -219,16 +220,18 @@ export default function TasksPage() {
 
   // ------------------------------------------------------------------
   // Live data via react-query
-  // response                = AxiosResponse<APIResponse<Task[]>>
-  // response.data           = APIResponse<Task[]>  (our wrapper object)
-  // response.data.data      = Task[]               (the actual array)
+  // response                      = AxiosResponse<APIResponse<...>>
+  // response.data                 = APIResponse<...>  (our wrapper object)
+  // response.data.data            = { tasks: Task[] } (the live payload)
+  // response.data.data.tasks      = Task[]            (the actual array)
   // ------------------------------------------------------------------
   const { data: response, isLoading, isError } = useQuery({
     queryKey: ['tasks', 'all'],
     queryFn:  () => tasksApi.getAll(),
   });
 
-  const liveTasks: Task[] = response?.data?.data ?? [];
+  // Extract the tasks array from the API response payload: response.data.data.tasks
+  const liveTasks: Task[] = response?.data?.data?.tasks ?? [];
 
   // ------------------------------------------------------------------
   // Loading state
