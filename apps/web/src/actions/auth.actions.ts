@@ -46,12 +46,19 @@ const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 
 /**
  * Cookie configuration for secure token storage
+ *
+ * domain: '.validiant.in' in production — shares the cookie across
+ *   www.validiant.in (Next.js) and api.validiant.in (Cloudflare Worker)
+ *   so both subdomains can read/write the same HttpOnly tokens.
+ * domain: undefined in development — host-only cookie, no domain
+ *   attribute emitted, works correctly on localhost.
  */
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
   path: '/',
+  domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
 };
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds
