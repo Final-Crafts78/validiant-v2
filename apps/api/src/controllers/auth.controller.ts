@@ -78,7 +78,9 @@ const formatUserResponse = (user: User) => ({
  */
 export const register = async (c: Context) => {
   try {
-    const { email, password, fullName } = (await c.req.json()) as z.infer<typeof userRegistrationSchema>;
+    const payload = (await c.req.json()) as z.infer<typeof userRegistrationSchema>;
+    const email = payload.email.toLowerCase();
+    const { password, fullName } = payload;
 
     const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0] || '';
@@ -150,7 +152,9 @@ export const register = async (c: Context) => {
  */
 export const login = async (c: Context) => {
   try {
-    const { email, password } = (await c.req.json()) as z.infer<typeof userLoginSchema>;
+    const payload = (await c.req.json()) as z.infer<typeof userLoginSchema>;
+    const email = payload.email.toLowerCase();
+    const { password } = payload;
 
     const [user] = await db
       .select()
@@ -412,7 +416,8 @@ export const forgotPassword = async (c: Context) => {
       FRONTEND_URL: string;
     }>(c);
 
-    const { email } = await c.req.json() as { email: string };
+    const payload = await c.req.json() as { email: string };
+    const email = payload.email.toLowerCase();
 
     // Look up user — silently exit with 200 if not found (enumeration guard)
     const [user] = await db
