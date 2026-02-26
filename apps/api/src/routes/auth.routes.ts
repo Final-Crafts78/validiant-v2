@@ -27,9 +27,14 @@ import * as authController from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth';
 
 /**
- * Create auth routes Hono instance
+ * Auth router instance.
+ * Mounted in app.ts via: app.route('/api/v1/auth', authRoutes)
  */
-const app = new Hono();
+const authRoutes = new Hono();
+
+// ============================================================================
+// CORE AUTH ROUTES
+// ============================================================================
 
 /**
  * POST /register
@@ -38,7 +43,7 @@ const app = new Hono();
  * Validation: userRegistrationSchema (email, password, fullName)
  * Response: 201 Created with user object + HttpOnly cookies
  */
-app.post(
+authRoutes.post(
   '/register',
   zValidator('json', userRegistrationSchema),
   authController.register
@@ -51,7 +56,7 @@ app.post(
  * Validation: userLoginSchema (email, password)
  * Response: 200 OK with user object + HttpOnly cookies
  */
-app.post(
+authRoutes.post(
   '/login',
   zValidator('json', userLoginSchema),
   authController.login
@@ -64,7 +69,7 @@ app.post(
  * No body validation needed (reads from cookies / header)
  * Response: 200 OK with new access token
  */
-app.post(
+authRoutes.post(
   '/refresh',
   authController.refresh
 );
@@ -76,7 +81,7 @@ app.post(
  * Requires: authenticate middleware
  * Response: 200 OK with user object
  */
-app.get(
+authRoutes.get(
   '/me',
   authenticate,
   authController.getMe
@@ -89,27 +94,35 @@ app.get(
  * Requires: authenticate middleware
  * Response: 200 OK with success message
  */
-app.post(
+authRoutes.post(
   '/logout',
   authenticate,
   authController.logout
 );
+
+// ============================================================================
+// PASSWORD RESET FUNNEL
+// Both routes are registered directly on authRoutes BEFORE export.
+// Final resolved paths (via app.ts mount):
+//   POST /api/v1/auth/forgot-password
+//   POST /api/v1/auth/reset-password
+// ============================================================================
 
 /**
  * POST /forgot-password
  * Request a password reset email
  *
  * Validation: { email: string (valid email format) }
- * Security: Returns 200 regardless of whether the email exists
+ * Security: Always returns 200 regardless of whether the email exists
  *           to prevent user enumeration attacks.
  * Response: 200 OK with safe success message
  */
-app.post(
+authRoutes.post(
   '/forgot-password',
   zValidator(
     'json',
     z.object({
-      email: z.string().email('Please provide a valid email address'),
+      email: z.string().email('Invalid email format'),
     })
   ),
   authController.forgotPassword
@@ -120,10 +133,10 @@ app.post(
  * Complete password reset using a valid token
  *
  * Validation: { token: string, password: string (min 8 chars) }
- * Guards: token existence, expiry (1hr), reuse (usedAt)
+ * Guards (in controller): token existence, expiry (1hr), reuse (usedAt)
  * Response: 200 OK with success message
  */
-app.post(
+authRoutes.post(
   '/reset-password',
   zValidator(
     'json',
@@ -135,4 +148,7 @@ app.post(
   authController.resetPassword
 );
 
-export default app;
+// ============================================================================
+// EXPORT — must be the final statement; nothing may be registered after this
+// ============================================================================
+export default authRoutes;
