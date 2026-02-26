@@ -44,12 +44,21 @@ import type { User } from '../db/schema';
 
 /**
  * Cookie configuration for secure token storage
+ *
+ * sameSite: 'none' — required for cross-domain cookie delivery
+ *   (frontend and API on different origins).
+ * secure: true    — unconditionally enforced; our environments
+ *   (Cloudflare Edge, production) exclusively use HTTPS.
+ * maxAge          — default 7-day TTL applied via COOKIE_OPTIONS
+ *   spread; individual setCookie calls may override with shorter
+ *   values (e.g. ACCESS_TOKEN_MAX_AGE for the access token).
  */
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'Strict' as const,
+  secure: true,
+  sameSite: 'none' as const,
   path: '/',
+  maxAge: 7 * 24 * 60 * 60, // 7 days
 };
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60;          // 15 minutes
