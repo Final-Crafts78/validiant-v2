@@ -1,7 +1,7 @@
 /**
  * Profile Page
- * 
- * User profile and account settings.
+ *
+ * User profile and account settings — Phase 8 Corporate Light Theme.
  */
 
 'use client';
@@ -20,9 +20,30 @@ import {
   Loader2,
 } from 'lucide-react';
 
-/**
- * Profile Page Component
- */
+// ---------------------------------------------------------------------------
+// Shared style constants — mirror Tasks / Projects pages exactly
+// ---------------------------------------------------------------------------
+const inputCls =
+  'w-full bg-white border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm ' +
+  'text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ' +
+  'focus:ring-blue-600 focus:border-transparent disabled:bg-slate-50 ' +
+  'disabled:text-slate-400 disabled:cursor-not-allowed transition-shadow';
+
+const labelCls = 'block text-sm font-semibold text-slate-700 mb-1.5';
+
+const btnPrimary =
+  'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 ' +
+  'text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 ' +
+  'disabled:cursor-not-allowed';
+
+const btnGhost =
+  'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 ' +
+  'bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors ' +
+  'disabled:opacity-60 disabled:cursor-not-allowed';
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
@@ -63,7 +84,7 @@ export default function ProfilePage() {
 
   /**
    * Handle profile form submission
-   * CRITICAL: Combines firstName and lastName into fullName before sending to server
+   * CRITICAL: Combines firstName and lastName into fullName before sending
    */
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,12 +101,10 @@ export default function ProfilePage() {
 
     startTransition(async () => {
       try {
-        // Combine firstName and lastName into fullName
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
 
         console.log('[ProfilePage] Submitting profile update:', { fullName, bio: bio.trim() });
 
-        // Call server action with fullName (matching backend schema)
         const result = await updateProfileAction({
           fullName,
           bio: bio.trim() || undefined,
@@ -93,8 +112,7 @@ export default function ProfilePage() {
 
         if (result.success && result.user) {
           console.log('[ProfilePage] Profile updated successfully:', result.user);
-          
-          // Merge updated data with existing user data
+
           const mergedUserData = {
             ...user,
             ...result.user,
@@ -114,9 +132,7 @@ export default function ProfilePage() {
     });
   };
 
-  /**
-   * Handle cancel - reset form to original values
-   */
+  /** Handle cancel — reset form to original values */
   const handleCancel = () => {
     setFirstName(nameComponents.firstName);
     setLastName(nameComponents.lastName);
@@ -125,413 +141,403 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
+  // -------------------------------------------------------------------------
+  // Tab configuration
+  // -------------------------------------------------------------------------
+  const tabs: { id: 'profile' | 'security' | 'notifications'; label: string }[] = [
+    { id: 'profile', label: 'Profile Information' },
+    { id: 'security', label: 'Security' },
+    { id: 'notifications', label: 'Notifications' },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header */}
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Page Header                                                          */}
+      {/* ------------------------------------------------------------------ */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your account and preferences</p>
+        <h1 className="text-3xl font-extrabold text-slate-900">Profile Settings</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Manage your personal information and security preferences
+        </p>
       </div>
 
-      {/* Profile Card */}
-      <div className="card">
-        <div className="card-body">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            {/* Avatar */}
-            <div className="relative">
-              {user.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt={user.fullName}
-                  className="w-24 h-24 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-24 h-24 bg-primary-600 rounded-full flex items-center justify-center">
-                  <span className="text-3xl font-bold text-white">
-                    {initials}
-                  </span>
-                </div>
-              )}
-              <button className="absolute bottom-0 right-0 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <Camera className="h-4 w-4 text-gray-600" />
-              </button>
-            </div>
+      {/* ------------------------------------------------------------------ */}
+      {/* Profile Hero Card                                                    */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
 
-            {/* User Info */}
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {user.fullName}
-              </h2>
-              <p className="text-gray-600 mt-1">{user.email}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="badge badge-success">Active</span>
-                {user.emailVerified && (
-                  <span className="badge badge-info">Verified</span>
-                )}
-                <span className="text-sm text-gray-500">
-                  Member since {format(new Date(user.createdAt), 'MMMM yyyy')}
-                </span>
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            {user.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={user.fullName}
+                className="w-20 h-20 rounded-full object-cover ring-2 ring-slate-200"
+              />
+            ) : (
+              <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold select-none">
+                {initials}
               </div>
+            )}
+            <button
+              type="button"
+              aria-label="Change avatar"
+              className="absolute bottom-0 right-0 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center hover:bg-slate-50 shadow-sm transition-colors"
+            >
+              <Camera className="h-3.5 w-3.5 text-slate-500" />
+            </button>
+          </div>
+
+          {/* User Info */}
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold text-slate-900 truncate">{user.fullName}</h2>
+            <p className="text-sm text-slate-500 mt-0.5">{user.email}</p>
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              {/* Active badge */}
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Active
+              </span>
+              {/* Verified badge */}
+              {user.emailVerified && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                  Verified
+                </span>
+              )}
+              <span className="text-xs text-slate-400">
+                Member since {format(new Date(user.createdAt), 'MMMM yyyy')}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex gap-8">
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'profile'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-            }`}
-          >
-            Profile Information
-          </button>
-          <button
-            onClick={() => setActiveTab('security')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'security'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-            }`}
-          >
-            Security
-          </button>
-          <button
-            onClick={() => setActiveTab('notifications')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'notifications'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
-            }`}
-          >
-            Notifications
-          </button>
+      {/* ------------------------------------------------------------------ */}
+      {/* Tab Navigation                                                       */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="border-b border-slate-200">
+        <nav className="flex gap-1" aria-label="Profile sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 pb-3 pt-1 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === tab.id
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </nav>
       </div>
 
-      {/* Tab Content */}
+      {/* ================================================================== */}
+      {/* TAB: PROFILE INFORMATION                                            */}
+      {/* ================================================================== */}
       {activeTab === 'profile' && (
-        <div className="card">
-          <div className="card-body">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Personal Information
-            </h3>
-            <form className="space-y-5" onSubmit={handleProfileSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="firstName" className="label">
-                    First Name
-                  </label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="input"
-                    disabled={isPending}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="label">
-                    Last Name
-                  </label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="input"
-                    disabled={isPending}
-                    required
-                  />
-                </div>
-              </div>
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-4 mb-6">
+            Personal Information
+          </h3>
+          <form className="space-y-5" onSubmit={handleProfileSubmit}>
 
+            {/* First / Last Name */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="email" className="label">
-                  Email Address
-                </label>
+                <label htmlFor="firstName" className={labelCls}>First Name</label>
                 <input
-                  id="email"
-                  type="email"
-                  value={user.email}
-                  className="input"
-                  disabled
-                  readOnly
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className={inputCls}
+                  disabled={isPending}
+                  required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Email address cannot be changed from this page
-                </p>
               </div>
-
               <div>
-                <label htmlFor="bio" className="label">
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  rows={4}
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  placeholder="Tell us about yourself..."
-                  className="input resize-none"
+                <label htmlFor="lastName" className={labelCls}>Last Name</label>
+                <input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className={inputCls}
                   disabled={isPending}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email — read-only */}
+            <div>
+              <label htmlFor="email" className={labelCls}>Email Address</label>
+              <input
+                id="email"
+                type="email"
+                value={user.email}
+                className={inputCls}
+                disabled
+                readOnly
+              />
+              <p className="text-xs text-slate-400 mt-1">
+                Email address cannot be changed from this page.
+              </p>
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label htmlFor="bio" className={labelCls}>Bio</label>
+              <textarea
+                id="bio"
+                rows={4}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Tell us about yourself..."
+                className={`${inputCls} resize-none`}
+                disabled={isPending}
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                className={btnGhost}
+                onClick={handleCancel}
+                disabled={isPending}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={btnPrimary}
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    <span>Save Changes</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ================================================================== */}
+      {/* TAB: SECURITY                                                        */}
+      {/* ================================================================== */}
+      {activeTab === 'security' && (
+        <div className="space-y-6">
+
+          {/* Change Password card */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-4 mb-6">
+              Change Password
+            </h3>
+            <form className="space-y-5">
+
+              {/* Current Password */}
+              <div>
+                <label htmlFor="currentPassword" className={labelCls}>Current Password</label>
+                <div className="relative">
+                  <input
+                    id="currentPassword"
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    placeholder="Enter your current password"
+                    className={`${inputCls} pr-10`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showCurrentPassword
+                      ? <EyeOff className="h-4 w-4" />
+                      : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label htmlFor="newPassword" className={labelCls}>New Password</label>
+                <div className="relative">
+                  <input
+                    id="newPassword"
+                    type={showNewPassword ? 'text' : 'password'}
+                    placeholder="At least 8 characters"
+                    className={`${inputCls} pr-10`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showNewPassword
+                      ? <EyeOff className="h-4 w-4" />
+                      : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="confirmPassword" className={labelCls}>Confirm New Password</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Re-enter new password"
+                  className={inputCls}
                 />
               </div>
 
-              <div className="flex justify-end gap-3">
-                <button 
-                  type="button" 
-                  className="btn btn-ghost btn-md"
-                  onClick={handleCancel}
-                  disabled={isPending}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="btn btn-primary btn-md"
-                  disabled={isPending}
-                >
-                  {isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      <span>Save Changes</span>
-                    </>
-                  )}
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" className={btnGhost}>Cancel</button>
+                <button type="submit" className={btnPrimary}>
+                  <Lock className="h-4 w-4" />
+                  <span>Update Password</span>
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      )}
 
-      {activeTab === 'security' && (
-        <div className="space-y-6">
-          {/* Change Password */}
-          <div className="card">
-            <div className="card-body">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                Change Password
-              </h3>
-              <form className="space-y-5">
+          {/* Two-Factor Authentication card */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                </div>
                 <div>
-                  <label htmlFor="currentPassword" className="label">
-                    Current Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="currentPassword"
-                      type={showCurrentPassword ? 'text' : 'password'}
-                      className="input pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                    >
-                      {showCurrentPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
+                  <h3 className="text-base font-semibold text-slate-900">
+                    Two-Factor Authentication
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    Add an extra layer of security to your account
+                  </p>
                 </div>
-
-                <div>
-                  <label htmlFor="newPassword" className="label">
-                    New Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="newPassword"
-                      type={showNewPassword ? 'text' : 'password'}
-                      className="input pr-10"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="confirmPassword" className="label">
-                    Confirm New Password
-                  </label>
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    className="input"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3">
-                  <button type="button" className="btn btn-ghost btn-md">
-                    Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary btn-md">
-                    <Lock className="h-4 w-4" />
-                    <span>Update Password</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* Two-Factor Authentication */}
-          <div className="card">
-            <div className="card-body">
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-primary-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">
-                      Two-Factor Authentication
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Add an extra layer of security to your account
-                    </p>
-                  </div>
-                </div>
-                <button className="btn btn-outline btn-sm">
-                  Enable
-                </button>
               </div>
+              <button
+                type="button"
+                className="flex-shrink-0 inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Enable
+              </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* ================================================================== */}
+      {/* TAB: NOTIFICATIONS                                                   */}
+      {/* ================================================================== */}
       {activeTab === 'notifications' && (
-        <div className="card">
-          <div className="card-body">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Notification Preferences
-            </h3>
-            <div className="space-y-6">
-              {/* Email Notifications */}
-              <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-4">
-                  Email Notifications
-                </h4>
-                <div className="space-y-3">
-                  <label className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Project updates
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Get notified about project changes and milestones
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked={user.notificationPreferences?.projectUpdate ?? false}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Task assignments
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Receive emails when tasks are assigned to you
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked={user.notificationPreferences?.taskAssigned ?? false}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Team invitations
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Get notified when someone invites you to join a team
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked={user.notificationPreferences?.projectInvite ?? false}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                  </label>
-                </div>
-              </div>
+        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-4 mb-6">
+            Notification Preferences
+          </h3>
+          <div className="space-y-8">
 
-              {/* Push Notifications */}
-              <div>
-                <h4 className="text-sm font-semibold text-gray-900 mb-4">
-                  Push Notifications
-                </h4>
-                <div className="space-y-3">
-                  <label className="flex items-center justify-between">
+            {/* Email Notifications */}
+            <div>
+              <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">
+                Email Notifications
+              </h4>
+              <div className="space-y-4">
+                {([
+                  {
+                    label: 'Project updates',
+                    description: 'Get notified about project changes and milestones',
+                    key: 'projectUpdate' as const,
+                  },
+                  {
+                    label: 'Task assignments',
+                    description: 'Receive emails when tasks are assigned to you',
+                    key: 'taskAssigned' as const,
+                  },
+                  {
+                    label: 'Team invitations',
+                    description: 'Get notified when someone invites you to join a team',
+                    key: 'projectInvite' as const,
+                  },
+                ] as const).map((item) => (
+                  <label
+                    key={item.key}
+                    className="flex items-start justify-between gap-4 cursor-pointer"
+                  >
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Mentions and comments
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        When someone mentions you or comments on your work
-                      </p>
+                      <p className="text-sm font-medium text-slate-900">{item.label}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences?.commentMention ?? false}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      defaultChecked={user.notificationPreferences?.[item.key] ?? false}
+                      className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
                     />
                   </label>
-                  <label className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        Due date reminders
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Reminders for upcoming task and project deadlines
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked={user.notificationPreferences?.taskDueSoon ?? false}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                  </label>
-                </div>
+                ))}
               </div>
+            </div>
 
-              <div className="flex justify-end gap-3 pt-4">
-                <button type="button" className="btn btn-ghost btn-md">
-                  Cancel
-                </button>
-                <button type="button" className="btn btn-primary btn-md">
-                  <Save className="h-4 w-4" />
-                  <span>Save Preferences</span>
-                </button>
+            {/* Push Notifications */}
+            <div>
+              <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">
+                Push Notifications
+              </h4>
+              <div className="space-y-4">
+                {([
+                  {
+                    label: 'Mentions and comments',
+                    description: 'When someone mentions you or comments on your work',
+                    key: 'commentMention' as const,
+                  },
+                  {
+                    label: 'Due date reminders',
+                    description: 'Reminders for upcoming task and project deadlines',
+                    key: 'taskDueSoon' as const,
+                  },
+                ] as const).map((item) => (
+                  <label
+                    key={item.key}
+                    className="flex items-start justify-between gap-4 cursor-pointer"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{item.label}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      defaultChecked={user.notificationPreferences?.[item.key] ?? false}
+                      className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
+                    />
+                  </label>
+                ))}
               </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+              <button type="button" className={btnGhost}>Cancel</button>
+              <button type="button" className={btnPrimary}>
+                <Save className="h-4 w-4" />
+                <span>Save Preferences</span>
+              </button>
             </div>
           </div>
         </div>
