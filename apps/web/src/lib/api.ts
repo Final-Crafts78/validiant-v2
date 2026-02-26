@@ -35,6 +35,7 @@ import type {
   CreateProjectData,
   UpdateProjectData,
 } from '@validiant/shared';
+import { useAuthStore } from '../store/auth';
 
 /**
  * API Configuration with URL Normalization
@@ -112,7 +113,7 @@ apiClient.interceptors.request.use(
  * Response Interceptor
  *
  * Handles errors globally:
- * - 401: Redirect to /auth/login (session expired)
+ * - 401: Clear Zustand auth state, then redirect to /auth/login (session expired)
  * - 403: Show permission error
  * - 500: Show server error
  */
@@ -145,6 +146,13 @@ apiClient.interceptors.response.use(
         !window.location.pathname.includes('/auth/login')
       ) {
         console.warn('[API] Authentication required, redirecting to login...');
+
+        // CRITICAL FIX: Clear Zustand auth state before redirecting.
+        // Without this, the login page's auth guard sees isAuthenticated=true
+        // and immediately redirects back to the dashboard, causing an
+        // infinite redirect loop.
+        useAuthStore.getState().clearAuth();
+
         // Redirect to login page
         window.location.href =
           '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
