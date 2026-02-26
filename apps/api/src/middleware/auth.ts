@@ -3,9 +3,14 @@
  * 
  * Validates JWT tokens and attaches user info to context.
  * Edge-compatible implementation.
+ *
+ * Token resolution order:
+ *   1. Authorization: Bearer <token> header  (mobile / API clients)
+ *   2. accessToken HttpOnly cookie           (web clients via withCredentials)
  */
 
 import type { Context, Next } from 'hono';
+import { getCookie } from 'hono/cookie';
 import { verifyToken, extractBearerToken } from '../utils/jwt';
 
 /**
@@ -20,12 +25,22 @@ export interface UserContext {
 
 /**
  * Authenticate middleware
- * Verifies JWT token and attaches user to context
+ * Verifies JWT token and attaches user to context.
+ *
+ * Reads token from the Authorization header first; falls back to the
+ * HttpOnly `accessToken` cookie set by the auth controller on login.
+ * Cookie name must match auth.controller.ts → setCookie('accessToken', ...).
  */
 export const authenticate = async (c: Context, next: Next): Promise<Response | void> => {
   try {
     const authHeader = c.req.header('Authorization');
-    const token = extractBearerToken(authHeader);
+    let token = extractBearerToken(authHeader);
+
+    // Fallback: If no Bearer token is found, look for the HttpOnly cookie.
+    // Cookie name is 'accessToken' — matches auth.controller.ts setCookie call.
+    if (!token) {
+      token = getCookie(c, 'accessToken') || null;
+    }
 
     if (!token) {
       return c.json(
