@@ -33,6 +33,9 @@ export interface UserContext {
  */
 export const authenticate = async (c: Context, next: Next): Promise<Response | void> => {
   try {
+    console.log('[auth] Raw Cookie header:', c.req.header('cookie'));
+    console.log('[auth] Parsed accessToken:', getCookie(c, 'accessToken'));
+
     const authHeader = c.req.header('Authorization');
     let token = extractBearerToken(authHeader);
 
