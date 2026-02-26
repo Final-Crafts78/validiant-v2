@@ -296,8 +296,8 @@ export const getErrorMessage = (error: any): string => {
  */
 export const tasksApi = {
   /** Fetch the current user's tasks */
-  getAll: (): Promise<AxiosResponse<APIResponse<Task[]>>> =>
-    get<APIResponse<Task[]>>('/tasks/my'),
+  getAll: (): Promise<AxiosResponse<APIResponse<{ tasks: Task[] }>>> =>
+    get<APIResponse<{ tasks: Task[] }>>('/tasks/my'),
 
   /** Fetch a single task by ID */
   getById: (id: string): Promise<AxiosResponse<APIResponse<Task>>> =>
@@ -336,8 +336,8 @@ export const tasksApi = {
  */
 export const projectsApi = {
   /** Fetch all projects */
-  getAll: (): Promise<AxiosResponse<APIResponse<Project[]>>> =>
-    get<APIResponse<Project[]>>('/projects'),
+  getAll: (): Promise<AxiosResponse<APIResponse<{ projects: Project[] }>>> =>
+    get<APIResponse<{ projects: Project[] }>>('/projects'),
 
   /** Fetch a single project by ID */
   getById: (id: string): Promise<AxiosResponse<APIResponse<Project>>> =>
