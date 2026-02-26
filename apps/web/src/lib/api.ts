@@ -27,6 +27,14 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
+import type {
+  Task,
+  Project,
+  CreateTaskData,
+  UpdateTaskData,
+  CreateProjectData,
+  UpdateProjectData,
+} from '@validiant/shared';
 
 /**
  * API Configuration with URL Normalization
@@ -254,4 +262,84 @@ export const getErrorMessage = (error: any): string => {
     return error.message;
   }
   return 'An unexpected error occurred';
+};
+
+// ---------------------------------------------------------------------------
+// Tasks API Service
+// ---------------------------------------------------------------------------
+
+/**
+ * tasksApi — CRUD operations for Tasks.
+ *
+ * All methods use the shared Axios instance (withCredentials, interceptors)
+ * and are typed against the shared @validiant/shared Task types.
+ *
+ * Types used:
+ *   Task            — full task entity returned by the API
+ *   CreateTaskData  — payload for creating a new task
+ *   UpdateTaskData  — partial payload for updating an existing task
+ */
+export const tasksApi = {
+  /** Fetch all tasks */
+  getAll: (): Promise<AxiosResponse<APIResponse<Task[]>>> =>
+    get<APIResponse<Task[]>>('/tasks'),
+
+  /** Fetch a single task by ID */
+  getById: (id: string): Promise<AxiosResponse<APIResponse<Task>>> =>
+    get<APIResponse<Task>>(`/tasks/${id}`),
+
+  /** Create a new task */
+  create: (data: CreateTaskData): Promise<AxiosResponse<APIResponse<Task>>> =>
+    post<APIResponse<Task>>('/tasks', data),
+
+  /** Partially update an existing task */
+  update: (
+    id: string,
+    data: Partial<UpdateTaskData>
+  ): Promise<AxiosResponse<APIResponse<Task>>> =>
+    patch<APIResponse<Task>>(`/tasks/${id}`, data),
+
+  /** Delete a task by ID */
+  delete: (id: string): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+    del<APIResponse<{ success: boolean }>>(`/tasks/${id}`),
+};
+
+// ---------------------------------------------------------------------------
+// Projects API Service
+// ---------------------------------------------------------------------------
+
+/**
+ * projectsApi — CRUD operations for Projects.
+ *
+ * Mirrors the structure of tasksApi, pointing to /projects endpoints
+ * and typed against the shared @validiant/shared Project types.
+ *
+ * Types used:
+ *   Project            — full project entity returned by the API
+ *   CreateProjectData  — payload for creating a new project
+ *   UpdateProjectData  — partial payload for updating an existing project
+ */
+export const projectsApi = {
+  /** Fetch all projects */
+  getAll: (): Promise<AxiosResponse<APIResponse<Project[]>>> =>
+    get<APIResponse<Project[]>>('/projects'),
+
+  /** Fetch a single project by ID */
+  getById: (id: string): Promise<AxiosResponse<APIResponse<Project>>> =>
+    get<APIResponse<Project>>(`/projects/${id}`),
+
+  /** Create a new project */
+  create: (data: CreateProjectData): Promise<AxiosResponse<APIResponse<Project>>> =>
+    post<APIResponse<Project>>('/projects', data),
+
+  /** Partially update an existing project */
+  update: (
+    id: string,
+    data: Partial<UpdateProjectData>
+  ): Promise<AxiosResponse<APIResponse<Project>>> =>
+    patch<APIResponse<Project>>(`/projects/${id}`, data),
+
+  /** Delete a project by ID */
+  delete: (id: string): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+    del<APIResponse<{ success: boolean }>>(`/projects/${id}`),
 };
