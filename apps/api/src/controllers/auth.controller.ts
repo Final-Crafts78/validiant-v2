@@ -43,22 +43,34 @@ import {
 import type { User } from '../db/schema';
 
 /**
- * Cookie configuration for secure token storage
+ * Dynamic cookie options factory.
  *
- * sameSite: 'none' — required for cross-domain cookie delivery
- *   (frontend and API on different origins).
- * secure: true    — unconditionally enforced; our environments
- *   (Cloudflare Edge, production) exclusively use HTTPS.
- * maxAge          — default 7-day TTL applied via COOKIE_OPTIONS
- *   spread; individual setCookie calls may override with shorter
- *   values (e.g. ACCESS_TOKEN_MAX_AGE for the access token).
+ * Resolves the correct sameSite and domain policy at request time by
+ * inspecting the FRONTEND_URL environment binding:
+ *
+ * Production (validiant.in):
+ *   - sameSite: 'lax'          — safe for same-site requests; no CSRF risk
+ *   - domain:   '.validiant.in' — shared across www. and api. subdomains
+ *
+ * Development / staging (any other origin):
+ *   - sameSite: 'none'         — cross-domain delivery required
+ *   - domain:   undefined      — host-only, no domain attribute emitted
+ *
+ * secure: true is unconditional — both environments use HTTPS exclusively.
  */
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'none' as const,
-  path: '/',
-  maxAge: 7 * 24 * 60 * 60, // 7 days
+const getCookieOptions = (c: Context, maxAge: number) => {
+  const { FRONTEND_URL } = env<{ FRONTEND_URL?: string }>(c);
+  // Strictly identify if we are on the production validiant.in domain
+  const isProd = FRONTEND_URL && FRONTEND_URL.includes('validiant.in');
+
+  return {
+    httpOnly: true,
+    secure: true,
+    sameSite: isProd ? ('lax' as const) : ('none' as const),
+    domain: isProd ? '.validiant.in' : undefined,
+    path: '/',
+    maxAge,
+  };
 };
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60;          // 15 minutes
@@ -128,8 +140,8 @@ export const register = async (c: Context) => {
     const accessToken = await generateToken({ userId: user.id, email: user.email });
     const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
 
-    setCookie(c, 'accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
-    setCookie(c, 'refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: REFRESH_TOKEN_MAX_AGE });
+    setCookie(c, 'accessToken', accessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
+    setCookie(c, 'refreshToken', refreshToken, getCookieOptions(c, REFRESH_TOKEN_MAX_AGE));
 
     return c.json(
       {
@@ -197,8 +209,8 @@ export const login = async (c: Context) => {
     const accessToken = await generateToken({ userId: user.id, email: user.email });
     const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
 
-    setCookie(c, 'accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
-    setCookie(c, 'refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: REFRESH_TOKEN_MAX_AGE });
+    setCookie(c, 'accessToken', accessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
+    setCookie(c, 'refreshToken', refreshToken, getCookieOptions(c, REFRESH_TOKEN_MAX_AGE));
 
     return c.json({
       success: true,
@@ -262,7 +274,7 @@ export const refresh = async (c: Context) => {
 
     const newAccessToken = await generateToken({ userId: decoded.userId, email: decoded.email });
 
-    setCookie(c, 'accessToken', newAccessToken, { ...COOKIE_OPTIONS, maxAge: ACCESS_TOKEN_MAX_AGE });
+    setCookie(c, 'accessToken', newAccessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
 
     return c.json({
       success: true,
@@ -370,8 +382,8 @@ export const logout = async (c: Context) => {
       }
     }
 
-    deleteCookie(c, 'accessToken', { ...COOKIE_OPTIONS });
-    deleteCookie(c, 'refreshToken', { ...COOKIE_OPTIONS });
+    deleteCookie(c, 'accessToken', getCookieOptions(c, 0));
+    deleteCookie(c, 'refreshToken', getCookieOptions(c, 0));
 
     return c.json({
       success: true,
