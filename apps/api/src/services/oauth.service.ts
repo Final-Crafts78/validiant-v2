@@ -265,7 +265,7 @@ export const initiateGoogleOAuth = async (): Promise<OAuthInitResult> => {
   await storePKCEData(state, codeVerifier);
   
   // Get authorization URL
-  const authUrl = getGoogleAuthUrl(state, codeVerifier);
+  const authUrl = await getGoogleAuthUrl(state, codeVerifier);
   
   return { authUrl, state };
 };
@@ -284,7 +284,7 @@ export const initiateGitHubOAuth = async (): Promise<OAuthInitResult> => {
   const state = uuidv4();
   
   // Get authorization URL
-  const authUrl = getGitHubAuthUrl(state);
+  const authUrl = await getGitHubAuthUrl(state);
   
   return { authUrl, state };
 };
