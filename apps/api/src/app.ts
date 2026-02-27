@@ -36,6 +36,21 @@ import projectRoutes from './routes/project.routes';
 import taskRoutes from './routes/task.routes';
 import { initEnv } from './config/env.config';
 
+// ---------------------------------------------------------------------------
+// Cloudflare Workers Fetch Patch
+// Strips the `cache` field from RequestInit before every fetch call.
+// Required because @upstash/redis internally passes cache: 'no-store' which
+// is not supported by the Cloudflare Workers fetch implementation.
+// ---------------------------------------------------------------------------
+const _nativeFetch = globalThis.fetch;
+globalThis.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+  if (init && 'cache' in init) {
+    const { cache: _cache, ...rest } = init;
+    return _nativeFetch(input, rest);
+  }
+  return _nativeFetch(input, init);
+};
+
 /**
  * Environment variables interface
  */
