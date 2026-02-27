@@ -64,6 +64,7 @@ const accessTokenCookieOptions = {
   sameSite: 'Lax' as const,
   maxAge: 3600, // 1 hour
   path: '/',
+  domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
 };
 
 const refreshTokenCookieOptions = {
@@ -72,8 +73,10 @@ const refreshTokenCookieOptions = {
   sameSite: 'Lax' as const,
   maxAge: 604800, // 7 days
   path: '/',
+  domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
 };
 
+// stateCookieOptions intentionally has NO domain — remains host-only for strict CSRF security
 const stateCookieOptions = {
   httpOnly: true,
   secure: isProduction,
@@ -165,6 +168,7 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       sameSite: 'Lax' as const,
       maxAge: 3600,
       path: '/',
+      domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
     });
     
     logger.info('Google OAuth successful', {
@@ -279,6 +283,7 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       sameSite: 'Lax' as const,
       maxAge: 3600,
       path: '/',
+      domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
     });
     
     logger.info('GitHub OAuth successful', {
