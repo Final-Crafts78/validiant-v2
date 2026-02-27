@@ -114,8 +114,8 @@ const envSchema = z.object({
 /**
  * Validate and parse environment variables (Edge-friendly with dry-run bypass)
  */
-const parseEnv = () => {
-  const result = envSchema.safeParse(process.env);
+const parseEnv = (runtimeEnv?: Record<string, unknown>) => {
+  const result = envSchema.safeParse(runtimeEnv ?? process.env);
   
   if (!result.success) {
     // 🚀 ARCHITECT'S BYPASS FOR CLOUDFLARE EDGE DRY-RUN
@@ -160,7 +160,17 @@ const parseEnv = () => {
 /**
  * Validated environment configuration
  */
-export const env = parseEnv();
+export let env = parseEnv();
+
+/**
+ * Re-initialise env from Cloudflare Worker bindings at request time.
+ * Call this once per request (in the first middleware) so that every
+ * downstream import of `env` sees the real secrets rather than the
+ * dry-run placeholders populated at module-load time.
+ */
+export const initEnv = (bindings: Record<string, unknown>): void => {
+  env = parseEnv(bindings);
+};
 
 /**
  * Helper to check if running in production
