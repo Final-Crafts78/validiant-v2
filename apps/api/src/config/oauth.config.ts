@@ -64,9 +64,10 @@ const getGitHubClient = (): GitHub => {
  * @param codeVerifier - PKCE code verifier
  * @returns Authorization URL with PKCE
  */
-export const getGoogleAuthUrl = (state: string, codeVerifier: string): string => {
+export const getGoogleAuthUrl = async (state: string, codeVerifier: string): Promise<string> => {
   const scopes = ['openid', 'profile', 'email'];
-  return getGoogleClient().createAuthorizationURL(state, codeVerifier, { scopes }).toString();
+  const url = await getGoogleClient().createAuthorizationURL(state, codeVerifier, { scopes });
+  return url.toString();
 };
 
 /**
@@ -75,9 +76,10 @@ export const getGoogleAuthUrl = (state: string, codeVerifier: string): string =>
  * @param state - CSRF protection token
  * @returns Authorization URL
  */
-export const getGitHubAuthUrl = (state: string): string => {
+export const getGitHubAuthUrl = async (state: string): Promise<string> => {
   const scopes = ['user:email', 'read:user'];
-  return getGitHubClient().createAuthorizationURL(state, { scopes }).toString();
+  const url = await getGitHubClient().createAuthorizationURL(state, { scopes });
+  return url.toString();
 };
 
 /**
