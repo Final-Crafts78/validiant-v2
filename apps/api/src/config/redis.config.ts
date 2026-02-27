@@ -9,6 +9,11 @@
  * Environment variables required:
  * - UPSTASH_REDIS_REST_URL: Your Upstash Redis REST URL
  * - UPSTASH_REDIS_REST_TOKEN: Your Upstash Redis REST token
+ * 
+ * Phase 7.3 Enhancement: Lazy initialization to fix Cloudflare cold-start.
+ * The Redis client is constructed on first use — after initEnv() has
+ * populated the real Cloudflare Worker secrets — and is automatically
+ * rebuilt if the URL changes between requests (e.g. env rotation).
  */
 
 import { Redis } from '@upstash/redis';
@@ -16,22 +21,29 @@ import { env } from './env.config';
 import { logger } from '../utils/logger';
 
 /**
- * Edge-compatible Redis client
- * Uses HTTP REST API instead of TCP connections
+ * Module-level singleton — null until first request touches the cache.
  */
-let redis: Redis;
+let _redis: Redis | null = null;
 
-try {
-  redis = new Redis({
-    url: env.UPSTASH_REDIS_REST_URL,
-    token: env.UPSTASH_REDIS_REST_TOKEN,
-  });
+/**
+ * Lazy getter — constructs (or re-constructs) the Upstash Redis client
+ * using the live `env` values that initEnv() has already hydrated for
+ * this request. Rebuilds automatically if the URL ever changes.
+ */
+const getRedis = (): Redis => {
+  const url = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
 
-  logger.info('✅ Upstash Redis client initialized');
-} catch (error) {
-  logger.error('❌ Failed to initialize Upstash Redis client:', error as Error);
-  throw error;
-}
+  if (!url || !token) {
+    throw new Error('Redis credentials not configured');
+  }
+
+  if (!_redis || (_redis as any).config?.url !== url) {
+    _redis = new Redis({ url, token });
+  }
+
+  return _redis;
+};
 
 /**
  * Cache utilities with automatic JSON handling
@@ -44,7 +56,7 @@ export const cache = {
    */
   async get<T = unknown>(key: string): Promise<T | null> {
     try {
-      const value = await redis.get<T>(key);
+      const value = await getRedis().get<T>(key);
       return value;
     } catch (error) {
       logger.error('Cache get error:', { key, error });
@@ -63,9 +75,9 @@ export const cache = {
   async set(key: string, value: unknown, ttl?: number): Promise<void> {
     try {
       if (ttl) {
-        await redis.setex(key, ttl, value);
+        await getRedis().setex(key, ttl, value);
       } else {
-        await redis.set(key, value);
+        await getRedis().set(key, value);
       }
     } catch (error) {
       logger.error('Cache set error:', { key, ttl, error });
@@ -77,7 +89,7 @@ export const cache = {
    */
   async del(key: string): Promise<void> {
     try {
-      await redis.del(key);
+      await getRedis().del(key);
     } catch (error) {
       logger.error('Cache delete error:', { key, error });
     }
@@ -89,9 +101,9 @@ export const cache = {
    */
   async delPattern(pattern: string): Promise<void> {
     try {
-      const keys = await redis.keys(pattern);
+      const keys = await getRedis().keys(pattern);
       if (keys.length > 0) {
-        await redis.del(...keys);
+        await getRedis().del(...keys);
       }
     } catch (error) {
       logger.error('Cache delete pattern error:', { pattern, error });
@@ -103,7 +115,7 @@ export const cache = {
    */
   async exists(key: string): Promise<boolean> {
     try {
-      const result = await redis.exists(key);
+      const result = await getRedis().exists(key);
       return result === 1;
     } catch (error) {
       logger.error('Cache exists error:', { key, error });
@@ -119,7 +131,7 @@ export const cache = {
    */
   async expire(key: string, ttl: number): Promise<void> {
     try {
-      await redis.expire(key, ttl);
+      await getRedis().expire(key, ttl);
     } catch (error) {
       logger.error('Cache expire error:', { key, ttl, error });
     }
@@ -132,7 +144,7 @@ export const cache = {
    */
   async ttl(key: string): Promise<number> {
     try {
-      return await redis.ttl(key);
+      return await getRedis().ttl(key);
     } catch (error) {
       logger.error('Cache TTL error:', { key, error });
       return -2;
@@ -144,7 +156,7 @@ export const cache = {
    */
   async incr(key: string, by: number = 1): Promise<number> {
     try {
-      return await redis.incrby(key, by);
+      return await getRedis().incrby(key, by);
     } catch (error) {
       logger.error('Cache increment error:', { key, error });
       return 0;
@@ -156,7 +168,7 @@ export const cache = {
    */
   async decr(key: string, by: number = 1): Promise<number> {
     try {
-      return await redis.decrby(key, by);
+      return await getRedis().decrby(key, by);
     } catch (error) {
       logger.error('Cache decrement error:', { key, error });
       return 0;
@@ -242,13 +254,13 @@ export const rateLimit = {
   ): Promise<{ allowed: boolean; remaining: number; reset: number }> {
     try {
       const windowSeconds = Math.ceil(windowMs / 1000);
-      const count = await redis.incr(key);
+      const count = await getRedis().incr(key);
 
       if (count === 1) {
-        await redis.expire(key, windowSeconds);
+        await getRedis().expire(key, windowSeconds);
       }
 
-      const ttl = await redis.ttl(key);
+      const ttl = await getRedis().ttl(key);
       const reset = Date.now() + (ttl * 1000);
       const remaining = Math.max(0, max - count);
 
@@ -296,16 +308,19 @@ export const denylist = {
 };
 
 /**
- * Export raw Redis client for advanced operations
+ * Export raw Redis client accessor for advanced operations.
+ * Exported as `redis` to preserve the existing import contract
+ * across the codebase — callers do `redis.someCommand()` as before,
+ * but now the client is built lazily with live credentials.
  */
-export { redis };
+export { getRedis as redis };
 
 /**
  * Utility to test Redis connection
  */
 export const testConnection = async (): Promise<boolean> => {
   try {
-    await redis.ping();
+    await getRedis().ping();
     logger.info('✅ Redis connection test successful');
     return true;
   } catch (error) {
@@ -324,7 +339,7 @@ export const checkRedisHealth = async (): Promise<{
 }> => {
   const start = Date.now();
   try {
-    await redis.ping();
+    await getRedis().ping();
     const latency = Date.now() - start;
     return { status: 'up', latency };
   } catch (error) {
