@@ -29,6 +29,11 @@ let _redis: Redis | null = null;
  * Lazy getter — constructs (or re-constructs) the Upstash Redis client
  * using the live `env` values that initEnv() has already hydrated for
  * this request. Rebuilds automatically if the URL ever changes.
+ *
+ * The custom `fetch` wrapper strips the `cache` property from the
+ * RequestInit object because Cloudflare Workers' native fetch rejects
+ * that field with: "The 'cache' field on 'RequestInitializerDict' is
+ * not implemented."
  */
 const getRedis = (): Redis => {
   const url = env.UPSTASH_REDIS_REST_URL;
@@ -39,7 +44,17 @@ const getRedis = (): Redis => {
   }
 
   if (!_redis || (_redis as any).config?.url !== url) {
-    _redis = new Redis({ url, token });
+    _redis = new Redis({
+      url,
+      token,
+      // Cloudflare Workers fetch doesn't support the 'cache' option
+      fetch: (input, init) => {
+        if (init && 'cache' in init) {
+          delete (init as any).cache;
+        }
+        return fetch(input, init);
+      },
+    });
   }
 
   return _redis;
