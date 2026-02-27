@@ -82,10 +82,8 @@ export default function LoginPage() {
     });
   };
 
-  // Initiate native Google OAuth flow via the Cloudflare backend
   const handleGoogleLogin = () => {
-    // Ensure we route to the native Google OAuth initiation endpoint
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`;
   };
 
   // ---------------------------------------------------------------------------
