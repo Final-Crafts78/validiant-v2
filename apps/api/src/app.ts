@@ -34,6 +34,7 @@ import userRoutes from './routes/user.routes';
 import organizationRoutes from './routes/organization.routes';
 import projectRoutes from './routes/project.routes';
 import taskRoutes from './routes/task.routes';
+import { initEnv } from './config/env.config';
 
 /**
  * Environment variables interface
@@ -77,6 +78,7 @@ export const createHonoApp = () => {
   // Edge Env Injector (Passes Cloudflare secrets to global scope for the DB Proxy)
   app.use('*', async (c, next) => {
     (globalThis as any).__ENV__ = c.env;
+    initEnv(c.env as Record<string, unknown>);
     await next();
   });
 
