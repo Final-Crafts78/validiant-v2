@@ -59,7 +59,7 @@ export const cache = {
       const value = await getRedis().get<T>(key);
       return value;
     } catch (error) {
-      logger.error('Cache get error:', { key, error });
+      logger.error('Cache get error:', { key, error: error instanceof Error ? error.message : String(error) });
       return null;
     }
   },
@@ -80,7 +80,7 @@ export const cache = {
         await getRedis().set(key, value);
       }
     } catch (error) {
-      logger.error('Cache set error:', { key, ttl, error });
+      logger.error('Cache set error:', { key, ttl, error: error instanceof Error ? error.message : String(error) });
     }
   },
 
@@ -91,7 +91,7 @@ export const cache = {
     try {
       await getRedis().del(key);
     } catch (error) {
-      logger.error('Cache delete error:', { key, error });
+      logger.error('Cache delete error:', { key, error: error instanceof Error ? error.message : String(error) });
     }
   },
 
@@ -106,7 +106,7 @@ export const cache = {
         await getRedis().del(...keys);
       }
     } catch (error) {
-      logger.error('Cache delete pattern error:', { pattern, error });
+      logger.error('Cache delete pattern error:', { pattern, error: error instanceof Error ? error.message : String(error) });
     }
   },
 
@@ -118,7 +118,7 @@ export const cache = {
       const result = await getRedis().exists(key);
       return result === 1;
     } catch (error) {
-      logger.error('Cache exists error:', { key, error });
+      logger.error('Cache exists error:', { key, error: error instanceof Error ? error.message : String(error) });
       return false;
     }
   },
