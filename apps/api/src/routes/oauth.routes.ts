@@ -156,8 +156,8 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     );
     
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'access_token', tokens.accessToken, accessTokenCookieOptions);
-    setCookie(c, 'refresh_token', tokens.refreshToken, refreshTokenCookieOptions);
+    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(c, 'refreshToken', tokens.refreshToken, refreshTokenCookieOptions);
     
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
@@ -270,8 +270,8 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
     );
     
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'access_token', tokens.accessToken, accessTokenCookieOptions);
-    setCookie(c, 'refresh_token', tokens.refreshToken, refreshTokenCookieOptions);
+    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(c, 'refreshToken', tokens.refreshToken, refreshTokenCookieOptions);
     
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
