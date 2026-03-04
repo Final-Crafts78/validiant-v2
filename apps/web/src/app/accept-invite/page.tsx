@@ -9,7 +9,7 @@
  * - If logged in → shows org info + Accept button
  */
 
-import { useEffect, useState, useTransition, Suspense } from 'react';
+import { useState, useTransition, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import apiClient from '@/lib/api';

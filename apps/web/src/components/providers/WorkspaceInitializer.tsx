@@ -31,7 +31,9 @@ export function WorkspaceInitializer({ orgs }: WorkspaceInitializerProps) {
     // If no org is selected, or the persisted org no longer exists, auto-select the first
     const orgIds = orgs.map((o) => o.id);
     if (!activeOrgId || !orgIds.includes(activeOrgId)) {
-      setActiveOrg(orgs[0].id);
+      if (orgs.length > 0 && orgs[0]) {
+        setActiveOrg(orgs[0].id);
+      }
     }
   }, [orgs, activeOrgId, setActiveOrg]);
 
