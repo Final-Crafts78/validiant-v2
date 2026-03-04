@@ -1070,3 +1070,273 @@ export const transferOwnership = async (c: Context) => {
     );
   }
 };
+
+// ============================================================================
+// INVITE MANAGEMENT ENDPOINTS (Phase 23)
+// ============================================================================
+
+/**
+ * Create organization invite
+ * POST /api/v1/organizations/:id/invites
+ *
+ * Generates a secure invite token and optionally emails the invite link.
+ */
+export const createInvite = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const orgId = c.req.param('id');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!orgId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Organization ID is required',
+        },
+        400
+      );
+    }
+
+    // Only owner or admin can invite
+    const roleCheck = await checkOrganizationRole(orgId, user.userId, [
+      OrganizationRole.OWNER,
+      OrganizationRole.ADMIN,
+    ]);
+
+    if (!roleCheck.hasPermission) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'Insufficient permissions. Required roles: owner, admin',
+        },
+        403
+      );
+    }
+
+    const { email, role } = await c.req.json();
+
+    if (!email || !role) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'email and role are required',
+        },
+        400
+      );
+    }
+
+    // Generate secure token (48 random bytes → base64url)
+    const tokenBytes = new Uint8Array(48);
+    crypto.getRandomValues(tokenBytes);
+    const token = btoa(String.fromCharCode(...tokenBytes))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    // Insert invite into DB
+    const { db } = await import('../db');
+    const { organizationInvitations } = await import('../db/schema');
+
+    await db.insert(organizationInvitations).values({
+      organizationId: orgId,
+      email,
+      role,
+      token,
+      expiresAt,
+    });
+
+    // Fetch org name for the invite email
+    const org = await organizationService.getOrganizationById(orgId);
+
+    // Build invite URL
+    const appUrl =
+      (c.env as Record<string, string>).APP_URL || 'https://www.validiant.in';
+    const inviteUrl = `${appUrl}/accept-invite?token=${token}`;
+
+    // Attempt to send email (non-blocking — invite still valid even if email fails)
+    try {
+      const { sendEmail } = await import('../services/email.service');
+      await sendEmail(
+        c.env as { RESEND_API_KEY: string; RESEND_FROM_EMAIL?: string },
+        email,
+        `You've been invited to ${org.name} on Validiant`,
+        `<h2>You've been invited!</h2>
+         <p>You've been invited to join <strong>${org.name}</strong> as a <strong>${role}</strong>.</p>
+         <p><a href="${inviteUrl}" style="display:inline-block;padding:12px 24px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">Accept Invitation</a></p>
+         <p style="color:#64748b;font-size:13px;">This invitation expires in 7 days.</p>`
+      );
+    } catch (emailErr) {
+      console.error(
+        '[Invite] Email send failed (invite still valid):',
+        emailErr
+      );
+    }
+
+    return c.json(
+      {
+        success: true,
+        message: 'Invitation created successfully',
+        data: { inviteUrl, token, expiresAt: expiresAt.toISOString() },
+      },
+      201
+    );
+  } catch (error) {
+    console.error('Create invite error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to create invitation',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Accept organization invite
+ * POST /api/v1/organizations/accept-invite
+ *
+ * Validates token, adds user to org, deletes invite record.
+ */
+export const acceptInvite = async (c: Context) => {
+  try {
+    const user = c.get('user');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'You must be logged in to accept an invitation',
+        },
+        401
+      );
+    }
+
+    const { token } = await c.req.json();
+
+    if (!token) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Invite token is required',
+        },
+        400
+      );
+    }
+
+    const { db } = await import('../db');
+    const { organizationInvitations } = await import('../db/schema');
+    const { eq } = await import('drizzle-orm');
+
+    // Look up invite
+    const invites = await db
+      .select()
+      .from(organizationInvitations)
+      .where(eq(organizationInvitations.token, token))
+      .limit(1);
+
+    if (invites.length === 0) {
+      return c.json(
+        {
+          success: false,
+          error: 'Not Found',
+          message: 'Invalid or expired invitation',
+        },
+        404
+      );
+    }
+
+    const invite = invites[0];
+
+    // Check expiry
+    if (new Date() > invite.expiresAt) {
+      // Delete expired invite
+      await db
+        .delete(organizationInvitations)
+        .where(eq(organizationInvitations.id, invite.id));
+
+      return c.json(
+        {
+          success: false,
+          error: 'Gone',
+          message: 'This invitation has expired',
+        },
+        410
+      );
+    }
+
+    // Check if user is already a member
+    const alreadyMember = await organizationService.isMember(
+      invite.organizationId,
+      user.userId
+    );
+
+    if (alreadyMember) {
+      // Delete invite since they're already in
+      await db
+        .delete(organizationInvitations)
+        .where(eq(organizationInvitations.id, invite.id));
+
+      return c.json({
+        success: true,
+        message: 'You are already a member of this organization',
+        data: { organizationId: invite.organizationId, alreadyMember: true },
+      });
+    }
+
+    // Add user to org with the invited role
+    await organizationService.addOrganizationMember(
+      invite.organizationId,
+      user.userId,
+      invite.role as any
+    );
+
+    // Delete the invite record
+    await db
+      .delete(organizationInvitations)
+      .where(eq(organizationInvitations.id, invite.id));
+
+    // Fetch org details for the response
+    const org = await organizationService.getOrganizationById(
+      invite.organizationId
+    );
+
+    return c.json({
+      success: true,
+      message: `You have joined ${org.name} as ${invite.role}`,
+      data: {
+        organizationId: invite.organizationId,
+        organizationName: org.name,
+        role: invite.role,
+      },
+    });
+  } catch (error) {
+    console.error('Accept invite error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to accept invitation',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};

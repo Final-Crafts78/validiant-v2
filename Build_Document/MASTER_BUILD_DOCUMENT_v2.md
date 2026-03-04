@@ -689,8 +689,8 @@ scopes: ['profile', 'email']
 })
 
 // Store state and verifier in secure, httpOnly cookies for the callback
-setCookie(c, 'oauth_state', state, { path: '/', secure: true, httpOnly: true, maxAge: 60 _ 10 })
-setCookie(c, 'oauth_code_verifier', codeVerifier, { path: '/', secure: true, httpOnly: true, maxAge: 60 _ 10 })
+setCookie(c, 'oauth*state', state, { path: '/', secure: true, httpOnly: true, maxAge: 60 * 10 })
+setCookie(c, 'oauth*code_verifier', codeVerifier, { path: '/', secure: true, httpOnly: true, maxAge: 60 * 10 })
 
 return c.redirect(url.toString())
 })
@@ -746,10 +746,10 @@ TypeScript
 setCookie(c, 'refreshToken', tokens.refreshToken, {
 domain: '.validiant.com', // Crucial for cross-subdomain sharing
 path: '/',
-secure: process.env.NODE_ENV === 'production',
+secure: process.env.NODE*ENV === 'production',
 httpOnly: true,
 sameSite: 'lax', // 'lax' is required for OAuth redirects; 'strict' will break the callback
-maxAge: 7 _ 24 _ 60 \* 60,
+maxAge: 7 * 24 \_ 60 \* 60,
 })
 Phase 3 Completion Checklist
 [ ] Google OAuth 2.0 flow initiates, redirects, and successfully handles the callback.
@@ -1581,6 +1581,7 @@ description: 'Manage organizations, projects, and field tasks seamlessly.',
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 return (
+
 <html lang="en" className="dark">
 <body className={`${inter.className} bg-[#0f1117] text-white min-h-screen`}>
 <Providers>
@@ -1704,6 +1705,7 @@ enabled: !!projectId
 if (isLoading) return <LoadingSpinner />
 
 return (
+
 <div className="p-6">
 <div className="flex justify-between items-center mb-6">
 <h1 className="text-2xl font-bold">Tasks</h1>
@@ -1960,6 +1962,7 @@ if (isLoading) return <LoadingSpinner />
 const industry = org?.industryType || 'bgv'
 
 return (
+
 <div className="bg-slate-50 min-h-screen">
 {industry === 'bgv' && <BGVDashboard settings={org.settings} />}
 {industry === 'logistics' && <LogisticsDashboard settings={org.settings} />}
@@ -2449,6 +2452,12 @@ pnpm --filter @validiant/app android   # or ios
 Phase 1  → Phase 2  → Phase 3  → Phase 4  → Phase 5  → Phase 6
    ↓
 Phase 7  → Phase 8  → Phase 9  → Phase 10 → Phase 11
+   ↓
+Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16
+   ↓
+Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
+   ↓
+Phase 22 → Phase 23 → Phase 24 → Phase 25 → Phase 26 → Phase 27 → Phase 28
 
 Phase 5 MUST be before Phase 7
   (PartyKit server must be deployed before web hook consumes it)
@@ -2458,27 +2467,40 @@ Phase 3 MUST be before Phase 4
 
 Phase 11 can begin in PARALLEL with Phase 8
   (mobile and web dashboards are independent after Phase 7)
+
+Phase 22 MUST be before Phase 23
+  (workspace context needed before invite acceptance can set active org)
+
+Phase 26 (Mobile Stitching) requires Phase 22 + Phase 24
+  (workspace store + task engine must exist before mobile wiring)
 ```
 
-| Phase | Title                           | Status          | Key Change                                                     |
-| ----- | ------------------------------- | --------------- | -------------------------------------------------------------- |
-| 1     | Monorepo Foundation & SaaS Arch | ✅ Full rewrite | Next.js 15 App Router, Expo, Hono v4, Multi-tenant             |
-| 2     | Elite SaaS Database Schema      | ✅ Full         | Organizations, Projects, Tasks, Passkeys, Activity Logs        |
-| 3     | Elite Auth System               | ✅ Full         | Google OAuth, FIDO2 Passkeys, Edge JWTs (`jose`)               |
-| 4     | SaaS Management API (RBAC)      | ✅ Updated      | Strict Organization and Project Role-Based Access Control      |
-| 5     | Task Management API & PartyKit  | ✅ Updated      | Join-table assignments, state machine, isolated websockets     |
-| 6     | Analytics, Logs & Edge Cron     | ✅ Updated      | Tenant-scoped aggregation, Resend HTTP, Cloudflare Cron        |
-| 7     | Frontend Routing & Middleware   | ✅ Full rewrite | Edge Middleware protection, Zustand + TanStack Query           |
-| 8 & 9 | Unified RBAC Dashboards         | ✅ Updated      | Dynamic UI based on `useRBAC`, shared SaaS components          |
-| 10    | Edge Rate Limiting              | ✅ Full         | Upstash Redis sliding window limits scoped per route           |
-| 11    | Mobile Application (Expo)       | ✅ Updated      | SaaS Tab Layout, Native GPS sorting, secure store              |
-| 12    | Dynamic Tenant Dashboards       | 🚀 Planned      | Org-specific UI rendering via JSONB settings                   |
-| 13    | Advanced Field Operations       | 🚀 Planned      | Expo Geofencing prompts and Base64 E-Signatures                |
-| 14    | Enterprise Storage & Comms      | 🚀 Planned      | Cloudflare R2 Presigned URLs, `@mentions`, task comments       |
-| 15    | Automations & Webhooks          | 🚀 Planned      | Expo Push Notifications, SLA Alerts, Outgoing Webhooks         |
-| 16    | Edge AI & Ecosystem API         | 🚀 Planned      | Cloudflare Workers AI Summaries, Swagger OpenAPI docs          |
-| 17    | KYC & Didit Integration         | 🚀 Planned      | Free KYC verification, Resend emails, HMAC Webhooks            |
-| 18    | Geocoding & Maps Engine         | 🚀 Planned      | Nominatim tiered fallback, Confidence Scores (0-100), MapLibre |
-| 19    | Billing & Adv. Search           | 🚀 Planned      | Time entries, react-pdf invoices, Postgres `tsvector` search   |
-| 20    | Workspaces & Comms              | 🚀 Planned      | Drag-drop dashboards, PartyKit notifications, Jitsi Video      |
-| 21    | Automations & Ent. Security     | 🚀 Planned      | Zapier-clone rules, R2 automated backups, SAML SSO, i18n       |
+| Phase | Title                           | Status          | Key Change                                                        |
+| ----- | ------------------------------- | --------------- | ----------------------------------------------------------------- |
+| 1     | Monorepo Foundation & SaaS Arch | ✅ Full rewrite | Next.js 15 App Router, Expo, Hono v4, Multi-tenant                |
+| 2     | Elite SaaS Database Schema      | ✅ Full         | Organizations, Projects, Tasks, Passkeys, Activity Logs           |
+| 3     | Elite Auth System               | ✅ Full         | Google OAuth, FIDO2 Passkeys, Edge JWTs (`jose`)                  |
+| 4     | SaaS Management API (RBAC)      | ✅ Updated      | Strict Organization and Project Role-Based Access Control         |
+| 5     | Task Management API & PartyKit  | ✅ Updated      | Join-table assignments, state machine, isolated websockets        |
+| 6     | Analytics, Logs & Edge Cron     | ✅ Updated      | Tenant-scoped aggregation, Resend HTTP, Cloudflare Cron           |
+| 7     | Frontend Routing & Middleware   | ✅ Full rewrite | Edge Middleware protection, Zustand + TanStack Query              |
+| 8 & 9 | Unified RBAC Dashboards         | ✅ Updated      | Dynamic UI based on `useRBAC`, shared SaaS components             |
+| 10    | Edge Rate Limiting              | ✅ Full         | Upstash Redis sliding window limits scoped per route              |
+| 11    | Mobile Application (Expo)       | ✅ Updated      | SaaS Tab Layout, Native GPS sorting, secure store                 |
+| 12    | Dynamic Tenant Dashboards       | 🚀 Planned      | Org-specific UI rendering via JSONB settings                      |
+| 13    | Advanced Field Operations       | 🚀 Planned      | Expo Geofencing prompts and Base64 E-Signatures                   |
+| 14    | Enterprise Storage & Comms      | 🚀 Planned      | Cloudflare R2 Presigned URLs, `@mentions`, task comments          |
+| 15    | Automations & Webhooks          | 🚀 Planned      | Expo Push Notifications, SLA Alerts, Outgoing Webhooks            |
+| 16    | Edge AI & Ecosystem API         | 🚀 Planned      | Cloudflare Workers AI Summaries, Swagger OpenAPI docs             |
+| 17    | KYC & Didit Integration         | 🚀 Planned      | Free KYC verification, Resend emails, HMAC Webhooks               |
+| 18    | Geocoding & Maps Engine         | 🚀 Planned      | Nominatim tiered fallback, Confidence Scores (0-100), MapLibre    |
+| 19    | Billing & Adv. Search           | 🚀 Planned      | Time entries, react-pdf invoices, Postgres `tsvector` search      |
+| 20    | Workspaces & Comms              | 🚀 Planned      | Drag-drop dashboards, PartyKit notifications, Jitsi Video         |
+| 21    | Automations & Ent. Security     | 🚀 Planned      | Zapier-clone rules, R2 automated backups, SAML SSO, i18n          |
+| 22    | Onboarding & Global Context     | ✅ Complete     | Zustand workspace store, OrgSwitcher, ProjectSwitcher, Onboarding |
+| 23    | Invite Acceptance Flow          | ✅ Complete     | Invitations table, token generation, Resend email, Accept UI      |
+| 24    | Task Creation & Slide-Over      | 🚀 Planned      | URL-driven task detail, optimistic updates, bulk upload           |
+| 25    | Profile APIs & Passkeys UI      | 🚀 Planned      | Self-service profile updates, passkey enrollment/revoke UI        |
+| 26    | Mobile Stitching (`apps/app/`)  | 🚀 Deferred     | Expo workspace store replica, offline mutation queue              |
+| 27    | SaaS Polish & Error Boundaries  | 🚀 Planned      | Global ErrorBoundary, branded empty states                        |
+| 28    | Guided Tour (Optional)          | 🚀 Future       | react-joyride 3-step onboarding tour                              |

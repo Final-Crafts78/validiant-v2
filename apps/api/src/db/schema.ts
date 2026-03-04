@@ -239,6 +239,7 @@ export const organizationsRelations = relations(
     }),
     members: many(organizationMembers),
     projects: many(projects),
+    invitations: many(organizationInvitations),
   })
 );
 
@@ -285,6 +286,47 @@ export const organizationMembersRelations = relations(
     user: one(users, {
       fields: [organizationMembers.userId],
       references: [users.id],
+    }),
+  })
+);
+
+// ============================================================================
+// ORGANIZATION INVITATIONS TABLE (Phase 23 - Invite Flow)
+// ============================================================================
+
+export const organizationInvitations = pgTable(
+  'organization_invitations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    email: text('email').notNull(),
+    role: text('role').notNull(), // 'owner' | 'admin' | 'member'
+    token: text('token').notNull().unique(),
+    expiresAt: timestamp('expires_at', {
+      mode: 'date',
+      withTimezone: true,
+    }).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    orgIdx: index('organization_invitations_org_id_idx').on(
+      table.organizationId
+    ),
+    tokenIdx: index('organization_invitations_token_idx').on(table.token),
+    emailIdx: index('organization_invitations_email_idx').on(table.email),
+  })
+);
+
+export const organizationInvitationsRelations = relations(
+  organizationInvitations,
+  ({ one }) => ({
+    organization: one(organizations, {
+      fields: [organizationInvitations.organizationId],
+      references: [organizations.id],
     }),
   })
 );
@@ -846,3 +888,8 @@ export type NewNotification = typeof notifications.$inferInsert;
 
 export type Automation = typeof automations.$inferSelect;
 export type NewAutomation = typeof automations.$inferInsert;
+
+export type OrganizationInvitation =
+  typeof organizationInvitations.$inferSelect;
+export type NewOrganizationInvitation =
+  typeof organizationInvitations.$inferInsert;

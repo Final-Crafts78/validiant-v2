@@ -2,6 +2,7 @@
  * Dashboard Header Component (BFF Pattern)
  *
  * Client component for dashboard navigation with server-side logout.
+ * Phase 22: Added OrgSwitcher and ProjectSwitcher for workspace context.
  */
 
 'use client';
@@ -21,6 +22,8 @@ import {
   LogOut,
 } from 'lucide-react';
 import type { AuthUser } from '@/types/auth.types';
+import { OrgSwitcher } from './OrgSwitcher';
+import { ProjectSwitcher } from './ProjectSwitcher';
 
 /**
  * Navigation item type
@@ -67,12 +70,19 @@ const navItems: NavItem[] = [
  */
 interface DashboardHeaderProps {
   user: AuthUser;
+  orgs?: {
+    id: string;
+    name: string;
+    slug?: string;
+    industry?: string;
+    logoUrl?: string;
+  }[];
 }
 
 /**
  * Dashboard Header Component
  */
-export function DashboardHeader({ user }: DashboardHeaderProps) {
+export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearAuth = useAuthStore((state) => state.clearAuth);
@@ -116,39 +126,49 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center gap-8">
+            {/* Logo + Context Switchers */}
+            <div className="flex items-center gap-4">
               <Link href={ROUTES.DASHBOARD} className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                   <LayoutDashboard className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-gray-900">
+                <span className="text-xl font-bold text-gray-900 hidden lg:inline">
                   Validiant
                 </span>
               </Link>
 
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex items-center gap-1">
-                {navItems.map((item) => {
-                  const isActive = pathname === item.href;
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-primary-50 text-primary-700'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+              {/* Workspace Context Switchers */}
+              {orgs.length > 0 && (
+                <div className="hidden md:flex items-center gap-2">
+                  <span className="text-slate-300">/</span>
+                  <OrgSwitcher />
+                  <span className="text-slate-300">/</span>
+                  <ProjectSwitcher />
+                </div>
+              )}
             </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-primary-50 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
 
             {/* Right Side */}
             <div className="flex items-center gap-4">

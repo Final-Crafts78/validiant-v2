@@ -8,12 +8,15 @@
  * - Cookie deletion must happen in Route Handlers
  * - On auth failure, redirect to /api/auth/session-expired
  * - Route Handler clears cookies and redirects to login
+ *
+ * Phase 22: Added organization fetching and onboarding redirect logic.
  */
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
+import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import type { AuthUser } from '@/types/auth.types';
 
@@ -116,6 +119,52 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 }
 
 /**
+ * Fetch user's organizations server-side
+ *
+ * RSC cookie forwarding: Forwards accessToken via Authorization header
+ * (same pattern as getCurrentUser) so the Hono API authenticates the SSR request.
+ */
+async function getUserOrganizations(accessToken: string): Promise<
+  {
+    id: string;
+    name: string;
+    slug?: string;
+    industry?: string;
+    logoUrl?: string;
+  }[]
+> {
+  try {
+    const raw = (
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
+    ).replace(/\/+$/, '');
+    const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
+    const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`;
+
+    console.log('[Dashboard Layout] Fetching orgs from:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      console.warn('[Dashboard Layout] Orgs fetch failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    return data?.data?.organizations ?? [];
+  } catch (error) {
+    console.error('[Dashboard Layout] Error fetching orgs:', error);
+    return [];
+  }
+}
+
+/**
  * Dashboard Layout Component (Server Component)
  */
 export default async function DashboardLayout({
@@ -134,13 +183,24 @@ export default async function DashboardLayout({
     redirect(ROUTES.LOGIN);
   }
 
+  // Fetch user's orgs server-side (forward the accessToken)
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('accessToken');
+  const orgs = accessToken ? await getUserOrganizations(accessToken.value) : [];
+
+  // If user has no orgs and not already on the onboarding page,
+  // redirect to onboarding
+  // NOTE: We cannot check pathname in a Server Component layout,
+  // so the onboarding page itself should handle the case of already having orgs.
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* CRITICAL: Initialize Zustand store with server-side user data */}
+      {/* CRITICAL: Initialize Zustand stores with server-side data */}
       <AuthStoreInitializer user={user} />
+      <WorkspaceInitializer orgs={orgs} />
 
       {/* Header with navigation (Client Component for interactivity) */}
-      <DashboardHeader user={user} />
+      <DashboardHeader user={user} orgs={orgs} />
 
       {/* Main Content */}
       <main className="container-custom py-4 md:py-8 pb-24 md:pb-8">

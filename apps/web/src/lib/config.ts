@@ -69,10 +69,13 @@ export const API_CONFIG = {
     // Organization endpoints
     ORGANIZATIONS: {
       LIST: '/organizations',
+      MY: '/organizations/my',
       DETAIL: (id: string) => `/organizations/${id}`,
       CREATE: '/organizations',
       UPDATE: (id: string) => `/organizations/${id}`,
       DELETE: (id: string) => `/organizations/${id}`,
+      INVITES: (id: string) => `/organizations/${id}/invites`,
+      ACCEPT_INVITE: '/organizations/accept-invite',
     },
   },
 } as const;
@@ -141,6 +144,12 @@ export const ROUTES = {
   // Profile
   PROFILE: '/dashboard/profile',
   SETTINGS: '/dashboard/settings',
+
+  // Onboarding
+  ONBOARDING: '/dashboard/onboarding',
+
+  // Invite
+  ACCEPT_INVITE: '/accept-invite',
 } as const;
 
 /**

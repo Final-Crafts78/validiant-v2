@@ -18,8 +18,8 @@ var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
+  for (var name2 in all)
+    __defProp(target, name2, { get: all[name2], enumerable: true });
 };
 var __copyProps = (to2, from, except2, desc2) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -40,22 +40,22 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 
 // ../../node_modules/.pnpm/unenv@2.0.0-rc.24/node_modules/unenv/dist/runtime/_internal/utils.mjs
 // @__NO_SIDE_EFFECTS__
-function createNotImplementedError(name) {
-  return new Error(`[unenv] ${name} is not implemented yet!`);
+function createNotImplementedError(name2) {
+  return new Error(`[unenv] ${name2} is not implemented yet!`);
 }
 // @__NO_SIDE_EFFECTS__
-function notImplemented(name) {
+function notImplemented(name2) {
   const fn = /* @__PURE__ */ __name(() => {
-    throw /* @__PURE__ */ createNotImplementedError(name);
+    throw /* @__PURE__ */ createNotImplementedError(name2);
   }, "fn");
   return Object.assign(fn, { __unenv__: true });
 }
 // @__NO_SIDE_EFFECTS__
-function notImplementedClass(name) {
+function notImplementedClass(name2) {
   return class {
     __unenv__ = true;
     constructor() {
-      throw new Error(`[unenv] ${name} is not implemented yet!`);
+      throw new Error(`[unenv] ${name2} is not implemented yet!`);
     }
   };
 }
@@ -113,8 +113,8 @@ var init_performance = __esm({
       entryType = "event";
       name;
       startTime;
-      constructor(name, options) {
-        this.name = name;
+      constructor(name2, options) {
+        this.name = name2;
         this.startTime = options?.startTime || _performanceNow();
         this.detail = options?.detail;
       }
@@ -233,14 +233,14 @@ var init_performance = __esm({
       getEntries() {
         return this._entries;
       }
-      getEntriesByName(name, type) {
-        return this._entries.filter((e) => e.name === name && (!type || e.entryType === type));
+      getEntriesByName(name2, type) {
+        return this._entries.filter((e) => e.name === name2 && (!type || e.entryType === type));
       }
       getEntriesByType(type) {
         return this._entries.filter((e) => e.entryType === type);
       }
-      mark(name, options) {
-        const entry = new PerformanceMark(name, options);
+      mark(name2, options) {
+        const entry = new PerformanceMark(name2, options);
         this._entries.push(entry);
         return entry;
       }
@@ -557,7 +557,7 @@ var init_write_stream = __esm({
       getColorDepth(env4) {
         return 1;
       }
-      hasColors(count3, env4) {
+      hasColors(count4, env4) {
         return false;
       }
       getWindowSize() {
@@ -6774,7 +6774,7 @@ function is(value, type) {
   }
   return false;
 }
-var entityKind;
+var entityKind, hasOwnEntityKind;
 var init_entity = __esm({
   "../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/entity.js"() {
     init_modules_watch_stub();
@@ -6782,6 +6782,7 @@ var init_entity = __esm({
     init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
     init_performance2();
     entityKind = /* @__PURE__ */ Symbol.for("drizzle:entityKind");
+    hasOwnEntityKind = /* @__PURE__ */ Symbol.for("drizzle:hasOwnEntityKind");
     __name(is, "is");
   }
 });
@@ -6935,8 +6936,8 @@ var init_table = __esm({
       /** @internal */
       [ExtraConfigBuilder] = void 0;
       [IsDrizzleTable] = true;
-      constructor(name, schema, baseName) {
-        this[TableName] = this[OriginalName] = name;
+      constructor(name2, schema, baseName) {
+        this[TableName] = this[OriginalName] = name2;
         this[Schema] = schema;
         this[BaseName] = baseName;
       }
@@ -6983,7 +6984,7 @@ var init_tracing = __esm({
     init_tracing_utils();
     init_version();
     tracer = {
-      startActiveSpan(name, fn) {
+      startActiveSpan(name2, fn) {
         if (!otel) {
           return fn();
         }
@@ -6992,7 +6993,7 @@ var init_tracing = __esm({
         }
         return iife(
           (otel2, rawTracer2) => rawTracer2.startActiveSpan(
-            name,
+            name2,
             (span) => {
               try {
                 return fn(span);
@@ -7136,8 +7137,14 @@ function mergeQueries(queries) {
   }
   return result;
 }
+function name(value) {
+  return new Name(value);
+}
 function isDriverValueEncoder(value) {
   return typeof value === "object" && value !== null && "mapToDriverValue" in value && typeof value.mapToDriverValue === "function";
+}
+function param(value, encoder2) {
+  return new Param(value, encoder2);
 }
 function sql(strings, ...params) {
   const queryChunks = [];
@@ -7148,6 +7155,9 @@ function sql(strings, ...params) {
     queryChunks.push(param2, new StringChunk(strings[paramIndex + 1]));
   }
   return new SQL(queryChunks);
+}
+function placeholder(name2) {
+  return new Placeholder(name2);
 }
 function fillPlaceholders(params, values) {
   return params.map((p2) => {
@@ -7371,6 +7381,7 @@ var init_sql = __esm({
         return new SQL([this]);
       }
     };
+    __name(name, "name");
     __name(isDriverValueEncoder, "isDriverValueEncoder");
     noopDecoder = {
       mapFromDriverValue: /* @__PURE__ */ __name((value) => value, "mapFromDriverValue")
@@ -7400,6 +7411,7 @@ var init_sql = __esm({
         return new SQL([this]);
       }
     };
+    __name(param, "param");
     __name(sql, "sql");
     ((sql2) => {
       function empty() {
@@ -7479,6 +7491,7 @@ var init_sql = __esm({
         return new SQL([this]);
       }
     };
+    __name(placeholder, "placeholder");
     __name(fillPlaceholders, "fillPlaceholders");
     View = class {
       static {
@@ -7561,11 +7574,11 @@ function mapResultRow(columns, row, joinsNotNullableMap) {
   return result;
 }
 function orderSelectedFields(fields, pathPrefix) {
-  return Object.entries(fields).reduce((result, [name, field]) => {
-    if (typeof name !== "string") {
+  return Object.entries(fields).reduce((result, [name2, field]) => {
+    if (typeof name2 !== "string") {
       return result;
     }
-    const newPath = pathPrefix ? [...pathPrefix, name] : [name];
+    const newPath = pathPrefix ? [...pathPrefix, name2] : [name2];
     if (is(field, Column) || is(field, SQL) || is(field, SQL.Aliased)) {
       result.push({ path: newPath, field });
     } else if (is(field, Table)) {
@@ -7604,13 +7617,13 @@ function mapUpdateSet(table3, values) {
 }
 function applyMixins(baseClass, extendedClasses) {
   for (const extendedClass of extendedClasses) {
-    for (const name of Object.getOwnPropertyNames(extendedClass.prototype)) {
-      if (name === "constructor")
+    for (const name2 of Object.getOwnPropertyNames(extendedClass.prototype)) {
+      if (name2 === "constructor")
         continue;
       Object.defineProperty(
         baseClass.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(extendedClass.prototype, name) || /* @__PURE__ */ Object.create(null)
+        name2,
+        Object.getOwnPropertyDescriptor(extendedClass.prototype, name2) || /* @__PURE__ */ Object.create(null)
       );
     }
   }
@@ -7714,13 +7727,13 @@ var init_delete = __esm({
         return rest;
       }
       /** @internal */
-      _prepare(name) {
+      _prepare(name2) {
         return tracer.startActiveSpan("drizzle.prepareQuery", () => {
-          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name);
+          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name2);
         });
       }
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       execute = /* @__PURE__ */ __name((placeholderValues) => {
         return tracer.startActiveSpan("drizzle.operation", () => {
@@ -7871,13 +7884,13 @@ var init_insert = __esm({
         return rest;
       }
       /** @internal */
-      _prepare(name) {
+      _prepare(name2) {
         return tracer.startActiveSpan("drizzle.prepareQuery", () => {
-          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name);
+          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name2);
         });
       }
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       execute = /* @__PURE__ */ __name((placeholderValues) => {
         return tracer.startActiveSpan("drizzle.operation", () => {
@@ -7894,6 +7907,9 @@ var init_insert = __esm({
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/alias.js
 function aliasedTable(table3, tableAlias) {
   return new Proxy(table3, new TableAliasProxyHandler(tableAlias, false));
+}
+function aliasedRelation(relation, tableAlias) {
+  return new Proxy(relation, new RelationTableAliasProxyHandler(tableAlias));
 }
 function aliasedTableColumn(column, tableAlias) {
   return new Proxy(
@@ -8008,6 +8024,7 @@ var init_alias = __esm({
       }
     };
     __name(aliasedTable, "aliasedTable");
+    __name(aliasedRelation, "aliasedRelation");
     __name(aliasedTableColumn, "aliasedTableColumn");
     __name(mapColumnsInAliasedSQLToAlias, "mapColumnsInAliasedSQLToAlias");
     __name(mapColumnsInSQLToAlias, "mapColumnsInSQLToAlias");
@@ -8061,9 +8078,9 @@ var init_column_builder = __esm({
       }
       static [entityKind] = "ColumnBuilder";
       config;
-      constructor(name, dataType, columnType) {
+      constructor(name2, dataType, columnType) {
         this.config = {
-          name,
+          name: name2,
           notNull: false,
           default: void 0,
           hasDefault: false,
@@ -8140,14 +8157,14 @@ var init_column_builder = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/table.js
-function pgTableWithSchema(name, columns, extraConfig, schema, baseName = name) {
-  const rawTable = new PgTable(name, schema, baseName);
+function pgTableWithSchema(name2, columns, extraConfig, schema, baseName = name2) {
+  const rawTable = new PgTable(name2, schema, baseName);
   const builtColumns = Object.fromEntries(
-    Object.entries(columns).map(([name2, colBuilderBase]) => {
+    Object.entries(columns).map(([name22, colBuilderBase]) => {
       const colBuilder = colBuilderBase;
       const column = colBuilder.build(rawTable);
       rawTable[InlineForeignKeys].push(...colBuilder.buildForeignKeys(column, rawTable));
-      return [name2, column];
+      return [name22, column];
     })
   );
   const table3 = Object.assign(rawTable, builtColumns);
@@ -8182,8 +8199,8 @@ var init_table2 = __esm({
       [Table.Symbol.ExtraConfigBuilder] = void 0;
     };
     __name(pgTableWithSchema, "pgTableWithSchema");
-    pgTable = /* @__PURE__ */ __name((name, columns, extraConfig) => {
-      return pgTableWithSchema(name, columns, extraConfig, void 0);
+    pgTable = /* @__PURE__ */ __name((name2, columns, extraConfig) => {
+      return pgTableWithSchema(name2, columns, extraConfig, void 0);
     }, "pgTable");
   }
 });
@@ -8211,8 +8228,8 @@ var init_foreign_keys = __esm({
       _onDelete = "no action";
       constructor(config2, actions) {
         this.reference = () => {
-          const { name, columns, foreignColumns } = config2();
-          return { name, columns, foreignTable: foreignColumns[0].table, foreignColumns };
+          const { name: name2, columns, foreignColumns } = config2();
+          return { name: name2, columns, foreignTable: foreignColumns[0].table, foreignColumns };
         };
         if (actions) {
           this._onUpdate = actions.onUpdate;
@@ -8247,7 +8264,7 @@ var init_foreign_keys = __esm({
       onUpdate;
       onDelete;
       getName() {
-        const { name, columns, foreignColumns } = this.reference();
+        const { name: name2, columns, foreignColumns } = this.reference();
         const columnNames = columns.map((column) => column.name);
         const foreignColumnNames = foreignColumns.map((column) => column.name);
         const chunks = [
@@ -8256,15 +8273,15 @@ var init_foreign_keys = __esm({
           foreignColumns[0].table[PgTable.Symbol.Name],
           ...foreignColumnNames
         ];
-        return name ?? `${chunks.join("_")}_fk`;
+        return name2 ?? `${chunks.join("_")}_fk`;
       }
     };
   }
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/unique-constraint.js
-function unique(name) {
-  return new UniqueOnConstraintBuilder(name);
+function unique(name2) {
+  return new UniqueOnConstraintBuilder(name2);
 }
 function uniqueKeyName(table3, columns) {
   return `${table3[PgTable.Symbol.Name]}_${columns.join("_")}_unique`;
@@ -8284,8 +8301,8 @@ var init_unique_constraint = __esm({
       static {
         __name(this, "UniqueConstraintBuilder");
       }
-      constructor(columns, name) {
-        this.name = name;
+      constructor(columns, name2) {
+        this.name = name2;
         this.columns = columns;
       }
       static [entityKind] = "PgUniqueConstraintBuilder";
@@ -8309,8 +8326,8 @@ var init_unique_constraint = __esm({
       static [entityKind] = "PgUniqueOnConstraintBuilder";
       /** @internal */
       name;
-      constructor(name) {
-        this.name = name;
+      constructor(name2) {
+        this.name = name2;
       }
       on(...columns) {
         return new UniqueConstraintBuilder(columns, this.name);
@@ -8320,10 +8337,10 @@ var init_unique_constraint = __esm({
       static {
         __name(this, "UniqueConstraint");
       }
-      constructor(table3, columns, nullsNotDistinct, name) {
+      constructor(table3, columns, nullsNotDistinct, name2) {
         this.table = table3;
         this.columns = columns;
-        this.name = name ?? uniqueKeyName(this.table, this.columns.map((column) => column.name));
+        this.name = name2 ?? uniqueKeyName(this.table, this.columns.map((column) => column.name));
         this.nullsNotDistinct = nullsNotDistinct;
       }
       static [entityKind] = "PgUniqueConstraint";
@@ -8453,9 +8470,9 @@ var init_common = __esm({
         this.foreignKeyConfigs.push({ ref: ref2, actions });
         return this;
       }
-      unique(name, config2) {
+      unique(name2, config2) {
         this.config.isUnique = true;
-        this.config.uniqueName = name;
+        this.config.uniqueName = name2;
         this.config.uniqueType = config2?.nulls;
         return this;
       }
@@ -8500,8 +8517,8 @@ var init_common = __esm({
         __name(this, "PgArrayBuilder");
       }
       static [entityKind] = "PgArrayBuilder";
-      constructor(name, baseBuilder, size) {
-        super(name, "array", "PgArray");
+      constructor(name2, baseBuilder, size) {
+        super(name2, "array", "PgArray");
         this.config.baseBuilder = baseBuilder;
         this.config.size = size;
       }
@@ -8549,11 +8566,11 @@ var init_common = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/bigint.js
-function bigint2(name, config2) {
+function bigint2(name2, config2) {
   if (config2.mode === "number") {
-    return new PgBigInt53Builder(name);
+    return new PgBigInt53Builder(name2);
   }
-  return new PgBigInt64Builder(name);
+  return new PgBigInt64Builder(name2);
 }
 var PgBigInt53Builder, PgBigInt53, PgBigInt64Builder, PgBigInt64;
 var init_bigint = __esm({
@@ -8569,8 +8586,8 @@ var init_bigint = __esm({
         __name(this, "PgBigInt53Builder");
       }
       static [entityKind] = "PgBigInt53Builder";
-      constructor(name) {
-        super(name, "number", "PgBigInt53");
+      constructor(name2) {
+        super(name2, "number", "PgBigInt53");
       }
       /** @internal */
       build(table3) {
@@ -8597,8 +8614,8 @@ var init_bigint = __esm({
         __name(this, "PgBigInt64Builder");
       }
       static [entityKind] = "PgBigInt64Builder";
-      constructor(name) {
-        super(name, "bigint", "PgBigInt64");
+      constructor(name2) {
+        super(name2, "bigint", "PgBigInt64");
       }
       /** @internal */
       build(table3) {
@@ -8640,8 +8657,8 @@ var init_bigserial = __esm({
         __name(this, "PgBigSerial53Builder");
       }
       static [entityKind] = "PgBigSerial53Builder";
-      constructor(name) {
-        super(name, "number", "PgBigSerial53");
+      constructor(name2) {
+        super(name2, "number", "PgBigSerial53");
         this.config.hasDefault = true;
         this.config.notNull = true;
       }
@@ -8673,8 +8690,8 @@ var init_bigserial = __esm({
         __name(this, "PgBigSerial64Builder");
       }
       static [entityKind] = "PgBigSerial64Builder";
-      constructor(name) {
-        super(name, "bigint", "PgBigSerial64");
+      constructor(name2) {
+        super(name2, "bigint", "PgBigSerial64");
         this.config.hasDefault = true;
       }
       /** @internal */
@@ -8702,8 +8719,8 @@ var init_bigserial = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/boolean.js
-function boolean(name) {
-  return new PgBooleanBuilder(name);
+function boolean(name2) {
+  return new PgBooleanBuilder(name2);
 }
 var PgBooleanBuilder, PgBoolean;
 var init_boolean = __esm({
@@ -8719,8 +8736,8 @@ var init_boolean = __esm({
         __name(this, "PgBooleanBuilder");
       }
       static [entityKind] = "PgBooleanBuilder";
-      constructor(name) {
-        super(name, "boolean", "PgBoolean");
+      constructor(name2) {
+        super(name2, "boolean", "PgBoolean");
       }
       /** @internal */
       build(table3) {
@@ -8755,8 +8772,8 @@ var init_char = __esm({
         __name(this, "PgCharBuilder");
       }
       static [entityKind] = "PgCharBuilder";
-      constructor(name, config2) {
-        super(name, "string", "PgChar");
+      constructor(name2, config2) {
+        super(name2, "string", "PgChar");
         this.config.length = config2.length;
         this.config.enumValues = config2.enum;
       }
@@ -8794,8 +8811,8 @@ var init_cidr = __esm({
         __name(this, "PgCidrBuilder");
       }
       static [entityKind] = "PgCidrBuilder";
-      constructor(name) {
-        super(name, "string", "PgCidr");
+      constructor(name2) {
+        super(name2, "string", "PgCidr");
       }
       /** @internal */
       build(table3) {
@@ -8829,8 +8846,8 @@ var init_custom = __esm({
         __name(this, "PgCustomColumnBuilder");
       }
       static [entityKind] = "PgCustomColumnBuilder";
-      constructor(name, fieldConfig, customTypeParams) {
-        super(name, "custom", "PgCustomColumn");
+      constructor(name2, fieldConfig, customTypeParams) {
+        super(name2, "custom", "PgCustomColumn");
         this.config.fieldConfig = fieldConfig;
         this.config.customTypeParams = customTypeParams;
       }
@@ -8908,8 +8925,8 @@ var init_date = __esm({
         __name(this, "PgDateBuilder");
       }
       static [entityKind] = "PgDateBuilder";
-      constructor(name) {
-        super(name, "date", "PgDate");
+      constructor(name2) {
+        super(name2, "date", "PgDate");
       }
       /** @internal */
       build(table3) {
@@ -8936,8 +8953,8 @@ var init_date = __esm({
         __name(this, "PgDateStringBuilder");
       }
       static [entityKind] = "PgDateStringBuilder";
-      constructor(name) {
-        super(name, "string", "PgDateString");
+      constructor(name2) {
+        super(name2, "string", "PgDateString");
       }
       /** @internal */
       build(table3) {
@@ -8974,8 +8991,8 @@ var init_double_precision = __esm({
         __name(this, "PgDoublePrecisionBuilder");
       }
       static [entityKind] = "PgDoublePrecisionBuilder";
-      constructor(name) {
-        super(name, "number", "PgDoublePrecision");
+      constructor(name2) {
+        super(name2, "number", "PgDoublePrecision");
       }
       /** @internal */
       build(table3) {
@@ -9018,8 +9035,8 @@ var init_enum = __esm({
         __name(this, "PgEnumColumnBuilder");
       }
       static [entityKind] = "PgEnumColumnBuilder";
-      constructor(name, enumInstance) {
-        super(name, "string", "PgEnumColumn");
+      constructor(name2, enumInstance) {
+        super(name2, "string", "PgEnumColumn");
         this.config.enum = enumInstance;
       }
       /** @internal */
@@ -9063,8 +9080,8 @@ var init_inet = __esm({
         __name(this, "PgInetBuilder");
       }
       static [entityKind] = "PgInetBuilder";
-      constructor(name) {
-        super(name, "string", "PgInet");
+      constructor(name2) {
+        super(name2, "string", "PgInet");
       }
       /** @internal */
       build(table3) {
@@ -9084,8 +9101,8 @@ var init_inet = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/integer.js
-function integer(name) {
-  return new PgIntegerBuilder(name);
+function integer(name2) {
+  return new PgIntegerBuilder(name2);
 }
 var PgIntegerBuilder, PgInteger;
 var init_integer = __esm({
@@ -9101,8 +9118,8 @@ var init_integer = __esm({
         __name(this, "PgIntegerBuilder");
       }
       static [entityKind] = "PgIntegerBuilder";
-      constructor(name) {
-        super(name, "number", "PgInteger");
+      constructor(name2) {
+        super(name2, "number", "PgInteger");
       }
       /** @internal */
       build(table3) {
@@ -9143,8 +9160,8 @@ var init_interval = __esm({
         __name(this, "PgIntervalBuilder");
       }
       static [entityKind] = "PgIntervalBuilder";
-      constructor(name, intervalConfig) {
-        super(name, "string", "PgInterval");
+      constructor(name2, intervalConfig) {
+        super(name2, "string", "PgInterval");
         this.config.intervalConfig = intervalConfig;
       }
       /** @internal */
@@ -9183,8 +9200,8 @@ var init_json = __esm({
         __name(this, "PgJsonBuilder");
       }
       static [entityKind] = "PgJsonBuilder";
-      constructor(name) {
-        super(name, "json", "PgJson");
+      constructor(name2) {
+        super(name2, "json", "PgJson");
       }
       /** @internal */
       build(table3) {
@@ -9220,8 +9237,8 @@ var init_json = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/jsonb.js
-function jsonb(name) {
-  return new PgJsonbBuilder(name);
+function jsonb(name2) {
+  return new PgJsonbBuilder(name2);
 }
 var PgJsonbBuilder, PgJsonb;
 var init_jsonb = __esm({
@@ -9237,8 +9254,8 @@ var init_jsonb = __esm({
         __name(this, "PgJsonbBuilder");
       }
       static [entityKind] = "PgJsonbBuilder";
-      constructor(name) {
-        super(name, "json", "PgJsonb");
+      constructor(name2) {
+        super(name2, "json", "PgJsonb");
       }
       /** @internal */
       build(table3) {
@@ -9289,8 +9306,8 @@ var init_macaddr = __esm({
         __name(this, "PgMacaddrBuilder");
       }
       static [entityKind] = "PgMacaddrBuilder";
-      constructor(name) {
-        super(name, "string", "PgMacaddr");
+      constructor(name2) {
+        super(name2, "string", "PgMacaddr");
       }
       /** @internal */
       build(table3) {
@@ -9324,8 +9341,8 @@ var init_macaddr8 = __esm({
         __name(this, "PgMacaddr8Builder");
       }
       static [entityKind] = "PgMacaddr8Builder";
-      constructor(name) {
-        super(name, "string", "PgMacaddr8");
+      constructor(name2) {
+        super(name2, "string", "PgMacaddr8");
       }
       /** @internal */
       build(table3) {
@@ -9359,8 +9376,8 @@ var init_numeric = __esm({
         __name(this, "PgNumericBuilder");
       }
       static [entityKind] = "PgNumericBuilder";
-      constructor(name, precision, scale) {
-        super(name, "string", "PgNumeric");
+      constructor(name2, precision, scale) {
+        super(name2, "string", "PgNumeric");
         this.config.precision = precision;
         this.config.scale = scale;
       }
@@ -9395,8 +9412,8 @@ var init_numeric = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/real.js
-function real(name) {
-  return new PgRealBuilder(name);
+function real(name2) {
+  return new PgRealBuilder(name2);
 }
 var PgRealBuilder, PgReal;
 var init_real = __esm({
@@ -9412,8 +9429,8 @@ var init_real = __esm({
         __name(this, "PgRealBuilder");
       }
       static [entityKind] = "PgRealBuilder";
-      constructor(name, length) {
-        super(name, "number", "PgReal");
+      constructor(name2, length) {
+        super(name2, "number", "PgReal");
         this.config.length = length;
       }
       /** @internal */
@@ -9458,8 +9475,8 @@ var init_serial = __esm({
         __name(this, "PgSerialBuilder");
       }
       static [entityKind] = "PgSerialBuilder";
-      constructor(name) {
-        super(name, "number", "PgSerial");
+      constructor(name2) {
+        super(name2, "number", "PgSerial");
         this.config.hasDefault = true;
         this.config.notNull = true;
       }
@@ -9495,8 +9512,8 @@ var init_smallint = __esm({
         __name(this, "PgSmallIntBuilder");
       }
       static [entityKind] = "PgSmallIntBuilder";
-      constructor(name) {
-        super(name, "number", "PgSmallInt");
+      constructor(name2) {
+        super(name2, "number", "PgSmallInt");
       }
       /** @internal */
       build(table3) {
@@ -9536,8 +9553,8 @@ var init_smallserial = __esm({
         __name(this, "PgSmallSerialBuilder");
       }
       static [entityKind] = "PgSmallSerialBuilder";
-      constructor(name) {
-        super(name, "number", "PgSmallSerial");
+      constructor(name2) {
+        super(name2, "number", "PgSmallSerial");
         this.config.hasDefault = true;
         this.config.notNull = true;
       }
@@ -9562,8 +9579,8 @@ var init_smallserial = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/text.js
-function text(name, config2 = {}) {
-  return new PgTextBuilder(name, config2);
+function text(name2, config2 = {}) {
+  return new PgTextBuilder(name2, config2);
 }
 var PgTextBuilder, PgText;
 var init_text = __esm({
@@ -9579,8 +9596,8 @@ var init_text = __esm({
         __name(this, "PgTextBuilder");
       }
       static [entityKind] = "PgTextBuilder";
-      constructor(name, config2) {
-        super(name, "string", "PgText");
+      constructor(name2, config2) {
+        super(name2, "string", "PgText");
         this.config.enumValues = config2.enum;
       }
       /** @internal */
@@ -9617,8 +9634,8 @@ var init_time = __esm({
       static {
         __name(this, "PgTimeBuilder");
       }
-      constructor(name, withTimezone, precision) {
-        super(name, "string", "PgTime");
+      constructor(name2, withTimezone, precision) {
+        super(name2, "string", "PgTime");
         this.withTimezone = withTimezone;
         this.precision = precision;
         this.config.withTimezone = withTimezone;
@@ -9651,11 +9668,11 @@ var init_time = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/timestamp.js
-function timestamp(name, config2 = {}) {
+function timestamp(name2, config2 = {}) {
   if (config2.mode === "string") {
-    return new PgTimestampStringBuilder(name, config2.withTimezone ?? false, config2.precision);
+    return new PgTimestampStringBuilder(name2, config2.withTimezone ?? false, config2.precision);
   }
-  return new PgTimestampBuilder(name, config2.withTimezone ?? false, config2.precision);
+  return new PgTimestampBuilder(name2, config2.withTimezone ?? false, config2.precision);
 }
 var PgTimestampBuilder, PgTimestamp, PgTimestampStringBuilder, PgTimestampString;
 var init_timestamp = __esm({
@@ -9672,8 +9689,8 @@ var init_timestamp = __esm({
         __name(this, "PgTimestampBuilder");
       }
       static [entityKind] = "PgTimestampBuilder";
-      constructor(name, withTimezone, precision) {
-        super(name, "date", "PgTimestamp");
+      constructor(name2, withTimezone, precision) {
+        super(name2, "date", "PgTimestamp");
         this.config.withTimezone = withTimezone;
         this.config.precision = precision;
       }
@@ -9710,8 +9727,8 @@ var init_timestamp = __esm({
         __name(this, "PgTimestampStringBuilder");
       }
       static [entityKind] = "PgTimestampStringBuilder";
-      constructor(name, withTimezone, precision) {
-        super(name, "string", "PgTimestampString");
+      constructor(name2, withTimezone, precision) {
+        super(name2, "string", "PgTimestampString");
         this.config.withTimezone = withTimezone;
         this.config.precision = precision;
       }
@@ -9745,8 +9762,8 @@ var init_timestamp = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/uuid.js
-function uuid(name) {
-  return new PgUUIDBuilder(name);
+function uuid(name2) {
+  return new PgUUIDBuilder(name2);
 }
 var PgUUIDBuilder, PgUUID;
 var init_uuid = __esm({
@@ -9763,8 +9780,8 @@ var init_uuid = __esm({
         __name(this, "PgUUIDBuilder");
       }
       static [entityKind] = "PgUUIDBuilder";
-      constructor(name) {
-        super(name, "string", "PgUUID");
+      constructor(name2) {
+        super(name2, "string", "PgUUID");
       }
       /**
        * Adds `default gen_random_uuid()` to the column definition.
@@ -9791,8 +9808,8 @@ var init_uuid = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/columns/varchar.js
-function varchar(name, config2 = {}) {
-  return new PgVarcharBuilder(name, config2);
+function varchar(name2, config2 = {}) {
+  return new PgVarcharBuilder(name2, config2);
 }
 var PgVarcharBuilder, PgVarchar;
 var init_varchar = __esm({
@@ -9808,8 +9825,8 @@ var init_varchar = __esm({
         __name(this, "PgVarcharBuilder");
       }
       static [entityKind] = "PgVarcharBuilder";
-      constructor(name, config2) {
-        super(name, "string", "PgVarchar");
+      constructor(name2, config2) {
+        super(name2, "string", "PgVarchar");
         this.config.length = config2.length;
         this.config.enumValues = config2.enum;
       }
@@ -9889,9 +9906,9 @@ var init_primary_keys = __esm({
       columns;
       /** @internal */
       name;
-      constructor(columns, name) {
+      constructor(columns, name2) {
         this.columns = columns;
-        this.name = name;
+        this.name = name2;
       }
       /** @internal */
       build(table3) {
@@ -9902,10 +9919,10 @@ var init_primary_keys = __esm({
       static {
         __name(this, "PrimaryKey");
       }
-      constructor(table3, columns, name) {
+      constructor(table3, columns, name2) {
         this.table = table3;
         this.columns = columns;
-        this.name = name;
+        this.name = name2;
       }
       static [entityKind] = "PgPrimaryKey";
       columns;
@@ -9989,17 +10006,17 @@ function exists(subquery) {
 function notExists(subquery) {
   return sql`not exists ${subquery}`;
 }
-function between(column, min, max) {
-  return sql`${column} between ${bindIfParam(min, column)} and ${bindIfParam(
-    max,
+function between(column, min2, max2) {
+  return sql`${column} between ${bindIfParam(min2, column)} and ${bindIfParam(
+    max2,
     column
   )}`;
 }
-function notBetween(column, min, max) {
+function notBetween(column, min2, max2) {
   return sql`${column} not between ${bindIfParam(
-    min,
+    min2,
     column
-  )} and ${bindIfParam(max, column)}`;
+  )} and ${bindIfParam(max2, column)}`;
 }
 function like(column, value) {
   return sql`${column} like ${value}`;
@@ -10012,6 +10029,36 @@ function ilike(column, value) {
 }
 function notIlike(column, value) {
   return sql`${column} not ilike ${value}`;
+}
+function arrayContains(column, values) {
+  if (Array.isArray(values)) {
+    if (values.length === 0) {
+      throw new Error("arrayContains requires at least one value");
+    }
+    const array = sql`${bindIfParam(values, column)}`;
+    return sql`${column} @> ${array}`;
+  }
+  return sql`${column} @> ${bindIfParam(values, column)}`;
+}
+function arrayContained(column, values) {
+  if (Array.isArray(values)) {
+    if (values.length === 0) {
+      throw new Error("arrayContained requires at least one value");
+    }
+    const array = sql`${bindIfParam(values, column)}`;
+    return sql`${column} <@ ${array}`;
+  }
+  return sql`${column} <@ ${bindIfParam(values, column)}`;
+}
+function arrayOverlaps(column, values) {
+  if (Array.isArray(values)) {
+    if (values.length === 0) {
+      throw new Error("arrayOverlaps requires at least one value");
+    }
+    const array = sql`${bindIfParam(values, column)}`;
+    return sql`${column} && ${array}`;
+  }
+  return sql`${column} && ${bindIfParam(values, column)}`;
 }
 var eq, ne, gt2, gte, lt, lte;
 var init_conditions = __esm({
@@ -10058,6 +10105,9 @@ var init_conditions = __esm({
     __name(notLike, "notLike");
     __name(ilike, "ilike");
     __name(notIlike, "notIlike");
+    __name(arrayContains, "arrayContains");
+    __name(arrayContained, "arrayContained");
+    __name(arrayOverlaps, "arrayOverlaps");
   }
 });
 
@@ -10401,12 +10451,47 @@ var init_relations = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/sql/functions/aggregate.js
+function count3(expression) {
+  return sql`count(${expression || sql.raw("*")})`.mapWith(Number);
+}
+function countDistinct(expression) {
+  return sql`count(distinct ${expression})`.mapWith(Number);
+}
+function avg(expression) {
+  return sql`avg(${expression})`.mapWith(String);
+}
+function avgDistinct(expression) {
+  return sql`avg(distinct ${expression})`.mapWith(String);
+}
+function sum(expression) {
+  return sql`sum(${expression})`.mapWith(String);
+}
+function sumDistinct(expression) {
+  return sql`sum(distinct ${expression})`.mapWith(String);
+}
+function max(expression) {
+  return sql`max(${expression})`.mapWith(is(expression, Column) ? expression : String);
+}
+function min(expression) {
+  return sql`min(${expression})`.mapWith(is(expression, Column) ? expression : String);
+}
 var init_aggregate = __esm({
   "../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/sql/functions/aggregate.js"() {
     init_modules_watch_stub();
     init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
     init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
     init_performance2();
+    init_entity();
+    init_sql();
+    init_column();
+    __name(count3, "count");
+    __name(countDistinct, "countDistinct");
+    __name(avg, "avg");
+    __name(avgDistinct, "avgDistinct");
+    __name(sum, "sum");
+    __name(sumDistinct, "sumDistinct");
+    __name(max, "max");
+    __name(min, "min");
   }
 });
 
@@ -10509,8 +10594,8 @@ var init_dialect = __esm({
           }
         });
       }
-      escapeName(name) {
-        return `"${name}"`;
+      escapeName(name2) {
+        return `"${name2}"`;
       }
       escapeParam(num) {
         return `$${num + 1}`;
@@ -12341,14 +12426,14 @@ var init_select2 = __esm({
       }
       static [entityKind] = "PgSelect";
       /** @internal */
-      _prepare(name) {
+      _prepare(name2) {
         const { session: session2, config: config2, dialect, joinsNotNullableMap } = this;
         if (!session2) {
           throw new Error("Cannot execute a query on a query builder. Please use a database instance instead.");
         }
         return tracer.startActiveSpan("drizzle.prepareQuery", () => {
           const fieldsList = orderSelectedFields(config2.fields);
-          const query = session2.prepareQuery(dialect.sqlToQuery(this.getSQL()), fieldsList, name);
+          const query = session2.prepareQuery(dialect.sqlToQuery(this.getSQL()), fieldsList, name2);
           query.joinsNotNullableMap = joinsNotNullableMap;
           return query;
         });
@@ -12360,8 +12445,8 @@ var init_select2 = __esm({
        *
        * {@link https://www.postgresql.org/docs/current/sql-prepare.html | Postgres prepare documentation}
        */
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       execute = /* @__PURE__ */ __name((placeholderValues) => {
         return tracer.startActiveSpan("drizzle.operation", () => {
@@ -12532,13 +12617,13 @@ var init_refresh_materialized_view = __esm({
         return rest;
       }
       /** @internal */
-      _prepare(name) {
+      _prepare(name2) {
         return tracer.startActiveSpan("drizzle.prepareQuery", () => {
-          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), void 0, name);
+          return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), void 0, name2);
         });
       }
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       execute = /* @__PURE__ */ __name((placeholderValues) => {
         return tracer.startActiveSpan("drizzle.operation", () => {
@@ -12654,11 +12739,11 @@ var init_update = __esm({
         return rest;
       }
       /** @internal */
-      _prepare(name) {
-        return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name);
+      _prepare(name2) {
+        return this.session.prepareQuery(this.dialect.sqlToQuery(this.getSQL()), this.config.returning, name2);
       }
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       execute = /* @__PURE__ */ __name((placeholderValues) => {
         return this._prepare().execute(placeholderValues);
@@ -12758,13 +12843,13 @@ var init_query = __esm({
       }
       static [entityKind] = "PgRelationalQuery";
       /** @internal */
-      _prepare(name) {
+      _prepare(name2) {
         return tracer.startActiveSpan("drizzle.prepareQuery", () => {
           const { query, builtQuery } = this._toSQL();
           return this.session.prepareQuery(
             builtQuery,
             void 0,
-            name,
+            name2,
             (rawRows, mapColumnValue) => {
               const rows = rawRows.map(
                 (row) => mapRelationalRow(this.schema, this.tableConfig, row, query.selection, mapColumnValue)
@@ -12777,8 +12862,8 @@ var init_query = __esm({
           );
         });
       }
-      prepare(name) {
-        return this._prepare(name);
+      prepare(name2) {
+        return this._prepare(name2);
       }
       _getQuery() {
         return this.dialect.buildRelationalQueryWithoutPK({
@@ -13155,8 +13240,8 @@ var init_checks = __esm({
       static {
         __name(this, "CheckBuilder");
       }
-      constructor(name, value) {
-        this.name = name;
+      constructor(name2, value) {
+        this.name = name2;
         this.value = value;
       }
       static [entityKind] = "PgCheckBuilder";
@@ -13183,8 +13268,8 @@ var init_checks = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/indexes.js
-function index(name) {
-  return new IndexBuilderOn(false, name);
+function index(name2) {
+  return new IndexBuilderOn(false, name2);
 }
 var IndexBuilderOn, IndexBuilder, Index;
 var init_indexes = __esm({
@@ -13198,9 +13283,9 @@ var init_indexes = __esm({
       static {
         __name(this, "IndexBuilderOn");
       }
-      constructor(unique2, name) {
+      constructor(unique2, name2) {
         this.unique = unique2;
-        this.name = name;
+        this.name = name2;
       }
       static [entityKind] = "PgIndexBuilderOn";
       on(...columns) {
@@ -13217,9 +13302,9 @@ var init_indexes = __esm({
       static [entityKind] = "PgIndexBuilder";
       /** @internal */
       config;
-      constructor(columns, unique2, only, name) {
+      constructor(columns, unique2, only, name2) {
         this.config = {
-          name,
+          name: name2,
           columns,
           unique: unique2,
           only
@@ -13285,17 +13370,17 @@ var init_view_common2 = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/pg-core/view.js
-function pgViewWithSchema(name, selection, schema) {
+function pgViewWithSchema(name2, selection, schema) {
   if (selection) {
-    return new ManualViewBuilder(name, selection, schema);
+    return new ManualViewBuilder(name2, selection, schema);
   }
-  return new ViewBuilder(name, schema);
+  return new ViewBuilder(name2, schema);
 }
-function pgMaterializedViewWithSchema(name, selection, schema) {
+function pgMaterializedViewWithSchema(name2, selection, schema) {
   if (selection) {
-    return new ManualMaterializedViewBuilder(name, selection, schema);
+    return new ManualMaterializedViewBuilder(name2, selection, schema);
   }
-  return new MaterializedViewBuilder(name, schema);
+  return new MaterializedViewBuilder(name2, schema);
 }
 var DefaultViewBuilderCore, ViewBuilder, ManualViewBuilder, MaterializedViewBuilderCore, MaterializedViewBuilder, ManualMaterializedViewBuilder, PgView, PgMaterializedViewConfig, PgMaterializedView;
 var init_view = __esm({
@@ -13315,8 +13400,8 @@ var init_view = __esm({
       static {
         __name(this, "DefaultViewBuilderCore");
       }
-      constructor(name, schema) {
-        this.name = name;
+      constructor(name2, schema) {
+        this.name = name2;
         this.schema = schema;
       }
       static [entityKind] = "PgDefaultViewBuilderCore";
@@ -13362,9 +13447,9 @@ var init_view = __esm({
       }
       static [entityKind] = "PgManualViewBuilder";
       columns;
-      constructor(name, columns, schema) {
-        super(name, schema);
-        this.columns = getTableColumns(pgTable(name, columns));
+      constructor(name2, columns, schema) {
+        super(name2, schema);
+        this.columns = getTableColumns(pgTable(name2, columns));
       }
       existing() {
         return new Proxy(
@@ -13409,8 +13494,8 @@ var init_view = __esm({
       static {
         __name(this, "MaterializedViewBuilderCore");
       }
-      constructor(name, schema) {
-        this.name = name;
+      constructor(name2, schema) {
+        this.name = name2;
         this.schema = schema;
       }
       static [entityKind] = "PgMaterializedViewBuilderCore";
@@ -13473,9 +13558,9 @@ var init_view = __esm({
       }
       static [entityKind] = "PgManualMaterializedViewBuilder";
       columns;
-      constructor(name, columns, schema) {
-        super(name, schema);
-        this.columns = getTableColumns(pgTable(name, columns));
+      constructor(name2, columns, schema) {
+        super(name2, schema);
+        this.columns = getTableColumns(pgTable(name2, columns));
       }
       existing() {
         return new Proxy(
@@ -13572,14 +13657,14 @@ var init_schema = __esm({
         this.schemaName = schemaName;
       }
       static [entityKind] = "PgSchema";
-      table = /* @__PURE__ */ __name((name, columns, extraConfig) => {
-        return pgTableWithSchema(name, columns, extraConfig, this.schemaName);
+      table = /* @__PURE__ */ __name((name2, columns, extraConfig) => {
+        return pgTableWithSchema(name2, columns, extraConfig, this.schemaName);
       }, "table");
-      view = /* @__PURE__ */ __name((name, columns) => {
-        return pgViewWithSchema(name, columns, this.schemaName);
+      view = /* @__PURE__ */ __name((name2, columns) => {
+        return pgViewWithSchema(name2, columns, this.schemaName);
       }, "view");
-      materializedView = /* @__PURE__ */ __name((name, columns) => {
-        return pgMaterializedViewWithSchema(name, columns, this.schemaName);
+      materializedView = /* @__PURE__ */ __name((name2, columns) => {
+        return pgMaterializedViewWithSchema(name2, columns, this.schemaName);
       }, "materializedView");
     };
   }
@@ -13814,7 +13899,7 @@ var init_session2 = __esm({
       }
       static [entityKind] = "NeonHttpSession";
       logger;
-      prepareQuery(query, fields, name, customResultMapper) {
+      prepareQuery(query, fields, name2, customResultMapper) {
         return new NeonHttpPreparedQuery(
           this.client,
           query,
@@ -13971,6 +14056,114 @@ var init_operations = __esm({
 });
 
 // ../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/index.js
+var drizzle_orm_exports = {};
+__export(drizzle_orm_exports, {
+  BaseName: () => BaseName,
+  Column: () => Column,
+  ColumnAliasProxyHandler: () => ColumnAliasProxyHandler,
+  ColumnBuilder: () => ColumnBuilder,
+  Columns: () => Columns,
+  ConsoleLogWriter: () => ConsoleLogWriter,
+  DefaultLogger: () => DefaultLogger,
+  DrizzleError: () => DrizzleError,
+  ExtraConfigBuilder: () => ExtraConfigBuilder,
+  FakePrimitiveParam: () => FakePrimitiveParam,
+  IsAlias: () => IsAlias,
+  Many: () => Many,
+  Name: () => Name,
+  NoopLogger: () => NoopLogger,
+  One: () => One,
+  OriginalName: () => OriginalName,
+  Param: () => Param,
+  Placeholder: () => Placeholder,
+  QueryPromise: () => QueryPromise,
+  Relation: () => Relation,
+  RelationTableAliasProxyHandler: () => RelationTableAliasProxyHandler,
+  Relations: () => Relations,
+  SQL: () => SQL,
+  Schema: () => Schema,
+  StringChunk: () => StringChunk,
+  Subquery: () => Subquery,
+  SubqueryConfig: () => SubqueryConfig,
+  Table: () => Table,
+  TableAliasProxyHandler: () => TableAliasProxyHandler,
+  TableName: () => TableName,
+  TransactionRollbackError: () => TransactionRollbackError,
+  View: () => View,
+  ViewBaseConfig: () => ViewBaseConfig,
+  WithSubquery: () => WithSubquery,
+  aliasedRelation: () => aliasedRelation,
+  aliasedTable: () => aliasedTable,
+  aliasedTableColumn: () => aliasedTableColumn,
+  and: () => and,
+  applyMixins: () => applyMixins,
+  arrayContained: () => arrayContained,
+  arrayContains: () => arrayContains,
+  arrayOverlaps: () => arrayOverlaps,
+  asc: () => asc,
+  avg: () => avg,
+  avgDistinct: () => avgDistinct,
+  between: () => between,
+  bindIfParam: () => bindIfParam,
+  count: () => count3,
+  countDistinct: () => countDistinct,
+  createMany: () => createMany,
+  createOne: () => createOne,
+  createTableRelationsHelpers: () => createTableRelationsHelpers,
+  desc: () => desc,
+  entityKind: () => entityKind,
+  eq: () => eq,
+  exists: () => exists,
+  extractTablesRelationalConfig: () => extractTablesRelationalConfig,
+  fillPlaceholders: () => fillPlaceholders,
+  getOperators: () => getOperators,
+  getOrderByOperators: () => getOrderByOperators,
+  getTableColumns: () => getTableColumns,
+  getTableLikeName: () => getTableLikeName,
+  getTableName: () => getTableName,
+  gt: () => gt2,
+  gte: () => gte,
+  hasOwnEntityKind: () => hasOwnEntityKind,
+  haveSameKeys: () => haveSameKeys,
+  ilike: () => ilike,
+  inArray: () => inArray,
+  is: () => is,
+  isDriverValueEncoder: () => isDriverValueEncoder,
+  isNotNull: () => isNotNull,
+  isNull: () => isNull,
+  isSQLWrapper: () => isSQLWrapper,
+  isTable: () => isTable,
+  like: () => like,
+  lt: () => lt,
+  lte: () => lte,
+  mapColumnsInAliasedSQLToAlias: () => mapColumnsInAliasedSQLToAlias,
+  mapColumnsInSQLToAlias: () => mapColumnsInSQLToAlias,
+  mapRelationalRow: () => mapRelationalRow,
+  mapResultRow: () => mapResultRow,
+  mapUpdateSet: () => mapUpdateSet,
+  max: () => max,
+  min: () => min,
+  name: () => name,
+  ne: () => ne,
+  noopDecoder: () => noopDecoder,
+  noopEncoder: () => noopEncoder,
+  noopMapper: () => noopMapper,
+  normalizeRelation: () => normalizeRelation,
+  not: () => not,
+  notBetween: () => notBetween,
+  notExists: () => notExists,
+  notIlike: () => notIlike,
+  notInArray: () => notInArray,
+  notLike: () => notLike,
+  or: () => or2,
+  orderSelectedFields: () => orderSelectedFields,
+  param: () => param,
+  placeholder: () => placeholder,
+  relations: () => relations,
+  sql: () => sql,
+  sum: () => sum,
+  sumDistinct: () => sumDistinct
+});
 var init_drizzle_orm = __esm({
   "../../node_modules/.pnpm/drizzle-orm@0.29.5_@cloudfl_04dae73ce9fb35be92d75364f54f2ea0/node_modules/drizzle-orm/index.js"() {
     init_modules_watch_stub();
@@ -14003,6 +14196,8 @@ __export(schema_exports, {
   automationsRelations: () => automationsRelations,
   notifications: () => notifications,
   notificationsRelations: () => notificationsRelations,
+  organizationInvitations: () => organizationInvitations,
+  organizationInvitationsRelations: () => organizationInvitationsRelations,
   organizationMembers: () => organizationMembers,
   organizationMembersRelations: () => organizationMembersRelations,
   organizations: () => organizations,
@@ -14026,7 +14221,7 @@ __export(schema_exports, {
   users: () => users,
   usersRelations: () => usersRelations
 });
-var users, usersRelations, passkeyCredentials, passkeyCredentialsRelations, passwordResetTokens, passwordResetTokensRelations, organizations, organizationsRelations, organizationMembers, organizationMembersRelations, projects, projectsRelations, projectMembers, projectMembersRelations, tasks, tasksRelations, taskAssignees, taskAssigneesRelations, taskComments, pushTokens, activityLogs, timeEntries, timeEntriesRelations, notifications, notificationsRelations, automations, automationsRelations;
+var users, usersRelations, passkeyCredentials, passkeyCredentialsRelations, passwordResetTokens, passwordResetTokensRelations, organizations, organizationsRelations, organizationMembers, organizationMembersRelations, organizationInvitations, organizationInvitationsRelations, projects, projectsRelations, projectMembers, projectMembersRelations, tasks, tasksRelations, taskAssignees, taskAssigneesRelations, taskComments, pushTokens, activityLogs, timeEntries, timeEntriesRelations, notifications, notificationsRelations, automations, automationsRelations;
 var init_schema2 = __esm({
   "src/db/schema.ts"() {
     "use strict";
@@ -14202,7 +14397,8 @@ var init_schema2 = __esm({
           relationName: "OrganizationOwner"
         }),
         members: many(organizationMembers),
-        projects: many(projects)
+        projects: many(projects),
+        invitations: many(organizationInvitations)
       })
     );
     organizationMembers = pgTable(
@@ -14238,6 +14434,38 @@ var init_schema2 = __esm({
         user: one(users, {
           fields: [organizationMembers.userId],
           references: [users.id]
+        })
+      })
+    );
+    organizationInvitations = pgTable(
+      "organization_invitations",
+      {
+        id: uuid("id").primaryKey().defaultRandom(),
+        organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+        email: text("email").notNull(),
+        role: text("role").notNull(),
+        // 'owner' | 'admin' | 'member'
+        token: text("token").notNull().unique(),
+        expiresAt: timestamp("expires_at", {
+          mode: "date",
+          withTimezone: true
+        }).notNull(),
+        createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow()
+      },
+      (table3) => ({
+        orgIdx: index("organization_invitations_org_id_idx").on(
+          table3.organizationId
+        ),
+        tokenIdx: index("organization_invitations_token_idx").on(table3.token),
+        emailIdx: index("organization_invitations_email_idx").on(table3.email)
+      })
+    );
+    organizationInvitationsRelations = relations(
+      organizationInvitations,
+      ({ one }) => ({
+        organization: one(organizations, {
+          fields: [organizationInvitations.organizationId],
+          references: [organizations.id]
         })
       })
     );
@@ -16883,6 +17111,52 @@ var require_build = __commonJS({
   }
 });
 
+// src/services/email.service.ts
+var email_service_exports = {};
+__export(email_service_exports, {
+  sendEmail: () => sendEmail
+});
+async function sendEmail(env4, to2, subject, html) {
+  try {
+    if (!env4.RESEND_API_KEY) {
+      console.error("[email] RESEND_API_KEY is not configured");
+      return false;
+    }
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env4.RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: env4.RESEND_FROM_EMAIL || "Validiant <noreply@validiant.com>",
+        to: to2,
+        subject,
+        html
+      })
+    });
+    if (!response.ok) {
+      const error3 = await response.text();
+      console.error("[email] Resend Error:", error3);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[email] Send failed:", err);
+    return false;
+  }
+}
+var init_email_service = __esm({
+  "src/services/email.service.ts"() {
+    "use strict";
+    init_modules_watch_stub();
+    init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+    init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+    init_performance2();
+    __name(sendEmail, "sendEmail");
+  }
+});
+
 // .wrangler/tmp/bundle-7Wvfa7/middleware-loader.entry.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
@@ -17278,15 +17552,15 @@ var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
     if (valueIndex > nextKeyIndex && nextKeyIndex !== -1) {
       valueIndex = -1;
     }
-    let name = url.slice(
+    let name2 = url.slice(
       keyIndex + 1,
       valueIndex === -1 ? nextKeyIndex === -1 ? void 0 : nextKeyIndex : valueIndex
     );
     if (encoded) {
-      name = _decodeURI(name);
+      name2 = _decodeURI(name2);
     }
     keyIndex = nextKeyIndex;
-    if (name === "") {
+    if (name2 === "") {
       continue;
     }
     let value;
@@ -17299,13 +17573,13 @@ var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
       }
     }
     if (multiple) {
-      if (!(results[name] && Array.isArray(results[name]))) {
-        results[name] = [];
+      if (!(results[name2] && Array.isArray(results[name2]))) {
+        results[name2] = [];
       }
       ;
-      results[name].push(value);
+      results[name2].push(value);
     } else {
-      results[name] ??= value;
+      results[name2] ??= value;
     }
   }
   return key ? results[key] : results;
@@ -17366,8 +17640,8 @@ var HonoRequest = class {
   }
   #getDecodedParam(key) {
     const paramKey = this.#matchResult[0][this.routeIndex][1][key];
-    const param = this.#getParamValue(paramKey);
-    return param && /\%/.test(param) ? tryDecodeURIComponent(param) : param;
+    const param2 = this.#getParamValue(paramKey);
+    return param2 && /\%/.test(param2) ? tryDecodeURIComponent(param2) : param2;
   }
   #getAllDecodedParams() {
     const decoded = {};
@@ -17389,9 +17663,9 @@ var HonoRequest = class {
   queries(key) {
     return getQueryParams(this.url, key);
   }
-  header(name) {
-    if (name) {
-      return this.raw.headers.get(name) ?? void 0;
+  header(name2) {
+    if (name2) {
+      return this.raw.headers.get(name2) ?? void 0;
     }
     const headerData = {};
     this.raw.headers.forEach((value, key) => {
@@ -17841,17 +18115,17 @@ var Context = class {
    * })
    * ```
    */
-  header = /* @__PURE__ */ __name((name, value, options) => {
+  header = /* @__PURE__ */ __name((name2, value, options) => {
     if (this.finalized) {
       this.#res = new Response(this.#res.body, this.#res);
     }
     const headers = this.#res ? this.#res.headers : this.#preparedHeaders ??= new Headers();
     if (value === void 0) {
-      headers.delete(name);
+      headers.delete(name2);
     } else if (options?.append) {
-      headers.append(name, value);
+      headers.append(name2, value);
     } else {
-      headers.set(name, value);
+      headers.set(name2, value);
     }
   }, "header");
   status = /* @__PURE__ */ __name((status) => {
@@ -18528,9 +18802,9 @@ var Node = class _Node {
     const pattern = token === "*" ? restTokens.length === 0 ? ["", "", ONLY_WILDCARD_REG_EXP_STR] : ["", "", LABEL_REG_EXP_STR] : token === "/*" ? ["", "", TAIL_WILDCARD_REG_EXP_STR] : token.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
     let node;
     if (pattern) {
-      const name = pattern[1];
+      const name2 = pattern[1];
       let regexpStr = pattern[2] || LABEL_REG_EXP_STR;
-      if (name && pattern[2]) {
+      if (name2 && pattern[2]) {
         if (regexpStr === ".*") {
           throw PATH_ERROR;
         }
@@ -18550,12 +18824,12 @@ var Node = class _Node {
           return;
         }
         node = this.#children[regexpStr] = new _Node();
-        if (name !== "") {
+        if (name2 !== "") {
           node.#varIndex = context2.varIndex++;
         }
       }
-      if (!pathErrorCheckOnly && name !== "") {
-        paramMap.push([name, node.#varIndex]);
+      if (!pathErrorCheckOnly && name2 !== "") {
+        paramMap.push([name2, node.#varIndex]);
       }
     } else {
       node = this.#children[token];
@@ -19045,7 +19319,7 @@ var Node2 = class _Node2 {
             }
             continue;
           }
-          const [key, name, matcher] = pattern;
+          const [key, name2, matcher] = pattern;
           if (!part && !(matcher instanceof RegExp)) {
             continue;
           }
@@ -19054,7 +19328,7 @@ var Node2 = class _Node2 {
           if (matcher instanceof RegExp) {
             const m2 = matcher.exec(restPathString);
             if (m2) {
-              params[name] = m2[0];
+              params[name2] = m2[0];
               handlerSets.push(...this.#getHandlerSets(child, method, node.#params, params));
               if (Object.keys(child.#children).length) {
                 child.#params = params;
@@ -19066,7 +19340,7 @@ var Node2 = class _Node2 {
             }
           }
           if (matcher === true || matcher.test(part)) {
-            params[name] = part;
+            params[name2] = part;
             if (isLast) {
               handlerSets.push(...this.#getHandlerSets(child, method, params, node.#params));
               if (child.#children["*"]) {
@@ -19355,8 +19629,8 @@ init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 var validCookieNameRegEx = /^[\w!#$%&'*.^`|~+-]+$/;
 var validCookieValueRegEx = /^[ !#-:<-[\]-~]*$/;
-var parse = /* @__PURE__ */ __name((cookie, name) => {
-  if (name && cookie.indexOf(name) === -1) {
+var parse = /* @__PURE__ */ __name((cookie, name2) => {
+  if (name2 && cookie.indexOf(name2) === -1) {
     return {};
   }
   const pairs = cookie.trim().split(";");
@@ -19368,7 +19642,7 @@ var parse = /* @__PURE__ */ __name((cookie, name) => {
       continue;
     }
     const cookieName = pairStr.substring(0, valueStartPos).trim();
-    if (name && name !== cookieName || !validCookieNameRegEx.test(cookieName)) {
+    if (name2 && name2 !== cookieName || !validCookieNameRegEx.test(cookieName)) {
       continue;
     }
     let cookieValue = pairStr.substring(valueStartPos + 1).trim();
@@ -19377,19 +19651,19 @@ var parse = /* @__PURE__ */ __name((cookie, name) => {
     }
     if (validCookieValueRegEx.test(cookieValue)) {
       parsedCookie[cookieName] = cookieValue.indexOf("%") !== -1 ? tryDecode(cookieValue, decodeURIComponent_) : cookieValue;
-      if (name) {
+      if (name2) {
         break;
       }
     }
   }
   return parsedCookie;
 }, "parse");
-var _serialize = /* @__PURE__ */ __name((name, value, opt = {}) => {
-  let cookie = `${name}=${value}`;
-  if (name.startsWith("__Secure-") && !opt.secure) {
+var _serialize = /* @__PURE__ */ __name((name2, value, opt = {}) => {
+  let cookie = `${name2}=${value}`;
+  if (name2.startsWith("__Secure-") && !opt.secure) {
     throw new Error("__Secure- Cookie must have Secure attributes");
   }
-  if (name.startsWith("__Host-")) {
+  if (name2.startsWith("__Host-")) {
     if (!opt.secure) {
       throw new Error("__Host- Cookie must have Secure attributes");
     }
@@ -19442,9 +19716,9 @@ var _serialize = /* @__PURE__ */ __name((name, value, opt = {}) => {
   }
   return cookie;
 }, "_serialize");
-var serialize = /* @__PURE__ */ __name((name, value, opt) => {
+var serialize = /* @__PURE__ */ __name((name2, value, opt) => {
   value = encodeURIComponent(value);
-  return _serialize(name, value, opt);
+  return _serialize(name2, value, opt);
 }, "serialize");
 
 // ../../node_modules/.pnpm/hono@4.11.9/node_modules/hono/dist/helper/cookie/index.js
@@ -19469,29 +19743,29 @@ var getCookie = /* @__PURE__ */ __name((c, key, prefix) => {
   const obj = parse(cookie);
   return obj;
 }, "getCookie");
-var generateCookie = /* @__PURE__ */ __name((name, value, opt) => {
+var generateCookie = /* @__PURE__ */ __name((name2, value, opt) => {
   let cookie;
   if (opt?.prefix === "secure") {
-    cookie = serialize("__Secure-" + name, value, { path: "/", ...opt, secure: true });
+    cookie = serialize("__Secure-" + name2, value, { path: "/", ...opt, secure: true });
   } else if (opt?.prefix === "host") {
-    cookie = serialize("__Host-" + name, value, {
+    cookie = serialize("__Host-" + name2, value, {
       ...opt,
       path: "/",
       secure: true,
       domain: void 0
     });
   } else {
-    cookie = serialize(name, value, { path: "/", ...opt });
+    cookie = serialize(name2, value, { path: "/", ...opt });
   }
   return cookie;
 }, "generateCookie");
-var setCookie = /* @__PURE__ */ __name((c, name, value, opt) => {
-  const cookie = generateCookie(name, value, opt);
+var setCookie = /* @__PURE__ */ __name((c, name2, value, opt) => {
+  const cookie = generateCookie(name2, value, opt);
   c.header("Set-Cookie", cookie, { append: true });
 }, "setCookie");
-var deleteCookie = /* @__PURE__ */ __name((c, name, opt) => {
-  const deletedCookie = getCookie(c, name, opt?.prefix);
-  setCookie(c, name, "", { ...opt, maxAge: 0 });
+var deleteCookie = /* @__PURE__ */ __name((c, name2, opt) => {
+  const deletedCookie = getCookie(c, name2, opt?.prefix);
+  setCookie(c, name2, "", { ...opt, maxAge: 0 });
   return deletedCookie;
 }, "deleteCookie");
 
@@ -21231,24 +21505,24 @@ var ZodString = class _ZodString extends ZodType {
     return !!this._def.checks.find((ch) => ch.kind === "base64url");
   }
   get minLength() {
-    let min = null;
+    let min2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
+        if (min2 === null || ch.value > min2)
+          min2 = ch.value;
       }
     }
-    return min;
+    return min2;
   }
   get maxLength() {
-    let max = null;
+    let max2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
+        if (max2 === null || ch.value < max2)
+          max2 = ch.value;
       }
     }
-    return max;
+    return max2;
   }
 };
 ZodString.create = (params) => {
@@ -21456,43 +21730,43 @@ var ZodNumber = class _ZodNumber extends ZodType {
     });
   }
   get minValue() {
-    let min = null;
+    let min2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
+        if (min2 === null || ch.value > min2)
+          min2 = ch.value;
       }
     }
-    return min;
+    return min2;
   }
   get maxValue() {
-    let max = null;
+    let max2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
+        if (max2 === null || ch.value < max2)
+          max2 = ch.value;
       }
     }
-    return max;
+    return max2;
   }
   get isInt() {
     return !!this._def.checks.find((ch) => ch.kind === "int" || ch.kind === "multipleOf" && util.isInteger(ch.value));
   }
   get isFinite() {
-    let max = null;
-    let min = null;
+    let max2 = null;
+    let min2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "finite" || ch.kind === "int" || ch.kind === "multipleOf") {
         return true;
       } else if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
+        if (min2 === null || ch.value > min2)
+          min2 = ch.value;
       } else if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
+        if (max2 === null || ch.value < max2)
+          max2 = ch.value;
       }
     }
-    return Number.isFinite(min) && Number.isFinite(max);
+    return Number.isFinite(min2) && Number.isFinite(max2);
   }
 };
 ZodNumber.create = (params) => {
@@ -21650,24 +21924,24 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
     });
   }
   get minValue() {
-    let min = null;
+    let min2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
+        if (min2 === null || ch.value > min2)
+          min2 = ch.value;
       }
     }
-    return min;
+    return min2;
   }
   get maxValue() {
-    let max = null;
+    let max2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
+        if (max2 === null || ch.value < max2)
+          max2 = ch.value;
       }
     }
-    return max;
+    return max2;
   }
 };
 ZodBigInt.create = (params) => {
@@ -21790,24 +22064,24 @@ var ZodDate = class _ZodDate extends ZodType {
     });
   }
   get minDate() {
-    let min = null;
+    let min2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min === null || ch.value > min)
-          min = ch.value;
+        if (min2 === null || ch.value > min2)
+          min2 = ch.value;
       }
     }
-    return min != null ? new Date(min) : null;
+    return min2 != null ? new Date(min2) : null;
   }
   get maxDate() {
-    let max = null;
+    let max2 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "max") {
-        if (max === null || ch.value < max)
-          max = ch.value;
+        if (max2 === null || ch.value < max2)
+          max2 = ch.value;
       }
     }
-    return max != null ? new Date(max) : null;
+    return max2 != null ? new Date(max2) : null;
   }
 };
 ZodDate.create = (params) => {
@@ -25766,12 +26040,12 @@ init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
-function unusable(name, prop = "algorithm.name") {
-  return new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name}`);
+function unusable(name2, prop = "algorithm.name") {
+  return new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name2}`);
 }
 __name(unusable, "unusable");
-function isAlgorithm(algorithm, name) {
-  return algorithm.name === name;
+function isAlgorithm(algorithm, name2) {
+  return algorithm.name === name2;
 }
 __name(isAlgorithm, "isAlgorithm");
 function getHashLength(hash) {
@@ -26730,8 +27004,8 @@ var jwt_claims_set_default = /* @__PURE__ */ __name((protectedHeader, encodedPay
   }
   if (maxTokenAge) {
     const age = now - payload.iat;
-    const max = typeof maxTokenAge === "number" ? maxTokenAge : secs_default(maxTokenAge);
-    if (age - tolerance > max) {
+    const max2 = typeof maxTokenAge === "number" ? maxTokenAge : secs_default(maxTokenAge);
+    if (age - tolerance > max2) {
       throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', payload, "iat", "check_failed");
     }
     if (age < 0 - tolerance) {
@@ -27181,8 +27455,8 @@ var subtle = webCrypto.subtle;
 // ../../node_modules/.pnpm/@upstash+redis@1.36.2/node_modules/@upstash/redis/chunk-Q3SWX4BB.mjs
 var __defProp2 = Object.defineProperty;
 var __export2 = /* @__PURE__ */ __name((target, all) => {
-  for (var name in all)
-    __defProp2(target, name, { get: all[name], enumerable: true });
+  for (var name2 in all)
+    __defProp2(target, name2, { get: all[name2], enumerable: true });
 }, "__export");
 var error_exports = {};
 __export2(error_exports, {
@@ -28830,8 +29104,8 @@ var LmPopCommand = class extends Command {
     __name(this, "LmPopCommand");
   }
   constructor(cmd, opts) {
-    const [numkeys, keys, direction, count3] = cmd;
-    super(["LMPOP", numkeys, ...keys, direction, ...count3 ? ["COUNT", count3] : []], opts);
+    const [numkeys, keys, direction, count4] = cmd;
+    super(["LMPOP", numkeys, ...keys, direction, ...count4 ? ["COUNT", count4] : []], opts);
   }
 };
 var LPopCommand = class extends Command {
@@ -29268,10 +29542,10 @@ var SPopCommand = class extends Command {
   static {
     __name(this, "SPopCommand");
   }
-  constructor([key, count3], opts) {
+  constructor([key, count4], opts) {
     const command = ["spop", key];
-    if (typeof count3 === "number") {
-      command.push(count3);
+    if (typeof count4 === "number") {
+      command.push(count4);
     }
     super(command, opts);
   }
@@ -29280,10 +29554,10 @@ var SRandMemberCommand = class extends Command {
   static {
     __name(this, "SRandMemberCommand");
   }
-  constructor([key, count3], opts) {
+  constructor([key, count4], opts) {
     const command = ["srandmember", key];
-    if (typeof count3 === "number") {
-      command.push(count3);
+    if (typeof count4 === "number") {
+      command.push(count4);
     }
     super(command, opts);
   }
@@ -29558,7 +29832,7 @@ var XPendingCommand = class extends Command {
   static {
     __name(this, "XPendingCommand");
   }
-  constructor([key, group3, start, end, count3, options], opts) {
+  constructor([key, group3, start, end, count4, options], opts) {
     const consumers = options?.consumer === void 0 ? [] : Array.isArray(options.consumer) ? [...options.consumer] : [options.consumer];
     super(
       [
@@ -29568,7 +29842,7 @@ var XPendingCommand = class extends Command {
         ...options?.idleTime ? ["IDLE", options.idleTime] : [],
         start,
         end,
-        count3,
+        count4,
         ...consumers
       ],
       opts
@@ -29602,10 +29876,10 @@ var XRangeCommand = class extends Command {
   static {
     __name(this, "XRangeCommand");
   }
-  constructor([key, start, end, count3], opts) {
+  constructor([key, start, end, count4], opts) {
     const command = ["XRANGE", key, start, end];
-    if (typeof count3 === "number") {
-      command.push("COUNT", count3);
+    if (typeof count4 === "number") {
+      command.push("COUNT", count4);
     }
     super(command, {
       deserialize: /* @__PURE__ */ __name((result) => deserialize6(result), "deserialize"),
@@ -29668,10 +29942,10 @@ var XRevRangeCommand = class extends Command {
   static {
     __name(this, "XRevRangeCommand");
   }
-  constructor([key, end, start, count3], opts) {
+  constructor([key, end, start, count4], opts) {
     const command = ["XREVRANGE", key, end, start];
-    if (typeof count3 === "number") {
-      command.push("COUNT", count3);
+    if (typeof count4 === "number") {
+      command.push("COUNT", count4);
     }
     super(command, {
       deserialize: /* @__PURE__ */ __name((result) => deserialize7(result), "deserialize"),
@@ -29800,10 +30074,10 @@ var ZPopMaxCommand = class extends Command {
   static {
     __name(this, "ZPopMaxCommand");
   }
-  constructor([key, count3], opts) {
+  constructor([key, count4], opts) {
     const command = ["zpopmax", key];
-    if (typeof count3 === "number") {
-      command.push(count3);
+    if (typeof count4 === "number") {
+      command.push(count4);
     }
     super(command, opts);
   }
@@ -29812,10 +30086,10 @@ var ZPopMinCommand = class extends Command {
   static {
     __name(this, "ZPopMinCommand");
   }
-  constructor([key, count3], opts) {
+  constructor([key, count4], opts) {
     const command = ["zpopmin", key];
-    if (typeof count3 === "number") {
-      command.push(count3);
+    if (typeof count4 === "number") {
+      command.push(count4);
     }
     super(command, opts);
   }
@@ -29824,8 +30098,8 @@ var ZRangeCommand = class extends Command {
   static {
     __name(this, "ZRangeCommand");
   }
-  constructor([key, min, max, opts], cmdOpts) {
-    const command = ["zrange", key, min, max];
+  constructor([key, min2, max2, opts], cmdOpts) {
+    const command = ["zrange", key, min2, max2];
     if (opts?.byScore) {
       command.push("byscore");
     }
@@ -30288,7 +30562,7 @@ var Pipeline = class {
   /**
    * @see https://redis.io/commands/hrandfield
    */
-  hrandfield = /* @__PURE__ */ __name((key, count3, withValues) => this.chain(new HRandFieldCommand([key, count3, withValues], this.commandOptions)), "hrandfield");
+  hrandfield = /* @__PURE__ */ __name((key, count4, withValues) => this.chain(new HRandFieldCommand([key, count4, withValues], this.commandOptions)), "hrandfield");
   /**
    * @see https://redis.io/commands/hscan
    */
@@ -30372,7 +30646,7 @@ var Pipeline = class {
   /**
    * @see https://redis.io/commands/lrem
    */
-  lrem = /* @__PURE__ */ __name((key, count3, value) => this.chain(new LRemCommand([key, count3, value], this.commandOptions)), "lrem");
+  lrem = /* @__PURE__ */ __name((key, count4, value) => this.chain(new LRemCommand([key, count4, value], this.commandOptions)), "lrem");
   /**
    * @see https://redis.io/commands/lset
    */
@@ -31076,8 +31350,8 @@ var Subscriber = class extends EventTarget {
         const messageStr = messageData.slice(secondCommaIndex + 1);
         try {
           if (type === "subscribe" || type === "psubscribe" || type === "unsubscribe" || type === "punsubscribe") {
-            const count3 = Number.parseInt(messageStr);
-            this.dispatchToListeners(type, count3);
+            const count4 = Number.parseInt(messageStr);
+            this.dispatchToListeners(type, count4);
           } else {
             const message2 = this.opts?.automaticDeserialization === false ? messageStr : parseWithTryCatch(messageStr);
             this.dispatchToListeners(type, { channel: channel2, message: message2 });
@@ -31771,7 +32045,7 @@ var Redis = class {
   /**
    * @see https://redis.io/commands/hrandfield
    */
-  hrandfield = /* @__PURE__ */ __name((key, count3, withValues) => new HRandFieldCommand([key, count3, withValues], this.opts).exec(this.client), "hrandfield");
+  hrandfield = /* @__PURE__ */ __name((key, count4, withValues) => new HRandFieldCommand([key, count4, withValues], this.opts).exec(this.client), "hrandfield");
   /**
    * @see https://redis.io/commands/hscan
    */
@@ -31855,7 +32129,7 @@ var Redis = class {
   /**
    * @see https://redis.io/commands/lrem
    */
-  lrem = /* @__PURE__ */ __name((key, count3, value) => new LRemCommand([key, count3, value], this.opts).exec(this.client), "lrem");
+  lrem = /* @__PURE__ */ __name((key, count4, value) => new LRemCommand([key, count4, value], this.opts).exec(this.client), "lrem");
   /**
    * @see https://redis.io/commands/lset
    */
@@ -34267,9 +34541,9 @@ var ConflictError = class _ConflictError extends ApiError {
     Object.setPrototypeOf(this, _ConflictError.prototype);
   }
 };
-function assertExists(value, name) {
+function assertExists(value, name2) {
   if (!value) {
-    throw new NotFoundError(`${name} not found`);
+    throw new NotFoundError(`${name2} not found`);
   }
 }
 __name(assertExists, "assertExists");
@@ -35793,17 +36067,17 @@ var LocalIdentificationBlock = class extends HexBlock(LocalBaseBlock) {
       this.tagNumber = tagNumberMask;
       this.blockLength = 1;
     } else {
-      let count3 = 1;
+      let count4 = 1;
       let intTagNumberBuffer = this.valueHexView = new Uint8Array(255);
       let tagNumberBufferMaxLength = 255;
-      while (intBuffer[count3] & 128) {
-        intTagNumberBuffer[count3 - 1] = intBuffer[count3] & 127;
-        count3++;
-        if (count3 >= intBuffer.length) {
+      while (intBuffer[count4] & 128) {
+        intTagNumberBuffer[count4 - 1] = intBuffer[count4] & 127;
+        count4++;
+        if (count4 >= intBuffer.length) {
           this.error = "End of input reached before message was fully decoded";
           return -1;
         }
-        if (count3 === tagNumberBufferMaxLength) {
+        if (count4 === tagNumberBufferMaxLength) {
           tagNumberBufferMaxLength += 255;
           const tempBufferView2 = new Uint8Array(tagNumberBufferMaxLength);
           for (let i = 0; i < intTagNumberBuffer.length; i++)
@@ -35811,12 +36085,12 @@ var LocalIdentificationBlock = class extends HexBlock(LocalBaseBlock) {
           intTagNumberBuffer = this.valueHexView = new Uint8Array(tagNumberBufferMaxLength);
         }
       }
-      this.blockLength = count3 + 1;
-      intTagNumberBuffer[count3 - 1] = intBuffer[count3] & 127;
-      const tempBufferView = new Uint8Array(count3);
-      for (let i = 0; i < count3; i++)
+      this.blockLength = count4 + 1;
+      intTagNumberBuffer[count4 - 1] = intBuffer[count4] & 127;
+      const tempBufferView = new Uint8Array(count4);
+      for (let i = 0; i < count4; i++)
         tempBufferView[i] = intTagNumberBuffer[i];
-      intTagNumberBuffer = this.valueHexView = new Uint8Array(count3);
+      intTagNumberBuffer = this.valueHexView = new Uint8Array(count4);
       intTagNumberBuffer.set(tempBufferView);
       if (this.blockLength <= 9)
         this.tagNumber = utilFromBase(intTagNumberBuffer, 7);
@@ -35892,23 +36166,23 @@ var LocalLengthBlock = class extends LocalBaseBlock {
       this.blockLength = 1;
       return inputOffset + this.blockLength;
     }
-    const count3 = intBuffer[0] & 127;
-    if (count3 > 8) {
+    const count4 = intBuffer[0] & 127;
+    if (count4 > 8) {
       this.error = "Too big integer";
       return -1;
     }
-    if (count3 + 1 > intBuffer.length) {
+    if (count4 + 1 > intBuffer.length) {
       this.error = "End of input reached before message was fully decoded";
       return -1;
     }
     const lenOffset = inputOffset + 1;
-    const lengthBufferView = view.subarray(lenOffset, lenOffset + count3);
-    if (lengthBufferView[count3 - 1] === 0)
+    const lengthBufferView = view.subarray(lenOffset, lenOffset + count4);
+    if (lengthBufferView[count4 - 1] === 0)
       this.warnings.push("Needlessly long encoded length");
     this.length = utilFromBase(lengthBufferView, 8);
     if (this.longFormUsed && this.length <= 127)
       this.warnings.push("Unnecessary usage of long length form");
-    this.blockLength = count3 + 1;
+    this.blockLength = count4 + 1;
     return inputOffset + this.blockLength;
   }
   toBER(sizeOnly = false) {
@@ -35962,9 +36236,9 @@ var BaseBlock = class extends LocalBaseBlock {
   static {
     __name(this, "BaseBlock");
   }
-  constructor({ name = EMPTY_STRING, optional = false, primitiveSchema, ...parameters } = {}, valueBlockType) {
+  constructor({ name: name2 = EMPTY_STRING, optional = false, primitiveSchema, ...parameters } = {}, valueBlockType) {
     super(parameters);
-    this.name = name;
+    this.name = name2;
     this.optional = optional;
     if (primitiveSchema) {
       this.primitiveSchema = primitiveSchema;
@@ -36030,9 +36304,9 @@ var BaseBlock = class extends LocalBaseBlock {
     return pvtsutils.Convert.ToHex(this.toBER());
   }
   onAsciiEncoding() {
-    const name = this.constructor.NAME;
+    const name2 = this.constructor.NAME;
     const value = pvtsutils.Convert.ToHex(this.valueBlock.valueBeforeDecodeView);
-    return `${name} : ${value}`;
+    return `${name2} : ${value}`;
   }
   isEqual(other) {
     if (this === other) {
@@ -36697,9 +36971,9 @@ var OctetString = class extends BaseBlock {
     if (this.valueBlock.isConstructed || this.valueBlock.value && this.valueBlock.value.length) {
       return Constructed.prototype.onAsciiEncoding.call(this);
     }
-    const name = this.constructor.NAME;
+    const name2 = this.constructor.NAME;
     const value = pvtsutils.Convert.ToHex(this.valueBlock.valueHexView);
-    return `${name} : ${value}`;
+    return `${name2} : ${value}`;
   }
   getValue() {
     if (!this.idBlock.isConstructed) {
@@ -36850,9 +37124,9 @@ var BitString = class extends BaseBlock {
         bits.push(byte.toString(2).padStart(8, "0"));
       }
       const bitsStr = bits.join("");
-      const name = this.constructor.NAME;
+      const name2 = this.constructor.NAME;
       const value = bitsStr.substring(0, bitsStr.length - this.valueBlock.unusedBits);
-      return `${name} : ${value}`;
+      return `${name2} : ${value}`;
     }
   }
 };
@@ -36871,9 +37145,9 @@ function viewAdd(first, second) {
   const secondViewCopy = secondView.slice(0);
   const secondViewCopyLength = secondViewCopy.length - 1;
   let value = 0;
-  const max = secondViewCopyLength < firstViewCopyLength ? firstViewCopyLength : secondViewCopyLength;
+  const max2 = secondViewCopyLength < firstViewCopyLength ? firstViewCopyLength : secondViewCopyLength;
   let counter = 0;
-  for (let i = max; i >= 0; i--, counter++) {
+  for (let i = max2; i >= 0; i--, counter++) {
     switch (true) {
       case counter < secondViewCopy.length:
         value = firstViewCopy[firstViewCopyLength - counter] + secondViewCopy[secondViewCopyLength - counter] + c[0];
@@ -38329,8 +38603,8 @@ var Any = class {
   static {
     __name(this, "Any");
   }
-  constructor({ name = EMPTY_STRING, optional = false } = {}) {
-    this.name = name;
+  constructor({ name: name2 = EMPTY_STRING, optional = false } = {}) {
+    this.name = name2;
     this.optional = optional;
   }
 };
@@ -38773,8 +39047,8 @@ var BitString2 = class {
   toASN() {
     return new BitString({ unusedBits: this.unusedBits, valueHex: this.value });
   }
-  toSchema(name) {
-    return new BitString({ name });
+  toSchema(name2) {
+    return new BitString({ name: name2 });
   }
   toNumber() {
     let res = "";
@@ -38819,14 +39093,14 @@ var OctetString2 = class {
   get byteOffset() {
     return 0;
   }
-  constructor(param) {
-    if (typeof param === "number") {
-      this.buffer = new ArrayBuffer(param);
+  constructor(param2) {
+    if (typeof param2 === "number") {
+      this.buffer = new ArrayBuffer(param2);
     } else {
-      if (import_pvtsutils2.BufferSourceConverter.isBufferSource(param)) {
-        this.buffer = import_pvtsutils2.BufferSourceConverter.toArrayBuffer(param);
-      } else if (Array.isArray(param)) {
-        this.buffer = new Uint8Array(param);
+      if (import_pvtsutils2.BufferSourceConverter.isBufferSource(param2)) {
+        this.buffer = import_pvtsutils2.BufferSourceConverter.toArrayBuffer(param2);
+      } else if (Array.isArray(param2)) {
+        this.buffer = new Uint8Array(param2);
       } else {
         this.buffer = new ArrayBuffer(0);
       }
@@ -38842,8 +39116,8 @@ var OctetString2 = class {
   toASN() {
     return new OctetString({ valueHex: this.buffer });
   }
-  toSchema(name) {
-    return new OctetString({ name });
+  toSchema(name2) {
+    return new OctetString({ name: name2 });
   }
 };
 
@@ -39080,7 +39354,7 @@ var AsnSchemaStorage = class {
     const asn1Value = [];
     for (const key in schema.items) {
       const item = schema.items[key];
-      const name = useNames ? key : "";
+      const name2 = useNames ? key : "";
       let asn1Item;
       if (typeof item.type === "number") {
         const Asn1TypeName = AsnPropTypes[item.type];
@@ -39088,20 +39362,20 @@ var AsnSchemaStorage = class {
         if (!Asn1Type) {
           throw new Error(`Cannot get ASN1 class by name '${Asn1TypeName}'`);
         }
-        asn1Item = new Asn1Type({ name });
+        asn1Item = new Asn1Type({ name: name2 });
       } else if (isConvertible(item.type)) {
         const instance = new item.type();
-        asn1Item = instance.toSchema(name);
+        asn1Item = instance.toSchema(name2);
       } else if (item.optional) {
         const itemSchema = this.get(item.type);
         if (itemSchema.type === AsnTypeTypes.Choice) {
-          asn1Item = new Any({ name });
+          asn1Item = new Any({ name: name2 });
         } else {
           asn1Item = this.create(item.type, false);
-          asn1Item.name = name;
+          asn1Item.name = name2;
         }
       } else {
-        asn1Item = new Any({ name });
+        asn1Item = new Any({ name: name2 });
       }
       const optional = !!item.optional || item.defaultValue !== void 0;
       if (item.repeated) {
@@ -39109,21 +39383,21 @@ var AsnSchemaStorage = class {
         const Container = item.repeated === "set" ? Set2 : Sequence;
         asn1Item = new Container({
           name: "",
-          value: [new Repeated({ name, value: asn1Item })]
+          value: [new Repeated({ name: name2, value: asn1Item })]
         });
       }
       if (item.context !== null && item.context !== void 0) {
         if (item.implicit) {
           if (typeof item.type === "number" || isConvertible(item.type)) {
             const Container = item.repeated ? Constructed : Primitive;
-            asn1Value.push(new Container({ name, optional, idBlock: { tagClass: 3, tagNumber: item.context } }));
+            asn1Value.push(new Container({ name: name2, optional, idBlock: { tagClass: 3, tagNumber: item.context } }));
           } else {
             this.cache(item.type);
             const isRepeated = !!item.repeated;
             let value = !isRepeated ? this.get(item.type, true).schema : asn1Item;
             value = "valueBlock" in value ? value.valueBlock.value : value.value;
             asn1Value.push(new Constructed({
-              name: !isRepeated ? name : "",
+              name: !isRepeated ? name2 : "",
               optional,
               idBlock: { tagClass: 3, tagNumber: item.context },
               value
@@ -46358,8 +46632,8 @@ var listUsers = /* @__PURE__ */ __name(async (params) => {
   }
   const whereClause = and(...conditions);
   const countResult = await db.select({ count: sql`COUNT(*)` }).from(users).where(whereClause);
-  const { count: count3 } = countResult[0];
-  const total = Number(count3);
+  const { count: count4 } = countResult[0];
+  const total = Number(count4);
   const orderByColumn = sortBy === "createdAt" ? users.createdAt : sortBy === "updatedAt" ? users.updatedAt : sortBy === "fullName" ? users.fullName : sortBy === "email" ? users.email : users.createdAt;
   const orderByClause = sortOrder === "asc" ? asc(orderByColumn) : desc(orderByColumn);
   const userList = await db.select({
@@ -47190,8 +47464,8 @@ init_performance2();
 init_drizzle_orm();
 init_db2();
 init_schema2();
-var generateSlug = /* @__PURE__ */ __name(async (name) => {
-  let slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+var generateSlug = /* @__PURE__ */ __name(async (name2) => {
+  let slug = name2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   let counter = 1;
   let uniqueSlug = slug;
   while (true) {
@@ -48347,6 +48621,200 @@ var transferOwnership = /* @__PURE__ */ __name(async (c) => {
     );
   }
 }, "transferOwnership");
+var createInvite = /* @__PURE__ */ __name(async (c) => {
+  try {
+    const user = c.get("user");
+    const orgId = c.req.param("id");
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: "Unauthorized",
+          message: "User not authenticated"
+        },
+        401
+      );
+    }
+    if (!orgId) {
+      return c.json(
+        {
+          success: false,
+          error: "Bad Request",
+          message: "Organization ID is required"
+        },
+        400
+      );
+    }
+    const roleCheck = await checkOrganizationRole(orgId, user.userId, [
+      OrganizationRole.OWNER,
+      OrganizationRole.ADMIN
+    ]);
+    if (!roleCheck.hasPermission) {
+      return c.json(
+        {
+          success: false,
+          error: "Forbidden",
+          message: "Insufficient permissions. Required roles: owner, admin"
+        },
+        403
+      );
+    }
+    const { email, role } = await c.req.json();
+    if (!email || !role) {
+      return c.json(
+        {
+          success: false,
+          error: "Bad Request",
+          message: "email and role are required"
+        },
+        400
+      );
+    }
+    const tokenBytes = new Uint8Array(48);
+    crypto.getRandomValues(tokenBytes);
+    const token = btoa(String.fromCharCode(...tokenBytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3);
+    const { db: db2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { organizationInvitations: organizationInvitations2 } = await Promise.resolve().then(() => (init_schema2(), schema_exports));
+    await db2.insert(organizationInvitations2).values({
+      organizationId: orgId,
+      email,
+      role,
+      token,
+      expiresAt
+    });
+    const org = await getOrganizationById(orgId);
+    const appUrl = c.env.APP_URL || "https://www.validiant.in";
+    const inviteUrl = `${appUrl}/accept-invite?token=${token}`;
+    try {
+      const { sendEmail: sendEmail2 } = await Promise.resolve().then(() => (init_email_service(), email_service_exports));
+      await sendEmail2(
+        c.env,
+        email,
+        `You've been invited to ${org.name} on Validiant`,
+        `<h2>You've been invited!</h2>
+         <p>You've been invited to join <strong>${org.name}</strong> as a <strong>${role}</strong>.</p>
+         <p><a href="${inviteUrl}" style="display:inline-block;padding:12px 24px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">Accept Invitation</a></p>
+         <p style="color:#64748b;font-size:13px;">This invitation expires in 7 days.</p>`
+      );
+    } catch (emailErr) {
+      console.error(
+        "[Invite] Email send failed (invite still valid):",
+        emailErr
+      );
+    }
+    return c.json(
+      {
+        success: true,
+        message: "Invitation created successfully",
+        data: { inviteUrl, token, expiresAt: expiresAt.toISOString() }
+      },
+      201
+    );
+  } catch (error3) {
+    console.error("Create invite error:", error3);
+    return c.json(
+      {
+        success: false,
+        error: "Failed to create invitation",
+        message: error3 instanceof Error ? error3.message : "Unknown error"
+      },
+      500
+    );
+  }
+}, "createInvite");
+var acceptInvite = /* @__PURE__ */ __name(async (c) => {
+  try {
+    const user = c.get("user");
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: "Unauthorized",
+          message: "You must be logged in to accept an invitation"
+        },
+        401
+      );
+    }
+    const { token } = await c.req.json();
+    if (!token) {
+      return c.json(
+        {
+          success: false,
+          error: "Bad Request",
+          message: "Invite token is required"
+        },
+        400
+      );
+    }
+    const { db: db2 } = await Promise.resolve().then(() => (init_db2(), db_exports));
+    const { organizationInvitations: organizationInvitations2 } = await Promise.resolve().then(() => (init_schema2(), schema_exports));
+    const { eq: eq2 } = await Promise.resolve().then(() => (init_drizzle_orm(), drizzle_orm_exports));
+    const invites = await db2.select().from(organizationInvitations2).where(eq2(organizationInvitations2.token, token)).limit(1);
+    if (invites.length === 0) {
+      return c.json(
+        {
+          success: false,
+          error: "Not Found",
+          message: "Invalid or expired invitation"
+        },
+        404
+      );
+    }
+    const invite = invites[0];
+    if (/* @__PURE__ */ new Date() > invite.expiresAt) {
+      await db2.delete(organizationInvitations2).where(eq2(organizationInvitations2.id, invite.id));
+      return c.json(
+        {
+          success: false,
+          error: "Gone",
+          message: "This invitation has expired"
+        },
+        410
+      );
+    }
+    const alreadyMember = await isMember(
+      invite.organizationId,
+      user.userId
+    );
+    if (alreadyMember) {
+      await db2.delete(organizationInvitations2).where(eq2(organizationInvitations2.id, invite.id));
+      return c.json({
+        success: true,
+        message: "You are already a member of this organization",
+        data: { organizationId: invite.organizationId, alreadyMember: true }
+      });
+    }
+    await addOrganizationMember(
+      invite.organizationId,
+      user.userId,
+      invite.role
+    );
+    await db2.delete(organizationInvitations2).where(eq2(organizationInvitations2.id, invite.id));
+    const org = await getOrganizationById(
+      invite.organizationId
+    );
+    return c.json({
+      success: true,
+      message: `You have joined ${org.name} as ${invite.role}`,
+      data: {
+        organizationId: invite.organizationId,
+        organizationName: org.name,
+        role: invite.role
+      }
+    });
+  } catch (error3) {
+    console.error("Accept invite error:", error3);
+    return c.json(
+      {
+        success: false,
+        error: "Failed to accept invitation",
+        message: error3 instanceof Error ? error3.message : "Unknown error"
+      },
+      500
+    );
+  }
+}, "acceptInvite");
 
 // src/routes/organization.routes.ts
 var app4 = new Hono2();
@@ -48357,6 +48825,7 @@ app4.post(
   createOrganization2
 );
 app4.get("/my", getMyOrganizations);
+app4.post("/accept-invite", acceptInvite);
 app4.get("/slug/:slug", getOrganizationBySlug2);
 app4.get("/:id", getOrganizationById2);
 app4.put(
@@ -48371,6 +48840,7 @@ app4.patch(
 );
 app4.delete("/:id", deleteOrganization2);
 app4.get("/:id/members", getOrganizationMembers2);
+app4.post("/:id/invites", createInvite);
 app4.post(
   "/:id/members",
   zValidator("json", addOrganizationMemberSchema),
@@ -50541,45 +51011,7 @@ init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
-
-// src/services/email.service.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-async function sendEmail(env4, to2, subject, html) {
-  try {
-    if (!env4.RESEND_API_KEY) {
-      console.error("[email] RESEND_API_KEY is not configured");
-      return false;
-    }
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env4.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: env4.RESEND_FROM_EMAIL || "Validiant <noreply@validiant.com>",
-        to: to2,
-        subject,
-        html
-      })
-    });
-    if (!response.ok) {
-      const error3 = await response.text();
-      console.error("[email] Resend Error:", error3);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error("[email] Send failed:", err);
-    return false;
-  }
-}
-__name(sendEmail, "sendEmail");
-
-// src/routes/contact.routes.ts
+init_email_service();
 var contactRoutes = new Hono2();
 contactRoutes.post(
   "/",
@@ -50593,13 +51025,13 @@ contactRoutes.post(
   ),
   async (c) => {
     try {
-      const { name, email: senderEmail, message: message2 } = c.req.valid("json");
+      const { name: name2, email: senderEmail, message: message2 } = c.req.valid("json");
       const envVars = env2(c);
       const success = await sendEmail(
         envVars,
         "support@validiant.com",
-        `New Contact from ${name}`,
-        `<p><strong>Name:</strong> ${name}</p>
+        `New Contact from ${name2}`,
+        `<p><strong>Name:</strong> ${name2}</p>
          <p><strong>Email:</strong> ${senderEmail}</p>
          <p><strong>Message:</strong></p>
          <p>${message2}</p>`
@@ -50966,6 +51398,7 @@ async function createDiditSession(env4, _candidateName, candidateEmail, taskId) 
 __name(createDiditSession, "createDiditSession");
 
 // src/routes/kyc.routes.ts
+init_email_service();
 var kycRequestSchema2 = external_exports.object({
   taskId: external_exports.string().uuid(),
   candidateEmail: external_exports.string().email(),
@@ -51292,8 +51725,8 @@ var getTaskTimeEntries = /* @__PURE__ */ __name(async (c) => {
     const taskId = c.req.param("taskId");
     const entries = await db.select().from(schema_exports.timeEntries).where(eq(schema_exports.timeEntries.taskId, taskId)).orderBy(desc(schema_exports.timeEntries.startTime));
     const totalSeconds = entries.reduce(
-      (sum, entry) => {
-        return sum + (entry.duration || 0);
+      (sum2, entry) => {
+        return sum2 + (entry.duration || 0);
       },
       0
     );
@@ -51824,14 +52257,14 @@ var createAutomation = /* @__PURE__ */ __name(async (c) => {
     const body = await c.req.json();
     const {
       organizationId,
-      name,
+      name: name2,
       description,
       triggerEvent,
       conditions,
       actionType,
       actionPayload
     } = body;
-    if (!organizationId || !name || !triggerEvent || !actionType) {
+    if (!organizationId || !name2 || !triggerEvent || !actionType) {
       return c.json(
         {
           success: false,
@@ -51843,7 +52276,7 @@ var createAutomation = /* @__PURE__ */ __name(async (c) => {
     const [automation] = await db.insert(schema_exports.automations).values({
       organizationId,
       createdById: user.userId,
-      name,
+      name: name2,
       description: description || null,
       triggerEvent,
       conditions: conditions || [],
@@ -52438,8 +52871,8 @@ async function exportPublicJwkFrom(privateKey) {
   return { kty, alg, e, n, crv, x: x2, y: y2, key_ops: [CryptoKeyUsage.Verify] };
 }
 __name(exportPublicJwkFrom, "exportPublicJwkFrom");
-function getKeyAlgorithm(name) {
-  switch (name) {
+function getKeyAlgorithm(name2) {
+  switch (name2) {
     case "HS256":
       return {
         name: "HMAC",
@@ -52539,7 +52972,7 @@ function getKeyAlgorithm(name) {
         namedCurve: "Ed25519"
       };
     default:
-      throw new JwtAlgorithmNotImplemented(name);
+      throw new JwtAlgorithmNotImplemented(name2);
   }
 }
 __name(getKeyAlgorithm, "getKeyAlgorithm");

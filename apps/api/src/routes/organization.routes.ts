@@ -78,6 +78,17 @@ app.post(
 app.get('/my', organizationController.getMyOrganizations);
 
 /**
+ * POST /accept-invite
+ * Accept an organization invitation (authenticated user)
+ *
+ * Body: { token: string }
+ * Response: 200 OK with organization info
+ *
+ * CRITICAL: Must be before /:id routes to avoid param collision
+ */
+app.post('/accept-invite', organizationController.acceptInvite);
+
+/**
  * GET /slug/:slug
  * Get organization by slug
  *
@@ -142,6 +153,15 @@ app.delete('/:id', organizationController.deleteOrganization);
  * Response: 200 OK with members array
  */
 app.get('/:id/members', organizationController.getOrganizationMembers);
+
+/**
+ * POST /:id/invites
+ * Create an invitation to join the organization (owner/admin only)
+ *
+ * Body: { email: string, role: string }
+ * Response: 201 Created with invite URL and token
+ */
+app.post('/:id/invites', organizationController.createInvite);
 
 /**
  * POST /:id/members
