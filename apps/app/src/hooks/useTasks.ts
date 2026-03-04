@@ -1,6 +1,6 @@
 /**
  * Mobile Task Hooks - Optimistic Updates
- * 
+ *
  * Identical pattern to web app for cross-platform consistency.
  */
 
@@ -47,7 +47,9 @@ interface TaskResponse {
 }
 
 const fetchTasks = async (projectId: string): Promise<Task[]> => {
-  const response = await get<TasksResponse>(`/api/v1/projects/${projectId}/tasks`);
+  const response = await get<TasksResponse>(
+    `/api/v1/projects/${projectId}/tasks`
+  );
   return response.data.data.tasks;
 };
 
@@ -69,37 +71,58 @@ export function useUpdateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ taskId, data }: { taskId: string; projectId: string; data: UpdateTaskData }) => {
-      const response = await patch<TaskResponse>(`/api/v1/tasks/${taskId}`, data);
+    mutationFn: async ({
+      taskId,
+      data,
+    }: {
+      taskId: string;
+      projectId: string;
+      data: UpdateTaskData;
+    }) => {
+      const response = await patch<TaskResponse>(
+        `/api/v1/tasks/${taskId}`,
+        data
+      );
       return response.data.data.task;
     },
-    
+
     onMutate: async ({ taskId, projectId, data }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.projects.tasks(projectId) });
-      
-      const previousTasks = getQueryData<Task[]>(queryKeys.projects.tasks(projectId));
-      
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.projects.tasks(projectId),
+      });
+
+      const previousTasks = getQueryData<Task[]>(
+        queryKeys.projects.tasks(projectId)
+      );
+
       if (previousTasks) {
         setQueryData<Task[]>(
           queryKeys.projects.tasks(projectId),
-          previousTasks.map(task =>
-            task.id === taskId ? { ...task, ...data, updatedAt: new Date().toISOString() } : task
+          previousTasks.map((task) =>
+            task.id === taskId
+              ? { ...task, ...data, updatedAt: new Date().toISOString() }
+              : task
           )
         );
       }
-      
+
       return { previousTasks, taskId, projectId };
     },
-    
+
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        setQueryData(queryKeys.projects.tasks(context.projectId), context.previousTasks);
+        setQueryData(
+          queryKeys.projects.tasks(context.projectId),
+          context.previousTasks
+        );
       }
     },
-    
+
     onSettled: (data, error, variables, context) => {
       if (context) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(context.projectId),
+        });
       }
     },
   });
@@ -116,13 +139,24 @@ export function useCreateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ projectId, data }: { projectId: string; data: CreateTaskData }) => {
-      const response = await post<TaskResponse>(`/api/v1/projects/${projectId}/tasks`, data);
+    mutationFn: async ({
+      projectId,
+      data,
+    }: {
+      projectId: string;
+      data: CreateTaskData;
+    }) => {
+      const response = await post<TaskResponse>(
+        `/api/v1/projects/${projectId}/tasks`,
+        data
+      );
       return response.data.data.task;
     },
-    
+
     onSuccess: (newTask, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(variables.projectId) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.tasks(variables.projectId),
+      });
     },
   });
 }
@@ -134,31 +168,40 @@ export function useDeleteTask() {
     mutationFn: async ({ taskId }: { taskId: string; projectId: string }) => {
       await del(`/api/v1/tasks/${taskId}`);
     },
-    
+
     onMutate: async ({ taskId, projectId }) => {
-      await queryClient.cancelQueries({ queryKey: queryKeys.projects.tasks(projectId) });
-      
-      const previousTasks = getQueryData<Task[]>(queryKeys.projects.tasks(projectId));
-      
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.projects.tasks(projectId),
+      });
+
+      const previousTasks = getQueryData<Task[]>(
+        queryKeys.projects.tasks(projectId)
+      );
+
       if (previousTasks) {
         setQueryData<Task[]>(
           queryKeys.projects.tasks(projectId),
-          previousTasks.filter(task => task.id !== taskId)
+          previousTasks.filter((task) => task.id !== taskId)
         );
       }
-      
+
       return { previousTasks, taskId, projectId };
     },
-    
+
     onError: (error, variables, context) => {
       if (context?.previousTasks) {
-        setQueryData(queryKeys.projects.tasks(context.projectId), context.previousTasks);
+        setQueryData(
+          queryKeys.projects.tasks(context.projectId),
+          context.previousTasks
+        );
       }
     },
-    
+
     onSettled: (data, error, variables, context) => {
       if (context) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(context.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(context.projectId),
+        });
       }
     },
   });

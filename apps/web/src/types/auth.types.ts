@@ -1,6 +1,6 @@
 /**
  * Auth Types for BFF Pattern
- * 
+ *
  * These types match the actual API response structure from auth endpoints.
  * The API returns a simplified user object, not the full User type from shared package.
  */
@@ -23,6 +23,7 @@ export interface AuthUser {
   twoFactorEnabled: boolean;
   bio?: string;
   notificationPreferences?: NotificationPreferences;
+  role?: string;
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }

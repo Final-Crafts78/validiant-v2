@@ -5,6 +5,7 @@ Shared types, constants, and utilities for the Validiant platform.
 ## Overview
 
 This package contains all shared code used across the Validiant ecosystem:
+
 - **Mobile App** (React Native)
 - **Web App** (Next.js)
 - **API Server** (Express)
@@ -137,7 +138,11 @@ if (isTaskOverdue(task)) {
 ### Batch Validation
 
 ```typescript
-import { validateBatch, validateEmail, validatePassword } from '@validiant/shared';
+import {
+  validateBatch,
+  validateEmail,
+  validatePassword,
+} from '@validiant/shared';
 
 const { isValid, errors } = validateBatch({
   email: validateEmail(formData.email),
@@ -229,15 +234,17 @@ npm run lint
 ## Best Practices
 
 1. **Import Selectively**: Import only what you need
+
    ```typescript
    // Good
    import { User, validateEmail } from '@validiant/shared';
-   
+
    // Avoid
    import * as shared from '@validiant/shared';
    ```
 
 2. **Use Type Guards**: Leverage provided type guards
+
    ```typescript
    if (isActiveUser(user)) {
      // TypeScript knows user is active here
@@ -245,6 +252,7 @@ npm run lint
    ```
 
 3. **Validation**: Always validate user input
+
    ```typescript
    const result = validateEmail(email);
    if (!result.isValid) {
@@ -254,12 +262,15 @@ npm run lint
    ```
 
 4. **Constants**: Use constants instead of magic strings/numbers
+
    ```typescript
    // Good
-   if (limit >= PAGINATION.MAX_PER_PAGE) { }
-   
+   if (limit >= PAGINATION.MAX_PER_PAGE) {
+   }
+
    // Avoid
-   if (limit >= 100) { }
+   if (limit >= 100) {
+   }
    ```
 
 ## License

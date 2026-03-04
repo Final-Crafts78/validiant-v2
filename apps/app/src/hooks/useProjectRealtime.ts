@@ -1,6 +1,6 @@
 /**
  * Mobile Real-Time Hook - PartyKit WebSocket
- * 
+ *
  * Identical pattern to web app for cross-platform consistency.
  */
 
@@ -39,9 +39,15 @@ export interface OnlineUser {
   joinedAt: number;
 }
 
-const PARTYKIT_HOST = Constants.expoConfig?.extra?.partyKitUrl || 'localhost:1999';
+const PARTYKIT_HOST =
+  Constants.expoConfig?.extra?.partyKitUrl || 'localhost:1999';
 
-export function useProjectRealtime(projectId: string, userId?: string, userName?: string, enabled = true) {
+export function useProjectRealtime(
+  projectId: string,
+  userId?: string,
+  userName?: string,
+  enabled = true
+) {
   const queryClient = useQueryClient();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
 
@@ -50,7 +56,7 @@ export function useProjectRealtime(projectId: string, userId?: string, userName?
     room: projectId,
     party: 'main',
     query: userId && userName ? { userId, userName } : undefined,
-    
+
     onMessage: (event) => {
       try {
         const message: RealtimeMessage = JSON.parse(event.data);
@@ -59,16 +65,16 @@ export function useProjectRealtime(projectId: string, userId?: string, userName?
         console.error('[Realtime] Failed to parse message:', error);
       }
     },
-    
+
     onOpen: () => {
       console.log('[Realtime] Connected to project:', projectId);
     },
-    
+
     onClose: () => {
       console.log('[Realtime] Disconnected from project:', projectId);
       setOnlineUsers([]);
     },
-    
+
     onError: (error) => {
       console.error('[Realtime] WebSocket error:', error);
     },
@@ -108,16 +114,22 @@ function handleRealtimeMessage(
     case RealtimeEventType.TASK_UPDATED:
     case RealtimeEventType.TASK_STATUS_CHANGED:
       if (payload.projectId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(payload.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(payload.projectId),
+        });
       }
       break;
 
     case RealtimeEventType.TASK_DELETED:
       if (payload.taskId) {
-        queryClient.removeQueries({ queryKey: queryKeys.tasks.detail(payload.taskId) });
+        queryClient.removeQueries({
+          queryKey: queryKeys.tasks.detail(payload.taskId),
+        });
       }
       if (payload.projectId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.projects.tasks(payload.projectId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.tasks(payload.projectId),
+        });
       }
       break;
 
@@ -125,14 +137,20 @@ function handleRealtimeMessage(
       if (payload.userId && payload.userName) {
         setOnlineUsers((prev) => [
           ...prev.filter((u) => u.userId !== payload.userId),
-          { userId: payload.userId!, userName: payload.userName!, joinedAt: message.timestamp },
+          {
+            userId: payload.userId!,
+            userName: payload.userName!,
+            joinedAt: message.timestamp,
+          },
         ]);
       }
       break;
 
     case RealtimeEventType.USER_LEFT:
       if (payload.userId) {
-        setOnlineUsers((prev) => prev.filter((u) => u.userId !== payload.userId));
+        setOnlineUsers((prev) =>
+          prev.filter((u) => u.userId !== payload.userId)
+        );
       }
       break;
 

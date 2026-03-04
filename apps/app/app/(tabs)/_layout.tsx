@@ -1,6 +1,6 @@
 /**
  * Tabs Layout
- * 
+ *
  * Main app navigation with bottom tabs.
  */
 

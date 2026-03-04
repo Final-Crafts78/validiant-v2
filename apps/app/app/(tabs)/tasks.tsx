@@ -1,6 +1,6 @@
 /**
  * Tasks Screen
- * 
+ *
  * View and manage tasks.
  * TODO: Implement task list, filtering, sorting, and creation.
  */
@@ -78,7 +78,7 @@ export default function TasksScreen() {
       {/* Tips */}
       <View style={styles.tipsSection}>
         <Text style={styles.tipsTitle}>💡 Pro Tips</Text>
-        
+
         <View style={styles.tipCard}>
           <Text style={styles.tipIcon}>✓</Text>
           <View style={styles.tipContent}>

@@ -1,6 +1,6 @@
 /**
  * Authentication Service
- * 
+ *
  * API calls for authentication operations.
  */
 
@@ -45,7 +45,9 @@ interface ApiResponse<T> {
 /**
  * Login
  */
-export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+export const login = async (
+  credentials: LoginCredentials
+): Promise<AuthResponse> => {
   const response = await api.post<ApiResponse<AuthResponse>>(
     '/api/v1/auth/login',
     credentials
@@ -74,7 +76,9 @@ export const logout = async (): Promise<void> => {
 /**
  * Refresh token
  */
-export const refreshToken = async (refreshToken: string): Promise<AuthResponse> => {
+export const refreshToken = async (
+  refreshToken: string
+): Promise<AuthResponse> => {
   const response = await api.post<ApiResponse<AuthResponse>>(
     '/api/v1/auth/refresh',
     { refreshToken }
@@ -86,7 +90,8 @@ export const refreshToken = async (refreshToken: string): Promise<AuthResponse> 
  * Get current user
  */
 export const getCurrentUser = async (): Promise<User> => {
-  const response = await api.get<ApiResponse<{ user: User }>>('/api/v1/auth/me');
+  const response =
+    await api.get<ApiResponse<{ user: User }>>('/api/v1/auth/me');
   return response.data.data.user;
 };
 

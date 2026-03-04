@@ -1,6 +1,6 @@
 /**
  * Forgot Password Screen
- * 
+ *
  * Request password reset via email.
  */
 
@@ -110,8 +110,8 @@ export default function ForgotPasswordScreen() {
           {/* Instructions */}
           <View style={styles.instructionsContainer}>
             <Text style={styles.instructions}>
-              Please check your email and click on the link to reset your password.
-              If you don't see the email, check your spam folder.
+              Please check your email and click on the link to reset your
+              password. If you don't see the email, check your spam folder.
             </Text>
           </View>
 
@@ -184,10 +184,7 @@ export default function ForgotPasswordScreen() {
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.email && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.email && styles.inputError]}
                   placeholder="Enter your email"
                   placeholderTextColor="#999"
                   keyboardType="email-address"

@@ -1,6 +1,6 @@
 /**
  * Validation Schemas
- * 
+ *
  * Zod schemas for validating input data.
  */
 
@@ -39,10 +39,11 @@ export const loginSchema = z.object({
     .string()
     .min(1, 'Email is required')
     .email('Invalid email address')
-    .max(VALIDATION.EMAIL.MAX_LENGTH, `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`),
-  password: z
-    .string()
-    .min(1, 'Password is required'),
+    .max(
+      VALIDATION.EMAIL.MAX_LENGTH,
+      `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`
+    ),
+  password: z.string().min(1, 'Password is required'),
 });
 
 export const registerSchema = z.object({
@@ -50,25 +51,52 @@ export const registerSchema = z.object({
     .string()
     .min(1, 'Email is required')
     .email('Invalid email address')
-    .max(VALIDATION.EMAIL.MAX_LENGTH, `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`),
+    .max(
+      VALIDATION.EMAIL.MAX_LENGTH,
+      `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`
+    ),
   password: z
     .string()
-    .min(VALIDATION.PASSWORD.MIN_LENGTH, `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`)
-    .max(VALIDATION.PASSWORD.MAX_LENGTH, `Password must be at most ${VALIDATION.PASSWORD.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.PASSWORD.MIN_LENGTH,
+      `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.PASSWORD.MAX_LENGTH,
+      `Password must be at most ${VALIDATION.PASSWORD.MAX_LENGTH} characters`
+    )
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
       'Password must contain uppercase, lowercase, number, and special character'
     ),
   firstName: z
     .string()
-    .min(VALIDATION.NAME.MIN_LENGTH, `First name must be at least ${VALIDATION.NAME.MIN_LENGTH} characters`)
-    .max(VALIDATION.NAME.MAX_LENGTH, `First name must be at most ${VALIDATION.NAME.MAX_LENGTH} characters`)
-    .regex(/^[a-zA-Z\s'-]+$/, 'First name can only contain letters, spaces, hyphens, and apostrophes'),
+    .min(
+      VALIDATION.NAME.MIN_LENGTH,
+      `First name must be at least ${VALIDATION.NAME.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.NAME.MAX_LENGTH,
+      `First name must be at most ${VALIDATION.NAME.MAX_LENGTH} characters`
+    )
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      'First name can only contain letters, spaces, hyphens, and apostrophes'
+    ),
   lastName: z
     .string()
-    .min(VALIDATION.NAME.MIN_LENGTH, `Last name must be at least ${VALIDATION.NAME.MIN_LENGTH} characters`)
-    .max(VALIDATION.NAME.MAX_LENGTH, `Last name must be at most ${VALIDATION.NAME.MAX_LENGTH} characters`)
-    .regex(/^[a-zA-Z\s'-]+$/, 'Last name can only contain letters, spaces, hyphens, and apostrophes'),
+    .min(
+      VALIDATION.NAME.MIN_LENGTH,
+      `Last name must be at least ${VALIDATION.NAME.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.NAME.MAX_LENGTH,
+      `Last name must be at most ${VALIDATION.NAME.MAX_LENGTH} characters`
+    )
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      'Last name can only contain letters, spaces, hyphens, and apostrophes'
+    ),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -76,15 +104,24 @@ export const forgotPasswordSchema = z.object({
     .string()
     .min(1, 'Email is required')
     .email('Invalid email address')
-    .max(VALIDATION.EMAIL.MAX_LENGTH, `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`),
+    .max(
+      VALIDATION.EMAIL.MAX_LENGTH,
+      `Email must be at most ${VALIDATION.EMAIL.MAX_LENGTH} characters`
+    ),
 });
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Token is required'),
   password: z
     .string()
-    .min(VALIDATION.PASSWORD.MIN_LENGTH, `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`)
-    .max(VALIDATION.PASSWORD.MAX_LENGTH, `Password must be at most ${VALIDATION.PASSWORD.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.PASSWORD.MIN_LENGTH,
+      `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.PASSWORD.MAX_LENGTH,
+      `Password must be at most ${VALIDATION.PASSWORD.MAX_LENGTH} characters`
+    )
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
       'Password must contain uppercase, lowercase, number, and special character'
@@ -97,12 +134,24 @@ export const resetPasswordSchema = z.object({
 export const createProjectSchema = z.object({
   name: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    ),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    ),
   organizationId: z.string().uuid('Invalid organization ID'),
   dueDate: z.string().datetime().optional(),
 });
@@ -110,13 +159,25 @@ export const createProjectSchema = z.object({
 export const updateProjectSchema = z.object({
   name: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    )
     .optional(),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    )
     .optional(),
   status: z.enum(['active', 'completed', 'on-hold', 'planning']).optional(),
   progress: z.number().min(0).max(100).optional(),
@@ -129,12 +190,24 @@ export const updateProjectSchema = z.object({
 export const createTaskSchema = z.object({
   title: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Title must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Title must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Title must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Title must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    ),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    ),
   projectId: z.string().uuid('Invalid project ID'),
   priority: z.enum(['low', 'medium', 'high', 'urgent']),
   assigneeId: z.string().uuid('Invalid assignee ID').optional(),
@@ -144,13 +217,25 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = z.object({
   title: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Title must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Title must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Title must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Title must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    )
     .optional(),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    )
     .optional(),
   status: z.enum(['todo', 'in-progress', 'completed']).optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
@@ -164,24 +249,48 @@ export const updateTaskSchema = z.object({
 export const createOrganizationSchema = z.object({
   name: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    ),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`),
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    ),
 });
 
 export const updateOrganizationSchema = z.object({
   name: z
     .string()
-    .min(VALIDATION.TITLE.MIN_LENGTH, `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`)
-    .max(VALIDATION.TITLE.MAX_LENGTH, `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.TITLE.MIN_LENGTH,
+      `Name must be at least ${VALIDATION.TITLE.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.TITLE.MAX_LENGTH,
+      `Name must be at most ${VALIDATION.TITLE.MAX_LENGTH} characters`
+    )
     .optional(),
   description: z
     .string()
-    .min(VALIDATION.DESCRIPTION.MIN_LENGTH, `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`)
-    .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`)
+    .min(
+      VALIDATION.DESCRIPTION.MIN_LENGTH,
+      `Description must be at least ${VALIDATION.DESCRIPTION.MIN_LENGTH} characters`
+    )
+    .max(
+      VALIDATION.DESCRIPTION.MAX_LENGTH,
+      `Description must be at most ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+    )
     .optional(),
 });
 

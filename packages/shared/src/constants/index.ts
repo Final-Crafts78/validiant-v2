@@ -1,6 +1,6 @@
 /**
  * Shared Constants
- * 
+ *
  * Constants used across the application.
  */
 
@@ -11,10 +11,15 @@ export const VALIDATION = {
   EMAIL: {
     MIN_LENGTH: 5,
     MAX_LENGTH: 255,
+    REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   },
   PASSWORD: {
     MIN_LENGTH: 8,
     MAX_LENGTH: 128,
+    REQUIRE_UPPERCASE: true,
+    REQUIRE_LOWERCASE: true,
+    REQUIRE_NUMBER: true,
+    REQUIRE_SPECIAL: true,
   },
   USERNAME: {
     MIN_LENGTH: 3,
@@ -107,19 +112,19 @@ export const ERROR_CODES = {
   INVALID_TOKEN: 'INVALID_TOKEN',
   EMAIL_ALREADY_EXISTS: 'EMAIL_ALREADY_EXISTS',
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
-  
+
   // Resource errors
   NOT_FOUND: 'NOT_FOUND',
   ALREADY_EXISTS: 'ALREADY_EXISTS',
-  
+
   // Permission errors
   FORBIDDEN: 'FORBIDDEN',
   INSUFFICIENT_PERMISSIONS: 'INSUFFICIENT_PERMISSIONS',
-  
+
   // Validation errors
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   INVALID_INPUT: 'INVALID_INPUT',
-  
+
   // Server errors
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
@@ -162,9 +167,33 @@ export const PROJECT_STATUS = {
  * Task status values
  */
 export const TASK_STATUS = {
-  TODO: 'todo',
-  IN_PROGRESS: 'in-progress',
-  COMPLETED: 'completed',
+  UNASSIGNED: 'Unassigned',
+  PENDING: 'Pending',
+  IN_PROGRESS: 'In Progress',
+  COMPLETED: 'Completed',
+  VERIFIED: 'Verified',
+} as const;
+
+/**
+ * Task statuses array (for Zod enum validation)
+ */
+export const TASK_STATUSES = [
+  'Unassigned',
+  'Pending',
+  'In Progress',
+  'Completed',
+  'Verified',
+] as const;
+
+/**
+ * Valid status transitions (state machine)
+ */
+export const VALID_TRANSITIONS: Record<string, string[]> = {
+  Unassigned: ['Pending'],
+  Pending: ['In Progress', 'Unassigned'],
+  'In Progress': ['Completed', 'Pending'],
+  Completed: ['Verified', 'In Progress'],
+  Verified: [],
 } as const;
 
 /**
@@ -192,4 +221,13 @@ export const ORGANIZATION_ROLE = {
 export const FILE_UPLOAD = {
   MAX_SIZE: 5 * 1024 * 1024, // 5MB
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+} as const;
+
+/**
+ * Project member role values
+ */
+export const PROJECT_MEMBER_ROLE = {
+  MANAGER: 'manager',
+  CONTRIBUTOR: 'contributor',
+  VIEWER: 'viewer',
 } as const;

@@ -1,6 +1,6 @@
 /**
  * App Configuration Constants
- * 
+ *
  * Central configuration for the mobile app.
  */
 
@@ -71,22 +71,22 @@ export const STORAGE_KEYS = {
 export const QUERY_KEYS = {
   // Auth
   ME: ['me'],
-  
+
   // Users
   USERS: ['users'],
   USER: (id: string) => ['users', id],
-  
+
   // Organizations
   ORGANIZATIONS: ['organizations'],
   ORGANIZATION: (id: string) => ['organizations', id],
   ORGANIZATION_MEMBERS: (id: string) => ['organizations', id, 'members'],
-  
+
   // Projects
   PROJECTS: ['projects'],
   PROJECT: (id: string) => ['projects', id],
   PROJECT_MEMBERS: (id: string) => ['projects', id, 'members'],
   PROJECT_TASKS: (id: string) => ['projects', id, 'tasks'],
-  
+
   // Tasks
   TASKS: ['tasks'],
   TASK: (id: string) => ['tasks', id],

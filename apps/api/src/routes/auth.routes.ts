@@ -69,10 +69,7 @@ authRoutes.post(
  * No body validation needed (reads from cookies / header)
  * Response: 200 OK with new access token
  */
-authRoutes.post(
-  '/refresh',
-  authController.refresh
-);
+authRoutes.post('/refresh', authController.refresh);
 
 /**
  * GET /me
@@ -81,11 +78,7 @@ authRoutes.post(
  * Requires: authenticate middleware
  * Response: 200 OK with user object
  */
-authRoutes.get(
-  '/me',
-  authenticate,
-  authController.getMe
-);
+authRoutes.get('/me', authenticate, authController.getMe);
 
 /**
  * POST /logout
@@ -94,11 +87,7 @@ authRoutes.get(
  * Requires: authenticate middleware
  * Response: 200 OK with success message
  */
-authRoutes.post(
-  '/logout',
-  authenticate,
-  authController.logout
-);
+authRoutes.post('/logout', authenticate, authController.logout);
 
 // ============================================================================
 // PASSWORD RESET FUNNEL

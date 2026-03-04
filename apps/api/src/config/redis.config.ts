@@ -1,20 +1,20 @@
 /**
  * Redis Configuration (Upstash - Edge Compatible)
- * 
+ *
  * HTTP-based Redis client compatible with Cloudflare Workers.
  * Uses Upstash Redis REST API instead of TCP connections.
- * 
+ *
  * CRITICAL: This replaces ioredis which is NOT edge-compatible.
- * 
+ *
  * Environment variables required:
  * - UPSTASH_REDIS_REST_URL: Your Upstash Redis REST URL
  * - UPSTASH_REDIS_REST_TOKEN: Your Upstash Redis REST token
- * 
+ *
  * Phase 7.3 Enhancement: Lazy initialization to fix Cloudflare cold-start.
  * The Redis client is constructed on first use — after initEnv() has
  * populated the real Cloudflare Worker secrets — and is automatically
  * rebuilt if the URL changes between requests (e.g. env rotation).
- * 
+ *
  * The global fetch patch in app.ts handles stripping the unsupported
  * `cache` field from every outgoing fetch call — no per-instance wrapper
  * is needed here.
@@ -63,7 +63,10 @@ export const cache = {
       const value = await getRedis().get<T>(key);
       return value;
     } catch (error) {
-      logger.error('Cache get error:', { key, error: error instanceof Error ? error.message : String(error) });
+      logger.error('Cache get error:', {
+        key,
+        error: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
   },
@@ -71,7 +74,7 @@ export const cache = {
   /**
    * Set value in cache with optional TTL
    * Automatically serializes JSON
-   * 
+   *
    * @param key - Cache key
    * @param value - Value to cache (will be JSON serialized)
    * @param ttl - Time to live in seconds (optional)
@@ -84,7 +87,11 @@ export const cache = {
         await getRedis().set(key, value);
       }
     } catch (error) {
-      logger.error('Cache set error:', { key, ttl, error: error instanceof Error ? error.message : String(error) });
+      logger.error('Cache set error:', {
+        key,
+        ttl,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   },
 
@@ -95,7 +102,10 @@ export const cache = {
     try {
       await getRedis().del(key);
     } catch (error) {
-      logger.error('Cache delete error:', { key, error: error instanceof Error ? error.message : String(error) });
+      logger.error('Cache delete error:', {
+        key,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   },
 
@@ -110,7 +120,10 @@ export const cache = {
         await getRedis().del(...keys);
       }
     } catch (error) {
-      logger.error('Cache delete pattern error:', { pattern, error: error instanceof Error ? error.message : String(error) });
+      logger.error('Cache delete pattern error:', {
+        pattern,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   },
 
@@ -122,14 +135,17 @@ export const cache = {
       const result = await getRedis().exists(key);
       return result === 1;
     } catch (error) {
-      logger.error('Cache exists error:', { key, error: error instanceof Error ? error.message : String(error) });
+      logger.error('Cache exists error:', {
+        key,
+        error: error instanceof Error ? error.message : String(error),
+      });
       return false;
     }
   },
 
   /**
    * Set expiration on existing key
-   * 
+   *
    * @param key - Cache key
    * @param ttl - Time to live in seconds
    */
@@ -143,7 +159,7 @@ export const cache = {
 
   /**
    * Get remaining TTL for key
-   * 
+   *
    * @returns TTL in seconds, -1 if no expiry, -2 if key doesn't exist
    */
   async ttl(key: string): Promise<number> {
@@ -212,7 +228,7 @@ export const session = {
 
   /**
    * Set session data with TTL
-   * 
+   *
    * @param sessionId - Session identifier
    * @param data - Session data (will be JSON serialized)
    * @param ttl - Time to live in seconds
@@ -265,7 +281,7 @@ export const rateLimit = {
       }
 
       const ttl = await getRedis().ttl(key);
-      const reset = Date.now() + (ttl * 1000);
+      const reset = Date.now() + ttl * 1000;
       const remaining = Math.max(0, max - count);
 
       return {
@@ -295,7 +311,7 @@ export const rateLimit = {
 export const denylist = {
   /**
    * Add token to denylist
-   * 
+   *
    * @param token - JWT token or token ID
    * @param ttl - Time until token naturally expires (seconds)
    */

@@ -1,12 +1,12 @@
 /**
  * User Controller
- * 
+ *
  * Handles HTTP requests for user management endpoints.
  * Includes profile management, user listing, and admin operations.
- * 
+ *
  * Edge-compatible Hono implementation.
  * Functions: 16 total (profile, preferences, admin operations, etc.)
- * 
+ *
  * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
  * All validation happens at route level via @hono/zod-validator
  */
@@ -65,7 +65,7 @@ export const getCurrentUserProfile = async (c: Context) => {
 /**
  * Update current user profile
  * PUT /api/v1/users/me
- * 
+ *
  * Payload validated by zValidator(updateUserProfileSchema) at route level
  */
 export const updateCurrentUserProfile = async (c: Context) => {
@@ -84,9 +84,14 @@ export const updateCurrentUserProfile = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateUserProfileSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateUserProfileSchema
+    >;
 
-    const updatedUser = await userService.updateProfile(user.userId, validatedData);
+    const updatedUser = await userService.updateProfile(
+      user.userId,
+      validatedData
+    );
 
     return c.json({
       success: true,
@@ -109,7 +114,7 @@ export const updateCurrentUserProfile = async (c: Context) => {
 /**
  * Update user preferences
  * PUT /api/v1/users/me/preferences
- * 
+ *
  * Payload validated by zValidator(updateUserPreferencesSchema) at route level
  */
 export const updateUserPreferences = async (c: Context) => {
@@ -128,7 +133,9 @@ export const updateUserPreferences = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { preferences } = (await c.req.json()) as z.infer<typeof updateUserPreferencesSchema>;
+    const { preferences } = (await c.req.json()) as z.infer<
+      typeof updateUserPreferencesSchema
+    >;
 
     const updatedUser = await userService.updatePreferences(
       user.userId,
@@ -156,7 +163,7 @@ export const updateUserPreferences = async (c: Context) => {
 /**
  * Update notification preferences
  * PUT /api/v1/users/me/notifications
- * 
+ *
  * No validation schema yet - accepts raw JSON
  */
 export const updateNotificationPreferences = async (c: Context) => {
@@ -312,13 +319,15 @@ export const getUserById = async (c: Context) => {
 /**
  * List users with pagination and filters
  * GET /api/v1/users
- * 
+ *
  * Query validated by zValidator(userListQuerySchema) at route level
  */
 export const listUsers = async (c: Context) => {
   try {
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedQuery = c.req.query() as unknown as z.infer<typeof userListQuerySchema>;
+    const validatedQuery = c.req.query() as unknown as z.infer<
+      typeof userListQuerySchema
+    >;
 
     const result = await userService.listUsers({
       page: validatedQuery.page,
@@ -350,13 +359,15 @@ export const listUsers = async (c: Context) => {
 /**
  * Search users
  * GET /api/v1/users/search
- * 
+ *
  * Query validated by zValidator(userSearchQuerySchema) at route level
  */
 export const searchUsers = async (c: Context) => {
   try {
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { q, limit } = c.req.query() as unknown as z.infer<typeof userSearchQuerySchema>;
+    const { q, limit } = c.req.query() as unknown as z.infer<
+      typeof userSearchQuerySchema
+    >;
 
     const users = await userService.searchUsers(q, limit || 10);
 
@@ -397,7 +408,10 @@ export const checkEmailAvailability = async (c: Context) => {
       );
     }
 
-    const isAvailable = await userService.isEmailAvailable(email, currentUser?.userId);
+    const isAvailable = await userService.isEmailAvailable(
+      email,
+      currentUser?.userId
+    );
 
     return c.json({
       success: true,
@@ -419,7 +433,7 @@ export const checkEmailAvailability = async (c: Context) => {
 /**
  * Update user profile by ID (admin only)
  * PUT /api/v1/users/:id
- * 
+ *
  * Payload validated by zValidator(updateUserProfileSchema) at route level
  */
 export const updateUserById = async (c: Context) => {
@@ -451,7 +465,9 @@ export const updateUserById = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateUserProfileSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateUserProfileSchema
+    >;
 
     const user = await userService.updateProfile(id, validatedData);
 
@@ -476,7 +492,7 @@ export const updateUserById = async (c: Context) => {
 /**
  * Update user role (admin only)
  * PATCH /api/v1/users/:id/role
- * 
+ *
  * Payload validated by zValidator(updateUserRoleSchema) at route level
  */
 export const updateUserRole = async (c: Context) => {
@@ -508,7 +524,9 @@ export const updateUserRole = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { role } = (await c.req.json()) as z.infer<typeof updateUserRoleSchema>;
+    const { role } = (await c.req.json()) as z.infer<
+      typeof updateUserRoleSchema
+    >;
 
     const user = await userService.updateUserRole(id, role);
 
@@ -533,7 +551,7 @@ export const updateUserRole = async (c: Context) => {
 /**
  * Update user status (admin only)
  * PATCH /api/v1/users/:id/status
- * 
+ *
  * Payload validated by zValidator(updateUserStatusSchema) at route level
  */
 export const updateUserStatus = async (c: Context) => {
@@ -565,7 +583,9 @@ export const updateUserStatus = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { status } = (await c.req.json()) as z.infer<typeof updateUserStatusSchema>;
+    const { status } = (await c.req.json()) as z.infer<
+      typeof updateUserStatusSchema
+    >;
 
     const user = await userService.updateUserStatus(id, status);
 
@@ -733,10 +753,14 @@ export const getUserActivity = async (c: Context) => {
       data: {
         activities: activities.rows || [],
         pagination: {
-          total: typeof total === 'number' ? total : parseInt(String(total), 10),
+          total:
+            typeof total === 'number' ? total : parseInt(String(total), 10),
           page,
           perPage,
-          totalPages: Math.ceil((typeof total === 'number' ? total : parseInt(String(total), 10)) / perPage),
+          totalPages: Math.ceil(
+            (typeof total === 'number' ? total : parseInt(String(total), 10)) /
+              perPage
+          ),
         },
       },
     });
@@ -756,7 +780,7 @@ export const getUserActivity = async (c: Context) => {
 /**
  * Bulk delete users (admin only)
  * POST /api/v1/users/bulk-delete
- * 
+ *
  * No validation schema yet - accepts raw JSON with userIds array
  */
 export const bulkDeleteUsers = async (c: Context) => {

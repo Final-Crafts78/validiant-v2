@@ -1,6 +1,6 @@
 /**
  * Response Utilities
- * 
+ *
  * Standardized API response helpers.
  */
 
@@ -36,7 +36,7 @@ export const sendError = (
     message,
     code: 'ERROR',
   };
-  
+
   const response: ApiResponse<unknown> = {
     success: false,
     error: errorObj,
@@ -48,16 +48,13 @@ export const sendError = (
 /**
  * Send validation error response
  */
-export const sendValidationError = (
-  c: Context,
-  errors: any
-): Response => {
+export const sendValidationError = (c: Context, errors: any): Response => {
   const errorObj: ApiError = {
     message: 'Validation failed',
     code: 'VALIDATION_ERROR',
     details: errors,
   };
-  
+
   const response: ApiResponse<unknown> = {
     success: false,
     error: errorObj,

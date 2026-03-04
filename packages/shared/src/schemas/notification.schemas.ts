@@ -1,6 +1,6 @@
 /**
  * Notification and API Schemas
- * 
+ *
  * Zod validation schemas for notifications and common API request patterns.
  */
 
@@ -23,8 +23,15 @@ export const notificationPrioritySchema = z.nativeEnum(NotificationPriority);
  * Pagination schema
  */
 export const paginationSchema = z.object({
-  page: z.number().min(PAGINATION.MIN_PER_PAGE).default(PAGINATION.DEFAULT_PAGE),
-  perPage: z.number().min(PAGINATION.MIN_PER_PAGE).max(PAGINATION.MAX_PER_PAGE).default(PAGINATION.DEFAULT_PER_PAGE),
+  page: z
+    .number()
+    .min(PAGINATION.MIN_PER_PAGE)
+    .default(PAGINATION.DEFAULT_PAGE),
+  perPage: z
+    .number()
+    .min(PAGINATION.MIN_PER_PAGE)
+    .max(PAGINATION.MAX_PER_PAGE)
+    .default(PAGINATION.DEFAULT_PER_PAGE),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
@@ -32,31 +39,35 @@ export const paginationSchema = z.object({
 /**
  * Cursor pagination schema
  */
-export const cursorPaginationSchema = z.object({
-  first: z.number().min(1).max(PAGINATION.MAX_PER_PAGE).optional(),
-  after: z.string().optional(),
-  last: z.number().min(1).max(PAGINATION.MAX_PER_PAGE).optional(),
-  before: z.string().optional(),
-}).refine(
-  (data) => {
-    // Either first/after or last/before, not both
-    const hasForward = data.first !== undefined || data.after !== undefined;
-    const hasBackward = data.last !== undefined || data.before !== undefined;
-    return !(hasForward && hasBackward);
-  },
-  { message: 'Cannot use both forward and backward pagination' }
-);
+export const cursorPaginationSchema = z
+  .object({
+    first: z.number().min(1).max(PAGINATION.MAX_PER_PAGE).optional(),
+    after: z.string().optional(),
+    last: z.number().min(1).max(PAGINATION.MAX_PER_PAGE).optional(),
+    before: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Either first/after or last/before, not both
+      const hasForward = data.first !== undefined || data.after !== undefined;
+      const hasBackward = data.last !== undefined || data.before !== undefined;
+      return !(hasForward && hasBackward);
+    },
+    { message: 'Cannot use both forward and backward pagination' }
+  );
 
 /**
  * Date range schema
  */
-export const dateRangeSchema = z.object({
-  start: z.string().datetime(),
-  end: z.string().datetime(),
-}).refine(
-  (data) => new Date(data.end) > new Date(data.start),
-  { message: 'End date must be after start date', path: ['end'] }
-);
+export const dateRangeSchema = z
+  .object({
+    start: z.string().datetime(),
+    end: z.string().datetime(),
+  })
+  .refine((data) => new Date(data.end) > new Date(data.start), {
+    message: 'End date must be after start date',
+    path: ['end'],
+  });
 
 /**
  * Search query schema
@@ -77,7 +88,9 @@ export const createNotificationSchema = z.object({
   title: z.string().min(1).max(200),
   message: z.string().min(1).max(1000),
   priority: notificationPrioritySchema.default(NotificationPriority.NORMAL),
-  channels: z.array(notificationChannelSchema).min(1, 'At least one channel is required'),
+  channels: z
+    .array(notificationChannelSchema)
+    .min(1, 'At least one channel is required'),
   data: z.record(z.unknown()).optional(),
   actionUrl: z.string().url().optional(),
   expiresAt: z.string().datetime().optional(),
@@ -87,43 +100,61 @@ export const createNotificationSchema = z.object({
  * Bulk create notifications schema
  */
 export const bulkCreateNotificationsSchema = z.object({
-  notifications: z.array(
-    z.object({
-      userId: z.string().uuid(),
-      type: notificationTypeSchema,
-      title: z.string().min(1).max(200),
-      message: z.string().min(1).max(1000),
-      priority: notificationPrioritySchema,
-      channels: z.array(notificationChannelSchema).min(1),
-      data: z.record(z.unknown()).optional(),
-      actionUrl: z.string().url().optional(),
-    })
-  ).min(1).max(100, 'Maximum 100 notifications at once'),
+  notifications: z
+    .array(
+      z.object({
+        userId: z.string().uuid(),
+        type: notificationTypeSchema,
+        title: z.string().min(1).max(200),
+        message: z.string().min(1).max(1000),
+        priority: notificationPrioritySchema,
+        channels: z.array(notificationChannelSchema).min(1),
+        data: z.record(z.unknown()).optional(),
+        actionUrl: z.string().url().optional(),
+      })
+    )
+    .min(1)
+    .max(100, 'Maximum 100 notifications at once'),
 });
 
 /**
  * Update notification preferences schema
  */
 export const updateNotificationPreferencesSchema = z.object({
-  channels: z.object({
-    email: z.boolean().optional(),
-    push: z.boolean().optional(),
-    sms: z.boolean().optional(),
-    inApp: z.boolean().optional(),
-  }).optional(),
+  channels: z
+    .object({
+      email: z.boolean().optional(),
+      push: z.boolean().optional(),
+      sms: z.boolean().optional(),
+      inApp: z.boolean().optional(),
+    })
+    .optional(),
   types: z.record(z.boolean()).optional(),
-  quietHours: z.object({
-    enabled: z.boolean(),
-    startTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)').optional(),
-    endTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)').optional(),
-    timezone: z.string().optional(),
-  }).optional(),
-  digest: z.object({
-    enabled: z.boolean(),
-    frequency: z.enum(['daily', 'weekly']).optional(),
-    time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/).optional(),
-    dayOfWeek: z.number().min(0).max(6).optional(),
-  }).optional(),
+  quietHours: z
+    .object({
+      enabled: z.boolean(),
+      startTime: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)')
+        .optional(),
+      endTime: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)')
+        .optional(),
+      timezone: z.string().optional(),
+    })
+    .optional(),
+  digest: z
+    .object({
+      enabled: z.boolean(),
+      frequency: z.enum(['daily', 'weekly']).optional(),
+      time: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/)
+        .optional(),
+      dayOfWeek: z.number().min(0).max(6).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -182,10 +213,12 @@ export const createAnnouncementSchema = z.object({
     allUsers: z.boolean().default(false),
   }),
   expiresAt: z.string().datetime().optional(),
-  actionButton: z.object({
-    label: z.string().max(50),
-    url: z.string().url(),
-  }).optional(),
+  actionButton: z
+    .object({
+      label: z.string().max(50),
+      url: z.string().url(),
+    })
+    .optional(),
 });
 
 /**
@@ -196,10 +229,13 @@ export const updateAnnouncementSchema = z.object({
   content: z.string().min(1).max(5000).optional(),
   type: z.enum(['info', 'warning', 'critical']).optional(),
   expiresAt: z.string().datetime().optional().nullable(),
-  actionButton: z.object({
-    label: z.string().max(50),
-    url: z.string().url(),
-  }).optional().nullable(),
+  actionButton: z
+    .object({
+      label: z.string().max(50),
+      url: z.string().url(),
+    })
+    .optional()
+    .nullable(),
 });
 
 /**
@@ -213,7 +249,9 @@ export const createAlertSchema = z.object({
     operator: z.enum(['gt', 'gte', 'lt', 'lte', 'eq', 'ne']),
     threshold: z.number(),
   }),
-  recipients: z.array(z.string().uuid()).min(1, 'At least one recipient is required'),
+  recipients: z
+    .array(z.string().uuid())
+    .min(1, 'At least one recipient is required'),
   channels: z.array(notificationChannelSchema).min(1),
   cooldownMinutes: z.number().min(1).max(1440).default(60),
   enabled: z.boolean().default(true),
@@ -225,11 +263,13 @@ export const createAlertSchema = z.object({
 export const updateAlertSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
-  condition: z.object({
-    metric: z.string(),
-    operator: z.enum(['gt', 'gte', 'lt', 'lte', 'eq', 'ne']),
-    threshold: z.number(),
-  }).optional(),
+  condition: z
+    .object({
+      metric: z.string(),
+      operator: z.enum(['gt', 'gte', 'lt', 'lte', 'eq', 'ne']),
+      threshold: z.number(),
+    })
+    .optional(),
   recipients: z.array(z.string().uuid()).min(1).optional(),
   channels: z.array(notificationChannelSchema).min(1).optional(),
   cooldownMinutes: z.number().min(1).max(1440).optional(),
@@ -264,7 +304,10 @@ export const updateWebhookSchema = z.object({
  * Bulk operation schema
  */
 export const bulkOperationSchema = z.object({
-  ids: z.array(z.string().uuid()).min(1, 'At least one ID is required').max(1000, 'Maximum 1000 items at once'),
+  ids: z
+    .array(z.string().uuid())
+    .min(1, 'At least one ID is required')
+    .max(1000, 'Maximum 1000 items at once'),
   action: z.string().min(1),
   data: z.record(z.unknown()).optional(),
 });
@@ -319,15 +362,18 @@ export const rateLimitInfoSchema = z.object({
  * Batch request schema
  */
 export const batchRequestSchema = z.object({
-  requests: z.array(
-    z.object({
-      id: z.string(),
-      method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-      url: z.string(),
-      body: z.unknown().optional(),
-      headers: z.record(z.string()).optional(),
-    })
-  ).min(1).max(50, 'Maximum 50 requests per batch'),
+  requests: z
+    .array(
+      z.object({
+        id: z.string(),
+        method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
+        url: z.string(),
+        body: z.unknown().optional(),
+        headers: z.record(z.string()).optional(),
+      })
+    )
+    .min(1)
+    .max(50, 'Maximum 50 requests per batch'),
 });
 
 /**
@@ -338,9 +384,15 @@ export type CursorPaginationInput = z.infer<typeof cursorPaginationSchema>;
 export type DateRangeInput = z.infer<typeof dateRangeSchema>;
 export type SearchQueryInput = z.infer<typeof searchQuerySchema>;
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;
-export type BulkCreateNotificationsInput = z.infer<typeof bulkCreateNotificationsSchema>;
-export type UpdateNotificationPreferencesInput = z.infer<typeof updateNotificationPreferencesSchema>;
-export type NotificationFiltersInput = z.infer<typeof notificationFiltersSchema>;
+export type BulkCreateNotificationsInput = z.infer<
+  typeof bulkCreateNotificationsSchema
+>;
+export type UpdateNotificationPreferencesInput = z.infer<
+  typeof updateNotificationPreferencesSchema
+>;
+export type NotificationFiltersInput = z.infer<
+  typeof notificationFiltersSchema
+>;
 export type CreateAnnouncementInput = z.infer<typeof createAnnouncementSchema>;
 export type UpdateAnnouncementInput = z.infer<typeof updateAnnouncementSchema>;
 export type CreateAlertInput = z.infer<typeof createAlertSchema>;

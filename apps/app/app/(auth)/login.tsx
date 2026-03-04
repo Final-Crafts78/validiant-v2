@@ -1,6 +1,6 @@
 /**
  * Login Screen
- * 
+ *
  * User login with email and password.
  */
 
@@ -64,7 +64,7 @@ export default function LoginScreen() {
     onSuccess: async (data) => {
       // Save auth data
       await setAuth(data.user, data.token, data.refreshToken);
-      
+
       // Navigate to main app
       router.replace('/(tabs)');
     },
@@ -112,10 +112,7 @@ export default function LoginScreen() {
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.email && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.email && styles.inputError]}
                   placeholder="Enter your email"
                   placeholderTextColor="#999"
                   keyboardType="email-address"
@@ -142,10 +139,7 @@ export default function LoginScreen() {
               name="password"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.password && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.password && styles.inputError]}
                   placeholder="Enter your password"
                   placeholderTextColor="#999"
                   secureTextEntry

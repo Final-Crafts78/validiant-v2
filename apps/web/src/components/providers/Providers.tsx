@@ -1,6 +1,6 @@
 /**
  * Providers Component
- * 
+ *
  * Wraps the application with all necessary providers:
  * - QueryClientProvider (TanStack Query)
  * - Future providers (theme, auth context, etc.)
@@ -9,6 +9,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 
 /**
@@ -20,7 +21,7 @@ interface ProvidersProps {
 
 /**
  * Providers Component
- * 
+ *
  * Initializes and provides all app-wide providers.
  */
 export function Providers({ children }: ProvidersProps) {
@@ -54,13 +55,4 @@ export function Providers({ children }: ProvidersProps) {
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
-}
-
-/**
- * Lazy-loaded React Query Devtools for development only
- * This component is tree-shaken in production builds
- */
-function ReactQueryDevtools() {
-  const { ReactQueryDevtools: DevtoolsComponent } = require('@tanstack/react-query-devtools');
-  return <DevtoolsComponent initialIsOpen={false} buttonPosition="bottom-right" />;
 }

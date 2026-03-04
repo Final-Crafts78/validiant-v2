@@ -120,7 +120,6 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-
       {/* Card Header */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -261,7 +260,6 @@ export default function ProjectsPage() {
 
   return (
     <div className="space-y-6">
-
       {/* =================================================================
           PAGE HEADER
       ================================================================= */}
@@ -287,7 +285,6 @@ export default function ProjectsPage() {
               STATS GRID
           ============================================================= */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
               <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
               <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
@@ -319,7 +316,6 @@ export default function ProjectsPage() {
                 Planning / On Hold
               </p>
             </div>
-
           </div>
 
           {/* =============================================================
@@ -327,7 +323,6 @@ export default function ProjectsPage() {
           ============================================================= */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <div className="flex flex-col lg:flex-row gap-3">
-
               {/* Search */}
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -355,7 +350,6 @@ export default function ProjectsPage() {
                   <option value="completed">Completed</option>
                 </select>
               </div>
-
             </div>
           </div>
 
@@ -374,19 +368,18 @@ export default function ProjectsPage() {
               Showing{' '}
               <span className="font-medium text-slate-700">
                 {projects.length}
-              </span>
-              {' '}of{' '}
+              </span>{' '}
+              of{' '}
               <span className="font-medium text-slate-700">
                 {projects.length}
-              </span>
-              {' '}projects
+              </span>{' '}
+              projects
             </p>
           </div>
         </>
       ) : (
         <EmptyState />
       )}
-
     </div>
   );
 }

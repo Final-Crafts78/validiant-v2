@@ -91,12 +91,10 @@ export default function ForgotPasswordPage() {
   // ---------------------------------------------------------------------------
   return (
     <div className="min-h-screen flex">
-
       {/* ===================================================================
           LEFT PANEL — Brand & Trust (desktop only)
       =================================================================== */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-blue-900 flex-col items-center justify-center px-16 relative overflow-hidden">
-
         {/* Geometric gradient overlays — identical to login/register */}
         <div
           aria-hidden="true"
@@ -135,8 +133,8 @@ export default function ForgotPasswordPage() {
 
           <p className="text-blue-200 text-base leading-relaxed">
             Regain access to your enterprise workspace quickly. We ensure all
-            password resets meet strict compliance protocols and maintain a
-            full audit trail.
+            password resets meet strict compliance protocols and maintain a full
+            audit trail.
           </p>
 
           {/* Trust badges */}
@@ -173,7 +171,6 @@ export default function ForgotPasswordPage() {
           RIGHT PANEL — Auth Form
       =================================================================== */}
       <div className="flex-1 bg-slate-50 flex flex-col items-center justify-center px-6 py-12 sm:px-12">
-
         {/* Mobile-only brand mark */}
         <div className="flex lg:hidden items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -184,7 +181,6 @@ export default function ForgotPasswordPage() {
 
         {/* Auth Card */}
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-lg p-8 sm:p-10">
-
           {/* ================================================================
               SUCCESS VIEW
           ================================================================ */}
@@ -222,7 +218,10 @@ export default function ForgotPasswordPage() {
                   'Make sure the email address is correct',
                   'Wait a few minutes and try resending',
                 ].map((hint) => (
-                  <li key={hint} className="flex items-start gap-2 text-sm text-slate-500">
+                  <li
+                    key={hint}
+                    className="flex items-start gap-2 text-sm text-slate-500"
+                  >
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0" />
                     {hint}
                   </li>
@@ -362,7 +361,6 @@ export default function ForgotPasswordPage() {
           )}
         </div>
       </div>
-
     </div>
   );
 }

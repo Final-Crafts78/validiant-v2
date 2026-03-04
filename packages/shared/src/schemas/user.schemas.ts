@@ -1,6 +1,6 @@
 /**
  * User and Authentication Schemas
- * 
+ *
  * Zod validation schemas for user-related operations.
  * These provide runtime validation matching our TypeScript types.
  */
@@ -29,8 +29,14 @@ export const oauthProviderSchema = z.nativeEnum(OAuthProvider);
  */
 export const emailSchema = z
   .string()
-  .min(VALIDATION.EMAIL.MIN_LENGTH, `Email must be at least ${VALIDATION.EMAIL.MIN_LENGTH} characters`)
-  .max(VALIDATION.EMAIL.MAX_LENGTH, `Email must not exceed ${VALIDATION.EMAIL.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.EMAIL.MIN_LENGTH,
+    `Email must be at least ${VALIDATION.EMAIL.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.EMAIL.MAX_LENGTH,
+    `Email must not exceed ${VALIDATION.EMAIL.MAX_LENGTH} characters`
+  )
   .email('Invalid email format')
   .toLowerCase()
   .trim();
@@ -40,21 +46,39 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(VALIDATION.PASSWORD.MIN_LENGTH, `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`)
-  .max(VALIDATION.PASSWORD.MAX_LENGTH, `Password must not exceed ${VALIDATION.PASSWORD.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.PASSWORD.MIN_LENGTH,
+    `Password must be at least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.PASSWORD.MAX_LENGTH,
+    `Password must not exceed ${VALIDATION.PASSWORD.MAX_LENGTH} characters`
+  )
   .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/\d/, 'Password must contain at least one number')
-  .regex(/[@$!%*?&]/, 'Password must contain at least one special character (@$!%*?&)');
+  .regex(
+    /[@$!%*?&]/,
+    'Password must contain at least one special character (@$!%*?&)'
+  );
 
 /**
  * Username validation schema
  */
 export const usernameSchema = z
   .string()
-  .min(VALIDATION.USERNAME.MIN_LENGTH, `Username must be at least ${VALIDATION.USERNAME.MIN_LENGTH} characters`)
-  .max(VALIDATION.USERNAME.MAX_LENGTH, `Username must not exceed ${VALIDATION.USERNAME.MAX_LENGTH} characters`)
-  .regex(VALIDATION.USERNAME.REGEX, 'Username can only contain letters, numbers, hyphens, and underscores')
+  .min(
+    VALIDATION.USERNAME.MIN_LENGTH,
+    `Username must be at least ${VALIDATION.USERNAME.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.USERNAME.MAX_LENGTH,
+    `Username must not exceed ${VALIDATION.USERNAME.MAX_LENGTH} characters`
+  )
+  .regex(
+    VALIDATION.USERNAME.REGEX,
+    'Username can only contain letters, numbers, hyphens, and underscores'
+  )
   .toLowerCase()
   .trim();
 
@@ -63,8 +87,14 @@ export const usernameSchema = z
  */
 export const fullNameSchema = z
   .string()
-  .min(VALIDATION.FULL_NAME.MIN_LENGTH, `Name must be at least ${VALIDATION.FULL_NAME.MIN_LENGTH} characters`)
-  .max(VALIDATION.FULL_NAME.MAX_LENGTH, `Name must not exceed ${VALIDATION.FULL_NAME.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.FULL_NAME.MIN_LENGTH,
+    `Name must be at least ${VALIDATION.FULL_NAME.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.FULL_NAME.MAX_LENGTH,
+    `Name must not exceed ${VALIDATION.FULL_NAME.MAX_LENGTH} characters`
+  )
   .trim();
 
 /**
@@ -113,7 +143,7 @@ export const userRegistrationSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   fullName: fullNameSchema,
-  acceptedTerms: z.boolean().refine(val => val === true, {
+  acceptedTerms: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms and conditions',
   }),
 });
@@ -187,7 +217,8 @@ export const updateUserPreferencesSchema = z.object({
  * User notification preferences update schema
  * Renamed to avoid conflict with notification.schemas.ts
  */
-export const userNotificationPreferencesUpdateSchema = notificationPreferencesSchema.partial();
+export const userNotificationPreferencesUpdateSchema =
+  notificationPreferencesSchema.partial();
 
 /**
  * Device info schema
@@ -195,7 +226,15 @@ export const userNotificationPreferencesUpdateSchema = notificationPreferencesSc
 export const deviceInfoSchema = z.object({
   deviceId: z.string(),
   deviceType: z.enum(['mobile', 'tablet', 'desktop', 'unknown']),
-  platform: z.enum(['ios', 'android', 'web', 'windows', 'macos', 'linux', 'unknown']),
+  platform: z.enum([
+    'ios',
+    'android',
+    'web',
+    'windows',
+    'macos',
+    'linux',
+    'unknown',
+  ]),
   browser: z.string().optional(),
   browserVersion: z.string().optional(),
   osVersion: z.string().optional(),
@@ -243,16 +282,18 @@ export const userListQuerySchema = z.object({
   // Pagination
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(100).default(20),
-  
+
   // Search
   search: z.string().optional(),
-  
+
   // Filters
   role: userRoleSchema.optional(),
   status: userStatusSchema.optional(),
-  
+
   // Sorting
-  sortBy: z.enum(['createdAt', 'updatedAt', 'fullName', 'email', 'lastLoginAt']).optional(),
+  sortBy: z
+    .enum(['createdAt', 'updatedAt', 'fullName', 'email', 'lastLoginAt'])
+    .optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
 });
 
@@ -294,7 +335,9 @@ export const userActivitySchema = z.object({
  * Bulk user action schema
  */
 export const bulkUserActionSchema = z.object({
-  userIds: z.array(z.string().uuid()).min(1, 'At least one user ID is required'),
+  userIds: z
+    .array(z.string().uuid())
+    .min(1, 'At least one user ID is required'),
   action: z.enum(['activate', 'deactivate', 'suspend', 'delete']),
 });
 
@@ -328,7 +371,10 @@ export const setupTwoFactorSchema = z.object({
  * Two-factor authentication verify schema
  */
 export const verifyTwoFactorSchema = z.object({
-  code: z.string().length(6, 'Verification code must be 6 digits').regex(/^\d{6}$/, 'Code must contain only numbers'),
+  code: z
+    .string()
+    .length(6, 'Verification code must be 6 digits')
+    .regex(/^\d{6}$/, 'Code must contain only numbers'),
 });
 
 /**
@@ -351,26 +397,34 @@ export const userExportRequestSchema = z.object({
 /**
  * Helper: Validate partial user update
  */
-export const partialUserUpdateSchema = z.object({
-  fullName: fullNameSchema.optional(),
-  displayName: z.string().min(2).max(50).optional(),
-  bio: z.string().max(500).optional(),
-  phoneNumber: phoneNumberSchema,
-  avatarUrl: z.string().url().optional(),
-  preferences: updateUserPreferencesSchema.optional(),
-  notificationPreferences: userNotificationPreferencesUpdateSchema.optional(),
-}).strict();
+export const partialUserUpdateSchema = z
+  .object({
+    fullName: fullNameSchema.optional(),
+    displayName: z.string().min(2).max(50).optional(),
+    bio: z.string().max(500).optional(),
+    phoneNumber: phoneNumberSchema,
+    avatarUrl: z.string().url().optional(),
+    preferences: updateUserPreferencesSchema.optional(),
+    notificationPreferences: userNotificationPreferencesUpdateSchema.optional(),
+  })
+  .strict();
 
 /**
  * Type inference helpers
  */
 export type UserRegistrationInput = z.infer<typeof userRegistrationSchema>;
 export type UserLoginInput = z.infer<typeof userLoginSchema>;
-export type PasswordResetRequestInput = z.infer<typeof passwordResetRequestSchema>;
-export type PasswordResetConfirmationInput = z.infer<typeof passwordResetConfirmationSchema>;
+export type PasswordResetRequestInput = z.infer<
+  typeof passwordResetRequestSchema
+>;
+export type PasswordResetConfirmationInput = z.infer<
+  typeof passwordResetConfirmationSchema
+>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
-export type UpdateUserPreferencesInput = z.infer<typeof updateUserPreferencesSchema>;
+export type UpdateUserPreferencesInput = z.infer<
+  typeof updateUserPreferencesSchema
+>;
 export type DeviceInfoInput = z.infer<typeof deviceInfoSchema>;
 export type UserFiltersInput = z.infer<typeof userFiltersSchema>;
 export type BulkUserActionInput = z.infer<typeof bulkUserActionSchema>;

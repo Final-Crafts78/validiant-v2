@@ -132,8 +132,8 @@ function ResetPasswordForm() {
             Invalid Reset Link
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            This password reset link is missing or invalid. Please request a
-            new one.
+            This password reset link is missing or invalid. Please request a new
+            one.
           </p>
         </div>
 
@@ -250,7 +250,6 @@ function ResetPasswordForm() {
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-
         {/* New Password */}
         <div>
           <label
@@ -370,7 +369,6 @@ function ResetPasswordForm() {
             'Reset Password'
           )}
         </button>
-
       </form>
 
       {/* Back to login */}
@@ -394,12 +392,10 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex">
-
       {/* =================================================================
           LEFT PANEL — Brand & Trust (desktop only)
       ================================================================= */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-blue-900 flex-col items-center justify-center px-16 relative overflow-hidden">
-
         {/* Geometric gradient overlays — identical to auth funnel */}
         <div
           aria-hidden="true"
@@ -432,8 +428,7 @@ export default function ResetPasswordPage() {
 
           {/* Headline */}
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-snug mb-5">
-            Secure{' '}
-            <span className="text-blue-300">Password Reset.</span>
+            Secure <span className="text-blue-300">Password Reset.</span>
           </h2>
 
           <p className="text-blue-200 text-base leading-relaxed">
@@ -475,7 +470,6 @@ export default function ResetPasswordPage() {
           RIGHT PANEL — Auth Form (with Suspense boundary)
       ================================================================= */}
       <div className="flex-1 bg-slate-50 flex flex-col items-center justify-center px-6 py-12 sm:px-12">
-
         {/* Mobile-only brand mark */}
         <div className="flex lg:hidden items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -495,7 +489,6 @@ export default function ResetPasswordPage() {
           <ResetPasswordForm />
         </Suspense>
       </div>
-
     </div>
   );
 }

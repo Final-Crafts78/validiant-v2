@@ -1,20 +1,20 @@
 /**
  * Mobile API Client - JWT Token Management
- * 
+ *
  * Axios client configured for mobile JWT authentication.
- * 
+ *
  * CRITICAL FEATURES:
  * - Automatic token injection from SecureStore
  * - Automatic token refresh on 401
  * - Retry failed requests after refresh
- * 
+ *
  * AUTHENTICATION FLOW:
  * 1. User logs in → Backend returns { accessToken, refreshToken }
  * 2. Mobile saves tokens to SecureStore (encrypted)
  * 3. All API requests automatically inject: Authorization: Bearer <accessToken>
  * 4. If 401 → Try refresh token → Get new accessToken → Retry request
  * 5. If refresh fails → Logout user
- * 
+ *
  * TOKEN REFRESH FLOW:
  * ```
  * API Request (401)
@@ -29,7 +29,7 @@
  *   ↓
  * Retry original request with new accessToken
  * ```
- * 
+ *
  * SECURITY:
  * - Tokens stored in SecureStore (hardware-backed encryption)
  * - No tokens in AsyncStorage or memory
@@ -37,7 +37,12 @@
  * - Token denylist (backend Redis)
  */
 
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import Constants from 'expo-constants';
 import {
   getAccessToken,
@@ -49,7 +54,8 @@ import {
 /**
  * API Configuration
  */
-const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3001';
+const API_BASE_URL =
+  Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3001';
 const API_TIMEOUT = 30000; // 30 seconds
 
 /**
@@ -80,7 +86,7 @@ export interface APIResponse<T = any> {
 
 /**
  * Create Axios Instance
- * 
+ *
  * Note: Does NOT set withCredentials (cookies not used in mobile)
  */
 const apiClient: AxiosInstance = axios.create({
@@ -117,7 +123,7 @@ const processQueue = (error: any = null, token: string | null = null) => {
 
 /**
  * Request Interceptor - Inject JWT Token
- * 
+ *
  * Retrieves accessToken from SecureStore and adds to Authorization header.
  */
 apiClient.interceptors.request.use(
@@ -145,7 +151,7 @@ apiClient.interceptors.request.use(
 
 /**
  * Response Interceptor - Handle 401 with Auto-Refresh
- * 
+ *
  * If request fails with 401:
  * 1. Try to refresh token
  * 2. Retry original request with new token
@@ -157,7 +163,9 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError<APIError>) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     // Handle network errors
     if (!error.response) {
@@ -165,7 +173,8 @@ apiClient.interceptors.response.use(
       return Promise.reject({
         success: false,
         error: 'NetworkError',
-        message: 'Unable to connect to server. Please check your internet connection.',
+        message:
+          'Unable to connect to server. Please check your internet connection.',
         statusCode: 0,
       } as APIError);
     }
@@ -212,13 +221,15 @@ apiClient.interceptors.response.use(
         }
 
         // Call refresh endpoint with refresh token in Authorization header
-        const refreshResponse = await axios.post<APIResponse<{ accessToken: string }>>(
+        const refreshResponse = await axios.post<
+          APIResponse<{ accessToken: string }>
+        >(
           `${API_BASE_URL}/api/v1/auth/refresh`,
           {},
           {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${refreshToken}`,
+              Authorization: `Bearer ${refreshToken}`,
             },
           }
         );
@@ -264,7 +275,10 @@ apiClient.interceptors.response.use(
     const apiError: APIError = {
       success: false,
       error: response.data?.error || 'UnknownError',
-      message: response.data?.message || error.message || 'An unexpected error occurred',
+      message:
+        response.data?.message ||
+        error.message ||
+        'An unexpected error occurred',
       statusCode,
       details: response.data?.details,
     };
@@ -339,7 +353,12 @@ export default apiClient;
  * Type guard to check if error is APIError
  */
 export const isAPIError = (error: any): error is APIError => {
-  return error && typeof error === 'object' && 'success' in error && error.success === false;
+  return (
+    error &&
+    typeof error === 'object' &&
+    'success' in error &&
+    error.success === false
+  );
 };
 
 /**

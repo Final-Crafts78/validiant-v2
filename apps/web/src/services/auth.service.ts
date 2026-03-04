@@ -1,6 +1,6 @@
 /**
  * Auth Service
- * 
+ *
  * Service for authentication-related API calls.
  * Handles login, register, logout, password reset, etc.
  */
@@ -74,9 +74,7 @@ export const login = async (
 /**
  * Register new user
  */
-export const register = async (
-  data: RegisterData
-): Promise<AuthResponse> => {
+export const register = async (data: RegisterData): Promise<AuthResponse> => {
   return post<APIResponse<AuthResponse>>(
     API_CONFIG.ENDPOINTS.AUTH.REGISTER,
     data
@@ -109,9 +107,9 @@ export const refreshToken = async (
  * Fixed: Changed from POST to GET to match backend route definition
  */
 export const getCurrentUser = async (): Promise<User> => {
-  return get<APIResponse<{ user: User }>>(
-    API_CONFIG.ENDPOINTS.AUTH.ME
-  ).then((res) => res.data.data!.user);
+  return get<APIResponse<{ user: User }>>(API_CONFIG.ENDPOINTS.AUTH.ME).then(
+    (res) => res.data.data!.user
+  );
 };
 
 /**
@@ -123,7 +121,10 @@ export const forgotPassword = async (
   return post<APIResponse<{ message: string }>>(
     API_CONFIG.ENDPOINTS.AUTH.FORGOT_PASSWORD,
     data
-  ).then((res) => ({ message: res.data.data?.message || res.data.message || 'Password reset email sent' }));
+  ).then((res) => ({
+    message:
+      res.data.data?.message || res.data.message || 'Password reset email sent',
+  }));
 };
 
 /**
@@ -135,7 +136,10 @@ export const resetPassword = async (
   return post<APIResponse<{ message: string }>>(
     API_CONFIG.ENDPOINTS.AUTH.RESET_PASSWORD,
     data
-  ).then((res) => ({ message: res.data.data?.message || res.data.message || 'Password reset successful' }));
+  ).then((res) => ({
+    message:
+      res.data.data?.message || res.data.message || 'Password reset successful',
+  }));
 };
 
 /**
@@ -147,5 +151,10 @@ export const verifyEmail = async (
   return post<APIResponse<{ message: string }>>(
     API_CONFIG.ENDPOINTS.AUTH.VERIFY_EMAIL,
     data
-  ).then((res) => ({ message: res.data.data?.message || res.data.message || 'Email verified successfully' }));
+  ).then((res) => ({
+    message:
+      res.data.data?.message ||
+      res.data.message ||
+      'Email verified successfully',
+  }));
 };

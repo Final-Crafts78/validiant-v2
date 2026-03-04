@@ -36,10 +36,7 @@ import {
   decodeToken,
 } from '../utils/jwt';
 import { cache } from '../config/redis.config';
-import {
-  userRegistrationSchema,
-  userLoginSchema,
-} from '@validiant/shared';
+import { userRegistrationSchema, userLoginSchema } from '@validiant/shared';
 import type { User } from '../db/schema';
 
 /**
@@ -73,7 +70,7 @@ const getCookieOptions = (c: Context, maxAge: number) => {
   };
 };
 
-const ACCESS_TOKEN_MAX_AGE = 15 * 60;          // 15 minutes
+const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
 /**
@@ -99,7 +96,9 @@ const formatUserResponse = (user: User) => ({
  */
 export const register = async (c: Context) => {
   try {
-    const payload = (await c.req.json()) as z.infer<typeof userRegistrationSchema>;
+    const payload = (await c.req.json()) as z.infer<
+      typeof userRegistrationSchema
+    >;
     const email = payload.email.toLowerCase();
     const { password, fullName } = payload;
 
@@ -137,11 +136,27 @@ export const register = async (c: Context) => {
       })
       .returning();
 
-    const accessToken = await generateToken({ userId: user.id, email: user.email });
-    const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
+    const accessToken = await generateToken({
+      userId: user.id,
+      email: user.email,
+    });
+    const refreshToken = await generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+    });
 
-    setCookie(c, 'accessToken', accessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
-    setCookie(c, 'refreshToken', refreshToken, getCookieOptions(c, REFRESH_TOKEN_MAX_AGE));
+    setCookie(
+      c,
+      'accessToken',
+      accessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
+    setCookie(
+      c,
+      'refreshToken',
+      refreshToken,
+      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
+    );
 
     return c.json(
       {
@@ -185,14 +200,22 @@ export const login = async (c: Context) => {
 
     if (!user) {
       return c.json(
-        { success: false, error: 'Invalid credentials', message: 'Email or password is incorrect' },
+        {
+          success: false,
+          error: 'Invalid credentials',
+          message: 'Email or password is incorrect',
+        },
         401
       );
     }
 
     if (!user.passwordHash) {
       return c.json(
-        { success: false, error: 'Invalid credentials', message: 'This account uses OAuth authentication' },
+        {
+          success: false,
+          error: 'Invalid credentials',
+          message: 'This account uses OAuth authentication',
+        },
         401
       );
     }
@@ -201,16 +224,36 @@ export const login = async (c: Context) => {
 
     if (!isPasswordValid) {
       return c.json(
-        { success: false, error: 'Invalid credentials', message: 'Email or password is incorrect' },
+        {
+          success: false,
+          error: 'Invalid credentials',
+          message: 'Email or password is incorrect',
+        },
         401
       );
     }
 
-    const accessToken = await generateToken({ userId: user.id, email: user.email });
-    const refreshToken = await generateRefreshToken({ userId: user.id, email: user.email });
+    const accessToken = await generateToken({
+      userId: user.id,
+      email: user.email,
+    });
+    const refreshToken = await generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+    });
 
-    setCookie(c, 'accessToken', accessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
-    setCookie(c, 'refreshToken', refreshToken, getCookieOptions(c, REFRESH_TOKEN_MAX_AGE));
+    setCookie(
+      c,
+      'accessToken',
+      accessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
+    setCookie(
+      c,
+      'refreshToken',
+      refreshToken,
+      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
+    );
 
     return c.json({
       success: true,
@@ -250,7 +293,11 @@ export const refresh = async (c: Context) => {
 
     if (!refreshToken) {
       return c.json(
-        { success: false, error: 'Refresh token not found', message: 'No refresh token provided' },
+        {
+          success: false,
+          error: 'Refresh token not found',
+          message: 'No refresh token provided',
+        },
         401
       );
     }
@@ -259,7 +306,11 @@ export const refresh = async (c: Context) => {
 
     if (!decoded) {
       return c.json(
-        { success: false, error: 'Invalid refresh token', message: 'Refresh token is invalid or expired' },
+        {
+          success: false,
+          error: 'Invalid refresh token',
+          message: 'Refresh token is invalid or expired',
+        },
         401
       );
     }
@@ -267,18 +318,33 @@ export const refresh = async (c: Context) => {
     const isDenied = await cache.exists(`token:denylist:${refreshToken}`);
     if (isDenied) {
       return c.json(
-        { success: false, error: 'Token has been revoked', message: 'This token has been invalidated' },
+        {
+          success: false,
+          error: 'Token has been revoked',
+          message: 'This token has been invalidated',
+        },
         401
       );
     }
 
-    const newAccessToken = await generateToken({ userId: decoded.userId, email: decoded.email });
+    const newAccessToken = await generateToken({
+      userId: decoded.userId,
+      email: decoded.email,
+    });
 
-    setCookie(c, 'accessToken', newAccessToken, getCookieOptions(c, ACCESS_TOKEN_MAX_AGE));
+    setCookie(
+      c,
+      'accessToken',
+      newAccessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
 
     return c.json({
       success: true,
-      data: { accessToken: newAccessToken, message: 'Token refreshed successfully' },
+      data: {
+        accessToken: newAccessToken,
+        message: 'Token refreshed successfully',
+      },
     });
   } catch (error) {
     console.error('Refresh error:', error);
@@ -303,7 +369,11 @@ export const getMe = async (c: Context) => {
 
     if (!user || !user.userId) {
       return c.json(
-        { success: false, error: 'Unauthorized', message: 'Authentication required' },
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        },
         401
       );
     }
@@ -316,7 +386,11 @@ export const getMe = async (c: Context) => {
 
     if (!dbUser) {
       return c.json(
-        { success: false, error: 'User not found', message: 'User account no longer exists' },
+        {
+          success: false,
+          error: 'User not found',
+          message: 'User account no longer exists',
+        },
         404
       );
     }
@@ -360,7 +434,11 @@ export const logout = async (c: Context) => {
         if (decoded && decoded.exp) {
           const remainingTTL = decoded.exp - Math.floor(Date.now() / 1000);
           if (remainingTTL > 0) {
-            await cache.set(`token:denylist:${accessToken}`, true, remainingTTL);
+            await cache.set(
+              `token:denylist:${accessToken}`,
+              true,
+              remainingTTL
+            );
           }
         }
       } catch (err) {
@@ -374,7 +452,11 @@ export const logout = async (c: Context) => {
         if (decoded && decoded.exp) {
           const remainingTTL = decoded.exp - Math.floor(Date.now() / 1000);
           if (remainingTTL > 0) {
-            await cache.set(`token:denylist:${refreshToken}`, true, remainingTTL);
+            await cache.set(
+              `token:denylist:${refreshToken}`,
+              true,
+              remainingTTL
+            );
           }
         }
       } catch (err) {
@@ -424,7 +506,10 @@ export const forgotPassword = async (c: Context) => {
   // Safe success response — returned regardless of whether the user exists
   const SAFE_RESPONSE = {
     success: true,
-    data: { message: 'If an account exists with that email, a reset link has been sent.' },
+    data: {
+      message:
+        'If an account exists with that email, a reset link has been sent.',
+    },
   } as const;
 
   try {
@@ -437,7 +522,7 @@ export const forgotPassword = async (c: Context) => {
       FRONTEND_URL: string;
     }>(c);
 
-    const payload = await c.req.json() as { email: string };
+    const payload = (await c.req.json()) as { email: string };
     const email = payload.email.toLowerCase();
 
     // Look up user — silently exit with 200 if not found (enumeration guard)
@@ -469,8 +554,9 @@ export const forgotPassword = async (c: Context) => {
     if (!RESEND_API_KEY) {
       console.error(
         '[forgotPassword] CRITICAL: RESEND_API_KEY binding is not set. ' +
-        'Add it to wrangler.toml [vars] or as a Cloudflare Secret. ' +
-        'Password reset email was NOT sent for user:', user.id
+          'Add it to wrangler.toml [vars] or as a Cloudflare Secret. ' +
+          'Password reset email was NOT sent for user:',
+        user.id
       );
       return c.json(SAFE_RESPONSE, 200);
     }
@@ -482,7 +568,7 @@ export const forgotPassword = async (c: Context) => {
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          Authorization: `Bearer ${RESEND_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -560,7 +646,10 @@ export const forgotPassword = async (c: Context) => {
  */
 export const resetPassword = async (c: Context) => {
   try {
-    const { token, password } = await c.req.json() as { token: string; password: string };
+    const { token, password } = (await c.req.json()) as {
+      token: string;
+      password: string;
+    };
 
     // Direct deterministic lookup — no bcrypt comparison required
     const [tokenRecord] = await db
@@ -572,7 +661,11 @@ export const resetPassword = async (c: Context) => {
     // Guard 1: Token does not exist
     if (!tokenRecord) {
       return c.json(
-        { success: false, error: 'Invalid or expired reset token', message: 'This reset link is invalid or has already been used.' },
+        {
+          success: false,
+          error: 'Invalid or expired reset token',
+          message: 'This reset link is invalid or has already been used.',
+        },
         400
       );
     }
@@ -580,7 +673,11 @@ export const resetPassword = async (c: Context) => {
     // Guard 2: Token has expired
     if (tokenRecord.expiresAt < new Date()) {
       return c.json(
-        { success: false, error: 'Invalid or expired reset token', message: 'This reset link has expired. Please request a new one.' },
+        {
+          success: false,
+          error: 'Invalid or expired reset token',
+          message: 'This reset link has expired. Please request a new one.',
+        },
         400
       );
     }
@@ -588,7 +685,11 @@ export const resetPassword = async (c: Context) => {
     // Guard 3: Token already consumed
     if (tokenRecord.usedAt !== null) {
       return c.json(
-        { success: false, error: 'Invalid or expired reset token', message: 'This reset link has already been used.' },
+        {
+          success: false,
+          error: 'Invalid or expired reset token',
+          message: 'This reset link has already been used.',
+        },
         400
       );
     }
@@ -610,7 +711,10 @@ export const resetPassword = async (c: Context) => {
 
     return c.json({
       success: true,
-      data: { message: 'Your password has been reset successfully. You can now sign in.' },
+      data: {
+        message:
+          'Your password has been reset successfully. You can now sign in.',
+      },
     });
   } catch (error) {
     console.error('Reset password error:', error);

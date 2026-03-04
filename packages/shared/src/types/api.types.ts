@@ -1,6 +1,6 @@
 /**
  * API Types
- * 
+ *
  * Type definitions for API responses, errors, pagination,
  * and common request/response patterns.
  */
@@ -24,7 +24,7 @@ export interface ApiError {
 /**
  * API response wrapper (discriminated union)
  * Standardized response format for all API endpoints
- * 
+ *
  * success: true -> data is guaranteed to exist
  * success: false -> error is guaranteed to exist
  */
@@ -278,26 +278,26 @@ export enum ErrorCode {
   FORBIDDEN = 'FORBIDDEN',
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   TOKEN_INVALID = 'TOKEN_INVALID',
-  
+
   // Validation
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   INVALID_INPUT = 'INVALID_INPUT',
   REQUIRED_FIELD_MISSING = 'REQUIRED_FIELD_MISSING',
-  
+
   // Resource
   NOT_FOUND = 'NOT_FOUND',
   ALREADY_EXISTS = 'ALREADY_EXISTS',
   CONFLICT = 'CONFLICT',
-  
+
   // Rate Limiting
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
   QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
-  
+
   // Server
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
   DATABASE_ERROR = 'DATABASE_ERROR',
-  
+
   // Business Logic
   OPERATION_FAILED = 'OPERATION_FAILED',
   INVALID_STATE = 'INVALID_STATE',
@@ -367,7 +367,7 @@ export const createPaginatedResponse = <T>(
   total: number
 ): PaginatedResponse<T> => {
   const totalPages = Math.ceil(total / perPage);
-  
+
   return {
     success: true,
     data,
@@ -391,9 +391,10 @@ export const extractPaginationParams = (
 ): Required<PaginationParams> => {
   return {
     page: params.page && params.page > 0 ? params.page : 1,
-    perPage: params.perPage && params.perPage > 0 && params.perPage <= 100 
-      ? params.perPage 
-      : 20,
+    perPage:
+      params.perPage && params.perPage > 0 && params.perPage <= 100
+        ? params.perPage
+        : 20,
     sortBy: params.sortBy || 'createdAt',
     sortOrder: params.sortOrder || 'desc',
   };
@@ -415,7 +416,9 @@ export const isApiError = (response: unknown): response is ApiErrorResponse => {
 /**
  * Type guard to check if response is success
  */
-export const isApiSuccess = <T>(response: unknown): response is ApiResponse<T> => {
+export const isApiSuccess = <T>(
+  response: unknown
+): response is ApiResponse<T> => {
   return (
     typeof response === 'object' &&
     response !== null &&

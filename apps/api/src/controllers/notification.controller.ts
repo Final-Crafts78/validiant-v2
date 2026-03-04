@@ -1,11 +1,15 @@
 /**
- * Notification Controller
- * 
- * Handles HTTP requests for notification management endpoints.
- * Edge-compatible Hono implementation.
+ * Notification Controller (Phase 20)
+ *
+ * In-app notification management — list, read, mark as read.
+ * Notifications are created by other services (task assignment, comments, etc.)
+ * Updated to use real Drizzle queries against the notifications table.
  */
 
 import { Context } from 'hono';
+import { eq, and, desc, sql } from 'drizzle-orm';
+import { db, schema } from '../db';
+import type { UserContext } from '../middleware/auth';
 
 /**
  * Get user notifications
@@ -13,29 +17,44 @@ import { Context } from 'hono';
  */
 export const getNotifications = async (c: Context) => {
   try {
-    const user = c.get('user');
+    const user = c.get('user') as UserContext;
+    const page = parseInt(c.req.query('page') || '1');
+    const limit = parseInt(c.req.query('limit') || '20');
+    const unreadOnly = c.req.query('unread') === 'true';
+    const offset = (page - 1) * limit;
 
-    if (!user || !user.userId) {
-      return c.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-          message: 'User not authenticated',
-          timestamp: new Date().toISOString(),
-        },
-        401
-      );
+    const conditions = [eq(schema.notifications.userId, user.userId)];
+    if (unreadOnly) {
+      conditions.push(eq(schema.notifications.isRead, false));
     }
 
-    // Placeholder: Replace with actual notification service call
-    const notifications: any[] = [];
+    const notifications = await db
+      .select()
+      .from(schema.notifications)
+      .where(and(...conditions))
+      .orderBy(desc(schema.notifications.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    // Get unread count for badge
+    const [unreadCount] = await db
+      .select({
+        count: sql<number>`COUNT(${schema.notifications.id})`.mapWith(Number),
+      })
+      .from(schema.notifications)
+      .where(
+        and(
+          eq(schema.notifications.userId, user.userId),
+          eq(schema.notifications.isRead, false)
+        )
+      );
 
     return c.json({
       success: true,
       data: {
         notifications,
-        total: notifications.length,
-        unreadCount: notifications.filter((n: any) => !n.read).length,
+        unreadCount: unreadCount?.count || 0,
+        pagination: { page, limit },
       },
       timestamp: new Date().toISOString(),
     });
@@ -59,20 +78,8 @@ export const getNotifications = async (c: Context) => {
  */
 export const markAsRead = async (c: Context) => {
   try {
-    const user = c.get('user');
+    const user = c.get('user') as UserContext;
     const id = c.req.param('id');
-
-    if (!user || !user.userId) {
-      return c.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-          message: 'User not authenticated',
-          timestamp: new Date().toISOString(),
-        },
-        401
-      );
-    }
 
     if (!id) {
       return c.json(
@@ -86,18 +93,36 @@ export const markAsRead = async (c: Context) => {
       );
     }
 
-    // Placeholder: Replace with actual notification service call
-    const notification = {
-      id,
-      userId: user.userId,
-      read: true,
-      readAt: new Date().toISOString(),
-    };
+    const [updated] = await db
+      .update(schema.notifications)
+      .set({
+        isRead: true,
+        readAt: new Date(),
+      })
+      .where(
+        and(
+          eq(schema.notifications.id, id),
+          eq(schema.notifications.userId, user.userId)
+        )
+      )
+      .returning();
+
+    if (!updated) {
+      return c.json(
+        {
+          success: false,
+          error: 'Not Found',
+          message: 'Notification not found',
+          timestamp: new Date().toISOString(),
+        },
+        404
+      );
+    }
 
     return c.json({
       success: true,
       message: 'Notification marked as read',
-      data: { notification },
+      data: { notification: updated },
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -120,27 +145,26 @@ export const markAsRead = async (c: Context) => {
  */
 export const markAllAsRead = async (c: Context) => {
   try {
-    const user = c.get('user');
+    const user = c.get('user') as UserContext;
 
-    if (!user || !user.userId) {
-      return c.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-          message: 'User not authenticated',
-          timestamp: new Date().toISOString(),
-        },
-        401
-      );
-    }
-
-    // Placeholder: Replace with actual notification service call
-    const count = 0;
+    const result = await db
+      .update(schema.notifications)
+      .set({
+        isRead: true,
+        readAt: new Date(),
+      })
+      .where(
+        and(
+          eq(schema.notifications.userId, user.userId),
+          eq(schema.notifications.isRead, false)
+        )
+      )
+      .returning();
 
     return c.json({
       success: true,
       message: 'All notifications marked as read',
-      data: { count },
+      data: { count: result.length },
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -149,6 +173,45 @@ export const markAllAsRead = async (c: Context) => {
       {
         success: false,
         error: 'Failed to mark all notifications as read',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Get unread notification count
+ * GET /api/v1/notifications/unread-count
+ */
+export const getUnreadCount = async (c: Context) => {
+  try {
+    const user = c.get('user') as UserContext;
+
+    const [result] = await db
+      .select({
+        count: sql<number>`COUNT(${schema.notifications.id})`.mapWith(Number),
+      })
+      .from(schema.notifications)
+      .where(
+        and(
+          eq(schema.notifications.userId, user.userId),
+          eq(schema.notifications.isRead, false)
+        )
+      );
+
+    return c.json({
+      success: true,
+      data: { unreadCount: result?.count || 0 },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Get unread count error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to get unread count',
         message: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       },

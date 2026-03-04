@@ -1,9 +1,9 @@
 /**
  * User Service (Drizzle Version)
- * 
+ *
  * Handles user profile management, user search, admin operations,
  * and user-related business logic.
- * 
+ *
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  */
 
@@ -11,10 +11,7 @@ import { eq, and, isNull, sql, or, desc, asc } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
 import { cache } from '../config/redis.config';
-import {
-  BadRequestError,
-  assertExists,
-} from '../utils/errors';
+import { BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { UserRole, UserStatus } from '@validiant/shared';
 
@@ -133,7 +130,9 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
       lastLoginAt: users.lastLoginAt,
     })
     .from(users)
-    .where(and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)))
+    .where(
+      and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt))
+    )
     .limit(1);
   const user = userResult[0];
 
@@ -218,7 +217,10 @@ export const updateProfile = async (
 /**
  * Update user preferences
  */
-export const updatePreferences = async (userId: string, preferences: any): Promise<User> => {
+export const updatePreferences = async (
+  userId: string,
+  preferences: any
+): Promise<User> => {
   const userResult = await db
     .update(users)
     .set({
@@ -350,14 +352,15 @@ export const listUsers = async (params: {
     sortBy === 'createdAt'
       ? users.createdAt
       : sortBy === 'updatedAt'
-      ? users.updatedAt
-      : sortBy === 'fullName'
-      ? users.fullName
-      : sortBy === 'email'
-      ? users.email
-      : users.createdAt;
+        ? users.updatedAt
+        : sortBy === 'fullName'
+          ? users.fullName
+          : sortBy === 'email'
+            ? users.email
+            : users.createdAt;
 
-  const orderByClause = sortOrder === 'asc' ? asc(orderByColumn) : desc(orderByColumn);
+  const orderByClause =
+    sortOrder === 'asc' ? asc(orderByColumn) : desc(orderByColumn);
 
   const userList = await db
     .select({
@@ -394,7 +397,10 @@ export const listUsers = async (params: {
  * Delete user (soft delete)
  */
 export const deleteUser = async (userId: string): Promise<void> => {
-  await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, userId));
+  await db
+    .update(users)
+    .set({ deletedAt: new Date() })
+    .where(eq(users.id, userId));
 
   // Clear cache
   await cache.del(`user:${userId}`);
@@ -405,7 +411,10 @@ export const deleteUser = async (userId: string): Promise<void> => {
 /**
  * Admin: Update user role
  */
-export const updateUserRole = async (userId: string, role: UserRole): Promise<User> => {
+export const updateUserRole = async (
+  userId: string,
+  role: UserRole
+): Promise<User> => {
   const userResult = await db
     .update(users)
     .set({
@@ -446,7 +455,10 @@ export const updateUserRole = async (userId: string, role: UserRole): Promise<Us
 /**
  * Admin: Update user status
  */
-export const updateUserStatus = async (userId: string, status: UserStatus): Promise<User> => {
+export const updateUserStatus = async (
+  userId: string,
+  status: UserStatus
+): Promise<User> => {
   const userResult = await db
     .update(users)
     .set({
@@ -511,7 +523,7 @@ export const getUserStats = async (): Promise<UserStats> => {
     .groupBy(users.role);
 
   const usersByRole: Record<string, number> = {};
-  roleStats.forEach((stat) => {
+  roleStats.forEach((stat: { role: string; count: number }) => {
     usersByRole[stat.role] = Number(stat.count);
   });
 
@@ -527,7 +539,10 @@ export const getUserStats = async (): Promise<UserStats> => {
 /**
  * Search users
  */
-export const searchUsers = async (query: string, limit: number = 10): Promise<User[]> => {
+export const searchUsers = async (
+  query: string,
+  limit: number = 10
+): Promise<User[]> => {
   const userList = await db
     .select({
       id: users.id,
@@ -564,7 +579,10 @@ export const isEmailAvailable = async (
   email: string,
   excludeUserId?: string
 ): Promise<boolean> => {
-  const conditions = [sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)];
+  const conditions = [
+    sql`LOWER(${users.email}) = LOWER(${email})`,
+    isNull(users.deletedAt),
+  ];
 
   if (excludeUserId) {
     conditions.push(sql`${users.id} != ${excludeUserId}`);

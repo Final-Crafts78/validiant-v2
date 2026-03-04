@@ -5,6 +5,7 @@ Shared UI components library for web and mobile applications.
 ## Components
 
 ### Atoms
+
 - Button
 - Input
 - Text
@@ -13,6 +14,7 @@ Shared UI components library for web and mobile applications.
 - Avatar
 
 ### Molecules
+
 - FormField
 - Card
 - Modal
@@ -20,6 +22,7 @@ Shared UI components library for web and mobile applications.
 - DatePicker
 
 ### Organisms
+
 - Navigation
 - Header
 - Sidebar

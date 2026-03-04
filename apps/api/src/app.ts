@@ -34,6 +34,23 @@ import userRoutes from './routes/user.routes';
 import organizationRoutes from './routes/organization.routes';
 import projectRoutes from './routes/project.routes';
 import taskRoutes from './routes/task.routes';
+import analyticsRoutes from './routes/analytics.routes';
+import activityRoutes from './routes/activity.routes';
+import contactRoutes from './routes/contact.routes';
+import optimizeRoutes from './routes/optimize.routes';
+import commentRoutes from './routes/comment.routes';
+import webhookRoutes from './routes/webhook.routes';
+import aiRoutes from './routes/ai.routes';
+import kycRoutes from './routes/kyc.routes';
+import geocodeRoutes from './routes/geocode.routes';
+import timeTrackingRoutes from './routes/time-tracking.routes';
+import notificationRoutes from './routes/notification.routes';
+import invoiceRoutes from './routes/invoice.routes';
+import searchRoutes from './routes/search.routes';
+import automationRoutes from './routes/automation.routes';
+import backupRoutes from './routes/backup.routes';
+import ssoRoutes from './routes/sso.routes';
+import { rateLimit } from './middleware/rateLimit';
 import { initEnv } from './config/env.config';
 
 // ---------------------------------------------------------------------------
@@ -51,16 +68,19 @@ globalThis.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
   return _nativeFetch(input, init);
 };
 
+import type { R2Bucket } from '@cloudflare/workers-types';
+
 /**
  * Environment variables interface
  */
-interface Env {
+export interface Env {
   DATABASE_URL: string;
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
   UPSTASH_REDIS_REST_URL?: string;
   UPSTASH_REDIS_REST_TOKEN?: string;
   CORS_ORIGIN?: string;
+  BACKUP_BUCKET?: R2Bucket;
 }
 
 /**
@@ -93,7 +113,7 @@ export const createHonoApp = () => {
   // Edge Env Injector (Passes Cloudflare secrets to global scope for the DB Proxy)
   app.use('*', async (c, next) => {
     (globalThis as any).__ENV__ = c.env;
-    initEnv(c.env as Record<string, unknown>);
+    initEnv(c.env as unknown as Record<string, unknown>);
     await next();
   });
 
@@ -123,7 +143,7 @@ export const createHonoApp = () => {
         }
         return null; // Reject unknown origins
       },
-      credentials: true,          // Required for HttpOnly cookie pass-through
+      credentials: true, // Required for HttpOnly cookie pass-through
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'Cookie'],
       exposeHeaders: ['Set-Cookie'],
@@ -131,6 +151,14 @@ export const createHonoApp = () => {
     });
     return corsMiddleware(c, next);
   });
+
+  // Rate Limiting — applied per route group
+  // Auth: 5 attempts per 15 minutes (brute-force protection)
+  app.use('/api/v1/auth/login', rateLimit(5, 900, 'rl:auth'));
+  // Passkey: 20 attempts per 60 seconds
+  app.use('/api/v1/passkey/*', rateLimit(20, 60, 'rl:passkey'));
+  // General API: 200 requests per 60 seconds
+  app.use('/api/v1/*', rateLimit(200, 60, 'rl:api'));
 
   // ============================================================================
   // HEALTH CHECK
@@ -172,6 +200,22 @@ export const createHonoApp = () => {
   app.route('/api/v1/organizations', organizationRoutes);
   app.route('/api/v1/projects', projectRoutes);
   app.route('/api/v1/tasks', taskRoutes);
+  app.route('/api/v1/analytics', analyticsRoutes);
+  app.route('/api/v1/activity', activityRoutes);
+  app.route('/api/v1/contact', contactRoutes);
+  app.route('/api/v1/tasks/optimize', optimizeRoutes);
+  app.route('/api/v1/comments', commentRoutes);
+  app.route('/api/v1/webhooks', webhookRoutes);
+  app.route('/api/v1/ai', aiRoutes);
+  app.route('/api/v1/kyc', kycRoutes);
+  app.route('/api/v1/geocode', geocodeRoutes);
+  app.route('/api/v1/time-tracking', timeTrackingRoutes);
+  app.route('/api/v1/notifications', notificationRoutes);
+  app.route('/api/v1/invoices', invoiceRoutes);
+  app.route('/api/v1/search', searchRoutes);
+  app.route('/api/v1/automations', automationRoutes);
+  app.route('/api/v1/backups', backupRoutes);
+  app.route('/api/v1/sso', ssoRoutes);
 
   // ============================================================================
   // ERROR HANDLING

@@ -47,6 +47,7 @@ After implementing cookie-clear safety net, **another critical issue** was disco
 **Root Cause:** Some browsers (especially in certain configurations) ignore `cookies().delete()` calls from Server Actions, leaving "ghost cookies" that still trigger authentication checks.
 
 **Solution:** **Explicit Cookie Overwrite** - Force browser compliance by:
+
 1. Overwriting cookie with empty value and expired date (`new Date(0)`)
 2. Then calling `delete()` as fallback for Next.js internal state
 
@@ -81,6 +82,7 @@ After implementing cookie-clear safety net, **another critical issue** was disco
 ### 0. Cookie-Clear Safety Net (CRITICAL)
 
 #### The Problem: Infinite Redirect Loop
+
 - Expired/invalid tokens in cookies cause infinite redirect loop
 - Middleware sees cookie → allows access
 - Layout gets 401 from API → redirects to login
@@ -88,6 +90,7 @@ After implementing cookie-clear safety net, **another critical issue** was disco
 - **INFINITE LOOP!** 🔄
 
 #### The Problem: Ghost Cookies
+
 - `cookies().delete()` doesn't always work in browsers
 - Browser ignores delete command
 - Cookie remains ("ghost cookie")
@@ -95,23 +98,26 @@ After implementing cookie-clear safety net, **another critical issue** was disco
 - **DELETE DOESN'T WORK!** 👻
 
 #### The Solution: Explicit Overwrite
+
 ```typescript
 /**
  * Clear authentication cookies
- * 
+ *
  * CRITICAL: Uses explicit overwrite method to force browser compliance.
  * Some browsers ignore cookies().delete() calls, leaving "ghost cookies" that
  * cause infinite redirect loops. This method:
  * 1. Overwrites cookies with empty value and past expiration (new Date(0))
  * 2. Calls delete() as fallback for Next.js internal state
- * 
+ *
  * This ensures cookies are actually removed from the browser.
  */
 function clearAuthCookies() {
   const cookieStore = cookies();
-  
-  console.log('[clearAuthCookies] Force clearing cookies with overwrite method');
-  
+
+  console.log(
+    '[clearAuthCookies] Force clearing cookies with overwrite method'
+  );
+
   // 1. Force overwrite with empty value and immediate expiration
   cookieStore.set({
     name: 'accessToken',
@@ -172,12 +178,14 @@ if (!data.success || !data.data?.user) {
    - Belt-and-suspenders approach
 
 **Why `new Date(0)` works:**
+
 - `new Date(0)` = January 1, 1970, 00:00:00 UTC (Unix epoch)
 - Any date in the past tells browser "this cookie is expired"
 - Browser automatically removes expired cookies
 - More reliable than `delete()` across different browsers
 
 **Infinite Redirect Loop Prevention:**
+
 ```
 1. User with EXPIRED token visits /dashboard
    ↓
@@ -224,6 +232,7 @@ export interface AuthUser {
 ```
 
 **Why this matters:**
+
 - The shared `User` type expects many fields (role, status, preferences, etc.)
 - The API only returns essential auth fields
 - Using the wrong type causes TypeScript errors and runtime issues
@@ -240,7 +249,7 @@ import type { AuthUser } from '@/types/auth.types';
 // Helper to clear cookies with explicit overwrite (prevents ghost cookies)
 function clearAuthCookies() {
   const cookieStore = cookies();
-  
+
   // 1. Force overwrite with empty value and expired date
   cookieStore.set({
     name: 'accessToken',
@@ -263,7 +272,7 @@ function clearAuthCookies() {
 
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
   const cookieStore = cookies();
-  
+
   try {
     const accessToken = cookieStore.get('accessToken')?.value;
 
@@ -274,7 +283,7 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       cache: 'no-store',
@@ -324,7 +333,7 @@ import type { AuthUser } from '@/types/auth.types';
 // Helper to clear cookies with explicit overwrite (prevents ghost cookies)
 function clearAuthCookies() {
   const cookieStore = cookies();
-  
+
   // 1. Force overwrite with empty value and expired date
   cookieStore.set({
     name: 'accessToken',
@@ -385,7 +394,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 
 export default async function DashboardLayout({ children }) {
   const user = await getCurrentUser();
-  
+
   // Cookies cleared by getCurrentUser() with explicit overwrite if error occurred
   // Middleware won't redirect back (loop broken, no ghost cookies)
   if (!user) {
@@ -408,7 +417,7 @@ import { loginAction } from '@/actions/auth.actions';
 
 export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
-  
+
   const onSubmit = async (data) => {
     startTransition(async () => {
       const result = await loginAction(data.email, data.password);
@@ -432,7 +441,7 @@ import { logoutAction } from '@/actions/auth.actions';
 
 function LogoutButton() {
   const [isPending, startTransition] = useTransition();
-  
+
   const handleLogout = () => {
     startTransition(async () => {
       await logoutAction();
@@ -450,7 +459,7 @@ export function middleware(request: NextRequest) {
   // ✅ Can now read cookie (same domain!)
   const accessToken = request.cookies.get('accessToken');
   const isAuthenticated = !!accessToken;
-  
+
   if (isProtectedRoute && !isAuthenticated) {
     return NextResponse.redirect('/auth/login');
   }
@@ -481,32 +490,38 @@ export const useAuthStore = create<AuthState>((set) => ({
 ## Security Benefits
 
 ### ✅ HttpOnly Cookies
+
 - JavaScript **cannot** access tokens
 - XSS attacks **cannot** steal tokens
 - Tokens stored securely in browser
 
 ### ✅ Same-Origin Cookies
+
 - Middleware can verify authentication
 - No cross-domain cookie issues
 - Better CSRF protection with `SameSite: Lax`
 
 ### ✅ Server-Side Token Management
+
 - Client never sees tokens
 - Tokens only in JSON during initial response
 - All subsequent requests use cookies
 
 ### ✅ Token Denylist (Redis)
+
 - Real logout (not just client-side)
 - Tokens added to Redis denylist on logout
 - Prevents token reuse after logout
 
 ### ✅ Cookie-Clear Safety Net
+
 - **Prevents infinite redirect loops**
 - **Invalid tokens immediately removed**
 - **Graceful degradation on API errors**
 - **User experience preserved**
 
 ### ✅ Explicit Cookie Overwrite (Ghost Cookie Fix)
+
 - **Forces browser compliance**
 - **No ghost cookies left behind**
 - **Works across all browsers**
@@ -517,28 +532,28 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 ```typescript
 const COOKIE_OPTIONS = {
-  httpOnly: true,          // ✅ XSS protection
-  secure: true,            // ✅ HTTPS only (production)
-  sameSite: 'lax',         // ✅ CSRF protection
-  path: '/',               // ✅ Available site-wide
-  maxAge: 900,             // ✅ 15 min (access) / 7 days (refresh)
+  httpOnly: true, // ✅ XSS protection
+  secure: true, // ✅ HTTPS only (production)
+  sameSite: 'lax', // ✅ CSRF protection
+  path: '/', // ✅ Available site-wide
+  maxAge: 900, // ✅ 15 min (access) / 7 days (refresh)
 };
 ```
 
 ### Cookie Lifecycle
 
-| Cookie | Max Age | Purpose |
-|--------|---------|----------|
-| `accessToken` | 15 minutes | Short-lived auth token |
-| `refreshToken` | 7 days | Long-lived renewal token |
+| Cookie         | Max Age    | Purpose                  |
+| -------------- | ---------- | ------------------------ |
+| `accessToken`  | 15 minutes | Short-lived auth token   |
+| `refreshToken` | 7 days     | Long-lived renewal token |
 
 ### Cookie Clearing Methods
 
-| Method | Reliability | Used In |
-|--------|-------------|----------|
-| `cookies().delete()` | ❌ Unreliable | Deprecated (causes ghost cookies) |
-| `cookies().set({ expires: new Date(0) })` | ✅ Reliable | Current implementation |
-| Both (overwrite + delete) | ✅✅ Most Reliable | **Recommended** |
+| Method                                    | Reliability        | Used In                           |
+| ----------------------------------------- | ------------------ | --------------------------------- |
+| `cookies().delete()`                      | ❌ Unreliable      | Deprecated (causes ghost cookies) |
+| `cookies().set({ expires: new Date(0) })` | ✅ Reliable        | Current implementation            |
+| Both (overwrite + delete)                 | ✅✅ Most Reliable | **Recommended**                   |
 
 ## Authentication Flow
 
@@ -673,6 +688,7 @@ apps/web/
 ### The Problem
 
 The `User` type from `@validiant/shared` expects **30+ fields**:
+
 ```typescript
 interface User {
   id: string;
@@ -688,6 +704,7 @@ interface User {
 ```
 
 But the API only returns **9 fields**:
+
 ```typescript
 interface AuthUser {
   id: string;
@@ -817,7 +834,8 @@ npm run type-check
 
 **Cause:** Browser ignoring `cookies().delete()` calls  
 **Fix:** ✅ Explicit overwrite method now implemented (expires: new Date(0))  
-**Verify:** 
+**Verify:**
+
 - Check Network tab → Response Headers → See "Set-Cookie: accessToken=; expires=Thu, 01 Jan 1970"
 - Check Application tab → Cookies → Cookies should disappear immediately
 - No ghost cookies remain
@@ -868,23 +886,23 @@ The implementation includes comprehensive logging for debugging:
 
 ```typescript
 // Explicit Overwrite Logs
-'[clearAuthCookies] Force clearing cookies with overwrite method'
+'[clearAuthCookies] Force clearing cookies with overwrite method';
 
 // Server Action Logs
-'[getCurrentUserAction] No access token found'
-'[getCurrentUserAction] Fetching user from API: ...'
-'[getCurrentUserAction] API response status: 401'
-'[getCurrentUserAction] Token invalid (401/403), clearing cookies'
-'[getCurrentUserAction] Successfully fetched user: user@example.com'
+'[getCurrentUserAction] No access token found';
+'[getCurrentUserAction] Fetching user from API: ...';
+'[getCurrentUserAction] API response status: 401';
+'[getCurrentUserAction] Token invalid (401/403), clearing cookies';
+'[getCurrentUserAction] Successfully fetched user: user@example.com';
 
 // Dashboard Layout Logs
-'[Dashboard Layout] Force clearing cookies with overwrite method'
-'[Dashboard Layout] No access token found'
-'[Dashboard Layout] Fetching user from: ...'
-'[Dashboard Layout] API response status: 401'
-'[Dashboard Layout] Token invalid (401/403), clearing cookies'
-'[Dashboard Layout] Successfully fetched user: user@example.com'
-'[Dashboard Layout] No user found, redirecting to login'
+'[Dashboard Layout] Force clearing cookies with overwrite method';
+'[Dashboard Layout] No access token found';
+'[Dashboard Layout] Fetching user from: ...';
+'[Dashboard Layout] API response status: 401';
+'[Dashboard Layout] Token invalid (401/403), clearing cookies';
+'[Dashboard Layout] Successfully fetched user: user@example.com';
+'[Dashboard Layout] No user found, redirecting to login';
 ```
 
 Check server console (not browser console) for these logs when debugging auth issues.
@@ -894,20 +912,21 @@ Check server console (not browser console) for these logs when debugging auth is
 ### HTTP Cookie Specification (RFC 6265)
 
 From the HTTP Cookie spec:
+
 > "If the expires attribute is set to a date in the past, the user agent SHOULD remove the cookie"
 
 ### Browser Cookie Clearing Methods
 
-| Method | How It Works | Reliability |
-|--------|--------------|-------------|
-| `cookies().delete('name')` | Sends internal delete signal | ❌ Implementation-dependent |
-| `document.cookie = 'name=; expires=...'` | Client-side JS (blocked by HttpOnly) | ❌ Can't access HttpOnly cookies |
-| `Set-Cookie: name=; expires=Thu, 01 Jan 1970` | Server sets expired cookie | ✅ **HTTP spec compliant** |
+| Method                                        | How It Works                         | Reliability                      |
+| --------------------------------------------- | ------------------------------------ | -------------------------------- |
+| `cookies().delete('name')`                    | Sends internal delete signal         | ❌ Implementation-dependent      |
+| `document.cookie = 'name=; expires=...'`      | Client-side JS (blocked by HttpOnly) | ❌ Can't access HttpOnly cookies |
+| `Set-Cookie: name=; expires=Thu, 01 Jan 1970` | Server sets expired cookie           | ✅ **HTTP spec compliant**       |
 
 ### Why `new Date(0)` Works Universally
 
 ```typescript
-new Date(0).toUTCString()
+new Date(0).toUTCString();
 // → "Thu, 01 Jan 1970 00:00:00 GMT"
 
 // HTTP Response Header:

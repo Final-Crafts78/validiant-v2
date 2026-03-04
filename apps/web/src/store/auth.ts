@@ -1,6 +1,6 @@
 /**
  * Auth Store (BFF Pattern)
- * 
+ *
  * Zustand store for authentication state management.
  * Ephemeral state only - no persistence (user data fetched server-side).
  * Tokens are managed via HttpOnly cookies (not in store).
@@ -29,7 +29,7 @@ interface AuthState {
 
 /**
  * Auth Store
- * 
+ *
  * IMPORTANT: No persistence middleware.
  * User data is fetched server-side in dashboard layout and passed to client components.
  * This store only manages ephemeral client state during the session.
@@ -61,7 +61,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set full auth data (login/register)
   setAuth: ({ user }) => {
-    console.log('[Auth] Setting auth data', { userId: user.id, email: user.email });
+    console.log('[Auth] Setting auth data', {
+      userId: user.id,
+      email: user.email,
+    });
     set({
       user,
       isAuthenticated: true,
@@ -111,5 +114,6 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
  * Auth selectors for optimized re-renders
  */
 export const selectUser = (state: AuthState) => state.user;
-export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 export const selectIsLoading = (state: AuthState) => state.isLoading;

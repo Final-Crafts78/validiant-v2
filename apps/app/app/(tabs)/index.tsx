@@ -1,6 +1,6 @@
 /**
  * Home Dashboard Screen
- * 
+ *
  * Main dashboard showing overview, stats, and quick actions.
  */
 
@@ -117,24 +117,9 @@ export default function HomeScreen() {
             icon="📁"
             color="#007AFF"
           />
-          <StatCard
-            title="Tasks To Do"
-            value="0"
-            icon="✓"
-            color="#FF9500"
-          />
-          <StatCard
-            title="In Progress"
-            value="0"
-            icon="🔄"
-            color="#5856D6"
-          />
-          <StatCard
-            title="Completed"
-            value="0"
-            icon="✔️"
-            color="#34C759"
-          />
+          <StatCard title="Tasks To Do" value="0" icon="✓" color="#FF9500" />
+          <StatCard title="In Progress" value="0" icon="🔄" color="#5856D6" />
+          <StatCard title="Completed" value="0" icon="✔️" color="#34C759" />
         </View>
       </View>
 

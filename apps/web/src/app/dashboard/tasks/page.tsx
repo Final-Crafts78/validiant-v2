@@ -48,18 +48,18 @@ type TaskPriorityValue = Task['priority'];
 
 function PriorityBadge({ priority }: { priority: TaskPriorityValue }) {
   const styles: Record<string, string> = {
-    none:   'bg-slate-100 text-slate-500 border border-slate-200',
-    low:    'bg-slate-100 text-slate-700 border border-slate-200',
+    none: 'bg-slate-100 text-slate-500 border border-slate-200',
+    low: 'bg-slate-100 text-slate-700 border border-slate-200',
     medium: 'bg-blue-50 text-blue-700 border border-blue-200',
-    high:   'bg-amber-50 text-amber-700 border border-amber-200',
+    high: 'bg-amber-50 text-amber-700 border border-amber-200',
     urgent: 'bg-red-50 text-red-700 border border-red-200',
   };
 
   const labels: Record<string, string> = {
-    none:   'None',
-    low:    'Low',
+    none: 'None',
+    low: 'Low',
     medium: 'Medium',
-    high:   'High',
+    high: 'High',
     urgent: 'Urgent',
   };
 
@@ -80,13 +80,13 @@ function PriorityBadge({ priority }: { priority: TaskPriorityValue }) {
 // Uses the real Task type from @validiant/shared.
 //
 // Mapping notes (plain Task — no populated relations):
- //   assigneeId  → displayed as-is with a fallback of 'Unassigned'
- //   projectId   → displayed as-is with a fallback of 'No Project'
- //   description → optional on real Task, guarded with || ''
- //   dueDate     → optional Date on real Task, rendered only when present
- //
- // TaskStatus enum values used in statusIcon:
- //   'todo' | 'in_progress' | 'in_review' | 'blocked' | 'completed' | 'cancelled'
+//   assigneeId  → displayed as-is with a fallback of 'Unassigned'
+//   projectId   → displayed as-is with a fallback of 'No Project'
+//   description → optional on real Task, guarded with || ''
+//   dueDate     → optional Date on real Task, rendered only when present
+//
+// TaskStatus enum values used in statusIcon:
+//   'todo' | 'in_progress' | 'in_review' | 'blocked' | 'completed' | 'cancelled'
 // ---------------------------------------------------------------------------
 function TaskRow({ task }: { task: Task }) {
   const isOverdue =
@@ -97,12 +97,12 @@ function TaskRow({ task }: { task: Task }) {
 
   // Map all known TaskStatus values to an icon; unknown statuses get a fallback.
   const statusIconMap: Record<string, React.ReactNode> = {
-    todo:        <Circle className="h-5 w-5 text-slate-400 shrink-0" />,
+    todo: <Circle className="h-5 w-5 text-slate-400 shrink-0" />,
     in_progress: <Clock className="h-5 w-5 text-blue-600 shrink-0" />,
-    in_review:   <Clock className="h-5 w-5 text-amber-500 shrink-0" />,
-    blocked:     <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />,
-    completed:   <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />,
-    cancelled:   <Circle className="h-5 w-5 text-slate-300 shrink-0" />,
+    in_review: <Clock className="h-5 w-5 text-amber-500 shrink-0" />,
+    blocked: <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />,
+    completed: <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />,
+    cancelled: <Circle className="h-5 w-5 text-slate-300 shrink-0" />,
   };
   const statusIcon = statusIconMap[task.status] ?? (
     <Circle className="h-5 w-5 text-slate-400 shrink-0" />
@@ -110,8 +110,8 @@ function TaskRow({ task }: { task: Task }) {
 
   // Graceful display values for fields that may not be populated on plain Task
   const displayAssignee = task.assigneeId ?? 'Unassigned';
-  const displayProject  = task.projectId  ?? 'No Project';
-  const displayDesc     = task.description ?? '';
+  const displayProject = task.projectId ?? 'No Project';
+  const displayDesc = task.description ?? '';
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
@@ -214,8 +214,8 @@ function EmptyState() {
 // Tasks Page Component
 // ---------------------------------------------------------------------------
 export default function TasksPage() {
-  const [searchQuery, setSearchQuery]     = useState('');
-  const [statusFilter, setStatusFilter]   = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
 
   // ------------------------------------------------------------------
@@ -225,9 +225,13 @@ export default function TasksPage() {
   // response.data.data            = { tasks: Task[] } (the live payload)
   // response.data.data.tasks      = Task[]            (the actual array)
   // ------------------------------------------------------------------
-  const { data: response, isLoading, isError } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['tasks', 'all'],
-    queryFn:  () => tasksApi.getAll(),
+    queryFn: () => tasksApi.getAll(),
   });
 
   // Extract the tasks array from the API response payload: response.data.data.tasks
@@ -254,9 +258,12 @@ export default function TasksPage() {
         <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center">
           <AlertCircle className="h-7 w-7 text-red-500" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900">Failed to load tasks</h3>
+        <h3 className="text-lg font-semibold text-slate-900">
+          Failed to load tasks
+        </h3>
         <p className="text-sm text-slate-500">
-          There was a problem fetching your tasks. Please try refreshing the page.
+          There was a problem fetching your tasks. Please try refreshing the
+          page.
         </p>
       </div>
     );
@@ -272,9 +279,13 @@ export default function TasksPage() {
   const filteredTasks = liveTasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (task.description ?? '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus   = statusFilter   === 'all' || task.status   === statusFilter;
-    const matchesPriority = priorityFilter === 'all' || task.priority === priorityFilter;
+      (task.description ?? '')
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' || task.status === statusFilter;
+    const matchesPriority =
+      priorityFilter === 'all' || task.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
@@ -283,17 +294,16 @@ export default function TasksPage() {
   // so the metric cards always reflect the true totals.
   // ------------------------------------------------------------------
   const stats = {
-    total:      liveTasks.length,
-    todo:       liveTasks.filter((t) => t.status === 'todo').length,
+    total: liveTasks.length,
+    todo: liveTasks.filter((t) => t.status === 'todo').length,
     inProgress: liveTasks.filter((t) => t.status === 'in_progress').length,
-    completed:  liveTasks.filter((t) => t.status === 'completed').length,
+    completed: liveTasks.filter((t) => t.status === 'completed').length,
   };
 
   const hasTasks = liveTasks.length > 0;
 
   return (
     <div className="space-y-6">
-
       {/* ===================================================================
           PAGE HEADER
       =================================================================== */}
@@ -320,7 +330,6 @@ export default function TasksPage() {
               Counts derived from liveTasks (unfiltered totals)
           ================================================================= */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
             {/* Total */}
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
               <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
@@ -356,7 +365,6 @@ export default function TasksPage() {
                 Completed
               </p>
             </div>
-
           </div>
 
           {/* =================================================================
@@ -365,7 +373,6 @@ export default function TasksPage() {
           ================================================================= */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <div className="flex flex-col lg:flex-row gap-3">
-
               {/* Search */}
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
@@ -411,7 +418,6 @@ export default function TasksPage() {
                   <option value="none">None</option>
                 </select>
               </div>
-
             </div>
           </div>
 
@@ -421,9 +427,7 @@ export default function TasksPage() {
           ================================================================= */}
           <div className="space-y-4">
             {filteredTasks.length > 0 ? (
-              filteredTasks.map((task) => (
-                <TaskRow key={task.id} task={task} />
-              ))
+              filteredTasks.map((task) => <TaskRow key={task.id} task={task} />)
             ) : (
               <div className="bg-white border border-dashed border-slate-200 rounded-xl py-12 text-center">
                 <p className="text-sm font-medium text-slate-500">
@@ -437,17 +441,20 @@ export default function TasksPage() {
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-500">
               Showing{' '}
-              <span className="font-medium text-slate-700">{filteredTasks.length}</span>
-              {' '}of{' '}
-              <span className="font-medium text-slate-700">{liveTasks.length}</span>
-              {' '}tasks
+              <span className="font-medium text-slate-700">
+                {filteredTasks.length}
+              </span>{' '}
+              of{' '}
+              <span className="font-medium text-slate-700">
+                {liveTasks.length}
+              </span>{' '}
+              tasks
             </p>
           </div>
         </>
       ) : (
         <EmptyState />
       )}
-
     </div>
   );
 }

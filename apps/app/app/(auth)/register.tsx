@@ -1,6 +1,6 @@
 /**
  * Register Screen
- * 
+ *
  * User registration with full validation and terms acceptance.
  */
 
@@ -42,10 +42,7 @@ const registerSchema = z
       .min(2, 'Last name must be at least 2 characters')
       .max(50, 'Last name must be less than 50 characters')
       .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters'),
-    email: z
-      .string()
-      .email('Invalid email address')
-      .toLowerCase(),
+    email: z.string().email('Invalid email address').toLowerCase(),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -56,7 +53,10 @@ const registerSchema = z
     confirmPassword: z.string(),
     termsAccepted: z
       .boolean()
-      .refine((val) => val === true, 'You must accept the terms and conditions'),
+      .refine(
+        (val) => val === true,
+        'You must accept the terms and conditions'
+      ),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -100,18 +100,14 @@ export default function RegisterScreen() {
     onSuccess: async (data) => {
       // Save auth data
       await setAuth(data.user, data.token, data.refreshToken);
-      
+
       // Show success message
-      Alert.alert(
-        'Welcome!',
-        'Your account has been created successfully.',
-        [
-          {
-            text: 'Get Started',
-            onPress: () => router.replace('/(tabs)'),
-          },
-        ]
-      );
+      Alert.alert('Welcome!', 'Your account has been created successfully.', [
+        {
+          text: 'Get Started',
+          onPress: () => router.replace('/(tabs)'),
+        },
+      ]);
     },
     onError: (err) => {
       const message = getErrorMessage(err);
@@ -159,10 +155,7 @@ export default function RegisterScreen() {
               name="firstName"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.firstName && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.firstName && styles.inputError]}
                   placeholder="Enter your first name"
                   placeholderTextColor="#999"
                   autoCapitalize="words"
@@ -188,10 +181,7 @@ export default function RegisterScreen() {
               name="lastName"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.lastName && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.lastName && styles.inputError]}
                   placeholder="Enter your last name"
                   placeholderTextColor="#999"
                   autoCapitalize="words"
@@ -217,10 +207,7 @@ export default function RegisterScreen() {
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.email && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.email && styles.inputError]}
                   placeholder="Enter your email"
                   placeholderTextColor="#999"
                   keyboardType="email-address"
@@ -247,10 +234,7 @@ export default function RegisterScreen() {
               name="password"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  style={[
-                    styles.input,
-                    errors.password && styles.inputError,
-                  ]}
+                  style={[styles.input, errors.password && styles.inputError]}
                   placeholder="Create a password"
                   placeholderTextColor="#999"
                   secureTextEntry

@@ -1,23 +1,23 @@
 /**
  * PartyKit WebSocket Server - Real-Time Collaboration
- * 
+ *
  * Room-based WebSocket server for real-time project updates.
  * Each project gets its own isolated WebSocket room.
- * 
+ *
  * Architecture:
  * - Hono REST API (stateless) → HTTP POST → PartyKit Server → WebSocket Broadcast
  * - Frontend clients connect via WebSocket and receive real-time updates
- * 
+ *
  * Event Types:
  * - TASK_CREATED, TASK_UPDATED, TASK_DELETED
  * - TASK_STATUS_CHANGED (quick status updates)
  * - USER_JOINED, USER_LEFT (presence)
- * 
+ *
  * Security:
  * - HTTP broadcasts authenticated via shared secret
  * - WebSocket connections can include auth token for user identification
  * - Room isolation (project-based)
- * 
+ *
  * Edge-Compatible:
  * - Runs on Cloudflare Durable Objects
  * - Global low-latency
@@ -56,7 +56,7 @@ interface BroadcastRequest {
 
 /**
  * Main PartyKit Server
- * 
+ *
  * Rooms are identified by projectId (e.g., "project_abc123")
  */
 export default class ValidiantRealtimeServer implements Party.Server {
@@ -72,7 +72,7 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Called when a WebSocket client connects
-   * 
+   *
    * @param connection - WebSocket connection
    * @param ctx - Connection context with request info
    */
@@ -128,7 +128,7 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Called when a WebSocket client disconnects
-   * 
+   *
    * @param connection - WebSocket connection
    */
   onClose(connection: Party.Connection) {
@@ -156,10 +156,10 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Called when a WebSocket client sends a message
-   * 
+   *
    * Currently not used - all updates come via HTTP from Hono
    * Future: Could enable client-to-client messages (chat, cursors, etc.)
-   * 
+   *
    * @param message - Message from client
    * @param connection - WebSocket connection
    */
@@ -187,10 +187,10 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Called when an HTTP request is made to the room
-   * 
+   *
    * This is the HTTP-to-WebSocket bridge.
    * Hono services POST events here, and we broadcast to WebSocket clients.
-   * 
+   *
    * @param req - HTTP request
    * @returns HTTP response
    */
@@ -264,7 +264,7 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Broadcast a message to all connections except specified ones
-   * 
+   *
    * @param message - Message to broadcast
    * @param excludeConnectionIds - Connection IDs to exclude
    */
@@ -280,7 +280,7 @@ export default class ValidiantRealtimeServer implements Party.Server {
 
   /**
    * Optional: Alarm handler for scheduled tasks
-   * 
+   *
    * Could be used for:
    * - Cleanup of inactive connections
    * - Periodic heartbeats

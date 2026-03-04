@@ -1,11 +1,11 @@
 /**
  * Authentication Service (Drizzle Version)
- * 
+ *
  * Handles user authentication operations including registration, login,
  * JWT token generation, password management, and session handling.
- * 
+ *
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
- * 
+ *
  * Phase 6.1 Enhancement: OAuth token generation support
  * Phase 7.0 Enhancement: Migrated to Edge-native jose library
  */
@@ -71,7 +71,10 @@ const hashPassword = async (password: string): Promise<string> => {
 /**
  * Verify password against hash
  */
-const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+const verifyPassword = async (
+  password: string,
+  hash: string
+): Promise<boolean> => {
   return await bcrypt.compare(password, hash);
 };
 
@@ -97,7 +100,10 @@ const generateAccessToken = async (
 /**
  * Generate JWT refresh token (Edge-native with jose)
  */
-const generateRefreshToken = async (userId: string, sessionId: string): Promise<string> => {
+const generateRefreshToken = async (
+  userId: string,
+  sessionId: string
+): Promise<string> => {
   const secret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
   return await new SignJWT({ userId, sessionId, type: 'refresh' })
     .setProtectedHeader({ alg: 'HS256' })
@@ -109,7 +115,7 @@ const generateRefreshToken = async (userId: string, sessionId: string): Promise<
 
 /**
  * Generate both access and refresh tokens
- * 
+ *
  * Exported for use in OAuth flows
  */
 export const generateTokens = async (
@@ -157,7 +163,9 @@ export const register = async (data: {
   const existingUser = await db
     .select({ id: users.id })
     .from(users)
-    .where(and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)))
+    .where(
+      and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt))
+    )
     .limit(1);
 
   if (existingUser.length > 0) {
@@ -191,13 +199,20 @@ export const register = async (data: {
   const user: User = newUser as User;
 
   // Generate tokens (cast role to UserRole)
-  const tokens = await generateTokens(user.id, user.email, user.role as UserRole);
+  const tokens = await generateTokens(
+    user.id,
+    user.email,
+    user.role as UserRole
+  );
 
   // Log registration event
   logAuthEvent('register', user.id, { email: user.email });
 
   // TODO: Send verification email
-  logger.info('User registered successfully', { userId: user.id, email: user.email });
+  logger.info('User registered successfully', {
+    userId: user.id,
+    email: user.email,
+  });
 
   return { user, tokens };
 };
@@ -225,7 +240,9 @@ export const login = async (data: {
       createdAt: users.createdAt,
     })
     .from(users)
-    .where(and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)))
+    .where(
+      and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt))
+    )
     .limit(1);
 
   if (!userWithPassword) {
@@ -233,7 +250,10 @@ export const login = async (data: {
   }
 
   // Verify password
-  const isPasswordValid = await verifyPassword(password, userWithPassword.passwordHash!);
+  const isPasswordValid = await verifyPassword(
+    password,
+    userWithPassword.passwordHash!
+  );
 
   if (!isPasswordValid) {
     // Log failed login attempt
@@ -256,12 +276,20 @@ export const login = async (data: {
     .where(eq(users.id, user.id));
 
   // Generate tokens (cast role to UserRole)
-  const tokens = await generateTokens(user.id, user.email, user.role as UserRole, deviceInfo);
+  const tokens = await generateTokens(
+    user.id,
+    user.email,
+    user.role as UserRole,
+    deviceInfo
+  );
 
   // Log login event
   logAuthEvent('login', user.id, { email: user.email });
 
-  logger.info('User logged in successfully', { userId: user.id, email: user.email });
+  logger.info('User logged in successfully', {
+    userId: user.id,
+    email: user.email,
+  });
 
   return { user: user as User, tokens };
 };
@@ -269,12 +297,18 @@ export const login = async (data: {
 /**
  * Refresh access token using refresh token (Edge-native with jose)
  */
-export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> => {
+export const refreshAccessToken = async (
+  refreshToken: string
+): Promise<Tokens> => {
   try {
     // Verify refresh token
     const secret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
     const { payload } = await jwtVerify(refreshToken, secret);
-    const decoded = payload as { userId: string; sessionId: string; type: string };
+    const decoded = payload as {
+      userId: string;
+      sessionId: string;
+      type: string;
+    };
 
     if (decoded.type !== 'refresh') {
       throw new TokenError('Invalid token type');
@@ -325,7 +359,10 @@ export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> 
     if (error instanceof joseErrors.JWTExpired) {
       throw new TokenError('Refresh token has expired');
     }
-    if (error instanceof joseErrors.JWTInvalid || error instanceof joseErrors.JWSInvalid) {
+    if (
+      error instanceof joseErrors.JWTInvalid ||
+      error instanceof joseErrors.JWSInvalid
+    ) {
       throw new TokenError('Invalid refresh token');
     }
     throw error;
@@ -335,7 +372,10 @@ export const refreshAccessToken = async (refreshToken: string): Promise<Tokens> 
 /**
  * Logout user (invalidate session)
  */
-export const logout = async (sessionId: string, userId: string): Promise<void> => {
+export const logout = async (
+  sessionId: string,
+  userId: string
+): Promise<void> => {
   // Delete session from Redis
   await session.del(sessionId);
 
@@ -360,7 +400,9 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
       fullName: users.fullName,
     })
     .from(users)
-    .where(and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt)))
+    .where(
+      and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt))
+    )
     .limit(1);
 
   if (!user) {
@@ -381,13 +423,19 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
   });
 
   // TODO: Send password reset email
-  logger.info('Password reset requested', { userId: user.id, email: user.email });
+  logger.info('Password reset requested', {
+    userId: user.id,
+    email: user.email,
+  });
 };
 
 /**
  * Reset password with token
  */
-export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+): Promise<void> => {
   // Get valid reset token
   const [resetTokenRecord] = await db
     .select({
@@ -431,7 +479,9 @@ export const resetPassword = async (token: string, newPassword: string): Promise
     .where(eq(passwordResetTokens.userId, resetTokenRecord.userId));
 
   // Invalidate all user sessions
-  const sessions = await cache.get<string[]>(`user_sessions:${resetTokenRecord.userId}`);
+  const sessions = await cache.get<string[]>(
+    `user_sessions:${resetTokenRecord.userId}`
+  );
   if (sessions) {
     for (const sessionId of sessions) {
       await session.del(sessionId);
@@ -444,7 +494,9 @@ export const resetPassword = async (token: string, newPassword: string): Promise
   // Log event
   logAuthEvent('password_reset', resetTokenRecord.userId);
 
-  logger.info('Password reset successfully', { userId: resetTokenRecord.userId });
+  logger.info('Password reset successfully', {
+    userId: resetTokenRecord.userId,
+  });
 };
 
 /**
@@ -474,7 +526,10 @@ export const changePassword = async (
   }
 
   // Verify current password
-  const isPasswordValid = await verifyPassword(currentPassword, user.passwordHash);
+  const isPasswordValid = await verifyPassword(
+    currentPassword,
+    user.passwordHash
+  );
 
   if (!isPasswordValid) {
     throw new UnauthorizedError('Current password is incorrect');
@@ -510,7 +565,9 @@ export const verifyEmail = async (_token: string): Promise<void> => {
 /**
  * Get active sessions for user
  */
-export const getUserSessions = async (_userId: string): Promise<SessionData[]> => {
+export const getUserSessions = async (
+  _userId: string
+): Promise<SessionData[]> => {
   // This would require maintaining a list of session IDs per user
   // For now, return empty array
   // TODO: Implement session tracking

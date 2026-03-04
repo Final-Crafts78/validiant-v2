@@ -1,6 +1,6 @@
 /**
  * Time Tracking Types
- * 
+ *
  * Type definitions for time entries, timers, timesheets,
  * and time-related analytics.
  */
@@ -245,12 +245,12 @@ export interface TimeReportFilters {
 /**
  * Time report grouping
  */
-export type TimeReportGroupBy = 
-  | 'user' 
-  | 'project' 
-  | 'task' 
-  | 'date' 
-  | 'week' 
+export type TimeReportGroupBy =
+  | 'user'
+  | 'project'
+  | 'task'
+  | 'date'
+  | 'week'
   | 'month';
 
 /**
@@ -364,7 +364,7 @@ export const hasTimeOverlap = (
   entry2: TimeEntry
 ): boolean => {
   if (!entry1.endTime || !entry2.endTime) return false;
-  
+
   const start1 = new Date(entry1.startTime).getTime();
   const end1 = new Date(entry1.endTime).getTime();
   const start2 = new Date(entry2.startTime).getTime();
@@ -411,17 +411,18 @@ export const DEFAULT_USER_TIME_TRACKING_SETTINGS: UserTimeTrackingSettings = {
 /**
  * Default organization time tracking settings
  */
-export const DEFAULT_ORG_TIME_TRACKING_SETTINGS: OrganizationTimeTrackingSettings = {
-  requireProjectForTimeEntry: false,
-  requireTaskForTimeEntry: false,
-  requireDescriptionForTimeEntry: false,
-  allowManualTimeEntry: true,
-  allowTimerEditing: true,
-  requireTimesheetApproval: false,
-  timesheetPeriod: 'weekly',
-  timesheetSubmissionDeadline: 3,
-  overtimeThreshold: 40,
-  minimumTimeEntry: 1,
-  roundingInterval: 0,
-  roundingMethod: 'nearest',
-};
+export const DEFAULT_ORG_TIME_TRACKING_SETTINGS: OrganizationTimeTrackingSettings =
+  {
+    requireProjectForTimeEntry: false,
+    requireTaskForTimeEntry: false,
+    requireDescriptionForTimeEntry: false,
+    allowManualTimeEntry: true,
+    allowTimerEditing: true,
+    requireTimesheetApproval: false,
+    timesheetPeriod: 'weekly',
+    timesheetSubmissionDeadline: 3,
+    overtimeThreshold: 40,
+    minimumTimeEntry: 1,
+    roundingInterval: 0,
+    roundingMethod: 'nearest',
+  };

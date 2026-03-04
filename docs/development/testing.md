@@ -76,7 +76,7 @@ describe('TaskCard', () => {
   it('should call onPress when clicked', () => {
     const onPress = jest.fn();
     render(<TaskCard task={mockTask} onPress={onPress} />);
-    
+
     fireEvent.press(screen.getByText('Test Task'));
     expect(onPress).toHaveBeenCalledWith(mockTask);
   });
@@ -110,7 +110,7 @@ describe('TaskService', () => {
   it('should fetch tasks', async () => {
     const service = new TaskService();
     const tasks = await service.getTasks();
-    
+
     expect(tasks).toHaveLength(1);
     expect(tasks[0].title).toBe('Test');
   });
@@ -303,10 +303,10 @@ it('should show loading indicator while fetching tasks', () => {
 
 ```typescript
 // Bad
-it('works', () => { });
+it('works', () => {});
 
 // Good
-it('should display error message when task creation fails', () => { });
+it('should display error message when task creation fails', () => {});
 ```
 
 ### 3. Follow AAA Pattern
@@ -438,11 +438,11 @@ jest.useFakeTimers();
 it('should debounce', () => {
   const callback = jest.fn();
   const debounced = debounce(callback, 1000);
-  
+
   debounced();
   debounced();
   debounced();
-  
+
   jest.advanceTimersByTime(1000);
   expect(callback).toHaveBeenCalledTimes(1);
 });

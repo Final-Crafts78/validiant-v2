@@ -1,6 +1,6 @@
 /**
  * Profile Screen
- * 
+ *
  * User profile, settings, and account management.
  */
 
@@ -103,7 +103,7 @@ export default function ProfileScreen() {
     onSuccess: async () => {
       // Clear local auth state
       await clearAuth();
-      
+
       // Navigate to login
       router.replace('/login');
     },
@@ -157,7 +157,8 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+            {user.firstName.charAt(0)}
+            {user.lastName.charAt(0)}
           </Text>
         </View>
         <Text style={styles.userName}>
@@ -181,11 +182,7 @@ export default function ProfileScreen() {
             value={`${user.firstName} ${user.lastName}`}
           />
           <View style={styles.divider} />
-          <InfoItem
-            icon="📧"
-            label="Email"
-            value={user.email}
-          />
+          <InfoItem icon="📧" label="Email" value={user.email} />
           <View style={styles.divider} />
           <InfoItem
             icon="🏷️"
@@ -215,7 +212,10 @@ export default function ProfileScreen() {
             subtitle="Update your personal information"
             onPress={() => {
               // TODO: Navigate to edit profile
-              Alert.alert('Coming Soon', 'Edit profile feature is coming soon!');
+              Alert.alert(
+                'Coming Soon',
+                'Edit profile feature is coming soon!'
+              );
             }}
           />
           <View style={styles.divider} />

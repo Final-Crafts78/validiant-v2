@@ -1,9 +1,9 @@
 /**
  * Session Expired Route Handler
- * 
+ *
  * Handles cookie deletion when authentication fails.
  * Server Components cannot mutate cookies - only Route Handlers can.
- * 
+ *
  * This route is called when:
  * - Access token is invalid/expired (401/403)
  * - API response is malformed
@@ -16,7 +16,7 @@ import { ROUTES } from '@/lib/config';
 
 /**
  * GET /api/auth/session-expired
- * 
+ *
  * Clears authentication cookies and redirects to login
  */
 export async function GET(request: Request) {

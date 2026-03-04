@@ -1,6 +1,6 @@
 /**
  * Dashboard Header Component (BFF Pattern)
- * 
+ *
  * Client component for dashboard navigation with server-side logout.
  */
 
@@ -83,7 +83,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
     if (!user?.fullName) return '';
     const parts = user.fullName.trim().split(' ');
     const firstInitial = parts[0]?.charAt(0) || '';
-    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
+    const lastInitial =
+      parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   }, [user?.fullName]);
 
@@ -93,10 +94,10 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
       try {
         // Call server action to clear cookies
         await logoutAction();
-        
+
         // Clear client-side state
         clearAuth();
-        
+
         // Redirect to login
         router.push(ROUTES.LOGIN);
         router.refresh(); // Refresh to clear any cached data
@@ -121,7 +122,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                   <LayoutDashboard className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-gray-900">Validiant</span>
+                <span className="text-xl font-bold text-gray-900">
+                  Validiant
+                </span>
               </Link>
 
               {/* Desktop Navigation */}
@@ -198,7 +201,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
-                  isActive ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'
+                  isActive
+                    ? 'text-primary-600'
+                    : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
                 <Icon className="h-5 w-5" />

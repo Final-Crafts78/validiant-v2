@@ -91,12 +91,10 @@ export default function LoginPage() {
   // ---------------------------------------------------------------------------
   return (
     <div className="min-h-screen flex">
-
       {/* ===================================================================
           LEFT PANEL — Brand & Trust (desktop only)
       =================================================================== */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] bg-blue-900 flex-col items-center justify-center px-16 relative overflow-hidden">
-
         {/* Subtle geometric background shapes */}
         <div
           aria-hidden="true"
@@ -134,8 +132,8 @@ export default function LoginPage() {
           </h2>
 
           <p className="text-blue-200 text-base leading-relaxed">
-            Log in to your dashboard to monitor compliance, track workflows,
-            and access actionable intelligence across your entire organization.
+            Log in to your dashboard to monitor compliance, track workflows, and
+            access actionable intelligence across your entire organization.
           </p>
 
           {/* Trust badges */}
@@ -172,7 +170,6 @@ export default function LoginPage() {
           RIGHT PANEL — Auth Form
       =================================================================== */}
       <div className="flex-1 bg-slate-50 flex flex-col items-center justify-center px-6 py-12 sm:px-12">
-
         {/* Mobile-only brand mark */}
         <div className="flex lg:hidden items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -183,7 +180,6 @@ export default function LoginPage() {
 
         {/* Auth Card */}
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-lg p-8 sm:p-10">
-
           {/* Card Header */}
           <div className="mb-7">
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
@@ -219,8 +215,11 @@ export default function LoginPage() {
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="space-y-5"
+          >
             {/* Email */}
             <div>
               <label
@@ -315,12 +314,14 @@ export default function LoginPage() {
                 'Sign In'
               )}
             </button>
-
           </form>
 
           {/* OR Divider */}
           <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div
+              className="absolute inset-0 flex items-center"
+              aria-hidden="true"
+            >
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center">
@@ -338,7 +339,11 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 px-6 py-3 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
             {/* Google colour logo */}
-            <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <svg
+              className="h-4 w-4 shrink-0"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                 fill="#4285F4"
@@ -358,7 +363,6 @@ export default function LoginPage() {
             </svg>
             Continue with Google
           </button>
-
         </div>
 
         {/* Footer note */}
@@ -380,7 +384,6 @@ export default function LoginPage() {
           .
         </p>
       </div>
-
     </div>
   );
 }

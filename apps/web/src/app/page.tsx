@@ -157,7 +157,6 @@ export default function HomePage() {
   // ---------------------------------------------------------------------------
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
-
       {/* ===================================================================
           NAVIGATION — Sticky Top Bar
       =================================================================== */}
@@ -214,8 +213,8 @@ export default function HomePage() {
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight mb-6">
             Verify Performance.{' '}
-            <span className="text-blue-600">Ensure Compliance.</span>{' '}
-            Accelerate Growth.
+            <span className="text-blue-600">Ensure Compliance.</span> Accelerate
+            Growth.
           </h1>
 
           {/* Sub-headline */}
@@ -320,10 +319,12 @@ export default function HomePage() {
       {/* ===================================================================
           SECTION 4 — Lead Capture / Request Demo Form
       =================================================================== */}
-      <section id="request-demo" className="bg-slate-50 py-24 border-t border-slate-200">
+      <section
+        id="request-demo"
+        className="bg-slate-50 py-24 border-t border-slate-200"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
             {/* Left — Copy */}
             <div>
               <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
@@ -547,7 +548,6 @@ export default function HomePage() {
           </p>
         </div>
       </footer>
-
     </div>
   );
 }

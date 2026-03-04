@@ -217,15 +217,15 @@ All errors follow this format:
 
 ### Common Error Codes
 
-| Code | Status | Description |
-|------|--------|-------------|
-| `VALIDATION_ERROR` | 422 | Invalid input data |
-| `INVALID_CREDENTIALS` | 401 | Wrong email/password |
-| `UNAUTHORIZED` | 401 | Missing/invalid token |
-| `TOKEN_EXPIRED` | 401 | Token has expired |
-| `NOT_FOUND` | 404 | Resource not found |
-| `ALREADY_EXISTS` | 409 | Resource already exists |
-| `INTERNAL_SERVER_ERROR` | 500 | Server error |
+| Code                    | Status | Description             |
+| ----------------------- | ------ | ----------------------- |
+| `VALIDATION_ERROR`      | 422    | Invalid input data      |
+| `INVALID_CREDENTIALS`   | 401    | Wrong email/password    |
+| `UNAUTHORIZED`          | 401    | Missing/invalid token   |
+| `TOKEN_EXPIRED`         | 401    | Token has expired       |
+| `NOT_FOUND`             | 404    | Resource not found      |
+| `ALREADY_EXISTS`        | 409    | Resource already exists |
+| `INTERNAL_SERVER_ERROR` | 500    | Server error            |
 
 ---
 

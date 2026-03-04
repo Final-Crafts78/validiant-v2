@@ -1,16 +1,16 @@
 /**
  * OAuth 2.0 Routes (Hono) - SECURITY HARDENED
- * 
+ *
  * Provides OAuth authentication endpoints for:
  * - Google OAuth 2.0
  * - GitHub OAuth 2.0
- * 
+ *
  * Security Features:
  * - HttpOnly cookies for JWT tokens (no URL exposure)
  * - CSRF protection via oauth_state cookie
  * - Secure cookie flags (Secure, SameSite=Lax)
  * - State verification tied to browser session
- * 
+ *
  * Flow:
  * 1. Client initiates OAuth (/oauth/{provider})
  * 2. Server sets oauth_state cookie and redirects to provider
@@ -19,7 +19,7 @@
  * 5. Server verifies state cookie matches URL state
  * 6. Server creates/links user and sets JWT cookies (HttpOnly)
  * 7. Client redirects to dashboard (tokens in cookies)
- * 
+ *
  * Edge-compatible using Hono and Arctic
  */
 
@@ -99,17 +99,17 @@ app.get('/google', async (c) => {
   try {
     // Generate OAuth authorization URL with state
     const { authUrl, state } = await initiateGoogleOAuth();
-    
+
     // Store state in HttpOnly cookie (CSRF protection)
     setCookie(c, 'oauth_state', state, stateCookieOptions);
-    
+
     logger.info('Google OAuth initiated', { state });
-    
+
     // Redirect user to Google
     return c.redirect(authUrl);
   } catch (error) {
     logger.error('Google OAuth initiation failed:', error as Error);
-    
+
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
     errorUrl.searchParams.set('error', 'oauth_init_failed');
@@ -117,7 +117,7 @@ app.get('/google', async (c) => {
       'message',
       error instanceof Error ? error.message : 'Failed to initiate Google OAuth'
     );
-    
+
     return c.redirect(errorUrl.toString());
   }
 });
@@ -133,35 +133,40 @@ app.get('/google', async (c) => {
 app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
   try {
     const { code, state: urlState } = c.req.valid('query');
-    
+
     // Retrieve state from cookie (CSRF protection)
     const cookieState = getCookie(c, 'oauth_state');
-    
+
     if (!cookieState) {
       throw new Error('Missing OAuth state cookie');
     }
-    
+
     if (cookieState !== urlState) {
       throw new Error('OAuth state mismatch - possible CSRF attack');
     }
-    
+
     // Delete state cookie after verification (one-time use)
     deleteCookie(c, 'oauth_state');
-    
+
     // Handle OAuth callback
     const result = await handleGoogleCallback(code, urlState);
-    
+
     // Generate JWT tokens
     const tokens = await generateTokens(
       result.user.id,
       result.user.email,
       result.user.role
     );
-    
+
     // Set tokens as HttpOnly cookies (SECURE)
     setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
-    setCookie(c, 'refreshToken', tokens.refreshToken, refreshTokenCookieOptions);
-    
+    setCookie(
+      c,
+      'refreshToken',
+      tokens.refreshToken,
+      refreshTokenCookieOptions
+    );
+
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
       secure: isProduction,
@@ -170,24 +175,24 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       path: '/',
       domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
     });
-    
+
     logger.info('Google OAuth successful', {
       userId: result.user.id,
       isNewUser: result.isNewUser,
     });
-    
+
     // Redirect to dashboard (tokens in cookies)
     const dashboardUrl = result.isNewUser
       ? `${env.WEB_APP_URL}/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
-    
+
     return c.redirect(dashboardUrl);
   } catch (error) {
     logger.error('Google OAuth callback failed:', error as Error);
-    
+
     // Delete state cookie on error
     deleteCookie(c, 'oauth_state');
-    
+
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
     errorUrl.searchParams.set('error', 'oauth_failed');
@@ -195,7 +200,7 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       'message',
       error instanceof Error ? error.message : 'OAuth authentication failed'
     );
-    
+
     return c.redirect(errorUrl.toString());
   }
 });
@@ -214,17 +219,17 @@ app.get('/github', async (c) => {
   try {
     // Generate OAuth authorization URL with state
     const { authUrl, state } = await initiateGitHubOAuth();
-    
+
     // Store state in HttpOnly cookie (CSRF protection)
     setCookie(c, 'oauth_state', state, stateCookieOptions);
-    
+
     logger.info('GitHub OAuth initiated', { state });
-    
+
     // Redirect user to GitHub
     return c.redirect(authUrl);
   } catch (error) {
     logger.error('GitHub OAuth initiation failed:', error as Error);
-    
+
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
     errorUrl.searchParams.set('error', 'oauth_init_failed');
@@ -232,7 +237,7 @@ app.get('/github', async (c) => {
       'message',
       error instanceof Error ? error.message : 'Failed to initiate GitHub OAuth'
     );
-    
+
     return c.redirect(errorUrl.toString());
   }
 });
@@ -248,35 +253,40 @@ app.get('/github', async (c) => {
 app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
   try {
     const { code, state: urlState } = c.req.valid('query');
-    
+
     // Retrieve state from cookie (CSRF protection)
     const cookieState = getCookie(c, 'oauth_state');
-    
+
     if (!cookieState) {
       throw new Error('Missing OAuth state cookie');
     }
-    
+
     if (cookieState !== urlState) {
       throw new Error('OAuth state mismatch - possible CSRF attack');
     }
-    
+
     // Delete state cookie after verification (one-time use)
     deleteCookie(c, 'oauth_state');
-    
+
     // Handle OAuth callback
     const result = await handleGitHubCallback(code, urlState);
-    
+
     // Generate JWT tokens
     const tokens = await generateTokens(
       result.user.id,
       result.user.email,
       result.user.role
     );
-    
+
     // Set tokens as HttpOnly cookies (SECURE)
     setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
-    setCookie(c, 'refreshToken', tokens.refreshToken, refreshTokenCookieOptions);
-    
+    setCookie(
+      c,
+      'refreshToken',
+      tokens.refreshToken,
+      refreshTokenCookieOptions
+    );
+
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
       secure: isProduction,
@@ -285,24 +295,24 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       path: '/',
       domain: '.validiant.in', // Allows www.validiant.in to read cookies set by api.validiant.in
     });
-    
+
     logger.info('GitHub OAuth successful', {
       userId: result.user.id,
       isNewUser: result.isNewUser,
     });
-    
+
     // Redirect to dashboard (tokens in cookies)
     const dashboardUrl = result.isNewUser
       ? `${env.WEB_APP_URL}/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
-    
+
     return c.redirect(dashboardUrl);
   } catch (error) {
     logger.error('GitHub OAuth callback failed:', error as Error);
-    
+
     // Delete state cookie on error
     deleteCookie(c, 'oauth_state');
-    
+
     // Redirect to error page
     const errorUrl = new URL(env.WEB_APP_URL + '/auth/error');
     errorUrl.searchParams.set('error', 'oauth_failed');
@@ -310,7 +320,7 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       'message',
       error instanceof Error ? error.message : 'OAuth authentication failed'
     );
-    
+
     return c.redirect(errorUrl.toString());
   }
 });
@@ -333,7 +343,7 @@ app.post(
     try {
       const { provider } = c.req.valid('param');
       const userId = c.get('userId' as never) as string;
-      
+
       if (!userId) {
         return c.json(
           {
@@ -344,9 +354,9 @@ app.post(
           401
         );
       }
-      
+
       await unlinkOAuthProvider(userId, provider);
-      
+
       return c.json({
         success: true,
         message: `${provider} account unlinked successfully`,
@@ -357,9 +367,14 @@ app.post(
         {
           success: false,
           error: 'OAuthError',
-          message: error instanceof Error ? error.message : 'Failed to unlink OAuth provider',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to unlink OAuth provider',
         },
-        error instanceof Error && error.message.includes('Cannot unlink') ? 400 : 500
+        error instanceof Error && error.message.includes('Cannot unlink')
+          ? 400
+          : 500
       );
     }
   }

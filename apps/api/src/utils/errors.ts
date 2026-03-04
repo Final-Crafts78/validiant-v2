@@ -1,6 +1,6 @@
 /**
  * Error Handling Utilities
- * 
+ *
  * Custom error classes and error handling utilities.
  * Provides consistent error responses across the API.
  */
@@ -73,7 +73,13 @@ export class ForbiddenError extends ApiError {
  */
 export class NotFoundError extends ApiError {
   constructor(resource: string = 'Resource', details?: any) {
-    super(`${resource} not found`, 404, API_ERROR_CODES.NOT_FOUND, true, details);
+    super(
+      `${resource} not found`,
+      404,
+      API_ERROR_CODES.NOT_FOUND,
+      true,
+      details
+    );
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
@@ -122,7 +128,10 @@ export class InternalServerError extends ApiError {
  * 503 Service Unavailable
  */
 export class ServiceUnavailableError extends ApiError {
-  constructor(message: string = 'Service temporarily unavailable', details?: any) {
+  constructor(
+    message: string = 'Service temporarily unavailable',
+    details?: any
+  ) {
     super(message, 503, API_ERROR_CODES.SERVICE_UNAVAILABLE, true, details);
     Object.setPrototypeOf(this, ServiceUnavailableError.prototype);
   }
@@ -163,7 +172,13 @@ export class TokenError extends ApiError {
  */
 export class PermissionError extends ApiError {
   constructor(message: string = 'Insufficient permissions', details?: any) {
-    super(message, 403, API_ERROR_CODES.INSUFFICIENT_PERMISSIONS, true, details);
+    super(
+      message,
+      403,
+      API_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
+      true,
+      details
+    );
     Object.setPrototypeOf(this, PermissionError.prototype);
   }
 }
@@ -171,7 +186,9 @@ export class PermissionError extends ApiError {
 /**
  * Format Zod validation errors
  */
-export const formatZodError = (error: ZodError): { field: string; message: string }[] => {
+export const formatZodError = (
+  error: ZodError
+): { field: string; message: string }[] => {
   return error.errors.map((err) => ({
     field: err.path.join('.'),
     message: err.message,
@@ -253,7 +270,7 @@ export const sendErrorResponse = (
   includeStack: boolean = false
 ): Response => {
   const errorResponse = formatErrorResponse(error, includeStack);
-  
+
   // Log error
   if (errorResponse.error.statusCode >= 500) {
     logger.error('Server error', {
@@ -335,10 +352,9 @@ export const withDatabaseErrorHandling = async <T>(
     return await operation();
   } catch (error) {
     logger.error('Database operation failed', { error });
-    throw new DatabaseError(
-      errorMessage || 'Database operation failed',
-      { originalError: error instanceof Error ? error.message : 'Unknown error' }
-    );
+    throw new DatabaseError(errorMessage || 'Database operation failed', {
+      originalError: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 };
 
@@ -371,6 +387,4 @@ export const handleDatabaseConstraintError = (error: any): ApiError => {
 /**
  * Error types export
  */
-export type {
-  ErrorResponse,
-};
+export type { ErrorResponse };

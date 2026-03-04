@@ -1,6 +1,6 @@
 /**
  * Project and Task Types
- * 
+ *
  * Core type definitions for project management, task tracking,
  * milestones, and related entities.
  */
@@ -316,7 +316,14 @@ export interface CustomField {
   projectId?: string; // null for organization-wide fields
   name: string;
   key: string;
-  type: 'text' | 'number' | 'date' | 'select' | 'multiselect' | 'checkbox' | 'url';
+  type:
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'select'
+    | 'multiselect'
+    | 'checkbox'
+    | 'url';
   options?: string[]; // For select/multiselect types
   required: boolean;
   defaultValue?: string | number | boolean;
@@ -449,7 +456,13 @@ export interface TaskFilters {
  * Task sort options
  */
 export interface TaskSortOptions {
-  field: 'createdAt' | 'updatedAt' | 'dueDate' | 'priority' | 'status' | 'title';
+  field:
+    | 'createdAt'
+    | 'updatedAt'
+    | 'dueDate'
+    | 'priority'
+    | 'status'
+    | 'title';
   direction: 'asc' | 'desc';
 }
 
@@ -496,7 +509,10 @@ export const STATUS_WEIGHTS: Record<TaskStatus, number> = {
  */
 export const isTaskOverdue = (task: Task): boolean => {
   if (!task.dueDate) return false;
-  if (task.status === TaskStatus.COMPLETED || task.status === TaskStatus.CANCELLED) {
+  if (
+    task.status === TaskStatus.COMPLETED ||
+    task.status === TaskStatus.CANCELLED
+  ) {
     return false;
   }
   return new Date(task.dueDate) < new Date();
@@ -507,7 +523,10 @@ export const isTaskOverdue = (task: Task): boolean => {
  */
 export const isTaskDueSoon = (task: Task): boolean => {
   if (!task.dueDate) return false;
-  if (task.status === TaskStatus.COMPLETED || task.status === TaskStatus.CANCELLED) {
+  if (
+    task.status === TaskStatus.COMPLETED ||
+    task.status === TaskStatus.CANCELLED
+  ) {
     return false;
   }
   const now = new Date();

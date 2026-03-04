@@ -1,6 +1,6 @@
 /**
  * Common Utilities
- * 
+ *
  * General-purpose helper functions used across the application.
  */
 
@@ -16,23 +16,33 @@ export const deepClone = <T>(obj: T): T => {
  */
 export const deepEqual = (obj1: unknown, obj2: unknown): boolean => {
   if (obj1 === obj2) return true;
-  
-  if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+
+  if (
+    typeof obj1 !== 'object' ||
+    typeof obj2 !== 'object' ||
+    obj1 === null ||
+    obj2 === null
+  ) {
     return false;
   }
-  
+
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  
+
   if (keys1.length !== keys2.length) return false;
-  
+
   for (const key of keys1) {
     if (!keys2.includes(key)) return false;
-    if (!deepEqual((obj1 as Record<string, unknown>)[key], (obj2 as Record<string, unknown>)[key])) {
+    if (
+      !deepEqual(
+        (obj1 as Record<string, unknown>)[key],
+        (obj2 as Record<string, unknown>)[key]
+      )
+    ) {
       return false;
     }
   }
-  
+
   return true;
 };
 
@@ -44,7 +54,7 @@ export const debounce = <T extends (...args: unknown[]) => void>(
   wait: number
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout | null = null;
-  
+
   return (...args: Parameters<T>) => {
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
@@ -59,7 +69,7 @@ export const throttle = <T extends (...args: unknown[]) => void>(
   limit: number
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle = false;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);
@@ -73,7 +83,7 @@ export const throttle = <T extends (...args: unknown[]) => void>(
  * Sleep/delay function
  */
 export const sleep = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 /**
@@ -85,7 +95,7 @@ export const retry = async <T>(
   delayMs = 1000
 ): Promise<T> => {
   let lastError: Error | unknown;
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn();
@@ -96,25 +106,25 @@ export const retry = async <T>(
       }
     }
   }
-  
+
   throw lastError;
 };
 
 /**
  * Group array of objects by key
  */
-export const groupBy = <T>(
-  array: T[],
-  key: keyof T
-): Record<string, T[]> => {
-  return array.reduce((result, item) => {
-    const groupKey = String(item[key]);
-    if (!result[groupKey]) {
-      result[groupKey] = [];
-    }
-    result[groupKey].push(item);
-    return result;
-  }, {} as Record<string, T[]>);
+export const groupBy = <T>(array: T[], key: keyof T): Record<string, T[]> => {
+  return array.reduce(
+    (result, item) => {
+      const groupKey = String(item[key]);
+      if (!result[groupKey]) {
+        result[groupKey] = [];
+      }
+      result[groupKey].push(item);
+      return result;
+    },
+    {} as Record<string, T[]>
+  );
 };
 
 /**
@@ -127,12 +137,9 @@ export const unique = <T>(array: T[]): T[] => {
 /**
  * Get unique objects by key
  */
-export const uniqueBy = <T>(
-  array: T[],
-  key: keyof T
-): T[] => {
+export const uniqueBy = <T>(array: T[], key: keyof T): T[] => {
   const seen = new Set();
-  return array.filter(item => {
+  return array.filter((item) => {
     const value = item[key];
     if (seen.has(value)) return false;
     seen.add(value);
@@ -151,7 +158,7 @@ export const sortBy = <T>(
   return [...array].sort((a, b) => {
     const aVal = a[key];
     const bVal = b[key];
-    
+
     if (aVal < bVal) return direction === 'asc' ? -1 : 1;
     if (aVal > bVal) return direction === 'asc' ? 1 : -1;
     return 0;
@@ -191,7 +198,7 @@ export const pick = <T extends object, K extends keyof T>(
   keys: K[]
 ): Pick<T, K> => {
   const result = {} as Pick<T, K>;
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (key in obj) {
       result[key] = obj[key];
     }
@@ -207,7 +214,7 @@ export const omit = <T extends object, K extends keyof T>(
   keys: K[]
 ): Omit<T, K> => {
   const result = { ...obj };
-  keys.forEach(key => {
+  keys.forEach((key) => {
     delete result[key];
   });
   return result;
@@ -241,7 +248,7 @@ export const getNestedValue = <T>(
 ): T | undefined => {
   const keys = path.split('.');
   let result: unknown = obj;
-  
+
   for (const key of keys) {
     if (result && typeof result === 'object' && key in result) {
       result = (result as Record<string, unknown>)[key];
@@ -249,7 +256,7 @@ export const getNestedValue = <T>(
       return defaultValue;
     }
   }
-  
+
   return result as T;
 };
 
@@ -263,18 +270,18 @@ export const setNestedValue = (
 ): void => {
   const keys = path.split('.');
   const lastKey = keys.pop();
-  
+
   if (!lastKey) return;
-  
+
   let current: Record<string, unknown> = obj;
-  
+
   for (const key of keys) {
     if (!(key in current) || typeof current[key] !== 'object') {
       current[key] = {};
     }
     current = current[key] as Record<string, unknown>;
   }
-  
+
   current[lastKey] = value;
 };
 
@@ -282,7 +289,8 @@ export const setNestedValue = (
  * Generate random ID
  */
 export const generateId = (length = 16): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -341,10 +349,7 @@ export const toArray = <T>(value: T | T[]): T[] => {
 /**
  * Safe JSON parse with fallback
  */
-export const safeJsonParse = <T>(
-  jsonString: string,
-  fallback: T
-): T => {
+export const safeJsonParse = <T>(jsonString: string, fallback: T): T => {
   try {
     return JSON.parse(jsonString) as T;
   } catch {
@@ -355,10 +360,7 @@ export const safeJsonParse = <T>(
 /**
  * Safe JSON stringify
  */
-export const safeJsonStringify = (
-  value: unknown,
-  fallback = '{}'
-): string => {
+export const safeJsonStringify = (value: unknown, fallback = '{}'): string => {
   try {
     return JSON.stringify(value);
   } catch {
@@ -373,14 +375,14 @@ export const memoize = <T extends (...args: unknown[]) => unknown>(
   fn: T
 ): T => {
   const cache = new Map<string, unknown>();
-  
+
   return ((...args: unknown[]) => {
     const key = JSON.stringify(args);
-    
+
     if (cache.has(key)) {
       return cache.get(key);
     }
-    
+
     const result = fn(...args);
     cache.set(key, result);
     return result;
@@ -390,18 +392,14 @@ export const memoize = <T extends (...args: unknown[]) => unknown>(
 /**
  * Compose functions (right to left)
  */
-export const compose = <T>(
-  ...fns: ((arg: T) => T)[]
-): ((arg: T) => T) => {
+export const compose = <T>(...fns: ((arg: T) => T)[]): ((arg: T) => T) => {
   return (arg: T) => fns.reduceRight((acc, fn) => fn(acc), arg);
 };
 
 /**
  * Pipe functions (left to right)
  */
-export const pipe = <T>(
-  ...fns: ((arg: T) => T)[]
-): ((arg: T) => T) => {
+export const pipe = <T>(...fns: ((arg: T) => T)[]): ((arg: T) => T) => {
   return (arg: T) => fns.reduce((acc, fn) => fn(acc), arg);
 };
 

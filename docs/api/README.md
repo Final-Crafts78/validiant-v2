@@ -18,6 +18,7 @@ Authorization: Bearer <token>
 ## Endpoints
 
 ### Authentication
+
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - Login user
 - `POST /auth/logout` - Logout user
@@ -25,6 +26,7 @@ Authorization: Bearer <token>
 - `GET /auth/me` - Get current user
 
 ### Projects
+
 - `GET /projects` - List all projects
 - `POST /projects` - Create new project
 - `GET /projects/:id` - Get project details
@@ -32,6 +34,7 @@ Authorization: Bearer <token>
 - `DELETE /projects/:id` - Delete project
 
 ### Tasks
+
 - `GET /tasks` - List all tasks
 - `POST /tasks` - Create new task
 - `GET /tasks/:id` - Get task details
@@ -41,6 +44,7 @@ Authorization: Bearer <token>
 ## Response Format
 
 ### Success Response
+
 ```json
 {
   "success": true,
@@ -50,6 +54,7 @@ Authorization: Bearer <token>
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,

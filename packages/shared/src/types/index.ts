@@ -1,6 +1,6 @@
 /**
  * Types Barrel Export
- * 
+ *
  * Central export point for all TypeScript type definitions.
  */
 

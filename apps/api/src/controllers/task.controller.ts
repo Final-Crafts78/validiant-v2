@@ -1,12 +1,12 @@
 /**
  * Task Controller
- * 
+ *
  * Handles HTTP requests for task management endpoints.
  * Includes task CRUD, assignment management, and task operations.
- * 
+ *
  * Edge-compatible Hono implementation.
  * Functions: 20 total (includes new completeTask and reopenTask)
- * 
+ *
  * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
  * All validation happens at route level via @hono/zod-validator
  */
@@ -27,14 +27,17 @@ import {
 /**
  * Check project access
  */
-const checkProjectAccess = async (projectId: string, userId: string): Promise<boolean> => {
+const checkProjectAccess = async (
+  projectId: string,
+  userId: string
+): Promise<boolean> => {
   return await projectService.isProjectMember(projectId, userId);
 };
 
 /**
  * Create task
  * POST /api/v1/tasks
- * 
+ *
  * Payload validated by zValidator(createTaskSchema) at route level
  */
 export const createTask = async (c: Context) => {
@@ -53,10 +56,15 @@ export const createTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof createTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof createTaskSchema
+    >;
 
     // Check project access
-    const hasAccess = await checkProjectAccess(validatedData.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      validatedData.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -73,7 +81,9 @@ export const createTask = async (c: Context) => {
       user.userId,
       {
         ...validatedData,
-        dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+        dueDate: validatedData.dueDate
+          ? new Date(validatedData.dueDate)
+          : undefined,
         estimatedHours: validatedData.estimatedHours ?? undefined,
       }
     );
@@ -165,7 +175,7 @@ export const getTaskById = async (c: Context) => {
 /**
  * Update task
  * PUT /api/v1/tasks/:id
- * 
+ *
  * Payload validated by zValidator(updateTaskSchema) at route level
  */
 export const updateTask = async (c: Context) => {
@@ -197,7 +207,10 @@ export const updateTask = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -210,11 +223,15 @@ export const updateTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateTaskSchema
+    >;
 
     const task = await taskService.updateTask(id, {
       ...validatedData,
-      dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
+      dueDate: validatedData.dueDate
+        ? new Date(validatedData.dueDate)
+        : undefined,
       estimatedHours: validatedData.estimatedHours ?? undefined,
       actualHours: validatedData.actualHours ?? undefined,
     });
@@ -305,7 +322,7 @@ export const deleteTask = async (c: Context) => {
 /**
  * List project tasks
  * GET /api/v1/projects/:projectId/tasks
- * 
+ *
  * Query validated by zValidator(taskListQuerySchema) at route level
  */
 export const listProjectTasks = async (c: Context) => {
@@ -349,7 +366,9 @@ export const listProjectTasks = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedQuery = c.req.query() as unknown as z.infer<typeof taskListQuerySchema>;
+    const validatedQuery = c.req.query() as unknown as z.infer<
+      typeof taskListQuerySchema
+    >;
 
     const result = await taskService.listProjectTasks(projectId, {
       status: validatedQuery.status as any,
@@ -426,7 +445,7 @@ export const getMyTasks = async (c: Context) => {
 /**
  * Assign user to task
  * POST /api/v1/tasks/:id/assign
- * 
+ *
  * Payload validated by zValidator(assignTaskSchema) at route level
  */
 export const assignTask = async (c: Context) => {
@@ -471,7 +490,9 @@ export const assignTask = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof assignTaskSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof assignTaskSchema
+    >;
 
     // Check if userId exists
     if (!validatedData.userId) {
@@ -591,7 +612,7 @@ export const unassignTask = async (c: Context) => {
 /**
  * Update task position
  * PATCH /api/v1/tasks/:id/position
- * 
+ *
  * Payload validated by zValidator(updateTaskPositionSchema) at route level
  */
 export const updateTaskPosition = async (c: Context) => {
@@ -636,7 +657,9 @@ export const updateTaskPosition = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateTaskPositionSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateTaskPositionSchema
+    >;
 
     await taskService.updateTaskPosition(id, validatedData.position);
 
@@ -691,7 +714,10 @@ export const markAsTodo = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -758,7 +784,10 @@ export const markAsInProgress = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -825,7 +854,10 @@ export const markAsInReview = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -892,7 +924,10 @@ export const markAsCompleted = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -959,7 +994,10 @@ export const cancelTask = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -1026,7 +1064,10 @@ export const getTaskSubtasks = async (c: Context) => {
 
     // Get parent task to check project access
     const parentTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(parentTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      parentTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -1183,7 +1224,10 @@ export const reopenTask = async (c: Context) => {
 
     // Get task to check project access
     const existingTask = await taskService.getTaskById(id);
-    const hasAccess = await checkProjectAccess(existingTask.projectId, user.userId);
+    const hasAccess = await checkProjectAccess(
+      existingTask.projectId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {

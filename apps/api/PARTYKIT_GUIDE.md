@@ -176,7 +176,7 @@ function useProjectRealtime(projectId: string, userId: string) {
   useEffect(() => {
     // Connect to PartyKit room
     const wsURL = `wss://validiant-realtime.partykit.dev/parties/main/${projectId}?userId=${userId}&userName=${encodeURIComponent(userName)}`;
-    
+
     const ws = new WebSocket(wsURL);
     wsRef.current = ws;
 
@@ -186,7 +186,7 @@ function useProjectRealtime(projectId: string, userId: string) {
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      
+
       switch (message.type) {
         case 'TASK_CREATED':
         case 'TASK_UPDATED':
@@ -197,12 +197,12 @@ function useProjectRealtime(projectId: string, userId: string) {
           queryClient.invalidateQueries(['tasks', projectId]);
           queryClient.invalidateQueries(['task', message.payload.taskId]);
           break;
-          
+
         case 'USER_JOINED':
           // Show notification or update presence UI
           console.log(`${message.payload.userName} joined the project`);
           break;
-          
+
         case 'USER_LEFT':
           console.log(`${message.payload.userName} left the project`);
           break;
@@ -240,7 +240,7 @@ function useProjectRealtime(projectId: string, userId: string) {
   useEffect(() => {
     // Same code as React - WebSocket API is available in React Native
     const wsURL = `wss://validiant-realtime.partykit.dev/parties/main/${projectId}?userId=${userId}`;
-    
+
     const ws = new WebSocket(wsURL);
     wsRef.current = ws;
 
@@ -264,15 +264,13 @@ import { broadcastTaskEvent, BroadcastEvent } from '../utils/broadcast';
 export const createTask = async (projectId: string, data: any) => {
   // 1. Update database
   const task = await db.insert(tasks).values(data).returning();
-  
+
   // 2. Broadcast to PartyKit (non-blocking)
-  await broadcastTaskEvent(
-    projectId,
-    task.id,
-    BroadcastEvent.TASK_CREATED,
-    { status: task.status, priority: task.priority }
-  );
-  
+  await broadcastTaskEvent(projectId, task.id, BroadcastEvent.TASK_CREATED, {
+    status: task.status,
+    priority: task.priority,
+  });
+
   return task;
 };
 ```
@@ -281,19 +279,12 @@ export const createTask = async (projectId: string, data: any) => {
 
 ```typescript
 // General broadcast
-await broadcastToProject(
-  projectId,
-  'CUSTOM_EVENT',
-  { data: 'anything' }
-);
+await broadcastToProject(projectId, 'CUSTOM_EVENT', { data: 'anything' });
 
 // Task-specific broadcast
-await broadcastTaskEvent(
-  projectId,
-  taskId,
-  BroadcastEvent.TASK_UPDATED,
-  { status: 'completed' }
-);
+await broadcastTaskEvent(projectId, taskId, BroadcastEvent.TASK_UPDATED, {
+  status: 'completed',
+});
 
 // Exclude specific user from receiving broadcast
 await broadcastToProject(
@@ -367,20 +358,26 @@ PARTYKIT_URL=https://validiant-realtime.partykit.dev
 ### Payload Optimization
 
 **❌ Bad (Heavy Payload)**
+
 ```typescript
 await broadcastToProject(projectId, 'TASK_UPDATED', {
   task: {
     id: taskId,
     title: 'Long task title...',
     description: 'Very long description...',
-    assignees: [/* full user objects */],
-    comments: [/* all comments */],
+    assignees: [
+      /* full user objects */
+    ],
+    comments: [
+      /* all comments */
+    ],
     // ... entire task object
-  }
+  },
 });
 ```
 
 **✅ Good (Lightweight Payload)**
+
 ```typescript
 await broadcastToProject(projectId, 'TASK_UPDATED', {
   taskId,

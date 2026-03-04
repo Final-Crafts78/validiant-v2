@@ -10,15 +10,7 @@ import { useState, useMemo, useTransition, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { updateProfileAction } from '@/actions/auth.actions';
 import { format } from 'date-fns';
-import {
-  Shield,
-  Lock,
-  Eye,
-  EyeOff,
-  Save,
-  Camera,
-  Loader2,
-} from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, Save, Camera, Loader2 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Shared style constants — mirror Tasks / Projects pages exactly
@@ -47,7 +39,9 @@ const btnGhost =
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
+  const [activeTab, setActiveTab] = useState<
+    'profile' | 'security' | 'notifications'
+  >('profile');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -71,14 +65,20 @@ export default function ProfilePage() {
     setFirstName(nameComponents.firstName);
     setLastName(nameComponents.lastName);
     setBio(user?.bio || '');
-  }, [user?.fullName, user?.bio, nameComponents.firstName, nameComponents.lastName]);
+  }, [
+    user?.fullName,
+    user?.bio,
+    nameComponents.firstName,
+    nameComponents.lastName,
+  ]);
 
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
     if (!user || !user.fullName) return '';
     const parts = user.fullName.trim().split(' ');
     const firstInitial = parts[0]?.charAt(0) || '';
-    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
+    const lastInitial =
+      parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   }, [user]);
 
@@ -103,7 +103,10 @@ export default function ProfilePage() {
       try {
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
 
-        console.log('[ProfilePage] Submitting profile update:', { fullName, bio: bio.trim() });
+        console.log('[ProfilePage] Submitting profile update:', {
+          fullName,
+          bio: bio.trim(),
+        });
 
         const result = await updateProfileAction({
           fullName,
@@ -111,7 +114,10 @@ export default function ProfilePage() {
         });
 
         if (result.success && result.user) {
-          console.log('[ProfilePage] Profile updated successfully:', result.user);
+          console.log(
+            '[ProfilePage] Profile updated successfully:',
+            result.user
+          );
 
           const mergedUserData = {
             ...user,
@@ -144,7 +150,10 @@ export default function ProfilePage() {
   // -------------------------------------------------------------------------
   // Tab configuration
   // -------------------------------------------------------------------------
-  const tabs: { id: 'profile' | 'security' | 'notifications'; label: string }[] = [
+  const tabs: {
+    id: 'profile' | 'security' | 'notifications';
+    label: string;
+  }[] = [
     { id: 'profile', label: 'Profile Information' },
     { id: 'security', label: 'Security' },
     { id: 'notifications', label: 'Notifications' },
@@ -152,12 +161,13 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
-
       {/* ------------------------------------------------------------------ */}
       {/* Page Header                                                          */}
       {/* ------------------------------------------------------------------ */}
       <div>
-        <h1 className="text-3xl font-extrabold text-slate-900">Profile Settings</h1>
+        <h1 className="text-3xl font-extrabold text-slate-900">
+          Profile Settings
+        </h1>
         <p className="text-sm text-slate-500 mt-1">
           Manage your personal information and security preferences
         </p>
@@ -168,7 +178,6 @@ export default function ProfilePage() {
       {/* ------------------------------------------------------------------ */}
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-
           {/* Avatar */}
           <div className="relative flex-shrink-0">
             {user.avatarUrl ? (
@@ -193,7 +202,9 @@ export default function ProfilePage() {
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold text-slate-900 truncate">{user.fullName}</h2>
+            <h2 className="text-xl font-bold text-slate-900 truncate">
+              {user.fullName}
+            </h2>
             <p className="text-sm text-slate-500 mt-0.5">{user.email}</p>
             <div className="flex flex-wrap items-center gap-2 mt-3">
               {/* Active badge */}
@@ -245,11 +256,12 @@ export default function ProfilePage() {
             Personal Information
           </h3>
           <form className="space-y-5" onSubmit={handleProfileSubmit}>
-
             {/* First / Last Name */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="firstName" className={labelCls}>First Name</label>
+                <label htmlFor="firstName" className={labelCls}>
+                  First Name
+                </label>
                 <input
                   id="firstName"
                   type="text"
@@ -261,7 +273,9 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className={labelCls}>Last Name</label>
+                <label htmlFor="lastName" className={labelCls}>
+                  Last Name
+                </label>
                 <input
                   id="lastName"
                   type="text"
@@ -276,7 +290,9 @@ export default function ProfilePage() {
 
             {/* Email — read-only */}
             <div>
-              <label htmlFor="email" className={labelCls}>Email Address</label>
+              <label htmlFor="email" className={labelCls}>
+                Email Address
+              </label>
               <input
                 id="email"
                 type="email"
@@ -292,7 +308,9 @@ export default function ProfilePage() {
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className={labelCls}>Bio</label>
+              <label htmlFor="bio" className={labelCls}>
+                Bio
+              </label>
               <textarea
                 id="bio"
                 rows={4}
@@ -314,11 +332,7 @@ export default function ProfilePage() {
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className={btnPrimary}
-                disabled={isPending}
-              >
+              <button type="submit" className={btnPrimary} disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -341,17 +355,17 @@ export default function ProfilePage() {
       {/* ================================================================== */}
       {activeTab === 'security' && (
         <div className="space-y-6">
-
           {/* Change Password card */}
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-4 mb-6">
               Change Password
             </h3>
             <form className="space-y-5">
-
               {/* Current Password */}
               <div>
-                <label htmlFor="currentPassword" className={labelCls}>Current Password</label>
+                <label htmlFor="currentPassword" className={labelCls}>
+                  Current Password
+                </label>
                 <div className="relative">
                   <input
                     id="currentPassword"
@@ -363,18 +377,24 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
-                    aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showCurrentPassword ? 'Hide password' : 'Show password'
+                    }
                   >
-                    {showCurrentPassword
-                      ? <EyeOff className="h-4 w-4" />
-                      : <Eye className="h-4 w-4" />}
+                    {showCurrentPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* New Password */}
               <div>
-                <label htmlFor="newPassword" className={labelCls}>New Password</label>
+                <label htmlFor="newPassword" className={labelCls}>
+                  New Password
+                </label>
                 <div className="relative">
                   <input
                     id="newPassword"
@@ -386,18 +406,24 @@ export default function ProfilePage() {
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
-                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showNewPassword ? 'Hide password' : 'Show password'
+                    }
                   >
-                    {showNewPassword
-                      ? <EyeOff className="h-4 w-4" />
-                      : <Eye className="h-4 w-4" />}
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className={labelCls}>Confirm New Password</label>
+                <label htmlFor="confirmPassword" className={labelCls}>
+                  Confirm New Password
+                </label>
                 <input
                   id="confirmPassword"
                   type="password"
@@ -408,7 +434,9 @@ export default function ProfilePage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" className={btnGhost}>Cancel</button>
+                <button type="button" className={btnGhost}>
+                  Cancel
+                </button>
                 <button type="submit" className={btnPrimary}>
                   <Lock className="h-4 w-4" />
                   <span>Update Password</span>
@@ -453,41 +481,51 @@ export default function ProfilePage() {
             Notification Preferences
           </h3>
           <div className="space-y-8">
-
             {/* Email Notifications */}
             <div>
               <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">
                 Email Notifications
               </h4>
               <div className="space-y-4">
-                {([
-                  {
-                    label: 'Project updates',
-                    description: 'Get notified about project changes and milestones',
-                    key: 'projectUpdate' as const,
-                  },
-                  {
-                    label: 'Task assignments',
-                    description: 'Receive emails when tasks are assigned to you',
-                    key: 'taskAssigned' as const,
-                  },
-                  {
-                    label: 'Team invitations',
-                    description: 'Get notified when someone invites you to join a team',
-                    key: 'projectInvite' as const,
-                  },
-                ] as const).map((item) => (
+                {(
+                  [
+                    {
+                      label: 'Project updates',
+                      description:
+                        'Get notified about project changes and milestones',
+                      key: 'projectUpdate' as const,
+                    },
+                    {
+                      label: 'Task assignments',
+                      description:
+                        'Receive emails when tasks are assigned to you',
+                      key: 'taskAssigned' as const,
+                    },
+                    {
+                      label: 'Team invitations',
+                      description:
+                        'Get notified when someone invites you to join a team',
+                      key: 'projectInvite' as const,
+                    },
+                  ] as const
+                ).map((item) => (
                   <label
                     key={item.key}
                     className="flex items-start justify-between gap-4 cursor-pointer"
                   >
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{item.label}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {item.description}
+                      </p>
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences?.[item.key] ?? false}
+                      defaultChecked={
+                        user.notificationPreferences?.[item.key] ?? false
+                      }
                       className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
                     />
                   </label>
@@ -501,29 +539,39 @@ export default function ProfilePage() {
                 Push Notifications
               </h4>
               <div className="space-y-4">
-                {([
-                  {
-                    label: 'Mentions and comments',
-                    description: 'When someone mentions you or comments on your work',
-                    key: 'commentMention' as const,
-                  },
-                  {
-                    label: 'Due date reminders',
-                    description: 'Reminders for upcoming task and project deadlines',
-                    key: 'taskDueSoon' as const,
-                  },
-                ] as const).map((item) => (
+                {(
+                  [
+                    {
+                      label: 'Mentions and comments',
+                      description:
+                        'When someone mentions you or comments on your work',
+                      key: 'commentMention' as const,
+                    },
+                    {
+                      label: 'Due date reminders',
+                      description:
+                        'Reminders for upcoming task and project deadlines',
+                      key: 'taskDueSoon' as const,
+                    },
+                  ] as const
+                ).map((item) => (
                   <label
                     key={item.key}
                     className="flex items-start justify-between gap-4 cursor-pointer"
                   >
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{item.label}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {item.description}
+                      </p>
                     </div>
                     <input
                       type="checkbox"
-                      defaultChecked={user.notificationPreferences?.[item.key] ?? false}
+                      defaultChecked={
+                        user.notificationPreferences?.[item.key] ?? false
+                      }
                       className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
                     />
                   </label>
@@ -533,7 +581,9 @@ export default function ProfilePage() {
 
             {/* Actions */}
             <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
-              <button type="button" className={btnGhost}>Cancel</button>
+              <button type="button" className={btnGhost}>
+                Cancel
+              </button>
               <button type="button" className={btnPrimary}>
                 <Save className="h-4 w-4" />
                 <span>Save Preferences</span>

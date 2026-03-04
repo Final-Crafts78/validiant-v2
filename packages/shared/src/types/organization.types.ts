@@ -1,6 +1,6 @@
 /**
  * Organization and Team Types
- * 
+ *
  * Type definitions for organization entities, team management,
  * and membership structures.
  */
@@ -57,7 +57,8 @@ export const OrganizationRole = {
   VIEWER: 'viewer',
 } as const;
 
-export type OrganizationRole = typeof OrganizationRole[keyof typeof OrganizationRole];
+export type OrganizationRole =
+  (typeof OrganizationRole)[keyof typeof OrganizationRole];
 
 /**
  * Team role enum
@@ -374,13 +375,16 @@ export const DEFAULT_TEAM_SETTINGS: TeamSettings = {
 /**
  * Subscription tier limits
  */
-export const SUBSCRIPTION_LIMITS: Record<SubscriptionTier, {
-  projects: number;
-  storage: number; // in GB
-  seats: number;
-  apiCalls: number; // per month
-  integrations: number;
-}> = {
+export const SUBSCRIPTION_LIMITS: Record<
+  SubscriptionTier,
+  {
+    projects: number;
+    storage: number; // in GB
+    seats: number;
+    apiCalls: number; // per month
+    integrations: number;
+  }
+> = {
   [SubscriptionTier.FREE]: {
     projects: 3,
     storage: 1,
@@ -424,11 +428,11 @@ export const isOrganizationOwner = (
 /**
  * Type guard to check if user is organization admin
  */
-export const isOrganizationAdmin = (
-  member: OrganizationMember
-): boolean => {
-  return member.role === OrganizationMemberRole.OWNER || 
-         member.role === OrganizationMemberRole.ADMIN;
+export const isOrganizationAdmin = (member: OrganizationMember): boolean => {
+  return (
+    member.role === OrganizationMemberRole.OWNER ||
+    member.role === OrganizationMemberRole.ADMIN
+  );
 };
 
 /**
@@ -450,24 +454,24 @@ export const hasReachedLimit = (
     if (limit === -1) return false; // unlimited
     return total >= limit;
   }
-  
+
   if (resource === 'storage') {
     const { used, limit } = usage.storage;
     if (limit === -1) return false; // unlimited
     return used >= limit;
   }
-  
+
   if (resource === 'apiCalls') {
     const { current, limit } = usage.apiCalls;
     if (limit === -1) return false; // unlimited
     return current >= limit;
   }
-  
+
   if (resource === 'integrations') {
     const { active, limit } = usage.integrations;
     if (limit === -1) return false; // unlimited
     return active >= limit;
   }
-  
+
   return false;
 };

@@ -1,11 +1,11 @@
 /**
  * Drizzle Kit Configuration
- * 
+ *
  * This configuration is used by drizzle-kit for:
  * - Generating migrations from schema changes
  * - Pushing schema directly to database
  * - Running Drizzle Studio for database management
- * 
+ *
  * Commands:
  * - pnpm db:generate  → Generate migration files
  * - pnpm db:push      → Push schema to database (no migration files)

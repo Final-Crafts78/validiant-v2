@@ -1,6 +1,6 @@
 /**
  * JWT Utilities
- * 
+ *
  * JWT token generation and verification.
  * Uses jose library for edge-compatible JWT operations.
  */
@@ -91,7 +91,9 @@ export const isTokenExpired = (token: string): boolean => {
 /**
  * Extract token from Authorization header
  */
-export const extractBearerToken = (authHeader: string | undefined | null): string | null => {
+export const extractBearerToken = (
+  authHeader: string | undefined | null
+): string | null => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }

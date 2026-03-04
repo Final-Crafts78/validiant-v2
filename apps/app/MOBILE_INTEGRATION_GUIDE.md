@@ -22,6 +22,7 @@ Validiant's React Native mobile app uses JWT tokens with SecureStore for authent
 The backend supports **both** authentication methods:
 
 **Web App (HttpOnly Cookies):**
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -44,6 +45,7 @@ Set-Cookie: refreshToken=...; HttpOnly; Secure
 ```
 
 **Mobile App (JWT Tokens):**
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -65,12 +67,14 @@ Content-Type: application/json
 ### Why Not HttpOnly Cookies on Mobile?
 
 **HttpOnly cookies don't work well on mobile:**
+
 - React Native's network stack doesn't support HttpOnly cookies natively
 - Requires complex cookie management libraries
 - Inconsistent behavior across iOS/Android
 - WebView-only feature (not native networking)
 
 **JWT tokens with SecureStore is the mobile standard:**
+
 - Hardware-backed encryption (iOS Keychain, Android Keystore)
 - Native platform support
 - Survives app updates
@@ -146,13 +150,13 @@ await clearTokens();
 
 ### Security Features
 
-| Feature | iOS | Android |
-|---------|-----|----------|
-| Hardware encryption | Keychain Services | Keystore |
-| Encrypted at rest | ✅ Yes | ✅ Yes |
-| Biometric protection | ✅ Optional | ✅ Optional |
-| Survives app updates | ✅ Yes | ✅ Yes |
-| Accessible by other apps | ❌ No | ❌ No |
+| Feature                  | iOS               | Android     |
+| ------------------------ | ----------------- | ----------- |
+| Hardware encryption      | Keychain Services | Keystore    |
+| Encrypted at rest        | ✅ Yes            | ✅ Yes      |
+| Biometric protection     | ✅ Optional       | ✅ Optional |
+| Survives app updates     | ✅ Yes            | ✅ Yes      |
+| Accessible by other apps | ❌ No             | ❌ No       |
 
 ## Automatic Token Refresh
 
@@ -168,13 +172,13 @@ const response = await get('/api/v1/projects');
 if (response.status === 401) {
   // 1. Get refresh token from SecureStore
   const refreshToken = await getRefreshToken();
-  
+
   // 2. Request new access token
   const newAccessToken = await refreshAccessToken(refreshToken);
-  
+
   // 3. Save new access token
   await saveAccessToken(newAccessToken);
-  
+
   // 4. Retry original request
   return retry(originalRequest, newAccessToken);
 }
@@ -185,12 +189,13 @@ if (response.status === 401) {
 ### Refresh Token Expiration
 
 If refresh token is expired (after 7 days):
+
 ```typescript
 // Interceptor detects refresh failure
 if (refreshFailed) {
   // 1. Clear all tokens from SecureStore
   await clearTokens();
-  
+
   // 2. Navigate to login screen
   navigation.navigate('Login');
 }
@@ -206,15 +211,15 @@ import { TaskStatus } from '@/hooks/useTasks';
 
 function TaskList({ projectId }: { projectId: string }) {
   const { data: tasks, isLoading, error } = useTasks(projectId);
-  
+
   if (isLoading) {
     return <ActivityIndicator />;
   }
-  
+
   if (error) {
     return <ErrorView error={error} />;
   }
-  
+
   return (
     <FlatList
       data={tasks}
@@ -234,7 +239,7 @@ import { TaskStatus } from '@/hooks/useTasks';
 function KanbanBoard({ projectId }: { projectId: string }) {
   const { data: tasks } = useTasks(projectId);
   const updateTask = useUpdateTask();
-  
+
   const handleDrop = (taskId: string, newStatus: TaskStatus) => {
     // UI updates INSTANTLY (before API call)
     updateTask.mutate({
@@ -246,7 +251,7 @@ function KanbanBoard({ projectId }: { projectId: string }) {
     // ✅ API updates in background
     // ✅ If API fails, task snaps back
   };
-  
+
   return (
     <View style={styles.board}>
       <Column status="todo" tasks={todoTasks} onDrop={handleDrop} />
@@ -273,21 +278,21 @@ function ProjectBoard({ projectId, userId, userName }: Props) {
     userId,
     userName
   );
-  
+
   return (
     <View>
       <View style={styles.header}>
         <Text>Project Board</Text>
         {isConnected && <Text>🟋️ Connected</Text>}
       </View>
-      
+
       <View style={styles.presence}>
         <Text>Online: {onlineUsers.length}</Text>
         {onlineUsers.map(user => (
           <Avatar key={user.userId} name={user.userName} />
         ))}
       </View>
-      
+
       <TaskList tasks={tasks} />
     </View>
   );
@@ -377,6 +382,7 @@ export default {
 ### 1. Always Use SecureStore for Tokens
 
 ❌ **Don't:**
+
 ```typescript
 // NEVER store tokens in AsyncStorage!
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -384,6 +390,7 @@ await AsyncStorage.setItem('token', accessToken); // ❌ INSECURE!
 ```
 
 ✅ **Do:**
+
 ```typescript
 // Always use SecureStore
 import { saveAccessToken } from '@/utils/storage';
@@ -409,9 +416,9 @@ const response = await get('/api/v1/data');
 
 ```typescript
 // For instant feedback:
-useUpdateTask() // ✅ Optimistic
-useCreateTask() // ✅ Optimistic
-useDeleteTask() // ✅ Optimistic
+useUpdateTask(); // ✅ Optimistic
+useCreateTask(); // ✅ Optimistic
+useDeleteTask(); // ✅ Optimistic
 ```
 
 ## Troubleshooting
@@ -421,6 +428,7 @@ useDeleteTask() // ✅ Optimistic
 **Problem**: API returns 401 even after login
 
 **Solution**:
+
 1. Check if tokens are saved: `await getTokens()`
 2. Verify API_URL in app.config.ts
 3. Check interceptor is injecting tokens (enable logging)
@@ -431,6 +439,7 @@ useDeleteTask() // ✅ Optimistic
 **Problem**: Not receiving real-time updates
 
 **Solution**:
+
 1. Check `PARTYKIT_URL` in app.config.ts
 2. Verify PartyKit server is running
 3. Check connection state: `isConnected`
@@ -441,6 +450,7 @@ useDeleteTask() // ✅ Optimistic
 **Problem**: SecureStore.setItemAsync fails
 
 **Solution**:
+
 1. iOS: Check keychain access permissions
 2. Android: Verify device has hardware keystore
 3. Simulator: May have limited keystore support

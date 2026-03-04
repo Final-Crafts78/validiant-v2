@@ -1,9 +1,9 @@
 /**
  * Project Service (Drizzle Version)
- * 
+ *
  * Handles project management, member operations, and project-related business logic.
  * Projects belong to organizations and can have multiple members.
- * 
+ *
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  */
 
@@ -11,11 +11,7 @@ import { eq, and, isNull, sql, or, desc } from 'drizzle-orm';
 import { db } from '../db';
 import { projects, projectMembers, organizations, users } from '../db/schema';
 import { cache } from '../config/redis.config';
-import {
-  ConflictError,
-  BadRequestError,
-  assertExists,
-} from '../utils/errors';
+import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { ProjectStatus, ProjectPriority } from '@validiant/shared';
 
@@ -94,7 +90,7 @@ export const createProject = async (
   }
 ): Promise<Project> => {
   // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const project = await db.transaction(async (tx) => {
+  const project = await db.transaction(async (tx: typeof db) => {
     // Create project using 'tx'
     const newProjectResult = await tx
       .insert(projects)
@@ -145,7 +141,11 @@ export const createProject = async (
     return newProject;
   });
 
-  logger.info('Project created', { projectId: project.id, organizationId, userId });
+  logger.info('Project created', {
+    projectId: project.id,
+    organizationId,
+    userId,
+  });
 
   return project as Project;
 };
@@ -153,7 +153,9 @@ export const createProject = async (
 /**
  * Get project by ID
  */
-export const getProjectById = async (projectId: string): Promise<ProjectWithStats> => {
+export const getProjectById = async (
+  projectId: string
+): Promise<ProjectWithStats> => {
   // Try cache first
   const cacheKey = `project:${projectId}`;
   const cached = await cache.get<ProjectWithStats>(cacheKey);
@@ -249,7 +251,8 @@ export const updateProject = async (
   if (data.priority !== undefined) updateData.priority = data.priority;
   if (data.startDate !== undefined) updateData.startDate = data.startDate;
   if (data.endDate !== undefined) updateData.endDate = data.endDate;
-  if (data.estimatedHours !== undefined) updateData.estimatedHours = data.estimatedHours;
+  if (data.estimatedHours !== undefined)
+    updateData.estimatedHours = data.estimatedHours;
   if (data.budget !== undefined) updateData.budget = data.budget;
   if (data.color !== undefined) updateData.color = data.color;
   if (data.icon !== undefined) updateData.icon = data.icon;
@@ -339,7 +342,10 @@ export const updateProjectSettings = async (
  * Delete project (soft delete)
  */
 export const deleteProject = async (projectId: string): Promise<void> => {
-  await db.update(projects).set({ deletedAt: new Date() }).where(eq(projects.id, projectId));
+  await db
+    .update(projects)
+    .set({ deletedAt: new Date() })
+    .where(eq(projects.id, projectId));
 
   // Clear cache
   await cache.del(`project:${projectId}`);
@@ -429,7 +435,7 @@ export const listOrganizationProjects = async (
     .offset(offset);
 
   return {
-    projects: projectList.map((p) => ({
+    projects: projectList.map((p: (typeof projectList)[number]) => ({
       ...p,
       memberCount: Number(p.memberCount),
     })) as ProjectWithStats[],
@@ -445,7 +451,9 @@ export const listOrganizationProjects = async (
 /**
  * Get user's projects
  */
-export const getUserProjects = async (userId: string): Promise<ProjectWithStats[]> => {
+export const getUserProjects = async (
+  userId: string
+): Promise<ProjectWithStats[]> => {
   const projectList = await db
     .select({
       id: projects.id,
@@ -485,7 +493,7 @@ export const getUserProjects = async (userId: string): Promise<ProjectWithStats[
     )
     .orderBy(desc(projects.updatedAt));
 
-  return projectList.map((p) => ({
+  return projectList.map((p: (typeof projectList)[number]) => ({
     ...p,
     memberCount: Number(p.memberCount),
   })) as ProjectWithStats[];
@@ -494,7 +502,9 @@ export const getUserProjects = async (userId: string): Promise<ProjectWithStats[
 /**
  * Get project members
  */
-export const getProjectMembers = async (projectId: string): Promise<ProjectMember[]> => {
+export const getProjectMembers = async (
+  projectId: string
+): Promise<ProjectMember[]> => {
   const members = await db
     .select({
       id: projectMembers.id,
@@ -574,12 +584,18 @@ export const addProjectMember = async (
 /**
  * Remove member from project
  */
-export const removeProjectMember = async (projectId: string, userId: string): Promise<void> => {
+export const removeProjectMember = async (
+  projectId: string,
+  userId: string
+): Promise<void> => {
   await db
     .update(projectMembers)
     .set({ deletedAt: new Date() })
     .where(
-      and(eq(projectMembers.projectId, projectId), eq(projectMembers.userId, userId))
+      and(
+        eq(projectMembers.projectId, projectId),
+        eq(projectMembers.userId, userId)
+      )
     );
 
   logger.info('Project member removed', { projectId, userId });
@@ -588,7 +604,10 @@ export const removeProjectMember = async (projectId: string, userId: string): Pr
 /**
  * Check if user is project member
  */
-export const isProjectMember = async (projectId: string, userId: string): Promise<boolean> => {
+export const isProjectMember = async (
+  projectId: string,
+  userId: string
+): Promise<boolean> => {
   const memberResult = await db
     .select({ id: projectMembers.id })
     .from(projectMembers)

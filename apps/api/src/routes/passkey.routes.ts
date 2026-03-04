@@ -1,20 +1,20 @@
 /**
  * Passkey (WebAuthn) Routes (Hono) - SECURITY HARDENED
- * 
+ *
  * Provides passkey authentication endpoints using WebAuthn/FIDO2.
- * 
+ *
  * Security Features:
  * - HttpOnly cookies for challenges (CSRF protection)
  * - HttpOnly cookies for JWT tokens (no URL exposure)
  * - Challenge verification prevents tampering
  * - One-time use challenges
  * - Counter-based replay protection
- * 
+ *
  * Supported Flows:
  * 1. Passkey Registration (authenticated users)
  * 2. Passkey Authentication (passwordless login)
  * 3. Passkey Management (list, delete, rename)
- * 
+ *
  * Edge-compatible using Hono and SimpleWebAuthn
  */
 
@@ -103,7 +103,7 @@ app.post(
       const userId = c.get('userId' as never) as string;
       const userEmail = c.get('userEmail' as never) as string;
       const userName = c.get('userName' as never) as string;
-      
+
       if (!userId || !userEmail) {
         return c.json(
           {
@@ -114,19 +114,19 @@ app.post(
           401
         );
       }
-      
+
       // Generate registration options
       const { options, challenge } = await generatePasskeyRegistrationOptions(
         userId,
         userEmail,
         userName || userEmail
       );
-      
+
       // Store challenge in HttpOnly cookie (CSRF protection)
       setCookie(c, 'passkey_challenge', challenge, challengeCookieOptions);
-      
+
       logger.info('Passkey registration options generated', { userId });
-      
+
       return c.json({
         success: true,
         options,
@@ -137,7 +137,10 @@ app.post(
         {
           success: false,
           error: 'PasskeyError',
-          message: error instanceof Error ? error.message : 'Failed to generate registration options',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to generate registration options',
         },
         500
       );
@@ -159,7 +162,7 @@ app.post(
     try {
       const userId = c.get('userId' as never) as string;
       const { response, deviceName } = c.req.valid('json');
-      
+
       if (!userId) {
         return c.json(
           {
@@ -170,10 +173,10 @@ app.post(
           401
         );
       }
-      
+
       // Retrieve challenge from cookie (CSRF protection)
       const challenge = getCookie(c, 'passkey_challenge');
-      
+
       if (!challenge) {
         return c.json(
           {
@@ -184,18 +187,23 @@ app.post(
           400
         );
       }
-      
+
       // Verify registration
-      const result = await verifyPasskeyRegistration(userId, response, challenge, deviceName);
-      
+      const result = await verifyPasskeyRegistration(
+        userId,
+        response,
+        challenge,
+        deviceName
+      );
+
       // Delete challenge cookie after use (one-time use)
       deleteCookie(c, 'passkey_challenge');
-      
+
       logger.info('Passkey registered successfully', {
         userId,
         credentialID: result.credentialID,
       });
-      
+
       return c.json({
         success: true,
         credential: result,
@@ -204,13 +212,16 @@ app.post(
     } catch (error) {
       // Delete challenge cookie on error
       deleteCookie(c, 'passkey_challenge');
-      
+
       logger.error('Passkey registration verification failed:', error as Error);
       return c.json(
         {
           success: false,
           error: 'VerificationError',
-          message: error instanceof Error ? error.message : 'Registration verification failed',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Registration verification failed',
         },
         400
       );
@@ -234,15 +245,16 @@ app.post(
   async (c) => {
     try {
       const { email } = c.req.valid('json');
-      
+
       // Generate authentication options
-      const { options, challenge } = await generatePasskeyAuthenticationOptions(email);
-      
+      const { options, challenge } =
+        await generatePasskeyAuthenticationOptions(email);
+
       // Store challenge in HttpOnly cookie (CSRF protection)
       setCookie(c, 'passkey_challenge', challenge, challengeCookieOptions);
-      
+
       logger.info('Passkey authentication options generated', { email });
-      
+
       return c.json({
         success: true,
         options,
@@ -253,7 +265,10 @@ app.post(
         {
           success: false,
           error: 'PasskeyError',
-          message: error instanceof Error ? error.message : 'Failed to generate authentication options',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to generate authentication options',
         },
         500
       );
@@ -273,10 +288,10 @@ app.post(
   async (c) => {
     try {
       const { response } = c.req.valid('json');
-      
+
       // Retrieve challenge from cookie (CSRF protection)
       const challenge = getCookie(c, 'passkey_challenge');
-      
+
       if (!challenge) {
         return c.json(
           {
@@ -287,24 +302,34 @@ app.post(
           400
         );
       }
-      
+
       // Verify authentication
       const result = await verifyPasskeyAuthentication(response, challenge);
-      
+
       // Delete challenge cookie after use (one-time use)
       deleteCookie(c, 'passkey_challenge');
-      
+
       // Generate JWT tokens
       const tokens = await generateTokens(
         result.user.id,
         result.user.email,
         result.user.role
       );
-      
+
       // Set tokens as HttpOnly cookies (SECURE - same as OAuth)
-      setCookie(c, 'access_token', tokens.accessToken, accessTokenCookieOptions);
-      setCookie(c, 'refresh_token', tokens.refreshToken, refreshTokenCookieOptions);
-      
+      setCookie(
+        c,
+        'access_token',
+        tokens.accessToken,
+        accessTokenCookieOptions
+      );
+      setCookie(
+        c,
+        'refresh_token',
+        tokens.refreshToken,
+        refreshTokenCookieOptions
+      );
+
       // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
       setCookie(c, 'user_id', result.user.id, {
         secure: isProduction,
@@ -312,12 +337,12 @@ app.post(
         maxAge: 3600,
         path: '/',
       });
-      
+
       logger.info('Passkey authentication successful', {
         userId: result.user.id,
         credentialID: result.credentialID,
       });
-      
+
       return c.json({
         success: true,
         user: {
@@ -332,13 +357,17 @@ app.post(
     } catch (error) {
       // Delete challenge cookie on error
       deleteCookie(c, 'passkey_challenge');
-      
-      logger.error('Passkey authentication verification failed:', error as Error);
+
+      logger.error(
+        'Passkey authentication verification failed:',
+        error as Error
+      );
       return c.json(
         {
           success: false,
           error: 'AuthenticationError',
-          message: error instanceof Error ? error.message : 'Authentication failed',
+          message:
+            error instanceof Error ? error.message : 'Authentication failed',
         },
         401
       );
@@ -358,7 +387,7 @@ app.post(
 app.get('/list', authenticate, async (c) => {
   try {
     const userId = c.get('userId' as never) as string;
-    
+
     if (!userId) {
       return c.json(
         {
@@ -369,9 +398,9 @@ app.get('/list', authenticate, async (c) => {
         401
       );
     }
-    
+
     const passkeys = await getUserPasskeys(userId);
-    
+
     return c.json({
       success: true,
       passkeys,
@@ -382,7 +411,8 @@ app.get('/list', authenticate, async (c) => {
       {
         success: false,
         error: 'PasskeyError',
-        message: error instanceof Error ? error.message : 'Failed to get passkeys',
+        message:
+          error instanceof Error ? error.message : 'Failed to get passkeys',
       },
       500
     );
@@ -398,7 +428,7 @@ app.delete('/:credentialID', authenticate, async (c) => {
   try {
     const userId = c.get('userId' as never) as string;
     const credentialID = c.req.param('credentialID');
-    
+
     if (!userId) {
       return c.json(
         {
@@ -409,9 +439,9 @@ app.delete('/:credentialID', authenticate, async (c) => {
         401
       );
     }
-    
+
     await deletePasskey(userId, credentialID);
-    
+
     return c.json({
       success: true,
       message: 'Passkey deleted successfully',
@@ -422,9 +452,12 @@ app.delete('/:credentialID', authenticate, async (c) => {
       {
         success: false,
         error: 'PasskeyError',
-        message: error instanceof Error ? error.message : 'Failed to delete passkey',
+        message:
+          error instanceof Error ? error.message : 'Failed to delete passkey',
       },
-      error instanceof Error && error.message.includes('Cannot delete') ? 400 : 500
+      error instanceof Error && error.message.includes('Cannot delete')
+        ? 400
+        : 500
     );
   }
 });
@@ -443,7 +476,7 @@ app.patch(
       const userId = c.get('userId' as never) as string;
       const credentialID = c.req.param('credentialID');
       const { deviceName } = c.req.valid('json');
-      
+
       if (!userId) {
         return c.json(
           {
@@ -454,9 +487,9 @@ app.patch(
           401
         );
       }
-      
+
       await updatePasskeyDeviceName(userId, credentialID, deviceName);
-      
+
       return c.json({
         success: true,
         message: 'Device name updated successfully',
@@ -467,7 +500,10 @@ app.patch(
         {
           success: false,
           error: 'PasskeyError',
-          message: error instanceof Error ? error.message : 'Failed to update device name',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Failed to update device name',
         },
         500
       );

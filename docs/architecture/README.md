@@ -7,6 +7,7 @@ Validiant follows a microservices-inspired architecture with clear separation of
 ## Components
 
 ### Frontend Applications
+
 1. **Mobile App** (React Native + Expo)
    - Offline-first architecture
    - Local storage with WatermelonDB
@@ -18,6 +19,7 @@ Validiant follows a microservices-inspired architecture with clear separation of
    - Progressive Web App features
 
 ### Backend
+
 1. **API Server** (Express.js)
    - RESTful endpoints
    - WebSocket support for real-time features

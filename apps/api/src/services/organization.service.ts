@@ -1,9 +1,9 @@
 /**
  * Organization Service (Drizzle Version)
- * 
+ *
  * Handles organization/team management, member operations,
  * invitations, and organization-related business logic.
- * 
+ *
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  */
 
@@ -11,11 +11,7 @@ import { eq, and, isNull, sql, desc, asc } from 'drizzle-orm';
 import { db } from '../db';
 import { organizations, organizationMembers, users } from '../db/schema';
 import { cache } from '../config/redis.config';
-import {
-  ConflictError,
-  BadRequestError,
-  assertExists,
-} from '../utils/errors';
+import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { OrganizationRole } from '@validiant/shared';
 
@@ -78,7 +74,9 @@ const generateSlug = async (name: string): Promise<string> => {
     const existingResult = await db
       .select({ id: organizations.id })
       .from(organizations)
-      .where(and(eq(organizations.slug, uniqueSlug), isNull(organizations.deletedAt)))
+      .where(
+        and(eq(organizations.slug, uniqueSlug), isNull(organizations.deletedAt))
+      )
       .limit(1);
     const existing = existingResult[0];
 
@@ -109,7 +107,7 @@ export const createOrganization = async (
   const slug = await generateSlug(data.name);
 
   // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const organization = await db.transaction(async (tx) => {
+  const organization = await db.transaction(async (tx: typeof db) => {
     // Create organization using 'tx'
     const newOrgResult = await tx
       .insert(organizations)
@@ -160,7 +158,9 @@ export const createOrganization = async (
 /**
  * Get organization by ID
  */
-export const getOrganizationById = async (organizationId: string): Promise<Organization> => {
+export const getOrganizationById = async (
+  organizationId: string
+): Promise<Organization> => {
   // Try cache first
   const cacheKey = `organization:${organizationId}`;
   const cached = await cache.get<Organization>(cacheKey);
@@ -184,7 +184,9 @@ export const getOrganizationById = async (organizationId: string): Promise<Organ
       updatedAt: organizations.updatedAt,
     })
     .from(organizations)
-    .where(and(eq(organizations.id, organizationId), isNull(organizations.deletedAt)))
+    .where(
+      and(eq(organizations.id, organizationId), isNull(organizations.deletedAt))
+    )
     .limit(1);
   const organization = organizationResult[0];
 
@@ -199,7 +201,9 @@ export const getOrganizationById = async (organizationId: string): Promise<Organ
 /**
  * Get organization by slug
  */
-export const getOrganizationBySlug = async (slug: string): Promise<Organization> => {
+export const getOrganizationBySlug = async (
+  slug: string
+): Promise<Organization> => {
   const organizationResult = await db
     .select({
       id: organizations.id,
@@ -276,7 +280,9 @@ export const updateOrganization = async (
   const organizationResult = await db
     .update(organizations)
     .set(updateData)
-    .where(and(eq(organizations.id, organizationId), isNull(organizations.deletedAt)))
+    .where(
+      and(eq(organizations.id, organizationId), isNull(organizations.deletedAt))
+    )
     .returning({
       id: organizations.id,
       name: organizations.name,
@@ -313,7 +319,9 @@ export const updateOrganizationSettings = async (
       settings,
       updatedAt: new Date(),
     })
-    .where(and(eq(organizations.id, organizationId), isNull(organizations.deletedAt)))
+    .where(
+      and(eq(organizations.id, organizationId), isNull(organizations.deletedAt))
+    )
     .returning({
       id: organizations.id,
       name: organizations.name,
@@ -340,11 +348,15 @@ export const updateOrganizationSettings = async (
 /**
  * Delete organization (soft delete)
  */
-export const deleteOrganization = async (organizationId: string): Promise<void> => {
+export const deleteOrganization = async (
+  organizationId: string
+): Promise<void> => {
   await db
     .update(organizations)
     .set({ deletedAt: new Date() })
-    .where(and(eq(organizations.id, organizationId), isNull(organizations.deletedAt)));
+    .where(
+      and(eq(organizations.id, organizationId), isNull(organizations.deletedAt))
+    );
 
   // Clear cache
   await cache.del(`organization:${organizationId}`);
@@ -355,7 +367,9 @@ export const deleteOrganization = async (organizationId: string): Promise<void> 
 /**
  * Get user's organizations
  */
-export const getUserOrganizations = async (userId: string): Promise<OrganizationWithRole[]> => {
+export const getUserOrganizations = async (
+  userId: string
+): Promise<OrganizationWithRole[]> => {
   // ✅ CATEGORY 5 FIX: Subquery for member count
   const results = await db
     .select({
@@ -379,7 +393,10 @@ export const getUserOrganizations = async (userId: string): Promise<Organization
       )`,
     })
     .from(organizationMembers)
-    .innerJoin(organizations, eq(organizationMembers.organizationId, organizations.id))
+    .innerJoin(
+      organizations,
+      eq(organizationMembers.organizationId, organizations.id)
+    )
     .where(
       and(
         eq(organizationMembers.userId, userId),
@@ -389,7 +406,7 @@ export const getUserOrganizations = async (userId: string): Promise<Organization
     )
     .orderBy(desc(organizations.createdAt));
 
-  return results.map((result) => ({
+  return results.map((result: (typeof results)[number]) => ({
     ...result,
     memberCount: Number(result.memberCount),
   })) as OrganizationWithRole[];
@@ -587,7 +604,10 @@ export const getUserRole = async (
 /**
  * Check if user is member
  */
-export const isMember = async (organizationId: string, userId: string): Promise<boolean> => {
+export const isMember = async (
+  organizationId: string,
+  userId: string
+): Promise<boolean> => {
   const memberResult = await db
     .select({ id: organizationMembers.id })
     .from(organizationMembers)

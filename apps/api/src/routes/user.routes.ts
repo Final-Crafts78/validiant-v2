@@ -1,9 +1,9 @@
 /**
  * User Routes
- * 
+ *
  * User management endpoints with edge-native validation.
  * Edge-compatible Hono implementation for Cloudflare Workers.
- * 
+ *
  * Routes:
  * - GET /me - Get current user profile
  * - PUT /me - Update current user profile
@@ -21,7 +21,7 @@
  * - PATCH /:id/role - Update user role (admin)
  * - PATCH /:id/status - Update user status (admin)
  * - GET /:id/activity - Get user activity log
- * 
+ *
  * ELITE PATTERN:
  * - Routes use @hono/zod-validator for edge validation
  * - Controllers blindly trust c.req.valid('json' | 'query')
@@ -60,7 +60,7 @@ app.use('*', authenticate);
 /**
  * GET /me
  * Get current user profile
- * 
+ *
  * No validation needed (uses auth context)
  * Response: 200 OK with user object
  */
@@ -69,7 +69,7 @@ app.get('/me', userController.getCurrentUserProfile);
 /**
  * PUT /me
  * Update current user profile
- * 
+ *
  * Validation: updateUserProfileSchema (fullName, displayName, bio, phoneNumber, avatarUrl)
  * Response: 200 OK with updated user object
  */
@@ -82,7 +82,7 @@ app.put(
 /**
  * DELETE /me
  * Delete current user account (soft delete)
- * 
+ *
  * No validation needed
  * Response: 200 OK with success message
  */
@@ -91,7 +91,7 @@ app.delete('/me', userController.deleteCurrentUser);
 /**
  * PUT /me/preferences
  * Update user preferences (theme, language, timezone, etc.)
- * 
+ *
  * Validation: updateUserPreferencesSchema
  * Response: 200 OK with updated user object
  */
@@ -104,7 +104,7 @@ app.put(
 /**
  * PUT /me/notifications
  * Update notification preferences
- * 
+ *
  * No validation schema yet - accepts raw JSON
  * Response: 200 OK with updated user object
  */
@@ -117,7 +117,7 @@ app.put('/me/notifications', userController.updateNotificationPreferences);
 /**
  * GET /search
  * Quick search users by name or email
- * 
+ *
  * Validation: userSearchQuerySchema (q, limit)
  * Response: 200 OK with users array
  */
@@ -130,7 +130,7 @@ app.get(
 /**
  * GET /check-email
  * Check if email address is available
- * 
+ *
  * Query params: email (string)
  * Response: 200 OK with { available: boolean }
  */
@@ -143,7 +143,7 @@ app.get('/check-email', userController.checkEmailAvailability);
 /**
  * GET /stats
  * Get user statistics (total users, active users, etc.)
- * 
+ *
  * FUTURE: Add requireAdmin middleware in Phase 5
  * Response: 200 OK with stats object
  */
@@ -152,7 +152,7 @@ app.get('/stats', userController.getUserStats);
 /**
  * POST /bulk-delete
  * Bulk delete multiple users
- * 
+ *
  * FUTURE: Add requireAdmin middleware + validation schema in Phase 5
  * Body: { userIds: string[] }
  * Response: 200 OK with deletion count
@@ -166,7 +166,7 @@ app.post('/bulk-delete', userController.bulkDeleteUsers);
 /**
  * GET /
  * List all users with pagination, search, and filters
- * 
+ *
  * Validation: userListQuerySchema (page, perPage, search, role, status, sortBy, sortOrder)
  * Response: 200 OK with paginated users
  */
@@ -183,7 +183,7 @@ app.get(
 /**
  * GET /:id
  * Get user by ID
- * 
+ *
  * Params: id (UUID)
  * Response: 200 OK with user object (full details for self/admin, limited for others)
  */
@@ -192,7 +192,7 @@ app.get('/:id', userController.getUserById);
 /**
  * PUT /:id
  * Update user profile by ID (admin only)
- * 
+ *
  * FUTURE: Add requireAdmin middleware in Phase 5
  * Validation: updateUserProfileSchema
  * Response: 200 OK with updated user object
@@ -206,7 +206,7 @@ app.put(
 /**
  * DELETE /:id
  * Delete user by ID (admin only, soft delete)
- * 
+ *
  * FUTURE: Add requireAdmin middleware in Phase 5
  * Response: 200 OK with success message
  */
@@ -215,7 +215,7 @@ app.delete('/:id', userController.deleteUserById);
 /**
  * PATCH /:id/role
  * Update user role (admin only)
- * 
+ *
  * FUTURE: Add requireAdmin middleware in Phase 5
  * Validation: updateUserRoleSchema (role)
  * Response: 200 OK with updated user object
@@ -229,7 +229,7 @@ app.patch(
 /**
  * PATCH /:id/status
  * Update user status (admin only)
- * 
+ *
  * FUTURE: Add requireAdmin middleware in Phase 5
  * Validation: updateUserStatusSchema (status, reason)
  * Response: 200 OK with updated user object
@@ -243,7 +243,7 @@ app.patch(
 /**
  * GET /:id/activity
  * Get user activity log (self or admin only)
- * 
+ *
  * Params: id (UUID)
  * Query: page, perPage
  * Response: 200 OK with activity logs and pagination

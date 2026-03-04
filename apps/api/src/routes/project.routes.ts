@@ -1,9 +1,9 @@
 /**
  * Project Routes
- * 
+ *
  * Project management endpoints with edge-native validation.
  * Edge-compatible Hono implementation for Cloudflare Workers.
- * 
+ *
  * ELITE PATTERN:
  * - Routes use @hono/zod-validator for edge validation
  * - Controllers blindly trust c.req.valid('json')
@@ -27,11 +27,23 @@ const app = new Hono();
 app.use('*', authenticate);
 
 // CRUD operations
-app.post('/', zValidator('json', createProjectSchema), projectController.createProject);
+app.post(
+  '/',
+  zValidator('json', createProjectSchema),
+  projectController.createProject
+);
 app.get('/my', projectController.getMyProjects);
 app.get('/:id', projectController.getProjectById);
-app.put('/:id', zValidator('json', updateProjectSchema), projectController.updateProject);
-app.patch('/:id/settings', zValidator('json', updateProjectSettingsSchema), projectController.updateProjectSettings);
+app.put(
+  '/:id',
+  zValidator('json', updateProjectSchema),
+  projectController.updateProject
+);
+app.patch(
+  '/:id/settings',
+  zValidator('json', updateProjectSettingsSchema),
+  projectController.updateProjectSettings
+);
 app.delete('/:id', projectController.deleteProject);
 
 // Project actions
@@ -42,7 +54,11 @@ app.post('/:id/leave', projectController.leaveProject);
 
 // Member management
 app.get('/:id/members', projectController.getProjectMembers);
-app.post('/:id/members', zValidator('json', addProjectMemberSchema), projectController.addProjectMember);
+app.post(
+  '/:id/members',
+  zValidator('json', addProjectMemberSchema),
+  projectController.addProjectMember
+);
 app.delete('/:id/members/:userId', projectController.removeProjectMember);
 
 export default app;

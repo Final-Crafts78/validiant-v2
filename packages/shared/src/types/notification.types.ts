@@ -1,6 +1,6 @@
 /**
  * Notification Types
- * 
+ *
  * Type definitions for notifications, alerts, and user communication.
  */
 
@@ -16,33 +16,33 @@ export enum NotificationType {
   TASK_DUE_SOON = 'task_due_soon',
   TASK_OVERDUE = 'task_overdue',
   TASK_COMMENTED = 'task_commented',
-  
+
   // Project-related
   PROJECT_INVITATION = 'project_invitation',
   PROJECT_MEMBER_ADDED = 'project_member_added',
   PROJECT_MEMBER_REMOVED = 'project_member_removed',
   PROJECT_UPDATED = 'project_updated',
-  
+
   // Organization-related
   ORGANIZATION_INVITATION = 'organization_invitation',
   ORGANIZATION_ROLE_CHANGED = 'organization_role_changed',
   ORGANIZATION_MEMBER_JOINED = 'organization_member_joined',
-  
+
   // Team-related
   TEAM_INVITATION = 'team_invitation',
   TEAM_MEMBER_ADDED = 'team_member_added',
   TEAM_MEMBER_REMOVED = 'team_member_removed',
-  
+
   // Comment-related
   COMMENT_MENTION = 'comment_mention',
   COMMENT_REPLY = 'comment_reply',
-  
+
   // Time tracking
   TIMESHEET_SUBMITTED = 'timesheet_submitted',
   TIMESHEET_APPROVED = 'timesheet_approved',
   TIMESHEET_REJECTED = 'timesheet_rejected',
   TIMESHEET_REMINDER = 'timesheet_reminder',
-  
+
   // System
   SYSTEM_ANNOUNCEMENT = 'system_announcement',
   SYSTEM_UPDATE = 'system_update',
@@ -271,8 +271,10 @@ export interface NotificationStats {
  * Helper to check if notification is urgent
  */
 export const isUrgentNotification = (notification: Notification): boolean => {
-  return notification.priority === NotificationPriority.URGENT ||
-         notification.priority === NotificationPriority.HIGH;
+  return (
+    notification.priority === NotificationPriority.URGENT ||
+    notification.priority === NotificationPriority.HIGH
+  );
 };
 
 /**
@@ -293,17 +295,21 @@ export const shouldSendNotification = (
 ): boolean => {
   // Check if globally enabled
   if (!settings.globalEnabled) return false;
-  
+
   // Check if channel is enabled
-  if (channel === NotificationChannel.IN_APP && !settings.channels.inApp) return false;
-  if (channel === NotificationChannel.EMAIL && !settings.channels.email) return false;
-  if (channel === NotificationChannel.PUSH && !settings.channels.push) return false;
-  if (channel === NotificationChannel.SMS && !settings.channels.sms) return false;
-  
+  if (channel === NotificationChannel.IN_APP && !settings.channels.inApp)
+    return false;
+  if (channel === NotificationChannel.EMAIL && !settings.channels.email)
+    return false;
+  if (channel === NotificationChannel.PUSH && !settings.channels.push)
+    return false;
+  if (channel === NotificationChannel.SMS && !settings.channels.sms)
+    return false;
+
   // Check event-specific preferences
-  const eventPref = settings.eventPreferences.find(p => p.eventType === type);
+  const eventPref = settings.eventPreferences.find((p) => p.eventType === type);
   if (!eventPref) return true; // Default to enabled if no specific preference
-  
+
   return eventPref.enabled && eventPref.channels.includes(channel);
 };
 
@@ -312,18 +318,18 @@ export const shouldSendNotification = (
  */
 export const isQuietHours = (settings: UserNotificationSettings): boolean => {
   if (!settings.quietHours.enabled) return false;
-  
+
   const now = new Date();
   const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-  
+
   const start = settings.quietHours.startTime;
   const end = settings.quietHours.endTime;
-  
+
   // Handle overnight quiet hours (e.g., 22:00 to 08:00)
   if (start > end) {
     return currentTime >= start || currentTime <= end;
   }
-  
+
   return currentTime >= start && currentTime <= end;
 };
 

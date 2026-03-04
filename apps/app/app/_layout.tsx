@@ -1,6 +1,6 @@
 /**
  * Root App Layout
- * 
+ *
  * Main entry point for the app with providers and navigation setup.
  * Uses Expo Router for file-based routing.
  */
@@ -64,10 +64,10 @@ export default function RootLayout() {
           >
             {/* Auth screens */}
             <Stack.Screen name="(auth)" />
-            
+
             {/* Main app screens */}
             <Stack.Screen name="(tabs)" />
-            
+
             {/* Modal screens */}
             <Stack.Screen
               name="modal"
@@ -78,7 +78,7 @@ export default function RootLayout() {
               }}
             />
           </Stack>
-          
+
           <StatusBar style="auto" />
         </QueryClientProvider>
       </SafeAreaProvider>

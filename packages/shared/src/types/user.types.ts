@@ -1,6 +1,6 @@
 /**
  * User Types
- * 
+ *
  * Core type definitions for user entities, authentication, and authorization.
  * These types are shared across all applications (mobile, web, API).
  */
@@ -18,7 +18,7 @@ export const UserRole = {
   USER: 'member', // Alias for backward compatibility
 } as const;
 
-export type UserRole = typeof UserRole[keyof typeof UserRole];
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 /**
  * User status enumeration (as const object for runtime + type safety)
@@ -32,7 +32,7 @@ export const UserStatus = {
   DELETED: 'deleted',
 } as const;
 
-export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
 
 /**
  * OAuth provider enumeration
@@ -172,7 +172,14 @@ export interface UserSession {
 export interface DeviceInfo {
   deviceId: string;
   deviceType: 'mobile' | 'tablet' | 'desktop' | 'unknown';
-  platform: 'ios' | 'android' | 'web' | 'windows' | 'macos' | 'linux' | 'unknown';
+  platform:
+    | 'ios'
+    | 'android'
+    | 'web'
+    | 'windows'
+    | 'macos'
+    | 'linux'
+    | 'unknown';
   browser?: string;
   browserVersion?: string;
   osVersion?: string;

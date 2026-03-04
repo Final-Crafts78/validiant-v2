@@ -1,20 +1,20 @@
 /**
  * Real-Time Broadcast Helper
- * 
+ *
  * HTTP-to-WebSocket bridge for triggering real-time updates.
- * 
+ *
  * Architecture:
  * 1. Hono service completes database transaction
  * 2. Calls broadcastToProject() with event type and payload
  * 3. Makes HTTP POST to PartyKit room URL
  * 4. PartyKit broadcasts to all connected WebSocket clients
  * 5. Frontend React Query invalidates and refetches data
- * 
+ *
  * Non-Blocking:
  * - Broadcast happens asynchronously (fire-and-forget)
  * - API responses are not delayed
  * - Errors are logged but don't affect API responses
- * 
+ *
  * Lightweight Payloads:
  * - Only send IDs and minimal data
  * - Frontend fetches full data via React Query
@@ -34,16 +34,16 @@ export enum BroadcastEvent {
   TASK_DELETED = 'TASK_DELETED',
   TASK_STATUS_CHANGED = 'TASK_STATUS_CHANGED',
   TASK_ASSIGNED = 'TASK_ASSIGNED',
-  
+
   // Project Events
   PROJECT_UPDATED = 'PROJECT_UPDATED',
   PROJECT_DELETED = 'PROJECT_DELETED',
-  
+
   // Member Events
   MEMBER_ADDED = 'MEMBER_ADDED',
   MEMBER_REMOVED = 'MEMBER_REMOVED',
   MEMBER_ROLE_CHANGED = 'MEMBER_ROLE_CHANGED',
-  
+
   // Comment Events (future)
   COMMENT_CREATED = 'COMMENT_CREATED',
   COMMENT_UPDATED = 'COMMENT_UPDATED',
@@ -59,7 +59,7 @@ interface BroadcastPayload {
 
 /**
  * Get PartyKit URL
- * 
+ *
  * Automatically detects development vs production
  */
 const getPartyKitURL = (): string => {
@@ -67,7 +67,7 @@ const getPartyKitURL = (): string => {
   if (env.NODE_ENV === 'development') {
     return 'http://localhost:1999';
   }
-  
+
   // Production: Use PartyKit deployment URL
   // TODO: Replace with actual production URL after deployment
   return env.PARTYKIT_URL || 'https://validiant-realtime.partykit.dev';
@@ -75,14 +75,14 @@ const getPartyKitURL = (): string => {
 
 /**
  * Broadcast event to a project room
- * 
+ *
  * This is the main function used by Hono services to trigger real-time updates.
- * 
+ *
  * @param projectId - Project ID (room identifier)
  * @param eventType - Type of event (TASK_UPDATED, etc.)
  * @param payload - Event payload (keep lightweight - IDs only)
  * @param excludeUserId - Optional user ID to exclude from broadcast
- * 
+ *
  * @example
  * ```typescript
  * // After creating a task
@@ -102,7 +102,7 @@ export const broadcastToProject = async (
   try {
     const partyKitURL = getPartyKitURL();
     const roomURL = `${partyKitURL}/parties/main/${projectId}`;
-    
+
     // Make HTTP POST to PartyKit room
     // This is non-blocking - we don't await the response
     fetch(roomURL, {
@@ -150,9 +150,9 @@ export const broadcastToProject = async (
 
 /**
  * Broadcast to multiple projects
- * 
+ *
  * Useful when an action affects multiple projects.
- * 
+ *
  * @param projectIds - Array of project IDs
  * @param eventType - Type of event
  * @param payload - Event payload
@@ -172,10 +172,10 @@ export const broadcastToProjects = async (
 
 /**
  * Broadcast task event helper
- * 
+ *
  * Convenience function for task-related events.
  * Automatically includes taskId in payload.
- * 
+ *
  * @param projectId - Project ID
  * @param taskId - Task ID
  * @param eventType - Event type (defaults to TASK_UPDATED)
@@ -195,9 +195,9 @@ export const broadcastTaskEvent = async (
 
 /**
  * Broadcast project event helper
- * 
+ *
  * Convenience function for project-related events.
- * 
+ *
  * @param projectId - Project ID
  * @param eventType - Event type
  * @param additionalData - Additional payload data

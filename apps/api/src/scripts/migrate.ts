@@ -1,6 +1,6 @@
 /**
  * Database Migration Script
- * 
+ *
  * Runs Drizzle migrations against the database.
  */
 

@@ -1,6 +1,6 @@
 /**
  * Auth Layout
- * 
+ *
  * Layout for authentication screens (login, register, forgot password).
  * Stack navigation without headers.
  */

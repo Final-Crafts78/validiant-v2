@@ -1,12 +1,12 @@
 /**
  * Task Service (Drizzle Version) - Real-Time Enhanced
- * 
+ *
  * Handles task management, assignments, status updates, and task-related business logic.
  * Tasks belong to projects and can be assigned to multiple users.
- * 
+ *
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  * THIS IS THE FINAL SERVICE MIGRATION! 🎉
- * 
+ *
  * Phase 6.3: Added real-time broadcasting via PartyKit WebSockets
  * - TASK_CREATED, TASK_UPDATED, TASK_DELETED events
  * - HTTP-to-WebSocket bridge pattern
@@ -112,7 +112,7 @@ export const createTask = async (
   }
 ): Promise<Task> => {
   // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const task = await db.transaction(async (tx) => {
+  const task = await db.transaction(async (tx: typeof db) => {
     // Get next position using 'tx'
     const maxPositionResult = await tx
       .select({
@@ -250,7 +250,13 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
     .from(tasks)
     .innerJoin(projects, eq(tasks.projectId, projects.id))
     .innerJoin(users, eq(tasks.createdBy, users.id))
-    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt), isNull(projects.deletedAt)))
+    .where(
+      and(
+        eq(tasks.id, taskId),
+        isNull(tasks.deletedAt),
+        isNull(projects.deletedAt)
+      )
+    )
     .limit(1);
   const task = taskResult[0];
 
@@ -328,10 +334,12 @@ export const updateTask = async (
 
   if (data.priority !== undefined) updateData.priority = data.priority;
   if (data.dueDate !== undefined) updateData.dueDate = data.dueDate;
-  if (data.estimatedHours !== undefined) updateData.estimatedHours = data.estimatedHours;
+  if (data.estimatedHours !== undefined)
+    updateData.estimatedHours = data.estimatedHours;
   if (data.actualHours !== undefined) updateData.actualHours = data.actualHours;
   if (data.tags !== undefined) updateData.tags = data.tags;
-  if (data.customFields !== undefined) updateData.customFields = data.customFields;
+  if (data.customFields !== undefined)
+    updateData.customFields = data.customFields;
 
   if (Object.keys(updateData).length === 1) {
     // Only updatedAt was added
@@ -400,7 +408,10 @@ export const deleteTask = async (taskId: string): Promise<void> => {
     throw new NotFoundError('Task');
   }
 
-  await db.update(tasks).set({ deletedAt: new Date() }).where(eq(tasks.id, taskId));
+  await db
+    .update(tasks)
+    .set({ deletedAt: new Date() })
+    .where(eq(tasks.id, taskId));
 
   // Clear cache
   await cache.del(`task:${taskId}`);
@@ -432,7 +443,10 @@ export const listProjectTasks = async (
   const offset = (page - 1) * perPage;
 
   // Build WHERE conditions
-  const conditions: any[] = [eq(tasks.projectId, projectId), isNull(tasks.deletedAt)];
+  const conditions: any[] = [
+    eq(tasks.projectId, projectId),
+    isNull(tasks.deletedAt),
+  ];
 
   if (params?.status) {
     conditions.push(eq(tasks.status, params.status));
@@ -475,7 +489,9 @@ export const listProjectTasks = async (
 
   // ✅ ELITE: Filter by tags with explicit ::jsonb cast for GIN index optimization
   if (params?.tags && params.tags.length > 0) {
-    conditions.push(sql`${tasks.tags} @> ${JSON.stringify(params.tags)}::jsonb`);
+    conditions.push(
+      sql`${tasks.tags} @> ${JSON.stringify(params.tags)}::jsonb`
+    );
   }
 
   const whereClause = and(...conditions);
@@ -521,7 +537,7 @@ export const listProjectTasks = async (
     .offset(offset);
 
   // Get assignees for each task
-  const taskIds = taskList.map((t) => t.id);
+  const taskIds = taskList.map((t: (typeof taskList)[number]) => t.id);
   let assigneesByTask: Record<string, any[]> = {};
 
   if (taskIds.length > 0) {
@@ -543,20 +559,29 @@ export const listProjectTasks = async (
       );
 
     // Group assignees by task ID
-    assigneesByTask = assignees.reduce((acc, assignee) => {
-      if (!acc[assignee.taskId]) {
-        acc[assignee.taskId] = [];
-      }
-      acc[assignee.taskId].push({
-        id: assignee.id,
-        fullName: assignee.fullName,
-        avatarUrl: assignee.avatarUrl,
-      });
-      return acc;
-    }, {} as Record<string, any[]>);
+    assigneesByTask = assignees.reduce(
+      (
+        acc: Record<
+          string,
+          { id: string; fullName: string; avatarUrl: string | null }[]
+        >,
+        assignee: (typeof assignees)[number]
+      ) => {
+        if (!acc[assignee.taskId]) {
+          acc[assignee.taskId] = [];
+        }
+        acc[assignee.taskId].push({
+          id: assignee.id,
+          fullName: assignee.fullName,
+          avatarUrl: assignee.avatarUrl,
+        });
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
   }
 
-  const tasksWithDetails = taskList.map((task) => ({
+  const tasksWithDetails = taskList.map((task: (typeof taskList)[number]) => ({
     ...task,
     subtaskCount: Number(task.subtaskCount),
     assignees: assigneesByTask[task.id] || undefined,
@@ -631,7 +656,10 @@ export const getUserTasks = async (
  * Assign user to task
  * ✅ REAL-TIME: Broadcasts TASK_ASSIGNED
  */
-export const assignTask = async (taskId: string, userId: string): Promise<TaskAssignee> => {
+export const assignTask = async (
+  taskId: string,
+  userId: string
+): Promise<TaskAssignee> => {
   // Get task to get projectId
   const taskResult = await db
     .select({ projectId: tasks.projectId })
@@ -682,9 +710,14 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
   logger.info('Task assigned', { taskId, userId });
 
   // ✅ REAL-TIME: Broadcast to project room
-  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_ASSIGNED, {
-    assigneeId: userId,
-  });
+  await broadcastTaskEvent(
+    task.projectId,
+    taskId,
+    BroadcastEvent.TASK_ASSIGNED,
+    {
+      assigneeId: userId,
+    }
+  );
 
   return assignee as TaskAssignee;
 };
@@ -693,7 +726,10 @@ export const assignTask = async (taskId: string, userId: string): Promise<TaskAs
  * Unassign user from task
  * ✅ REAL-TIME: Broadcasts TASK_ASSIGNED with removed flag
  */
-export const unassignTask = async (taskId: string, userId: string): Promise<void> => {
+export const unassignTask = async (
+  taskId: string,
+  userId: string
+): Promise<void> => {
   // Get task to get projectId
   const taskResult = await db
     .select({ projectId: tasks.projectId })
@@ -709,7 +745,9 @@ export const unassignTask = async (taskId: string, userId: string): Promise<void
   await db
     .update(taskAssignees)
     .set({ deletedAt: new Date() })
-    .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, userId)));
+    .where(
+      and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, userId))
+    );
 
   // Clear cache
   await cache.del(`task:${taskId}`);
@@ -717,16 +755,24 @@ export const unassignTask = async (taskId: string, userId: string): Promise<void
   logger.info('Task unassigned', { taskId, userId });
 
   // ✅ REAL-TIME: Broadcast to project room
-  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_ASSIGNED, {
-    assigneeId: userId,
-    removed: true,
-  });
+  await broadcastTaskEvent(
+    task.projectId,
+    taskId,
+    BroadcastEvent.TASK_ASSIGNED,
+    {
+      assigneeId: userId,
+      removed: true,
+    }
+  );
 };
 
 /**
  * Update task position (for drag and drop)
  */
-export const updateTaskPosition = async (taskId: string, newPosition: number): Promise<void> => {
+export const updateTaskPosition = async (
+  taskId: string,
+  newPosition: number
+): Promise<void> => {
   await db
     .update(tasks)
     .set({

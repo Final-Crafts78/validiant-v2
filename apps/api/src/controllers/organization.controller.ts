@@ -1,12 +1,12 @@
 /**
  * Organization Controller
- * 
+ *
  * Handles HTTP requests for organization management endpoints.
  * Includes organization CRUD, member management, and team operations.
- * 
+ *
  * Edge-compatible Hono implementation.
  * Functions: 17 total (CRUD, members, roles, permissions)
- * 
+ *
  * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
  * All validation happens at route level via @hono/zod-validator
  */
@@ -31,8 +31,14 @@ const checkOrganizationRole = async (
   organizationId: string,
   userId: string,
   requiredRoles: (typeof OrganizationRole)[keyof typeof OrganizationRole][]
-): Promise<{ hasPermission: boolean; userRole?: typeof OrganizationRole[keyof typeof OrganizationRole] | null }> => {
-  const userRole = await organizationService.getUserRole(organizationId, userId);
+): Promise<{
+  hasPermission: boolean;
+  userRole?: (typeof OrganizationRole)[keyof typeof OrganizationRole] | null;
+}> => {
+  const userRole = await organizationService.getUserRole(
+    organizationId,
+    userId
+  );
 
   if (!userRole || !requiredRoles.includes(userRole)) {
     return { hasPermission: false, userRole };
@@ -44,7 +50,7 @@ const checkOrganizationRole = async (
 /**
  * Create organization
  * POST /api/v1/organizations
- * 
+ *
  * Payload validated by zValidator(createOrganizationSchema) at route level
  */
 export const createOrganization = async (c: Context) => {
@@ -63,7 +69,9 @@ export const createOrganization = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof createOrganizationSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof createOrganizationSchema
+    >;
 
     const organization = await organizationService.createOrganization(
       user.userId,
@@ -110,7 +118,9 @@ export const getMyOrganizations = async (c: Context) => {
       );
     }
 
-    const organizations = await organizationService.getUserOrganizations(user.userId);
+    const organizations = await organizationService.getUserOrganizations(
+      user.userId
+    );
 
     return c.json({
       success: true,
@@ -209,7 +219,10 @@ export const getOrganizationBySlug = async (c: Context) => {
 
     // Check if user is a member
     if (user?.userId) {
-      const isMember = await organizationService.isMember(organization.id, user.userId);
+      const isMember = await organizationService.isMember(
+        organization.id,
+        user.userId
+      );
       const isAdmin = user.role === 'admin' || user.role === 'super_admin';
 
       if (!isMember && !isAdmin) {
@@ -244,7 +257,7 @@ export const getOrganizationBySlug = async (c: Context) => {
 /**
  * Update organization
  * PUT /api/v1/organizations/:id
- * 
+ *
  * Payload validated by zValidator(updateOrganizationSchema) at route level
  */
 export const updateOrganization = async (c: Context) => {
@@ -292,9 +305,14 @@ export const updateOrganization = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateOrganizationSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateOrganizationSchema
+    >;
 
-    const organization = await organizationService.updateOrganization(id, validatedData);
+    const organization = await organizationService.updateOrganization(
+      id,
+      validatedData
+    );
 
     return c.json({
       success: true,
@@ -317,7 +335,7 @@ export const updateOrganization = async (c: Context) => {
 /**
  * Update organization settings
  * PATCH /api/v1/organizations/:id/settings
- * 
+ *
  * Payload validated by zValidator(updateOrganizationSettingsSchema) at route level
  */
 export const updateOrganizationSettings = async (c: Context) => {
@@ -365,7 +383,9 @@ export const updateOrganizationSettings = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { settings } = (await c.req.json()) as z.infer<typeof updateOrganizationSettingsSchema>;
+    const { settings } = (await c.req.json()) as z.infer<
+      typeof updateOrganizationSettingsSchema
+    >;
 
     const organization = await organizationService.updateOrganizationSettings(
       id,
@@ -422,7 +442,9 @@ export const deleteOrganization = async (c: Context) => {
     }
 
     // Only owner can delete organization
-    const roleCheck = await checkOrganizationRole(id, user.userId, [OrganizationRole.OWNER]);
+    const roleCheck = await checkOrganizationRole(id, user.userId, [
+      OrganizationRole.OWNER,
+    ]);
 
     if (!roleCheck.hasPermission) {
       return c.json(
@@ -523,7 +545,7 @@ export const getOrganizationMembers = async (c: Context) => {
 /**
  * Add member to organization
  * POST /api/v1/organizations/:id/members
- * 
+ *
  * Payload validated by zValidator(addOrganizationMemberSchema) at route level
  */
 export const addOrganizationMember = async (c: Context) => {
@@ -571,7 +593,9 @@ export const addOrganizationMember = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof addOrganizationMemberSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof addOrganizationMemberSchema
+    >;
 
     const member = await organizationService.addOrganizationMember(
       id,
@@ -603,7 +627,7 @@ export const addOrganizationMember = async (c: Context) => {
 /**
  * Update member role
  * PATCH /api/v1/organizations/:id/members/:userId/role
- * 
+ *
  * Payload validated by zValidator(updateMemberRoleSchema) at route level
  */
 export const updateMemberRole = async (c: Context) => {
@@ -664,11 +688,15 @@ export const updateMemberRole = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const { role } = (await c.req.json()) as z.infer<typeof updateMemberRoleSchema>;
+    const { role } = (await c.req.json()) as z.infer<
+      typeof updateMemberRoleSchema
+    >;
 
     // Only owners can assign owner role
     if (role === OrganizationRole.OWNER) {
-      const ownerCheck = await checkOrganizationRole(id, user.userId, [OrganizationRole.OWNER]);
+      const ownerCheck = await checkOrganizationRole(id, user.userId, [
+        OrganizationRole.OWNER,
+      ]);
 
       if (!ownerCheck.hasPermission) {
         return c.json(
@@ -938,7 +966,7 @@ export const checkMembership = async (c: Context) => {
 /**
  * Transfer ownership
  * POST /api/v1/organizations/:id/transfer-ownership
- * 
+ *
  * No validation schema yet - accepts raw JSON with newOwnerId
  */
 export const transferOwnership = async (c: Context) => {
@@ -983,7 +1011,9 @@ export const transferOwnership = async (c: Context) => {
     }
 
     // Only current owner can transfer ownership
-    const roleCheck = await checkOrganizationRole(id, user.userId, [OrganizationRole.OWNER]);
+    const roleCheck = await checkOrganizationRole(id, user.userId, [
+      OrganizationRole.OWNER,
+    ]);
 
     if (!roleCheck.hasPermission) {
       return c.json(
@@ -1010,10 +1040,18 @@ export const transferOwnership = async (c: Context) => {
     }
 
     // Update new owner's role
-    await organizationService.updateMemberRole(id, newOwnerId, OrganizationRole.OWNER);
+    await organizationService.updateMemberRole(
+      id,
+      newOwnerId,
+      OrganizationRole.OWNER
+    );
 
     // Downgrade current owner to admin
-    await organizationService.updateMemberRole(id, user.userId, OrganizationRole.ADMIN);
+    await organizationService.updateMemberRole(
+      id,
+      user.userId,
+      OrganizationRole.ADMIN
+    );
 
     return c.json({
       success: true,

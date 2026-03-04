@@ -1,6 +1,6 @@
 /**
  * Authentication Store
- * 
+ *
  * Manages authentication state and secure token storage.
  */
 
@@ -24,7 +24,7 @@ interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  
+
   // Actions
   setAuth: (user: User, token: string, refreshToken: string) => Promise<void>;
   clearAuth: () => Promise<void>;

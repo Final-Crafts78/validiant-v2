@@ -94,6 +94,7 @@ git checkout -b feature/your-feature-name
 - `chore/` - Maintenance tasks
 
 Examples:
+
 - `feature/add-notifications`
 - `fix/login-validation`
 - `docs/update-readme`

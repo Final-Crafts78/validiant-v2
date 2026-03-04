@@ -25,6 +25,7 @@ Describe any alternative solutions or features you've considered.
 ## Benefits
 
 Who would benefit from this feature?
+
 - [ ] End users
 - [ ] Developers
 - [ ] Administrators

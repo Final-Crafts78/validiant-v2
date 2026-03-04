@@ -1,6 +1,6 @@
 /**
  * Projects Screen
- * 
+ *
  * View and manage projects.
  * TODO: Implement project list, filtering, and creation.
  */

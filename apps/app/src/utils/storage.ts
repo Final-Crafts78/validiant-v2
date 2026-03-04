@@ -1,34 +1,34 @@
 /**
  * Secure Storage Utility - JWT Token Management
- * 
+ *
  * Uses expo-secure-store for hardware-backed encrypted storage.
- * 
+ *
  * SECURITY:
  * - iOS: Keychain Services (hardware-backed)
  * - Android: Keystore (hardware-backed)
  * - Encrypted at rest
  * - Protected from unauthorized access
  * - Survives app updates
- * 
+ *
  * STORAGE KEYS:
  * - accessToken: Short-lived JWT (15 minutes)
  * - refreshToken: Long-lived JWT (7 days)
- * 
+ *
  * WHY NOT ASYNCSTORAGE:
  * - AsyncStorage is NOT encrypted
  * - Can be accessed by other apps on rooted/jailbroken devices
  * - SecureStore uses hardware encryption (much more secure)
- * 
+ *
  * USAGE:
  * ```typescript
  * import { saveTokens, getAccessToken, clearTokens } from '@/utils/storage';
- * 
+ *
  * // After login
  * await saveTokens(accessToken, refreshToken);
- * 
+ *
  * // For API requests
  * const token = await getAccessToken();
- * 
+ *
  * // On logout
  * await clearTokens();
  * ```
@@ -46,7 +46,7 @@ const STORAGE_KEYS = {
 
 /**
  * Save access token to SecureStore
- * 
+ *
  * @param token - JWT access token
  * @returns Promise<boolean> - True if successful
  */
@@ -62,7 +62,7 @@ export const saveAccessToken = async (token: string): Promise<boolean> => {
 
 /**
  * Get access token from SecureStore
- * 
+ *
  * @returns Promise<string | null> - Token or null if not found
  */
 export const getAccessToken = async (): Promise<string | null> => {
@@ -77,7 +77,7 @@ export const getAccessToken = async (): Promise<string | null> => {
 
 /**
  * Delete access token from SecureStore
- * 
+ *
  * @returns Promise<boolean> - True if successful
  */
 export const deleteAccessToken = async (): Promise<boolean> => {
@@ -92,7 +92,7 @@ export const deleteAccessToken = async (): Promise<boolean> => {
 
 /**
  * Save refresh token to SecureStore
- * 
+ *
  * @param token - JWT refresh token
  * @returns Promise<boolean> - True if successful
  */
@@ -108,7 +108,7 @@ export const saveRefreshToken = async (token: string): Promise<boolean> => {
 
 /**
  * Get refresh token from SecureStore
- * 
+ *
  * @returns Promise<string | null> - Token or null if not found
  */
 export const getRefreshToken = async (): Promise<string | null> => {
@@ -123,7 +123,7 @@ export const getRefreshToken = async (): Promise<string | null> => {
 
 /**
  * Delete refresh token from SecureStore
- * 
+ *
  * @returns Promise<boolean> - True if successful
  */
 export const deleteRefreshToken = async (): Promise<boolean> => {
@@ -138,7 +138,7 @@ export const deleteRefreshToken = async (): Promise<boolean> => {
 
 /**
  * Save both access and refresh tokens
- * 
+ *
  * @param accessToken - JWT access token
  * @param refreshToken - JWT refresh token
  * @returns Promise<boolean> - True if both saved successfully
@@ -161,7 +161,7 @@ export const saveTokens = async (
 
 /**
  * Get both access and refresh tokens
- * 
+ *
  * @returns Promise<{ accessToken: string | null; refreshToken: string | null }>
  */
 export const getTokens = async (): Promise<{
@@ -182,7 +182,7 @@ export const getTokens = async (): Promise<{
 
 /**
  * Clear all tokens (logout)
- * 
+ *
  * @returns Promise<boolean> - True if all cleared successfully
  */
 export const clearTokens = async (): Promise<boolean> => {
@@ -201,10 +201,10 @@ export const clearTokens = async (): Promise<boolean> => {
 
 /**
  * Check if user has valid tokens (not expired)
- * 
+ *
  * Note: This only checks if tokens exist, not if they're valid.
  * Server-side validation is still required.
- * 
+ *
  * @returns Promise<boolean> - True if both tokens exist
  */
 export const hasTokens = async (): Promise<boolean> => {
@@ -214,11 +214,11 @@ export const hasTokens = async (): Promise<boolean> => {
 
 /**
  * Decode JWT token (without verification)
- * 
+ *
  * SECURITY WARNING: This does NOT verify the token signature.
  * Only use for reading non-sensitive claims like expiration time.
  * All tokens must be validated server-side.
- * 
+ *
  * @param token - JWT token
  * @returns Decoded payload or null
  */
@@ -242,7 +242,7 @@ export const decodeToken = (token: string): any => {
 
 /**
  * Check if token is expired
- * 
+ *
  * @param token - JWT token
  * @returns boolean - True if expired
  */

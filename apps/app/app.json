@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.validiant.app",
@@ -39,11 +37,7 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-secure-store"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
     "experiments": {
       "typedRoutes": true
     },

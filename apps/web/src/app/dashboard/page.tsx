@@ -158,7 +158,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-
       {/* ===================================================================
           PAGE HEADER
       =================================================================== */}
@@ -185,32 +184,41 @@ export default function DashboardPage() {
           KPI CARDS — 4-Column Grid
       =================================================================== */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {KPI_CARDS.map(({ title, value, trend, trendColor, icon: Icon, iconBg, iconColor }) => (
-          <div
-            key={title}
-            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col gap-3"
-          >
-            <div className="flex items-start justify-between">
-              <p className="text-sm font-medium text-slate-500">{title}</p>
-              <div
-                className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0`}
-              >
-                <Icon className={`h-4 w-4 ${iconColor}`} />
+        {KPI_CARDS.map(
+          ({
+            title,
+            value,
+            trend,
+            trendColor,
+            icon: Icon,
+            iconBg,
+            iconColor,
+          }) => (
+            <div
+              key={title}
+              className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col gap-3"
+            >
+              <div className="flex items-start justify-between">
+                <p className="text-sm font-medium text-slate-500">{title}</p>
+                <div
+                  className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0`}
+                >
+                  <Icon className={`h-4 w-4 ${iconColor}`} />
+                </div>
               </div>
+              <p className="text-3xl font-bold text-slate-900 leading-none">
+                {value}
+              </p>
+              <p className={`text-xs font-medium ${trendColor}`}>{trend}</p>
             </div>
-            <p className="text-3xl font-bold text-slate-900 leading-none">
-              {value}
-            </p>
-            <p className={`text-xs font-medium ${trendColor}`}>{trend}</p>
-          </div>
-        ))}
+          )
+        )}
       </div>
 
       {/* ===================================================================
           LOWER SECTION — Activity + Quick Actions
       =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
         {/* -----------------------------------------------------------------
             LEFT PANEL — Recent Operational Activity (2 columns)
         ----------------------------------------------------------------- */}
@@ -230,19 +238,23 @@ export default function DashboardPage() {
 
           {/* Activity List */}
           <ul className="divide-y divide-slate-100">
-            {ACTIVITY_ITEMS.map(({ id, text, time, icon: Icon, iconBg, iconColor }) => (
-              <li key={id} className="flex items-start gap-4 px-6 py-4">
-                <div
-                  className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0 mt-0.5`}
-                >
-                  <Icon className={`h-4 w-4 ${iconColor}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-700 leading-snug">{text}</p>
-                  <p className="mt-1 text-xs text-slate-400">{time}</p>
-                </div>
-              </li>
-            ))}
+            {ACTIVITY_ITEMS.map(
+              ({ id, text, time, icon: Icon, iconBg, iconColor }) => (
+                <li key={id} className="flex items-start gap-4 px-6 py-4">
+                  <div
+                    className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0 mt-0.5`}
+                  >
+                    <Icon className={`h-4 w-4 ${iconColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-slate-700 leading-snug">
+                      {text}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">{time}</p>
+                  </div>
+                </li>
+              )
+            )}
           </ul>
         </div>
 
@@ -271,7 +283,6 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

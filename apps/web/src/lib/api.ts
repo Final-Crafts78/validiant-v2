@@ -42,7 +42,9 @@ import { useAuthStore } from '../store/auth';
  * Ensures /api/v1 prefix is present and prevents double prefixes
  */
 const getBaseUrl = () => {
-  const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+  const raw = (
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
+  ).replace(/\/+$/, '');
   return raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 };
 
@@ -155,7 +157,8 @@ apiClient.interceptors.response.use(
 
         // Redirect to login page
         window.location.href =
-          '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
+          '/auth/login?redirect=' +
+          encodeURIComponent(window.location.pathname);
       }
     }
 
@@ -315,7 +318,9 @@ export const tasksApi = {
     patch<APIResponse<Task>>(`/tasks/${id}`, data),
 
   /** Delete a task by ID */
-  delete: (id: string): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+  delete: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
     del<APIResponse<{ success: boolean }>>(`/tasks/${id}`),
 };
 
@@ -344,7 +349,9 @@ export const projectsApi = {
     get<APIResponse<Project>>(`/projects/${id}`),
 
   /** Create a new project */
-  create: (data: CreateProjectData): Promise<AxiosResponse<APIResponse<Project>>> =>
+  create: (
+    data: CreateProjectData
+  ): Promise<AxiosResponse<APIResponse<Project>>> =>
     post<APIResponse<Project>>('/projects', data),
 
   /** Partially update an existing project */
@@ -355,6 +362,8 @@ export const projectsApi = {
     patch<APIResponse<Project>>(`/projects/${id}`, data),
 
   /** Delete a project by ID */
-  delete: (id: string): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+  delete: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
     del<APIResponse<{ success: boolean }>>(`/projects/${id}`),
 };

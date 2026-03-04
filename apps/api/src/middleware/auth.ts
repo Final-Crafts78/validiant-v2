@@ -1,6 +1,6 @@
 /**
  * Authentication Middleware
- * 
+ *
  * Validates JWT tokens and attaches user info to context.
  * Edge-compatible implementation.
  *
@@ -31,7 +31,10 @@ export interface UserContext {
  * HttpOnly `accessToken` cookie set by the auth controller on login.
  * Cookie name must match auth.controller.ts → setCookie('accessToken', ...).
  */
-export const authenticate = async (c: Context, next: Next): Promise<Response | void> => {
+export const authenticate = async (
+  c: Context,
+  next: Next
+): Promise<Response | void> => {
   try {
     console.log('[auth] Raw Cookie header:', c.req.header('cookie'));
     console.log('[auth] Parsed accessToken:', getCookie(c, 'accessToken'));
@@ -77,7 +80,8 @@ export const authenticate = async (c: Context, next: Next): Promise<Response | v
         success: false,
         error: {
           code: 'UNAUTHORIZED',
-          message: error instanceof Error ? error.message : 'Authentication failed',
+          message:
+            error instanceof Error ? error.message : 'Authentication failed',
         },
         timestamp: new Date().toISOString(),
       },

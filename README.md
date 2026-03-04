@@ -40,24 +40,28 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 ## ✨ Features
 
 ### User Management
+
 - ✅ User registration and login
 - ✅ JWT token authentication (HttpOnly cookies + Bearer tokens)
 - ✅ Password reset flow
 - ✅ Profile management
 
 ### Project Management
+
 - ✅ Create and manage projects
 - ✅ Project status tracking
 - ✅ Progress monitoring
 - ✅ Team collaboration
 
 ### Task Management
+
 - ✅ Create and assign tasks
 - ✅ Priority levels (Low, Medium, High, Urgent)
 - ✅ Status tracking (Todo, In Progress, Completed)
 - ✅ Due date management
 
 ### Organization Management
+
 - ✅ Create and join organizations
 - ✅ Role-based access control (Owner, Admin, Member)
 - ✅ Team member management
@@ -69,39 +73,39 @@ Validiant v2 is a comprehensive full-stack project management platform designed 
 
 ### Frontend
 
-| Technology | Purpose |
-|------------|----------|
+| Technology              | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
 | **React Native + Expo** | Cross-platform mobile apps (iOS/Android) |
-| **Next.js 15** | Server-side rendered web application |
-| **TypeScript** | Type-safe development |
-| **Tailwind CSS** | Utility-first styling (Web) |
-| **React Query** | Data fetching and caching |
-| **Zustand** | State management |
-| **React Hook Form** | Form handling |
-| **Zod** | Schema validation |
+| **Next.js 15**          | Server-side rendered web application     |
+| **TypeScript**          | Type-safe development                    |
+| **Tailwind CSS**        | Utility-first styling (Web)              |
+| **React Query**         | Data fetching and caching                |
+| **Zustand**             | State management                         |
+| **React Hook Form**     | Form handling                            |
+| **Zod**                 | Schema validation                        |
 
 ### Backend
 
-| Technology | Purpose |
-|------------|----------|
-| **Hono** | Edge-native web framework |
-| **Cloudflare Workers** | Global edge compute platform |
-| **TypeScript** | Type-safe development |
-| **Drizzle ORM** | Type-safe SQL toolkit |
-| **Neon Serverless PostgreSQL** | Edge-compatible database |
-| **Upstash Redis** | Edge-compatible caching (HTTP-based) |
-| **JWT + jose** | Authentication tokens |
-| **bcryptjs** | Password hashing |
+| Technology                     | Purpose                              |
+| ------------------------------ | ------------------------------------ |
+| **Hono**                       | Edge-native web framework            |
+| **Cloudflare Workers**         | Global edge compute platform         |
+| **TypeScript**                 | Type-safe development                |
+| **Drizzle ORM**                | Type-safe SQL toolkit                |
+| **Neon Serverless PostgreSQL** | Edge-compatible database             |
+| **Upstash Redis**              | Edge-compatible caching (HTTP-based) |
+| **JWT + jose**                 | Authentication tokens                |
+| **bcryptjs**                   | Password hashing                     |
 
 ### DevOps
 
-| Technology | Purpose |
-|------------|----------|
-| **Turbo** | Monorepo build system |
-| **pnpm Workspaces** | Dependency management |
-| **Prettier** | Code formatting |
-| **ESLint** | Code linting |
-| **Wrangler** | Cloudflare Workers CLI |
+| Technology          | Purpose                |
+| ------------------- | ---------------------- |
+| **Turbo**           | Monorepo build system  |
+| **pnpm Workspaces** | Dependency management  |
+| **Prettier**        | Code formatting        |
+| **ESLint**          | Code linting           |
+| **Wrangler**        | Cloudflare Workers CLI |
 
 ---
 

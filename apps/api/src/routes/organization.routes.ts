@@ -1,9 +1,9 @@
 /**
  * Organization Routes
- * 
+ *
  * Organization management endpoints with edge-native validation.
  * Edge-compatible Hono implementation for Cloudflare Workers.
- * 
+ *
  * Routes:
  * - POST / - Create organization
  * - GET /my - Get current user's organizations
@@ -20,7 +20,7 @@
  * - POST /:id/transfer-ownership - Transfer ownership
  * - GET /:id/my-role - Get current user's role
  * - GET /:id/is-member - Check if user is member
- * 
+ *
  * ELITE PATTERN:
  * - Routes use @hono/zod-validator for edge validation
  * - Controllers blindly trust c.req.valid('json')
@@ -58,7 +58,7 @@ app.use('*', authenticate);
 /**
  * POST /
  * Create a new organization
- * 
+ *
  * Validation: createOrganizationSchema (name, slug, description, website, industry, size)
  * Response: 201 Created with organization object
  */
@@ -71,7 +71,7 @@ app.post(
 /**
  * GET /my
  * Get current user's organizations
- * 
+ *
  * No validation needed (uses auth context)
  * Response: 200 OK with organizations array
  */
@@ -80,7 +80,7 @@ app.get('/my', organizationController.getMyOrganizations);
 /**
  * GET /slug/:slug
  * Get organization by slug
- * 
+ *
  * Params: slug (string)
  * Response: 200 OK with organization object
  */
@@ -89,7 +89,7 @@ app.get('/slug/:slug', organizationController.getOrganizationBySlug);
 /**
  * GET /:id
  * Get organization by ID
- * 
+ *
  * Params: id (UUID)
  * Response: 200 OK with organization object
  */
@@ -98,7 +98,7 @@ app.get('/:id', organizationController.getOrganizationById);
 /**
  * PUT /:id
  * Update organization (owner/admin only)
- * 
+ *
  * Validation: updateOrganizationSchema (name, description, website, industry, size, logoUrl)
  * Response: 200 OK with updated organization object
  */
@@ -111,7 +111,7 @@ app.put(
 /**
  * PATCH /:id/settings
  * Update organization settings (owner/admin only)
- * 
+ *
  * Validation: updateOrganizationSettingsSchema (settings object)
  * Response: 200 OK with updated organization object
  */
@@ -124,7 +124,7 @@ app.patch(
 /**
  * DELETE /:id
  * Delete organization (owner only)
- * 
+ *
  * No validation needed
  * Response: 200 OK with success message
  */
@@ -137,7 +137,7 @@ app.delete('/:id', organizationController.deleteOrganization);
 /**
  * GET /:id/members
  * Get organization members (member access)
- * 
+ *
  * No validation needed
  * Response: 200 OK with members array
  */
@@ -146,7 +146,7 @@ app.get('/:id/members', organizationController.getOrganizationMembers);
 /**
  * POST /:id/members
  * Add member to organization (owner/admin only)
- * 
+ *
  * Validation: addOrganizationMemberSchema (userId, role, teamIds)
  * Response: 201 Created with member object
  */
@@ -159,7 +159,7 @@ app.post(
 /**
  * PATCH /:id/members/:userId/role
  * Update member role (owner/admin only)
- * 
+ *
  * Validation: updateMemberRoleSchema (role)
  * Response: 200 OK with updated member object
  */
@@ -172,7 +172,7 @@ app.patch(
 /**
  * DELETE /:id/members/:userId
  * Remove member from organization (owner/admin or self)
- * 
+ *
  * No validation needed
  * Response: 200 OK with success message
  */
@@ -185,7 +185,7 @@ app.delete('/:id/members/:userId', organizationController.removeMember);
 /**
  * POST /:id/leave
  * Leave organization (member access)
- * 
+ *
  * No validation needed
  * Response: 200 OK with success message
  */
@@ -194,7 +194,7 @@ app.post('/:id/leave', organizationController.leaveOrganization);
 /**
  * POST /:id/transfer-ownership
  * Transfer organization ownership (owner only)
- * 
+ *
  * FUTURE: Add transferOrganizationOwnershipSchema in Phase 5
  * Body: { newOwnerId: string, confirmationCode?: string }
  * Response: 200 OK with success message
@@ -208,7 +208,7 @@ app.post('/:id/transfer-ownership', organizationController.transferOwnership);
 /**
  * GET /:id/my-role
  * Get current user's role in organization (member access)
- * 
+ *
  * No validation needed
  * Response: 200 OK with { role: OrganizationRole }
  */
@@ -217,7 +217,7 @@ app.get('/:id/my-role', organizationController.getMyRole);
 /**
  * GET /:id/is-member
  * Check if current user is member
- * 
+ *
  * No validation needed
  * Response: 200 OK with { isMember: boolean }
  */

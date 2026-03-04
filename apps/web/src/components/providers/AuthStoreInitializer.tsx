@@ -1,12 +1,12 @@
 /**
  * Auth Store Initializer
- * 
+ *
  * CRITICAL: Prevents blank screens caused by Zustand hydration mismatch.
- * 
+ *
  * Server Components fetch user data, but Client Components using useAuthStore
  * start with null state until hydration completes. This causes a flash of
  * "no user" state and breaks the UI.
- * 
+ *
  * This component seeds the Zustand store immediately on first render,
  * ensuring child Client Components have access to user data.
  */

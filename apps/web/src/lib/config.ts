@@ -1,6 +1,6 @@
 /**
  * Application Configuration
- * 
+ *
  * Centralized configuration for the web application.
  * Environment variables, API endpoints, feature flags, etc.
  */
@@ -21,8 +21,7 @@ export const ENV: Environment =
  */
 export const API_CONFIG = {
   // Base URL for API requests
-  BASE_URL:
-    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1',
 
   // Timeout for API requests (milliseconds)
   TIMEOUT: 30000,
@@ -126,19 +125,19 @@ export const ROUTES = {
 
   // Protected routes - Dashboard
   DASHBOARD: '/dashboard',
-  
+
   // Projects
   PROJECTS: '/dashboard/projects',
   PROJECT_DETAIL: (id: string) => `/dashboard/projects/${id}`,
-  
+
   // Tasks
   TASKS: '/dashboard/tasks',
   TASK_DETAIL: (id: string) => `/dashboard/tasks/${id}`,
-  
+
   // Organizations
   ORGANIZATIONS: '/dashboard/organizations',
   ORGANIZATION_DETAIL: (id: string) => `/dashboard/organizations/${id}`,
-  
+
   // Profile
   PROFILE: '/dashboard/profile',
   SETTINGS: '/dashboard/settings',

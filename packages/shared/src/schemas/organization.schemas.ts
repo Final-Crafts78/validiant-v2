@@ -1,6 +1,6 @@
 /**
  * Organization and Team Schemas
- * 
+ *
  * Zod validation schemas for organization and team operations.
  */
 
@@ -44,8 +44,14 @@ export const invitationStatusSchema = z.nativeEnum(InvitationStatus);
  */
 export const organizationNameSchema = z
   .string()
-  .min(VALIDATION.ORGANIZATION_NAME.MIN_LENGTH, `Organization name must be at least ${VALIDATION.ORGANIZATION_NAME.MIN_LENGTH} characters`)
-  .max(VALIDATION.ORGANIZATION_NAME.MAX_LENGTH, `Organization name must not exceed ${VALIDATION.ORGANIZATION_NAME.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.ORGANIZATION_NAME.MIN_LENGTH,
+    `Organization name must be at least ${VALIDATION.ORGANIZATION_NAME.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.ORGANIZATION_NAME.MAX_LENGTH,
+    `Organization name must not exceed ${VALIDATION.ORGANIZATION_NAME.MAX_LENGTH} characters`
+  )
   .trim();
 
 /**
@@ -53,8 +59,14 @@ export const organizationNameSchema = z
  */
 export const teamNameSchema = z
   .string()
-  .min(VALIDATION.TEAM_NAME.MIN_LENGTH, `Team name must be at least ${VALIDATION.TEAM_NAME.MIN_LENGTH} characters`)
-  .max(VALIDATION.TEAM_NAME.MAX_LENGTH, `Team name must not exceed ${VALIDATION.TEAM_NAME.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.TEAM_NAME.MIN_LENGTH,
+    `Team name must be at least ${VALIDATION.TEAM_NAME.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.TEAM_NAME.MAX_LENGTH,
+    `Team name must not exceed ${VALIDATION.TEAM_NAME.MAX_LENGTH} characters`
+  )
   .trim();
 
 /**
@@ -64,7 +76,10 @@ export const organizationSlugSchema = z
   .string()
   .min(3, 'Slug must be at least 3 characters')
   .max(50, 'Slug must not exceed 50 characters')
-  .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens')
+  .regex(
+    /^[a-z0-9-]+$/,
+    'Slug can only contain lowercase letters, numbers, and hyphens'
+  )
   .toLowerCase();
 
 /**
@@ -79,7 +94,10 @@ export const organizationSettingsSchema = z.object({
   sessionTimeout: z.number().min(5).max(1440).optional(), // Minutes
   ipWhitelist: z.array(z.string().ip()).optional(),
   customDomain: z.string().url().optional(),
-  brandingColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  brandingColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   logoUrl: z.string().url().optional(),
 });
 
@@ -92,7 +110,9 @@ export const createOrganizationSchema = z.object({
   description: z.string().max(500).optional(),
   website: z.string().url('Invalid website URL').optional(),
   industry: z.string().max(100).optional(),
-  size: z.enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+']).optional(),
+  size: z
+    .enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+'])
+    .optional(),
 });
 
 /**
@@ -103,7 +123,9 @@ export const updateOrganizationSchema = z.object({
   description: z.string().max(500).optional(),
   website: z.string().url('Invalid website URL').optional(),
   industry: z.string().max(100).optional(),
-  size: z.enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+']).optional(),
+  size: z
+    .enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+'])
+    .optional(),
   logoUrl: z.string().url('Invalid logo URL').optional(),
 });
 
@@ -138,13 +160,16 @@ export const addOrganizationMemberSchema = z.object({
  * Bulk organization member invitation schema
  */
 export const bulkInviteOrganizationMembersSchema = z.object({
-  invitations: z.array(
-    z.object({
-      email: z.string().email(),
-      role: organizationRoleSchema,
-      teamIds: z.array(z.string().uuid()).optional(),
-    })
-  ).min(1, 'At least one invitation is required').max(50, 'Maximum 50 invitations at once'),
+  invitations: z
+    .array(
+      z.object({
+        email: z.string().email(),
+        role: organizationRoleSchema,
+        teamIds: z.array(z.string().uuid()).optional(),
+      })
+    )
+    .min(1, 'At least one invitation is required')
+    .max(50, 'Maximum 50 invitations at once'),
   message: z.string().max(500).optional(),
 });
 
@@ -206,12 +231,15 @@ export const addTeamMemberSchema = z.object({
  * Bulk add team members schema
  */
 export const bulkAddTeamMembersSchema = z.object({
-  members: z.array(
-    z.object({
-      userId: z.string().uuid(),
-      role: teamRoleSchema,
-    })
-  ).min(1, 'At least one member is required').max(100, 'Maximum 100 members at once'),
+  members: z
+    .array(
+      z.object({
+        userId: z.string().uuid(),
+        role: teamRoleSchema,
+      })
+    )
+    .min(1, 'At least one member is required')
+    .max(100, 'Maximum 100 members at once'),
 });
 
 /**
@@ -248,14 +276,16 @@ export const paymentMethodSchema = z.object({
   cardExpMonth: z.number().min(1).max(12).optional(),
   cardExpYear: z.number().min(2024).optional(),
   cardCvc: z.string().length(3).or(z.string().length(4)).optional(),
-  billingAddress: z.object({
-    line1: z.string(),
-    line2: z.string().optional(),
-    city: z.string(),
-    state: z.string().optional(),
-    postalCode: z.string(),
-    country: z.string().length(2), // ISO country code
-  }).optional(),
+  billingAddress: z
+    .object({
+      line1: z.string(),
+      line2: z.string().optional(),
+      city: z.string(),
+      state: z.string().optional(),
+      postalCode: z.string(),
+      country: z.string().length(2), // ISO country code
+    })
+    .optional(),
 });
 
 /**
@@ -266,7 +296,9 @@ export const organizationFiltersSchema = z.object({
   subscriptionTier: subscriptionTierSchema.optional(),
   subscriptionStatus: subscriptionStatusSchema.optional(),
   industry: z.string().optional(),
-  size: z.enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+']).optional(),
+  size: z
+    .enum(['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+'])
+    .optional(),
 });
 
 /**
@@ -315,10 +347,11 @@ export const transferOrganizationOwnershipSchema = z.object({
  * Organization deletion schema
  */
 export const deleteOrganizationSchema = z.object({
-  confirmationText: z.string().refine(
-    (val) => val === 'DELETE',
-    { message: 'Please type DELETE to confirm' }
-  ),
+  confirmationText: z
+    .string()
+    .refine((val) => val === 'DELETE', {
+      message: 'Please type DELETE to confirm',
+    }),
   password: z.string().min(1, 'Password is required for confirmation'),
 });
 
@@ -346,10 +379,11 @@ export const billingAddressSchema = z.object({
 /**
  * Update billing address schema
  */
-export const updateBillingAddressSchema = billingAddressSchema.partial().refine(
-  (data) => Object.keys(data).length > 0,
-  { message: 'At least one field must be provided' }
-);
+export const updateBillingAddressSchema = billingAddressSchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided',
+  });
 
 /**
  * Organization statistics request schema
@@ -357,14 +391,18 @@ export const updateBillingAddressSchema = billingAddressSchema.partial().refine(
 export const organizationStatsRequestSchema = z.object({
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  metrics: z.array(z.enum([
-    'projects',
-    'tasks',
-    'members',
-    'timeTracked',
-    'completionRate',
-    'activeUsers',
-  ])).optional(),
+  metrics: z
+    .array(
+      z.enum([
+        'projects',
+        'tasks',
+        'members',
+        'timeTracked',
+        'completionRate',
+        'activeUsers',
+      ])
+    )
+    .optional(),
 });
 
 /**
@@ -372,14 +410,24 @@ export const organizationStatsRequestSchema = z.object({
  */
 export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>;
-export type UpdateOrganizationSettingsInput = z.infer<typeof updateOrganizationSettingsSchema>;
-export type InviteOrganizationMemberInput = z.infer<typeof inviteOrganizationMemberSchema>;
-export type AddOrganizationMemberInput = z.infer<typeof addOrganizationMemberSchema>;
-export type BulkInviteOrganizationMembersInput = z.infer<typeof bulkInviteOrganizationMembersSchema>;
+export type UpdateOrganizationSettingsInput = z.infer<
+  typeof updateOrganizationSettingsSchema
+>;
+export type InviteOrganizationMemberInput = z.infer<
+  typeof inviteOrganizationMemberSchema
+>;
+export type AddOrganizationMemberInput = z.infer<
+  typeof addOrganizationMemberSchema
+>;
+export type BulkInviteOrganizationMembersInput = z.infer<
+  typeof bulkInviteOrganizationMembersSchema
+>;
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export type UpdateTeamInput = z.infer<typeof updateTeamSchema>;
 export type AddTeamMemberInput = z.infer<typeof addTeamMemberSchema>;
 export type UpdateSubscriptionInput = z.infer<typeof updateSubscriptionSchema>;
 export type PaymentMethodInput = z.infer<typeof paymentMethodSchema>;
-export type OrganizationFiltersInput = z.infer<typeof organizationFiltersSchema>;
+export type OrganizationFiltersInput = z.infer<
+  typeof organizationFiltersSchema
+>;
 export type TeamFiltersInput = z.infer<typeof teamFiltersSchema>;

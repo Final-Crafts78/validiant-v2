@@ -3,6 +3,7 @@
 ## Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - npm 9+
 - Git
@@ -13,6 +14,7 @@
 Create `.env.local` files in each app directory:
 
 #### API (.env.local)
+
 ```bash
 DATABASE_URL=
 SUPABASE_URL=
@@ -22,6 +24,7 @@ REDIS_URL=
 ```
 
 #### Web (.env.local)
+
 ```bash
 NEXT_PUBLIC_API_URL=
 NEXT_PUBLIC_SUPABASE_URL=
@@ -29,6 +32,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
 #### Mobile (.env)
+
 ```bash
 EXPO_PUBLIC_API_URL=
 EXPO_PUBLIC_SUPABASE_URL=

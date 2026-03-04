@@ -1,9 +1,9 @@
 /**
  * Task Routes
- * 
+ *
  * Task management endpoints with edge-native validation.
  * Edge-compatible Hono implementation for Cloudflare Workers.
- * 
+ *
  * ELITE PATTERN:
  * - Routes use @hono/zod-validator for edge validation
  * - Controllers blindly trust c.req.valid('json')
@@ -29,11 +29,19 @@ app.use('*', authenticate);
 app.post('/', zValidator('json', createTaskSchema), taskController.createTask);
 app.get('/my', taskController.getMyTasks);
 app.get('/:id', taskController.getTaskById);
-app.put('/:id', zValidator('json', updateTaskSchema), taskController.updateTask);
+app.put(
+  '/:id',
+  zValidator('json', updateTaskSchema),
+  taskController.updateTask
+);
 app.delete('/:id', taskController.deleteTask);
 
 // Task actions
-app.post('/:id/assign', zValidator('json', assignTaskSchema), taskController.assignTask);
+app.post(
+  '/:id/assign',
+  zValidator('json', assignTaskSchema),
+  taskController.assignTask
+);
 app.post('/:id/complete', taskController.completeTask);
 app.post('/:id/reopen', taskController.reopenTask);
 

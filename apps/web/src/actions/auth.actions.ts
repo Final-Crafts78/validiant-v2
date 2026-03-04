@@ -1,23 +1,23 @@
 /**
  * Auth Server Actions (BFF Pattern)
- * 
+ *
  * Backend-For-Frontend pattern to solve cross-domain cookie issues.
  * Next.js Server Actions proxy the Cloudflare API and set cookies
  * on the same domain (Vercel), making them readable by middleware.
- * 
+ *
  * Flow:
  * 1. Client calls server action (server-side execution)
  * 2. Server action fetches Cloudflare API
  * 3. Cloudflare returns tokens in JSON body
  * 4. Server action sets HttpOnly cookies on Next.js response
  * 5. Middleware can now read cookies (same domain)
- * 
+ *
  * Security Benefits:
  * - HttpOnly cookies (XSS immune)
  * - Same-origin cookies (CSRF protection with SameSite)
  * - Server-side validation
  * - No client-side token exposure
- * 
+ *
  * CRITICAL: Cookie-Clear Safety Net
  * - If API returns 401/403 or fails, cookies MUST be cleared
  * - Prevents infinite redirect loop between middleware and layout
@@ -41,7 +41,9 @@ import type {
  * API Configuration with URL Normalization
  * Ensures /api/v1 prefix is present and prevents double prefixes
  */
-const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+const raw = (
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
+).replace(/\/+$/, '');
 const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 
 /**
@@ -66,20 +68,22 @@ const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
 /**
  * Clear authentication cookies
- * 
+ *
  * CRITICAL: Uses explicit overwrite method to force browser compliance.
  * Some browsers ignore cookies().delete() calls, leaving "ghost cookies" that
  * cause infinite redirect loops. This method:
  * 1. Overwrites cookies with empty value and past expiration (new Date(0))
  * 2. Calls delete() as fallback for Next.js internal state
- * 
+ *
  * This ensures cookies are actually removed from the browser.
  */
 function clearAuthCookies() {
   const cookieStore = cookies();
-  
-  console.log('[clearAuthCookies] Force clearing cookies with overwrite method');
-  
+
+  console.log(
+    '[clearAuthCookies] Force clearing cookies with overwrite method'
+  );
+
   // 1. Force overwrite with empty value and immediate expiration
   cookieStore.set({
     name: 'accessToken',
@@ -102,7 +106,7 @@ function clearAuthCookies() {
 
 /**
  * Login Action
- * 
+ *
  * Server-side login that proxies Cloudflare API and sets cookies
  */
 export async function loginAction(
@@ -144,7 +148,7 @@ export async function loginAction(
 
     // Set HttpOnly cookies on Next.js domain (same origin as frontend)
     const cookieStore = cookies();
-    
+
     cookieStore.set('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
@@ -172,7 +176,7 @@ export async function loginAction(
 
 /**
  * Register Action
- * 
+ *
  * Server-side registration that proxies Cloudflare API and sets cookies
  */
 export async function registerAction(
@@ -216,7 +220,7 @@ export async function registerAction(
 
     // Set HttpOnly cookies on Next.js domain
     const cookieStore = cookies();
-    
+
     cookieStore.set('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
       maxAge: ACCESS_TOKEN_MAX_AGE,
@@ -244,7 +248,7 @@ export async function registerAction(
 
 /**
  * Update Profile Action
- * 
+ *
  * CRITICAL: Accepts fullName directly (not firstName/lastName) to match backend schema.
  * The backend expects { fullName: string, bio?: string } per updateUserProfileSchema.
  */
@@ -271,7 +275,7 @@ export async function updateProfileAction(payload: {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`, // CRITICAL: Auth header required
+        Authorization: `Bearer ${accessToken}`, // CRITICAL: Auth header required
       },
       body: JSON.stringify(payload), // Backend expects fullName
       cache: 'no-store',
@@ -318,7 +322,7 @@ export async function updateProfileAction(payload: {
 
 /**
  * Logout Action
- * 
+ *
  * Server-side logout that clears cookies
  */
 export async function logoutAction(): Promise<LogoutActionResult> {
@@ -334,7 +338,7 @@ export async function logoutAction(): Promise<LogoutActionResult> {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           credentials: 'include',
         });
@@ -358,16 +362,16 @@ export async function logoutAction(): Promise<LogoutActionResult> {
 
 /**
  * Get Current User Action
- * 
+ *
  * Server-side user fetch using cookie authentication
- * 
+ *
  * CRITICAL COOKIE-CLEAR SAFETY NET:
  * If the API returns 401/403 or any error, cookies are cleared to prevent
  * infinite redirect loop between middleware (sees cookie) and layout (gets error).
  */
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
   const cookieStore = cookies();
-  
+
   try {
     // Get access token from cookies
     const accessToken = cookieStore.get('accessToken')?.value;
@@ -381,13 +385,16 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log('[getCurrentUserAction] Fetching user from API:', `${API_BASE_URL}/auth/me`);
+    console.log(
+      '[getCurrentUserAction] Fetching user from API:',
+      `${API_BASE_URL}/auth/me`
+    );
 
     // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
@@ -398,7 +405,9 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
 
     // CRITICAL: If unauthorized or forbidden, clear cookies
     if (response.status === 401 || response.status === 403) {
-      console.warn('[getCurrentUserAction] Token invalid (401/403), clearing cookies');
+      console.warn(
+        '[getCurrentUserAction] Token invalid (401/403), clearing cookies'
+      );
       clearAuthCookies();
       return {
         success: false,
@@ -412,7 +421,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
     try {
       data = await response.json();
     } catch (jsonError) {
-      console.error('[getCurrentUserAction] Failed to parse JSON response:', jsonError);
+      console.error(
+        '[getCurrentUserAction] Failed to parse JSON response:',
+        jsonError
+      );
       // Clear cookies if response is malformed
       clearAuthCookies();
       return {
@@ -436,7 +448,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
 
     // Verify user data exists in response
     if (!data.data || !data.data.user) {
-      console.error('[getCurrentUserAction] User data missing from response:', data);
+      console.error(
+        '[getCurrentUserAction] User data missing from response:',
+        data
+      );
       // Clear cookies if user data is missing
       clearAuthCookies();
       return {
@@ -446,7 +461,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log('[getCurrentUserAction] Successfully fetched user:', data.data.user.email);
+    console.log(
+      '[getCurrentUserAction] Successfully fetched user:',
+      data.data.user.email
+    );
 
     return {
       success: true,

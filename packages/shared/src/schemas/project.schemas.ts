@@ -1,6 +1,6 @@
 /**
  * Project and Task Schemas
- * 
+ *
  * Zod validation schemas for project and task management operations.
  */
 
@@ -32,8 +32,14 @@ export const customFieldTypeSchema = z.nativeEnum(CustomFieldType);
  */
 export const projectNameSchema = z
   .string()
-  .min(VALIDATION.PROJECT_NAME.MIN_LENGTH, `Project name must be at least ${VALIDATION.PROJECT_NAME.MIN_LENGTH} characters`)
-  .max(VALIDATION.PROJECT_NAME.MAX_LENGTH, `Project name must not exceed ${VALIDATION.PROJECT_NAME.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.PROJECT_NAME.MIN_LENGTH,
+    `Project name must be at least ${VALIDATION.PROJECT_NAME.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.PROJECT_NAME.MAX_LENGTH,
+    `Project name must not exceed ${VALIDATION.PROJECT_NAME.MAX_LENGTH} characters`
+  )
   .trim();
 
 /**
@@ -41,9 +47,18 @@ export const projectNameSchema = z
  */
 export const projectKeySchema = z
   .string()
-  .min(VALIDATION.PROJECT_KEY.MIN_LENGTH, `Project key must be at least ${VALIDATION.PROJECT_KEY.MIN_LENGTH} characters`)
-  .max(VALIDATION.PROJECT_KEY.MAX_LENGTH, `Project key must not exceed ${VALIDATION.PROJECT_KEY.MAX_LENGTH} characters`)
-  .regex(VALIDATION.PROJECT_KEY.REGEX, 'Project key must start with a letter and contain only uppercase letters and numbers')
+  .min(
+    VALIDATION.PROJECT_KEY.MIN_LENGTH,
+    `Project key must be at least ${VALIDATION.PROJECT_KEY.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.PROJECT_KEY.MAX_LENGTH,
+    `Project key must not exceed ${VALIDATION.PROJECT_KEY.MAX_LENGTH} characters`
+  )
+  .regex(
+    VALIDATION.PROJECT_KEY.REGEX,
+    'Project key must start with a letter and contain only uppercase letters and numbers'
+  )
   .toUpperCase();
 
 /**
@@ -51,8 +66,14 @@ export const projectKeySchema = z
  */
 export const taskTitleSchema = z
   .string()
-  .min(VALIDATION.TASK_TITLE.MIN_LENGTH, `Task title must be at least ${VALIDATION.TASK_TITLE.MIN_LENGTH} characters`)
-  .max(VALIDATION.TASK_TITLE.MAX_LENGTH, `Task title must not exceed ${VALIDATION.TASK_TITLE.MAX_LENGTH} characters`)
+  .min(
+    VALIDATION.TASK_TITLE.MIN_LENGTH,
+    `Task title must be at least ${VALIDATION.TASK_TITLE.MIN_LENGTH} characters`
+  )
+  .max(
+    VALIDATION.TASK_TITLE.MAX_LENGTH,
+    `Task title must not exceed ${VALIDATION.TASK_TITLE.MAX_LENGTH} characters`
+  )
   .trim();
 
 /**
@@ -60,58 +81,71 @@ export const taskTitleSchema = z
  */
 export const descriptionSchema = z
   .string()
-  .max(VALIDATION.DESCRIPTION.MAX_LENGTH, `Description must not exceed ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`)
+  .max(
+    VALIDATION.DESCRIPTION.MAX_LENGTH,
+    `Description must not exceed ${VALIDATION.DESCRIPTION.MAX_LENGTH} characters`
+  )
   .optional();
 
 /**
  * Create project schema
  */
-export const createProjectSchema = z.object({
-  name: projectNameSchema,
-  key: projectKeySchema,
-  description: descriptionSchema,
-  organizationId: z.string().uuid(),
-  teamId: z.string().uuid().optional(),
-  visibility: projectVisibilitySchema.default(ProjectVisibility.PRIVATE),
-  priority: projectPrioritySchema.default(ProjectPriority.MEDIUM),
-  startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional(),
-  budget: z.number().min(0).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').optional(),
-  iconUrl: z.string().url().optional(),
-}).refine(
-  (data) => {
-    if (data.startDate && data.endDate) {
-      return new Date(data.startDate) < new Date(data.endDate);
-    }
-    return true;
-  },
-  { message: 'Start date must be before end date', path: ['endDate'] }
-);
+export const createProjectSchema = z
+  .object({
+    name: projectNameSchema,
+    key: projectKeySchema,
+    description: descriptionSchema,
+    organizationId: z.string().uuid(),
+    teamId: z.string().uuid().optional(),
+    visibility: projectVisibilitySchema.default(ProjectVisibility.PRIVATE),
+    priority: projectPrioritySchema.default(ProjectPriority.MEDIUM),
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+    budget: z.number().min(0).optional(),
+    color: z
+      .string()
+      .regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format')
+      .optional(),
+    iconUrl: z.string().url().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDate && data.endDate) {
+        return new Date(data.startDate) < new Date(data.endDate);
+      }
+      return true;
+    },
+    { message: 'Start date must be before end date', path: ['endDate'] }
+  );
 
 /**
  * Update project schema
  */
-export const updateProjectSchema = z.object({
-  name: projectNameSchema.optional(),
-  description: descriptionSchema,
-  visibility: projectVisibilitySchema.optional(),
-  priority: projectPrioritySchema.optional(),
-  status: projectStatusSchema.optional(),
-  startDate: z.string().datetime().optional().nullable(),
-  endDate: z.string().datetime().optional().nullable(),
-  budget: z.number().min(0).optional().nullable(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  iconUrl: z.string().url().optional().nullable(),
-}).refine(
-  (data) => {
-    if (data.startDate && data.endDate) {
-      return new Date(data.startDate) < new Date(data.endDate);
-    }
-    return true;
-  },
-  { message: 'Start date must be before end date', path: ['endDate'] }
-);
+export const updateProjectSchema = z
+  .object({
+    name: projectNameSchema.optional(),
+    description: descriptionSchema,
+    visibility: projectVisibilitySchema.optional(),
+    priority: projectPrioritySchema.optional(),
+    status: projectStatusSchema.optional(),
+    startDate: z.string().datetime().optional().nullable(),
+    endDate: z.string().datetime().optional().nullable(),
+    budget: z.number().min(0).optional().nullable(),
+    color: z
+      .string()
+      .regex(/^#[0-9A-Fa-f]{6}$/)
+      .optional(),
+    iconUrl: z.string().url().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDate && data.endDate) {
+        return new Date(data.startDate) < new Date(data.endDate);
+      }
+      return true;
+    },
+    { message: 'Start date must be before end date', path: ['endDate'] }
+  );
 
 /**
  * Project settings schema
@@ -246,7 +280,10 @@ export const createMilestoneSchema = z.object({
   description: descriptionSchema,
   projectId: z.string().uuid(),
   dueDate: z.string().datetime(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 /**
@@ -257,7 +294,10 @@ export const updateMilestoneSchema = z.object({
   description: descriptionSchema,
   dueDate: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional().nullable(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 /**
@@ -276,7 +316,10 @@ export const createLabelSchema = z.object({
 export const updateLabelSchema = z.object({
   name: z.string().min(2).max(50).optional(),
   description: z.string().max(200).optional(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 /**
@@ -290,11 +333,13 @@ export const createCustomFieldSchema = z.object({
   required: z.boolean().default(false),
   options: z.array(z.string()).optional(),
   defaultValue: z.unknown().optional(),
-  validation: z.object({
-    min: z.number().optional(),
-    max: z.number().optional(),
-    pattern: z.string().optional(),
-  }).optional(),
+  validation: z
+    .object({
+      min: z.number().optional(),
+      max: z.number().optional(),
+      pattern: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -306,11 +351,13 @@ export const updateCustomFieldSchema = z.object({
   required: z.boolean().optional(),
   options: z.array(z.string()).optional(),
   defaultValue: z.unknown().optional(),
-  validation: z.object({
-    min: z.number().optional(),
-    max: z.number().optional(),
-    pattern: z.string().optional(),
-  }).optional(),
+  validation: z
+    .object({
+      min: z.number().optional(),
+      max: z.number().optional(),
+      pattern: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -349,12 +396,15 @@ export const addProjectMemberSchema = z.object({
  * Bulk add project members schema
  */
 export const bulkAddProjectMembersSchema = z.object({
-  members: z.array(
-    z.object({
-      userId: z.string().uuid(),
-      role: z.enum(['owner', 'admin', 'member', 'viewer']),
-    })
-  ).min(1).max(100),
+  members: z
+    .array(
+      z.object({
+        userId: z.string().uuid(),
+        role: z.enum(['owner', 'admin', 'member', 'viewer']),
+      })
+    )
+    .min(1)
+    .max(100),
 });
 
 /**
@@ -401,7 +451,14 @@ export const taskFiltersSchema = z.object({
  * Project sort schema
  */
 export const projectSortSchema = z.object({
-  field: z.enum(['createdAt', 'updatedAt', 'name', 'priority', 'startDate', 'endDate']),
+  field: z.enum([
+    'createdAt',
+    'updatedAt',
+    'name',
+    'priority',
+    'startDate',
+    'endDate',
+  ]),
   direction: z.enum(['asc', 'desc']),
 });
 
@@ -409,7 +466,14 @@ export const projectSortSchema = z.object({
  * Task sort schema
  */
 export const taskSortSchema = z.object({
-  field: z.enum(['createdAt', 'updatedAt', 'title', 'priority', 'status', 'dueDate']),
+  field: z.enum([
+    'createdAt',
+    'updatedAt',
+    'title',
+    'priority',
+    'status',
+    'dueDate',
+  ]),
   direction: z.enum(['asc', 'desc']),
 });
 
@@ -442,16 +506,18 @@ export const createTaskTemplateSchema = z.object({
   name: z.string().min(3).max(100),
   description: descriptionSchema,
   projectId: z.string().uuid(),
-  tasks: z.array(
-    z.object({
-      title: taskTitleSchema,
-      description: descriptionSchema,
-      type: taskTypeSchema,
-      priority: taskPrioritySchema,
-      estimatedHours: z.number().min(0).optional(),
-      order: z.number().min(0),
-    })
-  ).min(1),
+  tasks: z
+    .array(
+      z.object({
+        title: taskTitleSchema,
+        description: descriptionSchema,
+        type: taskTypeSchema,
+        priority: taskPrioritySchema,
+        estimatedHours: z.number().min(0).optional(),
+        order: z.number().min(0),
+      })
+    )
+    .min(1),
 });
 
 /**
@@ -479,7 +545,9 @@ export const duplicateProjectSchema = z.object({
  */
 export const projectListQuerySchema = z.object({
   organizationId: z.string().uuid().optional(),
-  status: z.enum(['planning', 'active', 'on-hold', 'completed', 'archived']).optional(),
+  status: z
+    .enum(['planning', 'active', 'on-hold', 'completed', 'archived'])
+    .optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
   perPage: z.coerce.number().min(1).max(100).default(20),
@@ -494,7 +562,9 @@ export const projectListQuerySchema = z.object({
  */
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
-export type UpdateProjectSettingsInput = z.infer<typeof updateProjectSettingsSchema>;
+export type UpdateProjectSettingsInput = z.infer<
+  typeof updateProjectSettingsSchema
+>;
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;

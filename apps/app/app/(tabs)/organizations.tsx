@@ -1,6 +1,6 @@
 /**
  * Organizations Screen
- * 
+ *
  * View and manage organizations/teams.
  * TODO: Implement organization list, creation, and management.
  */
@@ -130,8 +130,8 @@ export default function OrganizationsScreen() {
         <View style={styles.infoBannerContent}>
           <Text style={styles.infoBannerTitle}>Need Help?</Text>
           <Text style={styles.infoBannerText}>
-            Organizations help teams collaborate effectively. You can be a member
-            of multiple organizations.
+            Organizations help teams collaborate effectively. You can be a
+            member of multiple organizations.
           </Text>
         </View>
       </View>

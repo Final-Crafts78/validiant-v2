@@ -1,12 +1,12 @@
 /**
  * Project Controller
- * 
+ *
  * Handles HTTP requests for project management endpoints.
  * Includes project CRUD, member management, and project operations.
- * 
+ *
  * Edge-compatible Hono implementation.
  * Functions: 15 total (CRUD, members, status operations)
- * 
+ *
  * ELITE PATTERN: Controllers NEVER parse/validate - they blindly trust c.req.valid()
  * All validation happens at route level via @hono/zod-validator
  */
@@ -37,14 +37,17 @@ const checkOrganizationAccess = async (
 /**
  * Check project access
  */
-const checkProjectAccess = async (projectId: string, userId: string): Promise<boolean> => {
+const checkProjectAccess = async (
+  projectId: string,
+  userId: string
+): Promise<boolean> => {
   return await projectService.isProjectMember(projectId, userId);
 };
 
 /**
  * Create project
  * POST /api/v1/projects
- * 
+ *
  * Payload validated by zValidator(createProjectSchema) at route level
  */
 export const createProject = async (c: Context) => {
@@ -63,10 +66,15 @@ export const createProject = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof createProjectSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof createProjectSchema
+    >;
 
     // Check organization access
-    const hasAccess = await checkOrganizationAccess(validatedData.organizationId, user.userId);
+    const hasAccess = await checkOrganizationAccess(
+      validatedData.organizationId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -83,8 +91,12 @@ export const createProject = async (c: Context) => {
       user.userId,
       {
         ...validatedData,
-        startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
-        endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+        startDate: validatedData.startDate
+          ? new Date(validatedData.startDate)
+          : undefined,
+        endDate: validatedData.endDate
+          ? new Date(validatedData.endDate)
+          : undefined,
         budget: validatedData.budget ?? undefined,
       }
     );
@@ -214,7 +226,7 @@ export const getProjectById = async (c: Context) => {
 /**
  * Update project
  * PUT /api/v1/projects/:id
- * 
+ *
  * Payload validated by zValidator(updateProjectSchema) at route level
  */
 export const updateProject = async (c: Context) => {
@@ -258,12 +270,18 @@ export const updateProject = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateProjectSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateProjectSchema
+    >;
 
     const project = await projectService.updateProject(id, {
       ...validatedData,
-      startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : undefined,
+      startDate: validatedData.startDate
+        ? new Date(validatedData.startDate)
+        : undefined,
+      endDate: validatedData.endDate
+        ? new Date(validatedData.endDate)
+        : undefined,
       budget: validatedData.budget ?? undefined,
     });
 
@@ -288,7 +306,7 @@ export const updateProject = async (c: Context) => {
 /**
  * Update project settings
  * PATCH /api/v1/projects/:id/settings
- * 
+ *
  * Payload validated by zValidator(updateProjectSettingsSchema) at route level
  */
 export const updateProjectSettings = async (c: Context) => {
@@ -332,9 +350,14 @@ export const updateProjectSettings = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof updateProjectSettingsSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof updateProjectSettingsSchema
+    >;
 
-    const project = await projectService.updateProjectSettings(id, validatedData.settings);
+    const project = await projectService.updateProjectSettings(
+      id,
+      validatedData.settings
+    );
 
     return c.json({
       success: true,
@@ -402,8 +425,14 @@ export const deleteProject = async (c: Context) => {
     const project = await projectService.getProjectById(id);
 
     // Check if user is org admin/owner
-    const userRole = await organizationService.getUserRole(project.organizationId, user.userId);
-    if (userRole !== OrganizationRole.OWNER && userRole !== OrganizationRole.ADMIN) {
+    const userRole = await organizationService.getUserRole(
+      project.organizationId,
+      user.userId
+    );
+    if (
+      userRole !== OrganizationRole.OWNER &&
+      userRole !== OrganizationRole.ADMIN
+    ) {
       return c.json(
         {
           success: false,
@@ -437,7 +466,7 @@ export const deleteProject = async (c: Context) => {
 /**
  * List organization projects
  * GET /api/v1/organizations/:organizationId/projects
- * 
+ *
  * Query validated by zValidator(projectListQuerySchema) at route level
  */
 export const listOrganizationProjects = async (c: Context) => {
@@ -468,7 +497,10 @@ export const listOrganizationProjects = async (c: Context) => {
     }
 
     // Check organization access
-    const hasAccess = await checkOrganizationAccess(organizationId, user.userId);
+    const hasAccess = await checkOrganizationAccess(
+      organizationId,
+      user.userId
+    );
     if (!hasAccess) {
       return c.json(
         {
@@ -481,15 +513,20 @@ export const listOrganizationProjects = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedQuery = c.req.query() as unknown as z.infer<typeof projectListQuerySchema>;
+    const validatedQuery = c.req.query() as unknown as z.infer<
+      typeof projectListQuerySchema
+    >;
 
-    const result = await projectService.listOrganizationProjects(organizationId, {
-      status: validatedQuery.status as any,
-      priority: validatedQuery.priority as any,
-      search: validatedQuery.search,
-      page: validatedQuery.page,
-      perPage: validatedQuery.perPage,
-    });
+    const result = await projectService.listOrganizationProjects(
+      organizationId,
+      {
+        status: validatedQuery.status as any,
+        priority: validatedQuery.priority as any,
+        search: validatedQuery.search,
+        page: validatedQuery.page,
+        perPage: validatedQuery.perPage,
+      }
+    );
 
     return c.json({
       success: true,
@@ -574,7 +611,7 @@ export const getProjectMembers = async (c: Context) => {
 /**
  * Add member to project
  * POST /api/v1/projects/:id/members
- * 
+ *
  * Payload validated by zValidator(addProjectMemberSchema) at route level
  */
 export const addProjectMember = async (c: Context) => {
@@ -618,7 +655,9 @@ export const addProjectMember = async (c: Context) => {
     }
 
     // ELITE PATTERN: Explicit type casting for decoupled validation
-    const validatedData = (await c.req.json()) as z.infer<typeof addProjectMemberSchema>;
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof addProjectMemberSchema
+    >;
 
     // Verify user is in the same organization
     const project = await projectService.getProjectById(id);
@@ -713,14 +752,21 @@ export const removeProjectMember = async (c: Context) => {
     // Users can remove themselves, or org admin/owner can remove others
     if (user.userId !== userId) {
       const project = await projectService.getProjectById(id);
-      const userRole = await organizationService.getUserRole(project.organizationId, user.userId);
+      const userRole = await organizationService.getUserRole(
+        project.organizationId,
+        user.userId
+      );
 
-      if (userRole !== OrganizationRole.OWNER && userRole !== OrganizationRole.ADMIN) {
+      if (
+        userRole !== OrganizationRole.OWNER &&
+        userRole !== OrganizationRole.ADMIN
+      ) {
         return c.json(
           {
             success: false,
             error: 'Forbidden',
-            message: 'Only organization owners and admins can remove other members',
+            message:
+              'Only organization owners and admins can remove other members',
           },
           403
         );

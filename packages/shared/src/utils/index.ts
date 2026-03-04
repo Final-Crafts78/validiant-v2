@@ -1,6 +1,6 @@
 /**
  * Shared Utility Functions
- * 
+ *
  * Common utilities used across frontend and backend.
  */
 
@@ -61,7 +61,8 @@ export const truncate = (str: string, length: number): string => {
  * Generate random ID
  */
 export const generateId = (length: number = 16): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -101,14 +102,17 @@ export const groupBy = <T extends Record<string, any>>(
   array: T[],
   key: keyof T
 ): Record<string, T[]> => {
-  return array.reduce((result, item) => {
-    const groupKey = String(item[key]);
-    if (!result[groupKey]) {
-      result[groupKey] = [];
-    }
-    result[groupKey].push(item);
-    return result;
-  }, {} as Record<string, T[]>);
+  return array.reduce(
+    (result, item) => {
+      const groupKey = String(item[key]);
+      if (!result[groupKey]) {
+        result[groupKey] = [];
+      }
+      result[groupKey].push(item);
+      return result;
+    },
+    {} as Record<string, T[]>
+  );
 };
 
 /**
@@ -247,10 +251,7 @@ export const isValidUrl = (url: string): boolean => {
 /**
  * Parse JSON safely
  */
-export const safeJsonParse = <T = any>(
-  json: string,
-  fallback: T
-): T => {
+export const safeJsonParse = <T = any>(json: string, fallback: T): T => {
   try {
     return JSON.parse(json) as T;
   } catch {
@@ -271,4 +272,58 @@ export const getInitials = (firstName: string, lastName: string): string => {
 export const calculatePercentage = (value: number, total: number): number => {
   if (total === 0) return 0;
   return Math.round((value / total) * 100);
+};
+
+/**
+ * Calculate the Haversine distance between two GPS coordinates in kilometers.
+ * Used for field-worker task proximity sorting.
+ */
+export const haversineDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
+  const R = 6371; // Earth's radius in km
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+/**
+ * Extract latitude and longitude from a Google Maps URL.
+ * Returns null if no coordinates are found.
+ */
+export const extractGoogleMapsCoordinates = (
+  url: string
+): { latitude: number; longitude: number } | null => {
+  // Match patterns like @12.345,67.890 or !3d12.345!4d67.890
+  const atMatch = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+  if (atMatch) {
+    return {
+      latitude: parseFloat(atMatch[1]),
+      longitude: parseFloat(atMatch[2]),
+    };
+  }
+
+  const dMatch = url.match(/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/);
+  if (dMatch) {
+    return {
+      latitude: parseFloat(dMatch[1]),
+      longitude: parseFloat(dMatch[2]),
+    };
+  }
+
+  return null;
 };

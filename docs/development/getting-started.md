@@ -48,6 +48,7 @@ This will install dependencies for all apps and packages in the monorepo.
 #### Configure Environment Variables
 
 **For API:**
+
 ```bash
 cd apps/api
 cp .env.example .env.local
@@ -55,6 +56,7 @@ cp .env.example .env.local
 ```
 
 **For Web:**
+
 ```bash
 cd apps/web
 cp .env.example .env.local
@@ -62,6 +64,7 @@ cp .env.example .env.local
 ```
 
 **For Mobile:**
+
 ```bash
 cd apps/mobile
 cp .env.example .env
@@ -83,6 +86,7 @@ npm run dev
 ```
 
 This starts:
+
 - API server on http://localhost:3001
 - Web app on http://localhost:3000
 - Mobile app with Expo
@@ -90,18 +94,21 @@ This starts:
 #### Option B: Start Individual Apps
 
 **API Server:**
+
 ```bash
 cd apps/api
 npm run dev
 ```
 
 **Web App:**
+
 ```bash
 cd apps/web
 npm run dev
 ```
 
 **Mobile App:**
+
 ```bash
 cd apps/mobile
 npm run dev
@@ -119,6 +126,7 @@ npm run dev
 ### Creating a New Feature
 
 1. Create a feature branch:
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
@@ -126,21 +134,25 @@ git checkout -b feature/your-feature-name
 2. Make your changes
 
 3. Run tests:
+
 ```bash
 npm run test
 ```
 
 4. Run linting:
+
 ```bash
 npm run lint
 ```
 
 5. Commit your changes:
+
 ```bash
 git commit -m "feat: add your feature description"
 ```
 
 6. Push to GitHub:
+
 ```bash
 git push origin feature/your-feature-name
 ```
@@ -201,6 +213,7 @@ npx expo start -c
 ### Database Connection Issues
 
 Verify your DATABASE_URL in .env.local is correct and includes:
+
 - Correct host
 - Correct port (usually 5432)
 - Correct database name

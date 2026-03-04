@@ -1,6 +1,6 @@
 /**
  * App Index
- * 
+ *
  * Entry point that redirects to auth or main app based on authentication status.
  */
 

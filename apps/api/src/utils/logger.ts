@@ -1,6 +1,6 @@
 /**
  * Edge-Compatible Logger Utility
- * 
+ *
  * Lightweight console-based logging for Cloudflare Workers.
  * Provides structured logging with metadata support and zero dependencies.
  */
@@ -44,10 +44,10 @@ const formatLogEntry = (
 ): string => {
   const timestamp = new Date().toISOString();
   const levelUpper = level.toUpperCase();
-  
+
   // Combine default metadata with provided metadata
   const combinedMeta = { ...defaultMeta };
-  
+
   if (meta) {
     if (meta instanceof Error) {
       combinedMeta.error = {
@@ -59,11 +59,12 @@ const formatLogEntry = (
       Object.assign(combinedMeta, meta);
     }
   }
-  
-  const metaStr = Object.keys(combinedMeta).length > 0 
-    ? ` ${JSON.stringify(combinedMeta)}`
-    : '';
-  
+
+  const metaStr =
+    Object.keys(combinedMeta).length > 0
+      ? ` ${JSON.stringify(combinedMeta)}`
+      : '';
+
   return `${timestamp} [${levelUpper}] ${message}${metaStr}`;
 };
 
@@ -73,22 +74,42 @@ const formatLogEntry = (
 const createLogger = (defaultMeta: LogMetadata = {}): Logger => {
   return {
     error: (message: string, meta?: LogMetadata | Error) => {
-      const formatted = formatLogEntry(LogLevel.ERROR, message, meta, defaultMeta);
+      const formatted = formatLogEntry(
+        LogLevel.ERROR,
+        message,
+        meta,
+        defaultMeta
+      );
       console.error(formatted);
     },
 
     warn: (message: string, meta?: LogMetadata) => {
-      const formatted = formatLogEntry(LogLevel.WARN, message, meta, defaultMeta);
+      const formatted = formatLogEntry(
+        LogLevel.WARN,
+        message,
+        meta,
+        defaultMeta
+      );
       console.warn(formatted);
     },
 
     info: (message: string, meta?: LogMetadata) => {
-      const formatted = formatLogEntry(LogLevel.INFO, message, meta, defaultMeta);
+      const formatted = formatLogEntry(
+        LogLevel.INFO,
+        message,
+        meta,
+        defaultMeta
+      );
       console.log(formatted);
     },
 
     debug: (message: string, meta?: LogMetadata) => {
-      const formatted = formatLogEntry(LogLevel.DEBUG, message, meta, defaultMeta);
+      const formatted = formatLogEntry(
+        LogLevel.DEBUG,
+        message,
+        meta,
+        defaultMeta
+      );
       console.debug(formatted);
     },
 
@@ -106,7 +127,10 @@ export const logger = createLogger();
 /**
  * Request logger - creates child logger with request context
  */
-export const createRequestLogger = (requestId: string, userId?: string): Logger => {
+export const createRequestLogger = (
+  requestId: string,
+  userId?: string
+): Logger => {
   return logger.child({
     requestId,
     userId,
@@ -123,8 +147,9 @@ export const logHttpRequest = (
   duration: number,
   userId?: string
 ): void => {
-  const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
-  
+  const level =
+    statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
+
   logger[level]('HTTP Request', {
     method,
     url,
@@ -163,7 +188,14 @@ export const logDatabaseQuery = (
  * Authentication event logging
  */
 export const logAuthEvent = (
-  event: 'login' | 'logout' | 'register' | 'password_reset' | 'email_verified' | '2fa_enabled' | '2fa_disabled',
+  event:
+    | 'login'
+    | 'logout'
+    | 'register'
+    | 'password_reset'
+    | 'email_verified'
+    | '2fa_enabled'
+    | '2fa_disabled',
   userId: string,
   meta?: LogMetadata
 ): void => {
@@ -182,8 +214,9 @@ export const logSecurityEvent = (
   severity: 'low' | 'medium' | 'high' | 'critical',
   meta?: LogMetadata
 ): void => {
-  const level = severity === 'critical' || severity === 'high' ? 'error' : 'warn';
-  
+  const level =
+    severity === 'critical' || severity === 'high' ? 'error' : 'warn';
+
   logger[level](`Security: ${event}`, {
     event,
     severity,
@@ -219,7 +252,7 @@ export const logPerformance = (
   meta?: LogMetadata
 ): void => {
   const level = duration > 5000 ? 'warn' : duration > 1000 ? 'info' : 'debug';
-  
+
   logger[level](`Performance: ${operation}`, {
     operation,
     duration: `${duration}ms`,
@@ -278,7 +311,9 @@ export const sanitizeLogData = (data: any): any => {
   const sanitized = Array.isArray(data) ? [...data] : { ...data };
 
   for (const key in sanitized) {
-    if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))) {
+    if (
+      sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive))
+    ) {
       sanitized[key] = '[REDACTED]';
     } else if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
       sanitized[key] = sanitizeLogData(sanitized[key]);
