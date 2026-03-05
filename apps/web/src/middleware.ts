@@ -68,7 +68,14 @@ export function middleware(request: NextRequest) {
   }
 
   // Allow request to proceed (default allow pattern)
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', pathname);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 /**

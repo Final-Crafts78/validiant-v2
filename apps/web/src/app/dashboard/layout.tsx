@@ -193,7 +193,10 @@ export default async function DashboardLayout({
   if (orgs.length === 0) {
     const headersList = headers();
     const pathname =
-      headersList.get('x-invoke-path') || headersList.get('x-next-url') || '';
+      headersList.get('x-pathname') ||
+      headersList.get('x-invoke-path') ||
+      headersList.get('x-next-url') ||
+      '';
     if (!pathname.includes('/dashboard/onboarding')) {
       redirect(ROUTES.ONBOARDING);
     }
