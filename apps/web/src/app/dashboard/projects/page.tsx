@@ -14,7 +14,7 @@ import { ROUTES } from '@/lib/config';
 import { projectsApi } from '@/lib/api';
 import { format } from '@/lib/utils';
 import type { Project as SharedProject } from '@validiant/shared';
-import { CreateProjectModalTrigger } from '@/components/modals/CreateProjectModalTrigger';
+import { CreateProjectModalTrigger } from '@/components/modals/CreateProjectModal';
 import {
   FolderKanban,
   Search,

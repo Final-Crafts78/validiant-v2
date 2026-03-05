@@ -10,7 +10,7 @@ interface CreateOrganizationModalProps {
   onClose: () => void;
 }
 
-export function CreateOrganizationModal({
+function CreateOrganizationModal({
   open,
   onClose,
 }: CreateOrganizationModalProps) {
@@ -136,5 +136,36 @@ export function CreateOrganizationModal({
         </form>
       </div>
     </div>
+  );
+}
+interface CreateOrganizationModalTriggerProps {
+  className?: string;
+  variant?: 'primary' | 'outline';
+  label?: string;
+}
+
+export function CreateOrganizationModalTrigger({
+  className,
+  variant = 'primary',
+  label = 'Create',
+}: CreateOrganizationModalTriggerProps) {
+  const [open, setOpen] = useState(false);
+
+  const defaultClassName =
+    variant === 'primary' ? 'btn btn-primary btn-md' : 'btn btn-outline btn-md';
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={className || defaultClassName}
+      >
+        <Plus className="h-5 w-5" />
+        <span>{label}</span>
+      </button>
+
+      <CreateOrganizationModal open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }

@@ -21,7 +21,7 @@ import { format } from '@/lib/utils';
 import { tasksApi } from '@/lib/api';
 import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
-import { CreateTaskModalTrigger } from '@/components/modals/CreateTaskModalTrigger';
+import { CreateTaskModalTrigger } from '@/components/modals/CreateTaskModal';
 import type { Task } from '@validiant/shared';
 import {
   CheckSquare,

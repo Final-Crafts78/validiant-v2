@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from '@/lib/utils';
 import { organizationsApi } from '@/lib/api';
-import { CreateOrganizationModalTrigger } from '@/components/modals/CreateOrganizationModalTrigger';
+import { CreateOrganizationModalTrigger } from '@/components/modals/CreateOrganizationModal';
 import {
   Building2,
   Search,
