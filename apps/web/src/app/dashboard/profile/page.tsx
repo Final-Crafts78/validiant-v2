@@ -9,8 +9,19 @@
 import { useState, useMemo, useTransition, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { updateProfileAction } from '@/actions/auth.actions';
+import { usersApi, passkeyApi } from '@/lib/api';
 import { format } from 'date-fns';
-import { Shield, Lock, Eye, EyeOff, Save, Camera, Loader2 } from 'lucide-react';
+import {
+  Shield,
+  Lock,
+  Eye,
+  EyeOff,
+  Save,
+  Camera,
+  Loader2,
+  Fingerprint,
+  CheckCircle2,
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Shared style constants — mirror Tasks / Projects pages exactly
@@ -58,16 +69,23 @@ export default function ProfilePage() {
   // Controlled form state for profile tab
   const [firstName, setFirstName] = useState(nameComponents.firstName);
   const [lastName, setLastName] = useState(nameComponents.lastName);
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
   const [bio, setBio] = useState(user?.bio || '');
+  const [passkeyStatus, setPasskeyStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
+  const [passkeyMsg, setPasskeyMsg] = useState('');
 
   // Update form state when user data changes (e.g., after refresh)
   useEffect(() => {
     setFirstName(nameComponents.firstName);
     setLastName(nameComponents.lastName);
+    setPhoneNumber(user?.phoneNumber || '');
     setBio(user?.bio || '');
   }, [
     user?.fullName,
     user?.bio,
+    user?.phoneNumber,
     nameComponents.firstName,
     nameComponents.lastName,
   ]);
@@ -113,6 +131,18 @@ export default function ProfilePage() {
           bio: bio.trim() || undefined,
         });
 
+        // Also call the API client for phoneNumber
+        if (phoneNumber.trim()) {
+          try {
+            await usersApi.updateProfile({
+              fullName,
+              phoneNumber: phoneNumber.trim(),
+            });
+          } catch {
+            // Non-blocking: phone number is best-effort
+          }
+        }
+
         if (result.success && result.user) {
           console.log(
             '[ProfilePage] Profile updated successfully:',
@@ -142,6 +172,7 @@ export default function ProfilePage() {
   const handleCancel = () => {
     setFirstName(nameComponents.firstName);
     setLastName(nameComponents.lastName);
+    setPhoneNumber(user?.phoneNumber || '');
     setBio(user?.bio || '');
   };
 
@@ -306,6 +337,22 @@ export default function ProfilePage() {
               </p>
             </div>
 
+            {/* Phone Number */}
+            <div>
+              <label htmlFor="phoneNumber" className={labelCls}>
+                Phone Number
+              </label>
+              <input
+                id="phoneNumber"
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className={inputCls}
+                disabled={isPending}
+              />
+            </div>
+
             {/* Bio */}
             <div>
               <label htmlFor="bio" className={labelCls}>
@@ -466,6 +513,84 @@ export default function ProfilePage() {
                 className="flex-shrink-0 inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
               >
                 Enable
+              </button>
+            </div>
+          </div>
+
+          {/* Passkey Registration card */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Fingerprint className="h-5 w-5 text-indigo-600" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900">
+                    Passkey (FaceID / TouchID)
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    Register a biometric authenticator for passwordless login
+                  </p>
+                  {passkeyStatus === 'success' && (
+                    <p className="text-sm text-emerald-600 mt-2 flex items-center gap-1.5">
+                      <CheckCircle2 className="h-4 w-4" />
+                      {passkeyMsg}
+                    </p>
+                  )}
+                  {passkeyStatus === 'error' && (
+                    <p className="text-sm text-red-600 mt-2">{passkeyMsg}</p>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={passkeyStatus === 'loading'}
+                onClick={async () => {
+                  try {
+                    setPasskeyStatus('loading');
+                    setPasskeyMsg('');
+
+                    // 1. Get registration options from server
+                    const optionsRes = await passkeyApi.generateOptions();
+                    const optionsData = optionsRes.data as Record<
+                      string,
+                      unknown
+                    >;
+
+                    // 2. Start WebAuthn browser ceremony
+                    const { startRegistration } =
+                      await import('@simplewebauthn/browser');
+                    const attResp = await startRegistration(
+                      optionsData as Parameters<typeof startRegistration>[0]
+                    );
+
+                    // 3. Verify with server
+                    await passkeyApi.verifyRegistration({ response: attResp });
+
+                    setPasskeyStatus('success');
+                    setPasskeyMsg('Passkey registered successfully!');
+                  } catch (err) {
+                    setPasskeyStatus('error');
+                    setPasskeyMsg(
+                      err instanceof Error
+                        ? err.message
+                        : 'Passkey registration failed. Please try again.'
+                    );
+                  }
+                }}
+                className="flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {passkeyStatus === 'loading' ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Registering…
+                  </>
+                ) : (
+                  <>
+                    <Fingerprint className="h-3.5 w-3.5" />
+                    Register
+                  </>
+                )}
               </button>
             </div>
           </div>

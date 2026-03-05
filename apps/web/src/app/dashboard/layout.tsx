@@ -12,7 +12,7 @@
  * Phase 22: Added organization fetching and onboarding redirect logic.
  */
 
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
@@ -188,10 +188,16 @@ export default async function DashboardLayout({
   const accessToken = cookieStore.get('accessToken');
   const orgs = accessToken ? await getUserOrganizations(accessToken.value) : [];
 
-  // If user has no orgs and not already on the onboarding page,
-  // redirect to onboarding
-  // NOTE: We cannot check pathname in a Server Component layout,
-  // so the onboarding page itself should handle the case of already having orgs.
+  // If user has no orgs, redirect to onboarding
+  // Check the current path to avoid redirect loops when already on onboarding
+  if (orgs.length === 0) {
+    const headersList = headers();
+    const pathname =
+      headersList.get('x-invoke-path') || headersList.get('x-next-url') || '';
+    if (!pathname.includes('/dashboard/onboarding')) {
+      redirect(ROUTES.ONBOARDING);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

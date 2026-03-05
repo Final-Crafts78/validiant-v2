@@ -14,10 +14,13 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { format } from '@/lib/utils';
 import { tasksApi } from '@/lib/api';
+import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
+import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
 import type { Task } from '@validiant/shared';
 import {
   CheckSquare,
@@ -30,6 +33,7 @@ import {
   AlertCircle,
   User,
   Loader2,
+  Upload,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -88,7 +92,7 @@ function PriorityBadge({ priority }: { priority: TaskPriorityValue }) {
 // TaskStatus enum values used in statusIcon:
 //   'todo' | 'in_progress' | 'in_review' | 'blocked' | 'completed' | 'cancelled'
 // ---------------------------------------------------------------------------
-function TaskRow({ task }: { task: Task }) {
+function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
   const isOverdue =
     task.dueDate != null &&
     new Date(task.dueDate) < new Date() &&
@@ -114,7 +118,15 @@ function TaskRow({ task }: { task: Task }) {
   const displayDesc = task.description ?? '';
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+    <div
+      className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onClick?.();
+      }}
+    >
       <div className="flex items-start gap-4">
         {/* Status Icon */}
         <button
@@ -213,10 +225,19 @@ function EmptyState() {
 // ---------------------------------------------------------------------------
 // Tasks Page Component
 // ---------------------------------------------------------------------------
-export default function TasksPage() {
+function TasksPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
+
+  const openTask = (taskId: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('taskId', taskId);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   // ------------------------------------------------------------------
   // Live data via react-query
@@ -314,13 +335,23 @@ export default function TasksPage() {
             Manage and track all your tasks
           </p>
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
-        >
-          <Plus className="h-4 w-4" />
-          New Task
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setBulkUploadOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shrink-0"
+          >
+            <Upload className="h-4 w-4" />
+            Bulk Upload
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+            New Task
+          </button>
+        </div>
       </div>
 
       {hasTasks ? (
@@ -427,7 +458,13 @@ export default function TasksPage() {
           ================================================================= */}
           <div className="space-y-4">
             {filteredTasks.length > 0 ? (
-              filteredTasks.map((task) => <TaskRow key={task.id} task={task} />)
+              filteredTasks.map((task) => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onClick={() => openTask(task.id)}
+                />
+              ))
             ) : (
               <div className="bg-white border border-dashed border-slate-200 rounded-xl py-12 text-center">
                 <p className="text-sm font-medium text-slate-500">
@@ -455,6 +492,29 @@ export default function TasksPage() {
       ) : (
         <EmptyState />
       )}
+
+      {/* Task Detail Slide-Over — opens when ?taskId is present */}
+      <TaskDetailSlideOver />
+
+      {/* Bulk Upload Wizard Modal */}
+      <BulkUploadWizard
+        open={bulkUploadOpen}
+        onClose={() => setBulkUploadOpen(false)}
+      />
     </div>
+  );
+}
+
+export default function TasksPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      }
+    >
+      <TasksPageContent />
+    </Suspense>
   );
 }

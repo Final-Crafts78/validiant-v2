@@ -22,6 +22,7 @@ export interface AuthUser {
   emailVerified: boolean;
   twoFactorEnabled: boolean;
   bio?: string;
+  phoneNumber?: string;
   notificationPreferences?: NotificationPreferences;
   role?: string;
   createdAt: string; // ISO string

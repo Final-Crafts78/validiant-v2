@@ -322,6 +322,19 @@ export const tasksApi = {
     id: string
   ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
     del<APIResponse<{ success: boolean }>>(`/tasks/${id}`),
+
+  /** Update only the status of a task (optimistic-friendly) */
+  updateStatus: (
+    id: string,
+    status: string
+  ): Promise<AxiosResponse<APIResponse<Task>>> =>
+    patch<APIResponse<Task>>(`/tasks/${id}`, { status }),
+
+  /** Bulk-create tasks from a parsed spreadsheet */
+  bulkCreate: (
+    tasks: Record<string, unknown>[]
+  ): Promise<AxiosResponse<APIResponse<{ created: number }>>> =>
+    post<APIResponse<{ created: number }>>('/tasks/bulk', { tasks }),
 };
 
 // ---------------------------------------------------------------------------
@@ -366,4 +379,37 @@ export const projectsApi = {
     id: string
   ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
     del<APIResponse<{ success: boolean }>>(`/projects/${id}`),
+};
+
+// ---------------------------------------------------------------------------
+// Users API Service
+// ---------------------------------------------------------------------------
+
+export const usersApi = {
+  /** Update the current user's profile */
+  updateProfile: (data: {
+    fullName?: string;
+    phoneNumber?: string;
+    bio?: string;
+  }): Promise<AxiosResponse<APIResponse<unknown>>> =>
+    put<APIResponse<unknown>>('/users/me', data),
+};
+
+// ---------------------------------------------------------------------------
+// Passkey API Service (WebAuthn / FIDO2)
+// ---------------------------------------------------------------------------
+
+export const passkeyApi = {
+  /** Generate passkey registration options (returns challenge) */
+  generateOptions: (
+    deviceName?: string
+  ): Promise<AxiosResponse<APIResponse<unknown>>> =>
+    post<APIResponse<unknown>>('/passkey/register/options', { deviceName }),
+
+  /** Verify passkey registration with signed credential */
+  verifyRegistration: (data: {
+    response: unknown;
+    deviceName?: string;
+  }): Promise<AxiosResponse<APIResponse<unknown>>> =>
+    post<APIResponse<unknown>>('/passkey/register/verify', data),
 };

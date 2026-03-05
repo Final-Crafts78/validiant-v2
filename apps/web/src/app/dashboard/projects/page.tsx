@@ -2,15 +2,18 @@
  * Projects Page
  *
  * List and manage projects.
- * Corporate Light Theme — Phase 8.
+ * Corporate Light Theme — Phase 8 → Phase 24 (live data via react-query).
  */
 
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import { ROUTES } from '@/lib/config';
+import { projectsApi } from '@/lib/api';
 import { format } from '@/lib/utils';
+import type { Project as SharedProject } from '@validiant/shared';
 import {
   FolderKanban,
   Plus,
@@ -20,61 +23,9 @@ import {
   Users,
   Calendar,
   CheckCircle2,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
-
-// ---------------------------------------------------------------------------
-// Project interface — preserved verbatim
-// ---------------------------------------------------------------------------
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: 'active' | 'completed' | 'on-hold' | 'planning';
-  progress: number;
-  memberCount: number;
-  taskCount: number;
-  dueDate: string;
-  createdAt: string;
-}
-
-// ---------------------------------------------------------------------------
-// Mock projects data — preserved verbatim
-// ---------------------------------------------------------------------------
-const mockProjects: Project[] = [
-  {
-    id: '1',
-    name: 'Website Redesign',
-    description: 'Complete redesign of the company website with modern UI/UX',
-    status: 'active',
-    progress: 65,
-    memberCount: 5,
-    taskCount: 24,
-    dueDate: '2026-03-15',
-    createdAt: '2026-01-10',
-  },
-  {
-    id: '2',
-    name: 'Mobile App Development',
-    description: 'Native mobile app for iOS and Android platforms',
-    status: 'active',
-    progress: 45,
-    memberCount: 8,
-    taskCount: 38,
-    dueDate: '2026-04-20',
-    createdAt: '2025-12-01',
-  },
-  {
-    id: '3',
-    name: 'Marketing Campaign',
-    description: 'Q1 2026 digital marketing and social media campaign',
-    status: 'planning',
-    progress: 15,
-    memberCount: 4,
-    taskCount: 12,
-    dueDate: '2026-03-31',
-    createdAt: '2026-02-01',
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Shared input class
@@ -87,26 +38,34 @@ const inputCls =
 // ---------------------------------------------------------------------------
 // Status Badge — pure Tailwind pills
 // ---------------------------------------------------------------------------
-function StatusBadge({ status }: { status: Project['status'] }) {
-  const styles: Record<Project['status'], string> = {
-    active: 'bg-blue-50 text-blue-700 border border-blue-200',
-    completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    'on-hold': 'bg-amber-50 text-amber-700 border border-amber-200',
-    planning: 'bg-slate-100 text-slate-700 border border-slate-200',
-  };
+const statusStyles: Record<string, string> = {
+  active: 'bg-blue-50 text-blue-700 border border-blue-200',
+  completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  'on-hold': 'bg-amber-50 text-amber-700 border border-amber-200',
+  on_hold: 'bg-amber-50 text-amber-700 border border-amber-200',
+  planning: 'bg-slate-100 text-slate-700 border border-slate-200',
+  archived: 'bg-slate-100 text-slate-500 border border-slate-200',
+  cancelled: 'bg-red-50 text-red-600 border border-red-200',
+};
 
-  const labels: Record<Project['status'], string> = {
-    active: 'Active',
-    completed: 'Completed',
-    'on-hold': 'On Hold',
-    planning: 'Planning',
-  };
+const statusLabels: Record<string, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  'on-hold': 'On Hold',
+  on_hold: 'On Hold',
+  planning: 'Planning',
+  archived: 'Archived',
+  cancelled: 'Cancelled',
+};
 
+function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles[status]}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+        statusStyles[status] ?? statusStyles['planning']
+      }`}
     >
-      {labels[status]}
+      {statusLabels[status] ?? status}
     </span>
   );
 }
@@ -114,9 +73,12 @@ function StatusBadge({ status }: { status: Project['status'] }) {
 // ---------------------------------------------------------------------------
 // Project Card
 // ---------------------------------------------------------------------------
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project }: { project: SharedProject }) {
+  const progress = project.progress ?? 0;
   const isOverdue =
-    new Date(project.dueDate) < new Date() && project.status !== 'completed';
+    project.endDate != null &&
+    new Date(project.endDate) < new Date() &&
+    project.status !== 'completed';
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
@@ -145,7 +107,7 @@ function ProjectCard({ project }: { project: Project }) {
 
       {/* Description */}
       <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-        {project.description}
+        {project.description || 'No description'}
       </p>
 
       {/* Progress Bar */}
@@ -155,47 +117,46 @@ function ProjectCard({ project }: { project: Project }) {
             Progress
           </span>
           <span className="text-xs font-semibold text-slate-700">
-            {project.progress}%
+            {progress}%
           </span>
         </div>
         {/* Track */}
         <div className="w-full bg-slate-100 rounded-full h-2">
-          {/* Fill — inline style for dynamic width; no arbitrary Tailwind value */}
           <div
             className="bg-blue-600 h-2 rounded-full transition-all"
-            style={{ width: `${project.progress}%` }}
+            style={{ width: `${progress}%` }}
             role="progressbar"
-            aria-valuenow={project.progress}
+            aria-valuenow={progress}
             aria-valuemin={0}
             aria-valuemax={100}
           />
         </div>
       </div>
 
-      {/* Meta Footer — pushed to bottom via mt-auto */}
+      {/* Meta Footer */}
       <div className="mt-auto pt-4 border-t border-slate-100">
         <div className="flex flex-wrap items-center justify-between gap-y-2">
-          {/* Team & Tasks */}
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Users className="h-3.5 w-3.5 text-slate-400" />
-              {project.memberCount}
+              <Users className="h-3.5 w-3.5 text-slate-400" />—
             </span>
             <span className="flex items-center gap-1.5 text-xs text-slate-500">
               <CheckCircle2 className="h-3.5 w-3.5 text-slate-400" />
-              {project.taskCount} tasks
+              {progress}%
             </span>
           </div>
 
           {/* Due Date */}
-          <span
-            className={`flex items-center gap-1.5 text-xs ${
-              isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'
-            }`}
-          >
-            <Calendar className="h-3.5 w-3.5 shrink-0" />
-            {format.date(project.dueDate, { month: 'short', day: 'numeric' })}
-          </span>
+          {project.endDate != null && (
+            <span
+              className={`flex items-center gap-1.5 text-xs ${
+                isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'
+              }`}
+            >
+              <Calendar className="h-3.5 w-3.5 shrink-0" />
+              {format.date(project.endDate, { month: 'short', day: 'numeric' })}
+            </span>
+          )}
         </div>
 
         {/* View Details Link */}
@@ -238,31 +199,84 @@ function EmptyState() {
 }
 
 // ---------------------------------------------------------------------------
-// Projects Page Component
+// Projects Page Component — LIVE DATA via react-query
 // ---------------------------------------------------------------------------
 export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // TODO: Replace with actual data fetching
-  const projects = mockProjects;
-  const hasProjects = projects.length > 0;
+  // Fetch projects from API
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['projects', 'all'],
+    queryFn: () => projectsApi.getAll(),
+  });
+
+  const liveProjects: SharedProject[] = response?.data?.data?.projects ?? [];
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <p className="text-sm font-medium text-slate-500">
+          Loading projects...
+        </p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 gap-4">
+        <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center">
+          <AlertCircle className="h-7 w-7 text-red-500" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900">
+          Failed to load projects
+        </h3>
+        <p className="text-sm text-slate-500">
+          There was a problem fetching your projects. Please try refreshing the
+          page.
+        </p>
+      </div>
+    );
+  }
+
+  // Filtered list
+  const filteredProjects = liveProjects.filter((project) => {
+    const matchesSearch =
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (project.description ?? '')
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' || project.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const hasProjects = liveProjects.length > 0;
 
   // Derived stats
   const stats = {
-    total: projects.length,
-    active: projects.filter((p) => p.status === 'active').length,
-    completed: projects.filter((p) => p.status === 'completed').length,
-    onHold: projects.filter(
-      (p) => p.status === 'on-hold' || p.status === 'planning'
+    total: liveProjects.length,
+    active: liveProjects.filter((p) => p.status === 'active').length,
+    completed: liveProjects.filter((p) => p.status === 'completed').length,
+    onHold: liveProjects.filter(
+      (p) =>
+        p.status === 'on_hold' ||
+        p.status === 'planning' ||
+        p.status === ('on-hold' as string)
     ).length,
   };
 
   return (
     <div className="space-y-6">
-      {/* =================================================================
-          PAGE HEADER
-      ================================================================= */}
+      {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900">Projects</h1>
@@ -281,9 +295,7 @@ export default function ProjectsPage() {
 
       {hasProjects ? (
         <>
-          {/* =============================================================
-              STATS GRID
-          ============================================================= */}
+          {/* STATS GRID */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
               <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
@@ -318,9 +330,7 @@ export default function ProjectsPage() {
             </div>
           </div>
 
-          {/* =============================================================
-              FILTERS BAR
-          ============================================================= */}
+          {/* FILTERS BAR */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <div className="flex flex-col lg:flex-row gap-3">
               {/* Search */}
@@ -346,20 +356,26 @@ export default function ProjectsPage() {
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="planning">Planning</option>
-                  <option value="on-hold">On Hold</option>
+                  <option value="on_hold">On Hold</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>
             </div>
           </div>
 
-          {/* =============================================================
-              PROJECTS GRID
-          ============================================================= */}
+          {/* PROJECTS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            ) : (
+              <div className="col-span-full bg-white border border-dashed border-slate-200 rounded-xl py-12 text-center">
+                <p className="text-sm font-medium text-slate-500">
+                  No projects match your current filters.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Pagination info */}
@@ -367,11 +383,11 @@ export default function ProjectsPage() {
             <p className="text-sm text-slate-500">
               Showing{' '}
               <span className="font-medium text-slate-700">
-                {projects.length}
+                {filteredProjects.length}
               </span>{' '}
               of{' '}
               <span className="font-medium text-slate-700">
-                {projects.length}
+                {liveProjects.length}
               </span>{' '}
               projects
             </p>
