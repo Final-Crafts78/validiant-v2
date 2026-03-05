@@ -111,69 +111,77 @@ export const createTask = async (
     assigneeIds?: string[];
   }
 ): Promise<Task> => {
-  // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const task = await db.transaction(async (tx: typeof db) => {
-    // Get next position using 'tx'
-    const maxPositionResult = await tx
-      .select({
-        maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`,
-      })
-      .from(tasks)
-      .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
-    const { maxPosition } = maxPositionResult[0];
+  // Proceed without db.transaction() because neon-http does not support interactive transactions
+  // 1. Get next position
+  const maxPositionResult = await db
+    .select({
+      maxPosition: sql<number>`COALESCE(MAX(${tasks.position}), 0)`,
+    })
+    .from(tasks)
+    .where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
+  const { maxPosition } = maxPositionResult[0];
 
-    const position = Number(maxPosition) + 1;
+  const position = Number(maxPosition) + 1;
 
-    // Create task using 'tx'
-    const newTaskResult = await tx
-      .insert(tasks)
-      .values({
-        projectId,
-        title: data.title,
-        description: data.description,
-        status: data.status || TaskStatus.TODO,
-        priority: data.priority || TaskPriority.MEDIUM,
-        dueDate: data.dueDate,
-        estimatedHours: data.estimatedHours,
-        parentTaskId: data.parentTaskId,
-        position,
-        tags: data.tags || [],
-        customFields: data.customFields || {},
-        createdBy: userId,
-      })
-      .returning({
-        id: tasks.id,
-        projectId: tasks.projectId,
-        title: tasks.title,
-        description: tasks.description,
-        status: tasks.status,
-        priority: tasks.priority,
-        dueDate: tasks.dueDate,
-        estimatedHours: tasks.estimatedHours,
-        actualHours: tasks.actualHours,
-        parentTaskId: tasks.parentTaskId,
-        position: tasks.position,
-        tags: tasks.tags,
-        customFields: tasks.customFields,
-        createdBy: tasks.createdBy,
-        createdAt: tasks.createdAt,
-        updatedAt: tasks.updatedAt,
-        completedAt: tasks.completedAt,
-      });
-    const newTask = newTaskResult[0];
+  // 2. Create task
+  const newTaskResult = await db
+    .insert(tasks)
+    .values({
+      projectId,
+      title: data.title,
+      description: data.description,
+      status: data.status || TaskStatus.TODO,
+      priority: data.priority || TaskPriority.MEDIUM,
+      dueDate: data.dueDate,
+      estimatedHours: data.estimatedHours,
+      parentTaskId: data.parentTaskId,
+      position,
+      tags: data.tags || [],
+      customFields: data.customFields || {},
+      createdBy: userId,
+    })
+    .returning({
+      id: tasks.id,
+      projectId: tasks.projectId,
+      title: tasks.title,
+      description: tasks.description,
+      status: tasks.status,
+      priority: tasks.priority,
+      dueDate: tasks.dueDate,
+      estimatedHours: tasks.estimatedHours,
+      actualHours: tasks.actualHours,
+      parentTaskId: tasks.parentTaskId,
+      position: tasks.position,
+      tags: tasks.tags,
+      customFields: tasks.customFields,
+      createdBy: tasks.createdBy,
+      createdAt: tasks.createdAt,
+      updatedAt: tasks.updatedAt,
+      completedAt: tasks.completedAt,
+    });
+  const newTask = newTaskResult[0];
 
-    // Assign users if provided using 'tx'
+  try {
+    // 3. Assign users if provided
     if (data.assigneeIds && data.assigneeIds.length > 0) {
       const assigneeValues = data.assigneeIds.map((assigneeId) => ({
         taskId: newTask.id,
         userId: assigneeId,
       }));
 
-      await tx.insert(taskAssignees).values(assigneeValues);
+      await db.insert(taskAssignees).values(assigneeValues);
     }
+  } catch (error) {
+    // Manual rollback: If adding assignees fails, delete the created task
+    logger.error('Failed to add assignees to new task, rolling back...', {
+      error,
+      taskId: newTask.id,
+    });
+    await db.delete(tasks).where(eq(tasks.id, newTask.id));
+    throw error;
+  }
 
-    return newTask;
-  });
+  const task = newTask;
 
   logger.info('Task created', { taskId: task.id, projectId, userId });
 

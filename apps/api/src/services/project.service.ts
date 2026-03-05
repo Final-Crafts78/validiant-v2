@@ -89,57 +89,65 @@ export const createProject = async (
     icon?: string;
   }
 ): Promise<Project> => {
-  // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const project = await db.transaction(async (tx: typeof db) => {
-    // Create project using 'tx'
-    const newProjectResult = await tx
-      .insert(projects)
-      .values({
-        organizationId,
-        ownerId: userId,
-        name: data.name,
-        description: data.description,
-        status: data.status || ProjectStatus.PLANNING,
-        priority: data.priority || ProjectPriority.MEDIUM,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        estimatedHours: data.estimatedHours,
-        budget: data.budget,
-        color: data.color,
-        icon: data.icon,
-        settings: {},
-        createdBy: userId,
-      })
-      .returning({
-        id: projects.id,
-        organizationId: projects.organizationId,
-        name: projects.name,
-        description: projects.description,
-        status: projects.status,
-        priority: projects.priority,
-        startDate: projects.startDate,
-        endDate: projects.endDate,
-        estimatedHours: projects.estimatedHours,
-        actualHours: projects.actualHours,
-        budget: projects.budget,
-        color: projects.color,
-        icon: projects.icon,
-        settings: projects.settings,
-        createdBy: projects.createdBy,
-        createdAt: projects.createdAt,
-        updatedAt: projects.updatedAt,
-      });
-    const newProject = newProjectResult[0];
+  // Proceed without db.transaction() because neon-http does not support interactive transactions
+  // 1. Create project
+  const newProjectResult = await db
+    .insert(projects)
+    .values({
+      organizationId,
+      ownerId: userId,
+      name: data.name,
+      description: data.description,
+      status: data.status || ProjectStatus.PLANNING,
+      priority: data.priority || ProjectPriority.MEDIUM,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      estimatedHours: data.estimatedHours,
+      budget: data.budget,
+      color: data.color,
+      icon: data.icon,
+      settings: {},
+      createdBy: userId,
+    })
+    .returning({
+      id: projects.id,
+      organizationId: projects.organizationId,
+      name: projects.name,
+      description: projects.description,
+      status: projects.status,
+      priority: projects.priority,
+      startDate: projects.startDate,
+      endDate: projects.endDate,
+      estimatedHours: projects.estimatedHours,
+      actualHours: projects.actualHours,
+      budget: projects.budget,
+      color: projects.color,
+      icon: projects.icon,
+      settings: projects.settings,
+      createdBy: projects.createdBy,
+      createdAt: projects.createdAt,
+      updatedAt: projects.updatedAt,
+    });
+  const newProject = newProjectResult[0];
 
-    // Add creator as project member using 'tx'
-    await tx.insert(projectMembers).values({
+  try {
+    // 2. Add creator as project member
+    await db.insert(projectMembers).values({
       projectId: newProject.id,
       userId,
       role: 'owner',
     });
+  } catch (error) {
+    // Manual rollback: If adding the member fails, delete the created project
+    logger.error('Failed to add owner to new project, rolling back...', {
+      error,
+      projectId: newProject.id,
+    });
+    await db.delete(projects).where(eq(projects.id, newProject.id));
+    throw error;
+  }
 
-    return newProject;
-  });
+  const project = newProject;
 
   logger.info('Project created', {
     projectId: project.id,

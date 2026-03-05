@@ -48886,49 +48886,56 @@ init_drizzle_orm();
 init_db2();
 init_schema2();
 var createProject = /* @__PURE__ */ __name(async (organizationId, userId, data) => {
-  const project = await db.transaction(async (tx) => {
-    const newProjectResult = await tx.insert(projects).values({
-      organizationId,
-      ownerId: userId,
-      name: data.name,
-      description: data.description,
-      status: data.status || ProjectStatus.PLANNING,
-      priority: data.priority || ProjectPriority.MEDIUM,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      estimatedHours: data.estimatedHours,
-      budget: data.budget,
-      color: data.color,
-      icon: data.icon,
-      settings: {},
-      createdBy: userId
-    }).returning({
-      id: projects.id,
-      organizationId: projects.organizationId,
-      name: projects.name,
-      description: projects.description,
-      status: projects.status,
-      priority: projects.priority,
-      startDate: projects.startDate,
-      endDate: projects.endDate,
-      estimatedHours: projects.estimatedHours,
-      actualHours: projects.actualHours,
-      budget: projects.budget,
-      color: projects.color,
-      icon: projects.icon,
-      settings: projects.settings,
-      createdBy: projects.createdBy,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt
-    });
-    const newProject = newProjectResult[0];
-    await tx.insert(projectMembers).values({
+  const newProjectResult = await db.insert(projects).values({
+    organizationId,
+    ownerId: userId,
+    name: data.name,
+    description: data.description,
+    status: data.status || ProjectStatus.PLANNING,
+    priority: data.priority || ProjectPriority.MEDIUM,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    estimatedHours: data.estimatedHours,
+    budget: data.budget,
+    color: data.color,
+    icon: data.icon,
+    settings: {},
+    createdBy: userId
+  }).returning({
+    id: projects.id,
+    organizationId: projects.organizationId,
+    name: projects.name,
+    description: projects.description,
+    status: projects.status,
+    priority: projects.priority,
+    startDate: projects.startDate,
+    endDate: projects.endDate,
+    estimatedHours: projects.estimatedHours,
+    actualHours: projects.actualHours,
+    budget: projects.budget,
+    color: projects.color,
+    icon: projects.icon,
+    settings: projects.settings,
+    createdBy: projects.createdBy,
+    createdAt: projects.createdAt,
+    updatedAt: projects.updatedAt
+  });
+  const newProject = newProjectResult[0];
+  try {
+    await db.insert(projectMembers).values({
       projectId: newProject.id,
       userId,
       role: "owner"
     });
-    return newProject;
-  });
+  } catch (error3) {
+    logger2.error("Failed to add owner to new project, rolling back...", {
+      error: error3,
+      projectId: newProject.id
+    });
+    await db.delete(projects).where(eq(projects.id, newProject.id));
+    throw error3;
+  }
+  const project = newProject;
   logger2.info("Project created", {
     projectId: project.id,
     organizationId,
@@ -50029,54 +50036,61 @@ var broadcastTaskEvent = /* @__PURE__ */ __name(async (projectId, taskId, eventT
 
 // src/services/task.service.ts
 var createTask3 = /* @__PURE__ */ __name(async (projectId, userId, data) => {
-  const task = await db.transaction(async (tx) => {
-    const maxPositionResult = await tx.select({
-      maxPosition: sql`COALESCE(MAX(${tasks.position}), 0)`
-    }).from(tasks).where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
-    const { maxPosition } = maxPositionResult[0];
-    const position = Number(maxPosition) + 1;
-    const newTaskResult = await tx.insert(tasks).values({
-      projectId,
-      title: data.title,
-      description: data.description,
-      status: data.status || TaskStatus.TODO,
-      priority: data.priority || TaskPriority.MEDIUM,
-      dueDate: data.dueDate,
-      estimatedHours: data.estimatedHours,
-      parentTaskId: data.parentTaskId,
-      position,
-      tags: data.tags || [],
-      customFields: data.customFields || {},
-      createdBy: userId
-    }).returning({
-      id: tasks.id,
-      projectId: tasks.projectId,
-      title: tasks.title,
-      description: tasks.description,
-      status: tasks.status,
-      priority: tasks.priority,
-      dueDate: tasks.dueDate,
-      estimatedHours: tasks.estimatedHours,
-      actualHours: tasks.actualHours,
-      parentTaskId: tasks.parentTaskId,
-      position: tasks.position,
-      tags: tasks.tags,
-      customFields: tasks.customFields,
-      createdBy: tasks.createdBy,
-      createdAt: tasks.createdAt,
-      updatedAt: tasks.updatedAt,
-      completedAt: tasks.completedAt
-    });
-    const newTask = newTaskResult[0];
+  const maxPositionResult = await db.select({
+    maxPosition: sql`COALESCE(MAX(${tasks.position}), 0)`
+  }).from(tasks).where(and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt)));
+  const { maxPosition } = maxPositionResult[0];
+  const position = Number(maxPosition) + 1;
+  const newTaskResult = await db.insert(tasks).values({
+    projectId,
+    title: data.title,
+    description: data.description,
+    status: data.status || TaskStatus.TODO,
+    priority: data.priority || TaskPriority.MEDIUM,
+    dueDate: data.dueDate,
+    estimatedHours: data.estimatedHours,
+    parentTaskId: data.parentTaskId,
+    position,
+    tags: data.tags || [],
+    customFields: data.customFields || {},
+    createdBy: userId
+  }).returning({
+    id: tasks.id,
+    projectId: tasks.projectId,
+    title: tasks.title,
+    description: tasks.description,
+    status: tasks.status,
+    priority: tasks.priority,
+    dueDate: tasks.dueDate,
+    estimatedHours: tasks.estimatedHours,
+    actualHours: tasks.actualHours,
+    parentTaskId: tasks.parentTaskId,
+    position: tasks.position,
+    tags: tasks.tags,
+    customFields: tasks.customFields,
+    createdBy: tasks.createdBy,
+    createdAt: tasks.createdAt,
+    updatedAt: tasks.updatedAt,
+    completedAt: tasks.completedAt
+  });
+  const newTask = newTaskResult[0];
+  try {
     if (data.assigneeIds && data.assigneeIds.length > 0) {
       const assigneeValues = data.assigneeIds.map((assigneeId) => ({
         taskId: newTask.id,
         userId: assigneeId
       }));
-      await tx.insert(taskAssignees).values(assigneeValues);
+      await db.insert(taskAssignees).values(assigneeValues);
     }
-    return newTask;
-  });
+  } catch (error3) {
+    logger2.error("Failed to add assignees to new task, rolling back...", {
+      error: error3,
+      taskId: newTask.id
+    });
+    await db.delete(tasks).where(eq(tasks.id, newTask.id));
+    throw error3;
+  }
+  const task = newTask;
   logger2.info("Task created", { taskId: task.id, projectId, userId });
   await broadcastTaskEvent(projectId, task.id, "TASK_CREATED" /* TASK_CREATED */, {
     status: task.status,
