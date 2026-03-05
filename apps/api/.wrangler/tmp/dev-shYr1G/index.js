@@ -47465,7 +47465,7 @@ init_drizzle_orm();
 init_db2();
 init_schema2();
 var generateSlug = /* @__PURE__ */ __name(async (name2) => {
-  let slug = name2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug = name2.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   let counter = 1;
   let uniqueSlug = slug;
   while (true) {
@@ -47481,37 +47481,44 @@ var generateSlug = /* @__PURE__ */ __name(async (name2) => {
 }, "generateSlug");
 var createOrganization = /* @__PURE__ */ __name(async (userId, data) => {
   const slug = await generateSlug(data.name);
-  const organization = await db.transaction(async (tx) => {
-    const newOrgResult = await tx.insert(organizations).values({
-      name: data.name,
-      slug,
-      ownerId: userId,
-      description: data.description,
-      website: data.website,
-      industry: data.industry,
-      size: data.size,
-      settings: {}
-    }).returning({
-      id: organizations.id,
-      name: organizations.name,
-      slug: organizations.slug,
-      description: organizations.description,
-      website: organizations.website,
-      industry: organizations.industry,
-      size: organizations.size,
-      logoUrl: organizations.logoUrl,
-      settings: organizations.settings,
-      createdAt: organizations.createdAt,
-      updatedAt: organizations.updatedAt
-    });
-    const newOrg = newOrgResult[0];
-    await tx.insert(organizationMembers).values({
+  const newOrgResult = await db.insert(organizations).values({
+    name: data.name,
+    slug,
+    ownerId: userId,
+    description: data.description,
+    website: data.website,
+    industry: data.industry,
+    size: data.size,
+    settings: {}
+  }).returning({
+    id: organizations.id,
+    name: organizations.name,
+    slug: organizations.slug,
+    description: organizations.description,
+    website: organizations.website,
+    industry: organizations.industry,
+    size: organizations.size,
+    logoUrl: organizations.logoUrl,
+    settings: organizations.settings,
+    createdAt: organizations.createdAt,
+    updatedAt: organizations.updatedAt
+  });
+  const newOrg = newOrgResult[0];
+  try {
+    await db.insert(organizationMembers).values({
       organizationId: newOrg.id,
       userId,
       role: OrganizationRole.OWNER
     });
-    return newOrg;
-  });
+  } catch (error3) {
+    logger2.error("Failed to add owner to new organization, rolling back...", {
+      error: error3,
+      organizationId: newOrg.id
+    });
+    await db.delete(organizations).where(eq(organizations.id, newOrg.id));
+    throw error3;
+  }
+  const organization = newOrg;
   logger2.info("Organization created", {
     organizationId: organization.id,
     userId,

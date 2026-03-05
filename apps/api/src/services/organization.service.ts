@@ -61,7 +61,7 @@ interface OrganizationWithRole extends Organization {
  * Generate unique slug from name
  */
 const generateSlug = async (name: string): Promise<string> => {
-  let slug = name
+  const slug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -106,45 +106,53 @@ export const createOrganization = async (
   // Generate unique slug
   const slug = await generateSlug(data.name);
 
-  // ✅ ELITE: Use transaction with 'tx' object for all operations
-  const organization = await db.transaction(async (tx: typeof db) => {
-    // Create organization using 'tx'
-    const newOrgResult = await tx
-      .insert(organizations)
-      .values({
-        name: data.name,
-        slug,
-        ownerId: userId,
-        description: data.description,
-        website: data.website,
-        industry: data.industry,
-        size: data.size,
-        settings: {},
-      })
-      .returning({
-        id: organizations.id,
-        name: organizations.name,
-        slug: organizations.slug,
-        description: organizations.description,
-        website: organizations.website,
-        industry: organizations.industry,
-        size: organizations.size,
-        logoUrl: organizations.logoUrl,
-        settings: organizations.settings,
-        createdAt: organizations.createdAt,
-        updatedAt: organizations.updatedAt,
-      });
-    const newOrg = newOrgResult[0];
+  // Proceed without db.transaction() because neon-http does not support interactive transactions
+  // 1. Create organization
+  const newOrgResult = await db
+    .insert(organizations)
+    .values({
+      name: data.name,
+      slug,
+      ownerId: userId,
+      description: data.description,
+      website: data.website,
+      industry: data.industry,
+      size: data.size,
+      settings: {},
+    })
+    .returning({
+      id: organizations.id,
+      name: organizations.name,
+      slug: organizations.slug,
+      description: organizations.description,
+      website: organizations.website,
+      industry: organizations.industry,
+      size: organizations.size,
+      logoUrl: organizations.logoUrl,
+      settings: organizations.settings,
+      createdAt: organizations.createdAt,
+      updatedAt: organizations.updatedAt,
+    });
+  const newOrg = newOrgResult[0];
 
-    // Add creator as owner using 'tx'
-    await tx.insert(organizationMembers).values({
+  try {
+    // 2. Add creator as owner
+    await db.insert(organizationMembers).values({
       organizationId: newOrg.id,
       userId,
       role: OrganizationRole.OWNER,
     });
+  } catch (error) {
+    // Manual rollback: If adding the member fails, delete the created organization
+    logger.error('Failed to add owner to new organization, rolling back...', {
+      error,
+      organizationId: newOrg.id,
+    });
+    await db.delete(organizations).where(eq(organizations.id, newOrg.id));
+    throw error;
+  }
 
-    return newOrg;
-  });
+  const organization = newOrg;
 
   logger.info('Organization created', {
     organizationId: organization.id,
