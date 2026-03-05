@@ -36,6 +36,7 @@ import type {
   UpdateProjectData,
 } from '@validiant/shared';
 import { useAuthStore } from '../store/auth';
+import { logger } from './logger';
 
 /**
  * API Configuration with URL Normalization
@@ -101,12 +102,12 @@ apiClient.interceptors.request.use(
   (config) => {
     // Log requests in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+      logger.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     }
     return config;
   },
   (error) => {
-    console.error('[API] Request error:', error);
+    logger.error('[API] Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -127,7 +128,7 @@ apiClient.interceptors.response.use(
   (error: AxiosError<APIError>) => {
     // Handle network errors
     if (!error.response) {
-      console.error('[API] Network error:', error.message);
+      logger.error('[API] Network error:', error.message);
       return Promise.reject({
         success: false,
         error: 'NetworkError',
@@ -147,7 +148,7 @@ apiClient.interceptors.response.use(
         typeof window !== 'undefined' &&
         !window.location.pathname.includes('/auth/login')
       ) {
-        console.warn('[API] Authentication required, redirecting to login...');
+        logger.warn('[API] Authentication required, redirecting to login...');
 
         // CRITICAL FIX: Clear Zustand auth state before redirecting.
         // Without this, the login page's auth guard sees isAuthenticated=true
@@ -164,12 +165,12 @@ apiClient.interceptors.response.use(
 
     // Handle permission errors (403)
     if (statusCode === 403) {
-      console.error('[API] Permission denied:', response.data?.message);
+      logger.error('[API] Permission denied:', response.data?.message);
     }
 
     // Handle server errors (500+)
     if (statusCode >= 500) {
-      console.error('[API] Server error:', response.data?.message);
+      logger.error('[API] Server error:', response.data?.message);
     }
 
     // Return structured error
