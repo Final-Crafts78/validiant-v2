@@ -10,10 +10,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from '@/lib/utils';
 import { organizationsApi } from '@/lib/api';
-import { CreateOrganizationModal } from '@/components/modals/CreateOrganizationModal';
+import { CreateOrganizationModalTrigger } from '@/components/modals/CreateOrganizationModalTrigger';
 import {
   Building2,
-  Plus,
   Search,
   Users,
   FolderKanban,
@@ -135,7 +134,7 @@ function OrganizationCard({ org }: { org: Organization }) {
 /**
  * Empty state component
  */
-function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
+function EmptyState() {
   return (
     <div className="card">
       <div className="card-body text-center py-16">
@@ -150,10 +149,7 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
           manage projects together.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button onClick={onCreateClick} className="btn btn-primary btn-md">
-            <Plus className="h-5 w-5" />
-            <span>Create Organization</span>
-          </button>
+          <CreateOrganizationModalTrigger label="Create Organization" />
           <button className="btn btn-outline btn-md">
             <UserPlus className="h-5 w-5" />
             <span>Join Organization</span>
@@ -169,7 +165,7 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
  */
 export default function OrganizationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+  // const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const {
     data: response,
@@ -231,13 +227,7 @@ export default function OrganizationsPage() {
             <UserPlus className="h-5 w-5" />
             <span>Join</span>
           </button>
-          <button
-            onClick={() => setCreateModalOpen(true)}
-            className="btn btn-primary btn-md"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Create</span>
-          </button>
+          <CreateOrganizationModalTrigger />
         </div>
       </div>
 
@@ -289,13 +279,10 @@ export default function OrganizationsPage() {
           </div>
         </>
       ) : (
-        <EmptyState onCreateClick={() => setCreateModalOpen(true)} />
+        <EmptyState />
       )}
 
-      <CreateOrganizationModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {/* Modal managed by Trigger */}
     </div>
   );
 }
