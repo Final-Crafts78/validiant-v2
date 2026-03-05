@@ -7,7 +7,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { format } from '@/lib/utils';
+import { organizationsApi } from '@/lib/api';
+import { CreateOrganizationModal } from '@/components/modals/CreateOrganizationModal';
 import {
   Building2,
   Plus,
@@ -31,39 +34,6 @@ interface Organization {
   projectCount: number;
   createdAt: string;
 }
-
-/**
- * Mock organizations data
- */
-const mockOrganizations: Organization[] = [
-  {
-    id: '1',
-    name: 'Acme Corporation',
-    description: 'Leading provider of innovative solutions',
-    role: 'owner',
-    memberCount: 24,
-    projectCount: 12,
-    createdAt: '2025-06-15',
-  },
-  {
-    id: '2',
-    name: 'TechStart Inc.',
-    description: 'Building the future of technology',
-    role: 'admin',
-    memberCount: 15,
-    projectCount: 8,
-    createdAt: '2025-09-20',
-  },
-  {
-    id: '3',
-    name: 'Creative Agency',
-    description: 'Design and marketing excellence',
-    role: 'member',
-    memberCount: 10,
-    projectCount: 5,
-    createdAt: '2025-11-10',
-  },
-];
 
 /**
  * Role badge component
@@ -165,7 +135,7 @@ function OrganizationCard({ org }: { org: Organization }) {
 /**
  * Empty state component
  */
-function EmptyState() {
+function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
     <div className="card">
       <div className="card-body text-center py-16">
@@ -180,7 +150,7 @@ function EmptyState() {
           manage projects together.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button className="btn btn-primary btn-md">
+          <button onClick={onCreateClick} className="btn btn-primary btn-md">
             <Plus className="h-5 w-5" />
             <span>Create Organization</span>
           </button>
@@ -199,10 +169,52 @@ function EmptyState() {
  */
 export default function OrganizationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // TODO: Replace with actual data fetching
-  const organizations = mockOrganizations;
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['organizations', 'my'],
+    queryFn: () => organizationsApi.getAll(),
+  });
+
+  // Extract organizations from response; default to empty array
+  // We type-cast here to match the local UI interface which expects memberCount/role etc.
+  const organizations = (response?.data?.data?.organizations ||
+    []) as unknown as Organization[];
+
+  // Basic search filter
+  const filteredOrganizations = organizations.filter(
+    (org) =>
+      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      org.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const hasOrganizations = organizations.length > 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center p-8">
+        <span className="loading loading-spinner text-primary"></span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center">
+        <p className="text-red-500 mb-2">Failed to load organizations</p>
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => window.location.reload()}
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -219,7 +231,10 @@ export default function OrganizationsPage() {
             <UserPlus className="h-5 w-5" />
             <span>Join</span>
           </button>
-          <button className="btn btn-primary btn-md">
+          <button
+            onClick={() => setCreateModalOpen(true)}
+            className="btn btn-primary btn-md"
+          >
             <Plus className="h-5 w-5" />
             <span>Create</span>
           </button>
@@ -246,7 +261,7 @@ export default function OrganizationsPage() {
 
           {/* Organizations Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {organizations.map((org) => (
+            {filteredOrganizations.map((org) => (
               <OrganizationCard key={org.id} org={org} />
             ))}
           </div>
@@ -274,8 +289,13 @@ export default function OrganizationsPage() {
           </div>
         </>
       ) : (
-        <EmptyState />
+        <EmptyState onCreateClick={() => setCreateModalOpen(true)} />
       )}
+
+      <CreateOrganizationModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
     </div>
   );
 }

@@ -373,6 +373,7 @@ export interface TaskWithDetails extends Task {
  * Project creation data
  */
 export interface CreateProjectData {
+  organizationId: string;
   name: string;
   key?: string;
   description?: string;

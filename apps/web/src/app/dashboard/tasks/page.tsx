@@ -21,6 +21,7 @@ import { format } from '@/lib/utils';
 import { tasksApi } from '@/lib/api';
 import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
+import { CreateTaskModal } from '@/components/modals/CreateTaskModal';
 import type { Task } from '@validiant/shared';
 import {
   CheckSquare,
@@ -198,7 +199,7 @@ function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
 // ---------------------------------------------------------------------------
 // Empty State
 // ---------------------------------------------------------------------------
-function EmptyState() {
+function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
     <div className="bg-white border border-dashed border-slate-200 rounded-xl py-16 text-center">
       <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -213,6 +214,7 @@ function EmptyState() {
       </p>
       <button
         type="button"
+        onClick={onCreateClick}
         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
       >
         <Plus className="h-4 w-4" />
@@ -232,6 +234,7 @@ function TasksPageContent() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const openTask = (taskId: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -346,6 +349,7 @@ function TasksPageContent() {
           </button>
           <button
             type="button"
+            onClick={() => setCreateModalOpen(true)}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0"
           >
             <Plus className="h-4 w-4" />
@@ -490,7 +494,7 @@ function TasksPageContent() {
           </div>
         </>
       ) : (
-        <EmptyState />
+        <EmptyState onCreateClick={() => setCreateModalOpen(true)} />
       )}
 
       {/* Task Detail Slide-Over — opens when ?taskId is present */}
@@ -500,6 +504,12 @@ function TasksPageContent() {
       <BulkUploadWizard
         open={bulkUploadOpen}
         onClose={() => setBulkUploadOpen(false)}
+      />
+
+      {/* Create Task Modal */}
+      <CreateTaskModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
       />
     </div>
   );

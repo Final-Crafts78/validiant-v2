@@ -34,6 +34,10 @@ import type {
   UpdateTaskData,
   CreateProjectData,
   UpdateProjectData,
+  Organization,
+  CreateOrganizationData,
+  UpdateOrganizationData,
+  OrganizationMember,
 } from '@validiant/shared';
 import { useAuthStore } from '../store/auth';
 import { logger } from './logger';
@@ -414,4 +418,54 @@ export const passkeyApi = {
     deviceName?: string;
   }): Promise<AxiosResponse<APIResponse<unknown>>> =>
     post<APIResponse<unknown>>('/passkey/register/verify', data),
+};
+
+// ---------------------------------------------------------------------------
+// Organizations API Service
+// ---------------------------------------------------------------------------
+
+export const organizationsApi = {
+  getAll: (): Promise<
+    AxiosResponse<APIResponse<{ organizations: Organization[] }>>
+  > => get<APIResponse<{ organizations: Organization[] }>>('/organizations/my'),
+
+  getById: (id: string): Promise<AxiosResponse<APIResponse<Organization>>> =>
+    get<APIResponse<Organization>>(`/organizations/${id}`),
+
+  create: (
+    data: CreateOrganizationData
+  ): Promise<AxiosResponse<APIResponse<Organization>>> =>
+    post<APIResponse<Organization>>('/organizations', data),
+
+  update: (
+    id: string,
+    data: Partial<UpdateOrganizationData>
+  ): Promise<AxiosResponse<APIResponse<Organization>>> =>
+    patch<APIResponse<Organization>>(`/organizations/${id}`, data),
+
+  delete: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+    del<APIResponse<{ success: boolean }>>(`/organizations/${id}`),
+
+  getMembers: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ members: OrganizationMember[] }>>> =>
+    get<APIResponse<{ members: OrganizationMember[] }>>(
+      `/organizations/${id}/members`
+    ),
+
+  invite: (
+    id: string,
+    data: { email: string; role: string }
+  ): Promise<AxiosResponse<APIResponse<{ inviteUrl: string }>>> =>
+    post<APIResponse<{ inviteUrl: string }>>(
+      `/organizations/${id}/invites`,
+      data
+    ),
+
+  getProjects: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ projects: Project[] }>>> =>
+    get<APIResponse<{ projects: Project[] }>>(`/organizations/${id}/projects`),
 };
