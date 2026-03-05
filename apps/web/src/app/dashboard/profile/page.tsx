@@ -552,7 +552,7 @@ export default function ProfilePage() {
 
                     // 1. Get registration options from server
                     const optionsRes = await passkeyApi.generateOptions();
-                    const optionsData = optionsRes.data as Record<
+                    const optionsData = optionsRes.data as unknown as Record<
                       string,
                       unknown
                     >;
@@ -561,7 +561,9 @@ export default function ProfilePage() {
                     const { startRegistration } =
                       await import('@simplewebauthn/browser');
                     const attResp = await startRegistration(
-                      optionsData as Parameters<typeof startRegistration>[0]
+                      optionsData as unknown as Parameters<
+                        typeof startRegistration
+                      >[0]
                     );
 
                     // 3. Verify with server

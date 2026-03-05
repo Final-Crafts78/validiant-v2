@@ -157,13 +157,10 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {user.firstName.charAt(0)}
-            {user.lastName.charAt(0)}
+            {user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
           </Text>
         </View>
-        <Text style={styles.userName}>
-          {user.firstName} {user.lastName}
-        </Text>
+        <Text style={styles.userName}>{user.fullName}</Text>
         <Text style={styles.userEmail}>{user.email}</Text>
         <View style={styles.roleBadge}>
           <Text style={styles.roleBadgeText}>
@@ -176,11 +173,7 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <ProfileSection title="Account Information" />
         <View style={styles.card}>
-          <InfoItem
-            icon="👤"
-            label="Full Name"
-            value={`${user.firstName} ${user.lastName}`}
-          />
+          <InfoItem icon="👤" label="Full Name" value={user.fullName} />
           <View style={styles.divider} />
           <InfoItem icon="📧" label="Email" value={user.email} />
           <View style={styles.divider} />

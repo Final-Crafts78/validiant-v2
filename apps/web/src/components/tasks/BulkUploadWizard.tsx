@@ -52,7 +52,6 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
   const parseFile = useCallback(async (f: File) => {
     try {
       setParseError('');
-      // @ts-expect-error - SheetJS types are missing in this monorepo setup
       const XLSX = await import(/* webpackIgnore: true */ 'xlsx');
       const buffer = await f.arrayBuffer();
       const wb = XLSX.read(buffer, { type: 'array' });

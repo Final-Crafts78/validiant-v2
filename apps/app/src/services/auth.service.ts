@@ -4,7 +4,7 @@
  * API calls for authentication operations.
  */
 
-import { api } from './api';
+import api from './api';
 import type { User } from '@validiant/shared';
 
 /**

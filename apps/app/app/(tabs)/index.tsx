@@ -99,9 +99,7 @@ export default function HomeScreen() {
       {/* Welcome Section */}
       <View style={styles.welcomeSection}>
         <Text style={styles.welcomeText}>Welcome back,</Text>
-        <Text style={styles.userName}>
-          {user.firstName} {user.lastName}
-        </Text>
+        <Text style={styles.userName}>{user.fullName}</Text>
         <Text style={styles.welcomeSubtext}>
           Here's what's happening with your projects today.
         </Text>
