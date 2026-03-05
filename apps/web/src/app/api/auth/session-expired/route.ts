@@ -22,11 +22,40 @@ import { ROUTES } from '@/lib/config';
 export async function GET(request: Request) {
   const cookieStore = cookies();
 
+  // Cookie configuration mirroring auth.actions.ts
+  const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
+  };
+
   console.log('[Session Cleanup] Clearing authentication cookies');
 
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
-  cookieStore.delete('accessToken');
-  cookieStore.delete('refreshToken');
+  cookieStore.set({
+    name: 'accessToken',
+    value: '',
+    expires: new Date(0), // Expire instantly in the past
+    ...COOKIE_OPTIONS,
+  });
+
+  cookieStore.set({
+    name: 'refreshToken',
+    value: '',
+    expires: new Date(0),
+    ...COOKIE_OPTIONS,
+  });
+
+  cookieStore.delete({
+    name: 'accessToken',
+    ...COOKIE_OPTIONS,
+  });
+  cookieStore.delete({
+    name: 'refreshToken',
+    ...COOKIE_OPTIONS,
+  });
 
   // Redirect back to login
   return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));

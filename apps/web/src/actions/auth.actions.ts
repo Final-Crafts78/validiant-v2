@@ -89,19 +89,25 @@ function clearAuthCookies() {
     name: 'accessToken',
     value: '',
     expires: new Date(0), // Expire instantly in the past
-    path: '/',
+    ...COOKIE_OPTIONS,
   });
 
   cookieStore.set({
     name: 'refreshToken',
     value: '',
     expires: new Date(0),
-    path: '/',
+    ...COOKIE_OPTIONS,
   });
 
   // 2. Also call delete as a fallback for Next.js internal state
-  cookieStore.delete('accessToken');
-  cookieStore.delete('refreshToken');
+  cookieStore.delete({
+    name: 'accessToken',
+    ...COOKIE_OPTIONS,
+  });
+  cookieStore.delete({
+    name: 'refreshToken',
+    ...COOKIE_OPTIONS,
+  });
 }
 
 /**
