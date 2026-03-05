@@ -198,7 +198,6 @@ function EmptyState() {
 export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  // const [createModalOpen, setCreateModalOpen] = useState(false);
 
   // Fetch projects from API
   const {
