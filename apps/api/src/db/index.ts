@@ -35,7 +35,7 @@ const getDb = () => {
 
     // Initialize Neon connection
     const sql = neon(url);
-    _db = drizzle(sql as any, { schema });
+    _db = drizzle(sql as Parameters<typeof drizzle>[0], { schema });
 
     console.log('[DB] Lazy-loaded Neon connection initialized');
   }
