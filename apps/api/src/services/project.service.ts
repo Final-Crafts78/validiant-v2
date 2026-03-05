@@ -7,13 +7,23 @@
  * Migrated from raw SQL to Drizzle ORM for type safety and better DX.
  */
 
-import { eq, and, isNull, sql, or, desc } from 'drizzle-orm';
+import { eq, and, isNull, sql, or, desc, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { projects, projectMembers, organizations, users } from '../db/schema';
 import { cache } from '../config/redis.config';
 import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { ProjectStatus, ProjectPriority } from '@validiant/shared';
+
+/**
+ * Pagination interface
+ */
+interface Pagination {
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
 
 /**
  * Project interface
@@ -32,7 +42,7 @@ interface Project {
   budget?: number;
   color?: string;
   icon?: string;
-  settings: any;
+  settings: Record<string, unknown>;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -249,21 +259,23 @@ export const updateProject = async (
   }
 ): Promise<Project> => {
   // Build update object with only provided fields
-  const updateData: any = {
+  const updateData: Partial<typeof projects.$inferInsert> & {
+    updatedAt: Date;
+  } = {
     updatedAt: new Date(),
+    ...(data.name !== undefined && { name: data.name }),
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.status !== undefined && { status: data.status }),
+    ...(data.priority !== undefined && { priority: data.priority }),
+    ...(data.startDate !== undefined && { startDate: data.startDate }),
+    ...(data.endDate !== undefined && { endDate: data.endDate }),
+    ...(data.estimatedHours !== undefined && {
+      estimatedHours: data.estimatedHours,
+    }),
+    ...(data.budget !== undefined && { budget: data.budget }),
+    ...(data.color !== undefined && { color: data.color }),
+    ...(data.icon !== undefined && { icon: data.icon }),
   };
-
-  if (data.name !== undefined) updateData.name = data.name;
-  if (data.description !== undefined) updateData.description = data.description;
-  if (data.status !== undefined) updateData.status = data.status;
-  if (data.priority !== undefined) updateData.priority = data.priority;
-  if (data.startDate !== undefined) updateData.startDate = data.startDate;
-  if (data.endDate !== undefined) updateData.endDate = data.endDate;
-  if (data.estimatedHours !== undefined)
-    updateData.estimatedHours = data.estimatedHours;
-  if (data.budget !== undefined) updateData.budget = data.budget;
-  if (data.color !== undefined) updateData.color = data.color;
-  if (data.icon !== undefined) updateData.icon = data.icon;
 
   if (Object.keys(updateData).length === 1) {
     // Only updatedAt was added
@@ -308,7 +320,7 @@ export const updateProject = async (
  */
 export const updateProjectSettings = async (
   projectId: string,
-  settings: any
+  settings: Record<string, unknown>
 ): Promise<Project> => {
   const projectResult = await db
     .update(projects)
@@ -373,13 +385,13 @@ export const listOrganizationProjects = async (
     page?: number;
     perPage?: number;
   }
-): Promise<{ projects: ProjectWithStats[]; pagination: any }> => {
+): Promise<{ projects: ProjectWithStats[]; pagination: Pagination }> => {
   const page = params?.page || 1;
   const perPage = Math.min(params?.perPage || 20, 100);
   const offset = (page - 1) * perPage;
 
   // Build WHERE conditions
-  const conditions: any[] = [
+  const conditions: Array<SQL<unknown> | undefined> = [
     eq(projects.organizationId, organizationId),
     isNull(projects.deletedAt),
   ];

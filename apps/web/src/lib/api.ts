@@ -58,13 +58,13 @@ export interface APIError {
   error: string;
   message: string;
   statusCode: number;
-  details?: any;
+  details?: unknown;
 }
 
 /**
  * API Success Response Interface
  */
-export interface APIResponse<T = any> {
+export interface APIResponse<T = unknown> {
   success: true;
   data?: T;
   message?: string;
@@ -195,7 +195,7 @@ apiClient.interceptors.response.use(
 /**
  * GET request
  */
-export const get = <T = any>(
+export const get = <T = unknown>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<AxiosResponse<T>> => {
@@ -205,7 +205,7 @@ export const get = <T = any>(
 /**
  * POST request
  */
-export const post = <T = any, D = any>(
+export const post = <T = unknown, D = unknown>(
   url: string,
   data?: D,
   config?: AxiosRequestConfig
@@ -216,7 +216,7 @@ export const post = <T = any, D = any>(
 /**
  * PUT request
  */
-export const put = <T = any, D = any>(
+export const put = <T = unknown, D = unknown>(
   url: string,
   data?: D,
   config?: AxiosRequestConfig
@@ -227,7 +227,7 @@ export const put = <T = any, D = any>(
 /**
  * PATCH request
  */
-export const patch = <T = any, D = any>(
+export const patch = <T = unknown, D = unknown>(
   url: string,
   data?: D,
   config?: AxiosRequestConfig
@@ -238,7 +238,7 @@ export const patch = <T = any, D = any>(
 /**
  * DELETE request
  */
-export const del = <T = any>(
+export const del = <T = unknown>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<AxiosResponse<T>> => {
@@ -253,19 +253,19 @@ export default apiClient;
 /**
  * Type guard to check if error is APIError
  */
-export const isAPIError = (error: any): error is APIError => {
+export const isAPIError = (error: unknown): error is APIError => {
   return (
-    error &&
     typeof error === 'object' &&
+    error !== null &&
     'success' in error &&
-    error.success === false
+    (error as Record<string, unknown>).success === false
   );
 };
 
 /**
  * Get error message from any error type
  */
-export const getErrorMessage = (error: any): string => {
+export const getErrorMessage = (error: unknown): string => {
   if (isAPIError(error)) {
     return error.message;
   }

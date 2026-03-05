@@ -22,6 +22,8 @@ import {
   addProjectMemberSchema,
   projectListQuerySchema,
   OrganizationRole,
+  ProjectStatus,
+  ProjectPriority,
 } from '@validiant/shared';
 
 /**
@@ -520,8 +522,8 @@ export const listOrganizationProjects = async (c: Context) => {
     const result = await projectService.listOrganizationProjects(
       organizationId,
       {
-        status: validatedQuery.status as any,
-        priority: validatedQuery.priority as any,
+        status: validatedQuery.status as ProjectStatus | undefined,
+        priority: validatedQuery.priority as ProjectPriority | undefined,
         search: validatedQuery.search,
         page: validatedQuery.page,
         perPage: validatedQuery.perPage,

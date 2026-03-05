@@ -37,6 +37,7 @@ import {
   updateMemberRoleSchema,
 } from '@validiant/shared';
 import * as organizationController from '../controllers/organization.controller';
+import * as projectController from '../controllers/project.controller';
 import { authenticate } from '../middleware/auth';
 
 /**
@@ -96,6 +97,18 @@ app.post('/accept-invite', organizationController.acceptInvite);
  * Response: 200 OK with organization object
  */
 app.get('/slug/:slug', organizationController.getOrganizationBySlug);
+
+/**
+ * GET /:organizationId/projects
+ * Get organization's projects
+ *
+ * Params: organizationId (UUID)
+ * Response: 200 OK with projects array
+ */
+app.get(
+  '/:organizationId/projects',
+  projectController.listOrganizationProjects
+);
 
 /**
  * GET /:id
