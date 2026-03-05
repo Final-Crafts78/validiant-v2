@@ -8,6 +8,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useWorkspaceStore } from '@/store/workspace';
 import { tasksApi } from '@/lib/api';
 import {
   Upload,
@@ -27,6 +28,7 @@ interface BulkUploadWizardProps {
 export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const activeProjectId = useWorkspaceStore((state) => state.activeProjectId);
 
   const [file, setFile] = useState<File | null>(null);
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
@@ -35,8 +37,10 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
 
   // Mutation to submit parsed rows
   const mutation = useMutation({
-    mutationFn: (tasks: Record<string, unknown>[]) =>
-      tasksApi.bulkCreate(tasks),
+    mutationFn: (tasks: Record<string, unknown>[]) => {
+      if (!activeProjectId) throw new Error('No active project selected.');
+      return tasksApi.bulkCreate(activeProjectId, tasks);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setStep('done');
@@ -48,6 +52,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
   const parseFile = useCallback(async (f: File) => {
     try {
       setParseError('');
+      // @ts-expect-error - SheetJS types are missing in this monorepo setup
       const XLSX = await import(/* webpackIgnore: true */ 'xlsx');
       const buffer = await f.arrayBuffer();
       const wb = XLSX.read(buffer, { type: 'array' });

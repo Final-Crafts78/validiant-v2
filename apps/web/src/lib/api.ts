@@ -332,9 +332,10 @@ export const tasksApi = {
 
   /** Bulk-create tasks from a parsed spreadsheet */
   bulkCreate: (
+    projectId: string,
     tasks: Record<string, unknown>[]
   ): Promise<AxiosResponse<APIResponse<{ created: number }>>> =>
-    post<APIResponse<{ created: number }>>('/tasks/bulk', { tasks }),
+    post<APIResponse<{ created: number }>>('/tasks/bulk', { projectId, tasks }),
 };
 
 // ---------------------------------------------------------------------------

@@ -16,6 +16,7 @@ import {
   createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
+  bulkUploadTaskSchema,
 } from '@validiant/shared';
 import * as taskController from '../controllers/task.controller';
 import { authenticate } from '../middleware/auth';
@@ -27,6 +28,11 @@ app.use('*', authenticate);
 
 // CRUD operations
 app.post('/', zValidator('json', createTaskSchema), taskController.createTask);
+app.post(
+  '/bulk',
+  zValidator('json', bulkUploadTaskSchema),
+  taskController.bulkUploadTasks
+);
 app.get('/my', taskController.getMyTasks);
 app.get('/:id', taskController.getTaskById);
 app.put(

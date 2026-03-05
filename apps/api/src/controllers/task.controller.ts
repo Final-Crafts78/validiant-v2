@@ -15,13 +15,14 @@ import { Context } from 'hono';
 import { z } from 'zod';
 import * as taskService from '../services/task.service';
 import * as projectService from '../services/project.service';
-import { TaskStatus } from '@validiant/shared';
+import { TaskStatus, TaskPriority } from '@validiant/shared';
 import {
   createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
   taskListQuerySchema,
   updateTaskPositionSchema,
+  bulkUploadTaskSchema,
 } from '@validiant/shared';
 
 /**
@@ -1178,6 +1179,80 @@ export const bulkUpdateTasks = async (c: Context) => {
       {
         success: false,
         error: 'Failed to bulk update tasks',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Bulk upload tasks
+ * POST /api/v1/tasks/bulk
+ *
+ * Payload validated by zValidator(bulkUploadTaskSchema) at route level
+ */
+export const bulkUploadTasks = async (c: Context) => {
+  try {
+    const user = c.get('user');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    const validatedData = (await c.req.json()) as z.infer<
+      typeof bulkUploadTaskSchema
+    >;
+
+    const hasAccess = await checkProjectAccess(
+      validatedData.projectId,
+      user.userId
+    );
+    if (!hasAccess) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'You are not a member of this project',
+        },
+        403
+      );
+    }
+
+    const createdTasks = [];
+    for (const taskData of validatedData.tasks) {
+      const task = await taskService.createTask(
+        validatedData.projectId,
+        user.userId,
+        {
+          ...taskData,
+          priority: (taskData.priority as TaskPriority) || TaskPriority.MEDIUM,
+        }
+      );
+      createdTasks.push(task);
+    }
+
+    return c.json(
+      {
+        success: true,
+        message: 'Tasks uploaded successfully',
+        data: { created: createdTasks.length },
+      },
+      201
+    );
+  } catch (error) {
+    console.error('Bulk upload tasks error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to bulk upload tasks',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500
