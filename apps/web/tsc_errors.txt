@@ -1,0 +1,2 @@
+﻿src/components/tasks/TaskDetailSlideOver.tsx(52,11): error TS2304: Cannot find name 'Search'.
+src/hooks/useOrganizations.ts(2,1): error TS6133: 'useWorkspaceStore' is declared but its value is never read.

@@ -35,6 +35,7 @@ import {
   Loader2,
   Upload,
 } from 'lucide-react';
+import { TaskStatus } from '@validiant/shared';
 
 // ---------------------------------------------------------------------------
 // Shared input class
@@ -96,17 +97,26 @@ function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
   const isOverdue =
     task.dueDate != null &&
     new Date(task.dueDate) < new Date() &&
-    task.status !== 'completed' &&
-    task.status !== 'cancelled';
+    task.status !== TaskStatus.COMPLETED &&
+    task.status !== TaskStatus.VERIFIED;
 
   // Map all known TaskStatus values to an icon; unknown statuses get a fallback.
-  const statusIconMap: Record<string, React.ReactNode> = {
-    todo: <Circle className="h-5 w-5 text-slate-400 shrink-0" />,
-    in_progress: <Clock className="h-5 w-5 text-blue-600 shrink-0" />,
-    in_review: <Clock className="h-5 w-5 text-amber-500 shrink-0" />,
-    blocked: <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />,
-    completed: <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />,
-    cancelled: <Circle className="h-5 w-5 text-slate-300 shrink-0" />,
+  const statusIconMap: Partial<Record<TaskStatus, React.ReactNode>> = {
+    [TaskStatus.PENDING]: (
+      <Circle className="h-5 w-5 text-slate-400 shrink-0" />
+    ),
+    [TaskStatus.IN_PROGRESS]: (
+      <Clock className="h-5 w-5 text-blue-600 shrink-0" />
+    ),
+    [TaskStatus.VERIFIED]: (
+      <Clock className="h-5 w-5 text-amber-500 shrink-0" />
+    ),
+    [TaskStatus.COMPLETED]: (
+      <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+    ),
+    [TaskStatus.UNASSIGNED]: (
+      <Circle className="h-5 w-5 text-slate-300 shrink-0" />
+    ),
   };
   const statusIcon = statusIconMap[task.status] ?? (
     <Circle className="h-5 w-5 text-slate-400 shrink-0" />
@@ -144,7 +154,7 @@ function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
             <div className="flex-1 min-w-0">
               <h3
                 className={`text-base font-semibold leading-snug ${
-                  task.status === 'completed'
+                  task.status === TaskStatus.COMPLETED
                     ? 'text-slate-400 line-through'
                     : 'text-slate-900'
                 }`}
@@ -304,9 +314,11 @@ function TasksPageContent() {
   // ------------------------------------------------------------------
   const stats = {
     total: liveTasks.length,
-    todo: liveTasks.filter((t) => t.status === 'todo').length,
-    inProgress: liveTasks.filter((t) => t.status === 'in_progress').length,
-    completed: liveTasks.filter((t) => t.status === 'completed').length,
+    pending: liveTasks.filter((t) => t.status === TaskStatus.PENDING).length,
+    inProgress: liveTasks.filter((t) => t.status === TaskStatus.IN_PROGRESS)
+      .length,
+    completed: liveTasks.filter((t) => t.status === TaskStatus.COMPLETED)
+      .length,
   };
 
   const hasTasks = liveTasks.length > 0;
@@ -351,11 +363,13 @@ function TasksPageContent() {
               </p>
             </div>
 
-            {/* To Do */}
+            {/* Pending */}
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-slate-900">{stats.todo}</p>
+              <p className="text-3xl font-bold text-slate-900">
+                {stats.pending}
+              </p>
               <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                To Do
+                Pending
               </p>
             </div>
 
@@ -407,12 +421,11 @@ function TasksPageContent() {
                   className={`${inputCls} pl-9 py-2 appearance-none`}
                 >
                   <option value="all">All Status</option>
-                  <option value="todo">To Do</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="in_review">In Review</option>
-                  <option value="blocked">Blocked</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value={TaskStatus.UNASSIGNED}>Unassigned</option>
+                  <option value={TaskStatus.PENDING}>Pending</option>
+                  <option value={TaskStatus.IN_PROGRESS}>In Progress</option>
+                  <option value={TaskStatus.VERIFIED}>Verified</option>
+                  <option value={TaskStatus.COMPLETED}>Completed</option>
                 </select>
               </div>
 

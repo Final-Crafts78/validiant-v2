@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useWorkspaceStore } from '@/store/workspace';
 import * as orgService from '@/services/organization.service';
 
 const ORG_KEYS = {

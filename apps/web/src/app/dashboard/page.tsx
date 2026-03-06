@@ -12,7 +12,7 @@ import { useAuthStore } from '@/store/auth';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { tasksApi, projectsApi, organizationsApi } from '@/lib/api';
-import type { Task, Project } from '@validiant/shared';
+import { Task, Project, TaskStatus } from '@validiant/shared';
 import {
   Activity,
   ShieldCheck,
@@ -66,13 +66,11 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
   }, [user]);
 
   const activeTasks = tasks.filter(
-    (t) =>
-      (t.status as string) !== 'Completed' &&
-      (t.status as string) !== 'Verified'
+    (t) => t.status !== TaskStatus.COMPLETED && t.status !== TaskStatus.VERIFIED
   ).length;
 
   const pendingTasks = tasks.filter(
-    (t) => (t.status as string) === 'Pending'
+    (t) => t.status === TaskStatus.PENDING
   ).length;
 
   const activeProjects = projects.filter((p) => p.status === 'active').length;

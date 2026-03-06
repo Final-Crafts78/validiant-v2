@@ -16,7 +16,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksApi } from '@/lib/api';
-import type { Task } from '@validiant/shared';
+import { Task, TaskStatus } from '@validiant/shared';
 import {
   X,
   Clock,
@@ -28,7 +28,6 @@ import {
   CheckCircle2,
   Circle,
   Ban,
-  Pause,
   Search,
 } from 'lucide-react';
 
@@ -36,34 +35,33 @@ import {
 // Status config
 // ---------------------------------------------------------------------------
 const STATUSES = [
-  { value: 'todo', label: 'To Do', icon: Circle, color: 'text-slate-500' },
   {
-    value: 'in_progress',
+    value: TaskStatus.PENDING,
+    label: 'Pending',
+    icon: Circle,
+    color: 'text-slate-500',
+  },
+  {
+    value: TaskStatus.IN_PROGRESS,
     label: 'In Progress',
     icon: Clock,
     color: 'text-blue-600',
   },
   {
-    value: 'in_review',
-    label: 'In Review',
+    value: TaskStatus.VERIFIED,
+    label: 'Verified',
     icon: Search,
     color: 'text-amber-500',
   },
   {
-    value: 'blocked',
-    label: 'Blocked',
-    icon: Pause,
-    color: 'text-red-500',
-  },
-  {
-    value: 'completed',
+    value: TaskStatus.COMPLETED,
     label: 'Completed',
     icon: CheckCircle2,
     color: 'text-emerald-600',
   },
   {
-    value: 'cancelled',
-    label: 'Cancelled',
+    value: TaskStatus.UNASSIGNED,
+    label: 'Unassigned',
     icon: Ban,
     color: 'text-slate-400',
   },
