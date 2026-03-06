@@ -37,7 +37,7 @@ import type {
   Organization,
   CreateOrganizationData,
   UpdateOrganizationData,
-  OrganizationMember,
+  OrganizationMemberWithUser,
 } from '@validiant/shared';
 import { useAuthStore } from '../store/auth';
 import { logger } from './logger';
@@ -462,8 +462,10 @@ export const organizationsApi = {
 
   getMembers: (
     id: string
-  ): Promise<AxiosResponse<APIResponse<{ members: OrganizationMember[] }>>> =>
-    get<APIResponse<{ members: OrganizationMember[] }>>(
+  ): Promise<
+    AxiosResponse<APIResponse<{ members: OrganizationMemberWithUser[] }>>
+  > =>
+    get<APIResponse<{ members: OrganizationMemberWithUser[] }>>(
       `/organizations/${id}/members`
     ),
 

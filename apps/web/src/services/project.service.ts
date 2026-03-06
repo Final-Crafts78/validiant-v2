@@ -49,3 +49,30 @@ export const addProjectMember = async (
   payload: { userId: string; role: 'admin' | 'member' | 'viewer' }
 ): Promise<void> =>
   post(`/projects/${projectId}/members`, payload).then(() => undefined);
+
+export interface ProjectMember {
+  id: string;
+  userId: string;
+  projectId: string;
+  role: 'admin' | 'member' | 'viewer';
+  joinedAt: string;
+  user: {
+    id: string;
+    fullName: string;
+    email: string;
+    avatarUrl?: string;
+  };
+}
+
+export const getProjectMembers = async (
+  projectId: string
+): Promise<ProjectMember[]> =>
+  get<APIResponse<{ members: ProjectMember[] }>>(
+    `/projects/${projectId}/members`
+  ).then((res) => res.data.data?.members ?? []);
+
+export const removeProjectMember = async (
+  projectId: string,
+  userId: string
+): Promise<void> =>
+  del(`/projects/${projectId}/members/${userId}`).then(() => undefined);

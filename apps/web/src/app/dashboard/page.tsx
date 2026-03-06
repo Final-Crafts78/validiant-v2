@@ -13,6 +13,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { tasksApi, projectsApi } from '@/lib/api';
 import { Task, Project, TaskStatus } from '@validiant/shared';
+import { usePermissions } from '@/hooks/usePermissions';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 import {
   Activity,
   ShieldCheck,
@@ -256,13 +258,15 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
               Pending Tasks
             </button>
 
-            <button
-              onClick={() => router.push('/dashboard/organizations')}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
-            >
-              <Lock className="h-4 w-4 text-slate-500 shrink-0" /> Manage
-              Organizations
-            </button>
+            <PermissionGate permission="manageOrg">
+              <button
+                onClick={() => router.push('/dashboard/organizations')}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+              >
+                <Lock className="h-4 w-4 text-slate-500 shrink-0" /> Manage
+                Organizations
+              </button>
+            </PermissionGate>
 
             <button
               onClick={() => router.push('/dashboard/projects')}
@@ -279,34 +283,76 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// BGV Dashboard Stub
-// ---------------------------------------------------------------------------
-function BGVDashboard({ orgId }: { orgId: string }) {
-  return (
-    <div className="p-8 text-center text-slate-500">
-      <p className="text-xl font-semibold mb-2">BGV Dashboard</p>
-      <p className="text-sm">
-        Compliance view is currently being provisioned for organization {orgId}.
-      </p>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Main Dashboard Switcher Component
 // ---------------------------------------------------------------------------
 export default function DashboardPage() {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
-  const { data: orgs = [] } = useOrganizations();
-  const activeOrg = orgs.find((o) => o.id === activeOrgId);
+  const { isLoading: isOrgsLoading } = useOrganizations();
+  const { isGuest, isLoading: isPermsLoading } = usePermissions();
 
-  const isBGV =
-    activeOrg?.industryType?.toLowerCase().includes('bgv') ||
-    activeOrg?.industryType?.toLowerCase().includes('legal') ||
-    activeOrg?.industryType?.toLowerCase().includes('compliance');
+  if (isOrgsLoading || isPermsLoading)
+    return <div className="p-8 text-slate-400">Loading workspace...</div>;
 
   if (!activeOrgId)
-    return <div className="p-8 text-slate-400">Loading workspace...</div>;
-  if (isBGV) return <BGVDashboard orgId={activeOrgId} />;
+    return <div className="p-8 text-slate-400">No workspace selected.</div>;
+
+  // GUEST gets a read-only shell with no action buttons
+  if (isGuest) return <GuestDashboard orgId={activeOrgId} />;
+
   return <GeneralDashboard orgId={activeOrgId} />;
+}
+
+function GuestDashboard({ orgId: _orgId }: { orgId: string }) {
+  const router = useRouter();
+  const { data: tasksRes } = useQuery({
+    queryKey: ['tasks', 'my'],
+    queryFn: () => tasksApi.getAll(),
+    staleTime: 2 * 60 * 1000,
+  });
+  const tasks: Task[] = tasksRes?.data?.data?.tasks ?? [];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-extrabold text-slate-900">Your Tasks</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          You have guest access. You can view and update tasks assigned to you.
+        </p>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-slate-900">
+            Assigned to You
+          </h2>
+          <span className="text-xs text-slate-400">{tasks.length} tasks</span>
+        </div>
+        {tasks.length === 0 ? (
+          <div className="py-12 text-center text-sm text-slate-400">
+            No tasks assigned yet.
+          </div>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer"
+                onClick={() => router.push('/dashboard/tasks')}
+              >
+                <CheckCircle2 className="w-4 h-4 text-slate-300 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-800 truncate">
+                    {task.title}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {task.status} · {task.priority}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
 }

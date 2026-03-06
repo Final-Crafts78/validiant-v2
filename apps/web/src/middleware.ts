@@ -27,6 +27,9 @@ const PROTECTED_ROUTES = [
  */
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
+// ✅ NEW: routes that are accessible while authenticated but NOT gated
+const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/dashboard/onboarding'];
+
 /**
  * Check if path matches any route pattern
  */
@@ -47,9 +50,10 @@ export function middleware(request: NextRequest) {
   // Check if route is protected
   const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
+  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
-  // Redirect unauthenticated users from protected routes to login
-  if (isProtectedRoute && !isAuthenticated) {
+  // Unauthenticated → login
+  if (isProtectedRoute && !isSemiPublic && !isAuthenticated) {
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);
@@ -60,11 +64,11 @@ export function middleware(request: NextRequest) {
   if (isAuthRoute && isAuthenticated) {
     // Check if there's a 'from' parameter to redirect back
     const fromParam = request.nextUrl.searchParams.get('from');
-    const dashboardUrl = new URL(
+    const dest = new URL(
       fromParam && fromParam.startsWith('/') ? fromParam : '/dashboard',
       request.url
     );
-    return NextResponse.redirect(dashboardUrl);
+    return NextResponse.redirect(dest);
   }
 
   // Allow request to proceed (default allow pattern)

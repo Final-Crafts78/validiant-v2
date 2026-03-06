@@ -19,6 +19,7 @@ import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitialize
 import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import type { AuthUser } from '@/types/auth.types';
+import { logger } from '@/lib/logger';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 
     // If no token, return null (middleware should have caught this)
     if (!accessToken) {
-      console.log('[Dashboard Layout] No access token found');
+      logger.log('[Dashboard Layout] No access token found');
       return null;
     }
 
@@ -49,7 +50,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
     const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
 
-    console.log('[Dashboard Layout] Fetching user from:', apiUrl);
+    logger.log('[Dashboard Layout] Fetching user from:', apiUrl);
 
     // Fetch user from API with Authorization header
     const response = await fetch(apiUrl, {
@@ -61,11 +62,11 @@ async function getCurrentUser(): Promise<AuthUser | null> {
       cache: 'no-store', // Always fetch fresh user data
     });
 
-    console.log('[Dashboard Layout] API response status:', response.status);
+    logger.log('[Dashboard Layout] API response status:', response.status);
 
     // CRITICAL: If unauthorized or forbidden, redirect to cleanup route
     if (response.status === 401 || response.status === 403) {
-      console.warn(
+      logger.warn(
         '[Dashboard Layout] Token invalid (401/403), redirecting to cleanup route'
       );
       redirect('/api/auth/session-expired');
@@ -73,7 +74,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 
     // If response is not OK, redirect to cleanup route
     if (!response.ok) {
-      console.warn(
+      logger.warn(
         '[Dashboard Layout] API returned error status:',
         response.status
       );
@@ -85,7 +86,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     try {
       data = await response.json();
     } catch (jsonError) {
-      console.error(
+      logger.error(
         '[Dashboard Layout] Failed to parse JSON response:',
         jsonError
       );
@@ -95,7 +96,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
 
     // Check if response indicates success and has user data
     if (!data.success || !data.data || !data.data.user) {
-      console.warn('[Dashboard Layout] Invalid response structure:', {
+      logger.warn('[Dashboard Layout] Invalid response structure:', {
         success: data.success,
         hasData: !!data.data,
         hasUser: !!(data.data && data.data.user),
@@ -104,7 +105,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
       redirect('/api/auth/session-expired');
     }
 
-    console.log(
+    logger.log(
       '[Dashboard Layout] Successfully fetched user:',
       data.data.user.email
     );
@@ -112,7 +113,7 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     // Extract user from nested data structure
     return data.data.user as AuthUser;
   } catch (error) {
-    console.error('[Dashboard Layout] Error fetching user:', error);
+    logger.error('[Dashboard Layout] Error fetching user:', error);
     // Redirect to cleanup route on any exception
     redirect('/api/auth/session-expired');
   }
@@ -140,7 +141,7 @@ async function getUserOrganizations(accessToken: string): Promise<
     const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
     const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`;
 
-    console.log('[Dashboard Layout] Fetching orgs from:', apiUrl);
+    logger.log('[Dashboard Layout] Fetching orgs from:', apiUrl);
 
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -152,14 +153,14 @@ async function getUserOrganizations(accessToken: string): Promise<
     });
 
     if (!response.ok) {
-      console.warn('[Dashboard Layout] Orgs fetch failed:', response.status);
+      logger.warn('[Dashboard Layout] Orgs fetch failed:', response.status);
       return [];
     }
 
     const data = await response.json();
     return data?.data?.organizations ?? [];
   } catch (error) {
-    console.error('[Dashboard Layout] Error fetching orgs:', error);
+    logger.error('[Dashboard Layout] Error fetching orgs:', error);
     return [];
   }
 }
@@ -179,8 +180,21 @@ export default async function DashboardLayout({
   // The cleanup route will have cleared cookies if there was an error,
   // so middleware will not redirect back here (breaking infinite loop)
   if (!user) {
-    console.log('[Dashboard Layout] No user found, redirecting to login');
+    logger.log('[Dashboard Layout] No user found, redirecting to login');
     redirect(ROUTES.LOGIN);
+  }
+
+  // ✅ NEW: Email verification gate
+  // Allow onboarding path through (user may not be verified yet when first creating org)
+  const headersList = headers();
+  const currentPath =
+    headersList.get('x-pathname') ||
+    headersList.get('x-invoke-path') ||
+    headersList.get('x-next-url') ||
+    '';
+
+  if (!user.emailVerified && !currentPath.includes('/dashboard/onboarding')) {
+    redirect('/auth/verify-email');
   }
 
   // Fetch user's orgs server-side (forward the accessToken)

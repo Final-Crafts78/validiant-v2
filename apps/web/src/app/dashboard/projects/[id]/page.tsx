@@ -1,14 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useProject,
   useUpdateProject,
   useDeleteProject,
+  useProjectMembers,
+  useAddProjectMember,
+  useRemoveProjectMember,
 } from '@/hooks/useProjects';
 import { useTasks, Task } from '@/hooks/useTasks';
 import { useWorkspaceStore } from '@/store/workspace';
-import { ProjectStatus, TaskStatus } from '@validiant/shared';
+import { organizationsApi } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import {
+  ProjectStatus,
+  TaskStatus,
+  OrganizationMemberWithUser,
+} from '@validiant/shared';
 import {
   ArrowLeft,
   Loader2,
@@ -18,6 +28,9 @@ import {
   Clock,
   Trash2,
   BarChart3,
+  UserPlus,
+  X,
+  Users,
 } from 'lucide-react';
 
 const STATUS_STYLES: Record<string, string> = {
@@ -37,6 +50,161 @@ const STATUS_OPTIONS = [
   { value: ProjectStatus.ARCHIVED, label: 'Archived' },
   { value: ProjectStatus.CANCELLED, label: 'Cancelled' },
 ];
+
+// ── Members Panel ─────────────────────────────────────────────────────────────
+function MembersPanel({
+  projectId,
+  orgId,
+}: {
+  projectId: string;
+  orgId: string;
+}) {
+  const [showAdd, setShowAdd] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [role, setRole] = useState<'admin' | 'member' | 'viewer'>('member');
+
+  const { data: members = [] } = useProjectMembers(projectId);
+  const addMember = useAddProjectMember(projectId);
+  const removeMember = useRemoveProjectMember(projectId);
+
+  // Fetch org members to populate the add-member dropdown
+  const { data: orgMembersRes } = useQuery({
+    queryKey: ['org-members', orgId],
+    queryFn: () => organizationsApi.getMembers(orgId),
+    enabled: !!orgId && showAdd,
+    staleTime: 2 * 60 * 1000,
+  });
+  const orgMembers = (orgMembersRes?.data?.data?.members ??
+    []) as OrganizationMemberWithUser[];
+
+  // Only show org members not already in the project
+  const memberIds = new Set(members.map((m) => m.userId));
+  const available = orgMembers.filter((m) => !memberIds.has(m.userId));
+
+  const handleAdd = async () => {
+    if (!selectedUserId) return;
+    await addMember.mutateAsync({ userId: selectedUserId, role });
+    setSelectedUserId('');
+    setShowAdd(false);
+  };
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <Users className="w-4 h-4 text-slate-400" />
+          <h2 className="text-base font-semibold text-slate-900">Members</h2>
+          <span className="text-xs text-slate-400 font-medium">
+            ({members.length})
+          </span>
+        </div>
+        <button
+          onClick={() => setShowAdd((v) => !v)}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <UserPlus className="w-3.5 h-3.5" /> Add Member
+        </button>
+      </div>
+
+      {/* Add member form */}
+      {showAdd && (
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex flex-wrap gap-3 items-end">
+          <div className="flex-1 min-w-[180px]">
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase mb-1">
+              Member
+            </label>
+            <select
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select a member…</option>
+              {available.map((m) => (
+                <option key={m.userId} value={m.userId}>
+                  {m.user.fullName ?? m.user.email ?? m.userId}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase mb-1">
+              Role
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as typeof role)}
+              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="admin">Admin</option>
+              <option value="member">Member</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          <button
+            onClick={handleAdd}
+            disabled={!selectedUserId || addMember.isPending}
+            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            {addMember.isPending ? 'Adding…' : 'Add'}
+          </button>
+          <button
+            onClick={() => setShowAdd(false)}
+            className="px-4 py-2 text-sm text-slate-500 hover:text-slate-800 border border-slate-300 rounded-lg"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Member list */}
+      {members.length === 0 ? (
+        <div className="py-10 text-center text-sm text-slate-400">
+          No members yet. Add org members to this project.
+        </div>
+      ) : (
+        <ul className="divide-y divide-slate-100">
+          {members.map((m) => (
+            <li key={m.id} className="flex items-center gap-3 px-6 py-3">
+              {m.user?.avatarUrl ? (
+                <img
+                  src={m.user.avatarUrl}
+                  alt={m.user.fullName}
+                  className="w-8 h-8 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-semibold text-blue-700">
+                    {m.user?.fullName?.charAt(0) ?? '?'}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-slate-800 truncate">
+                  {m.user?.fullName ?? 'Unknown'}
+                </p>
+                <p className="text-xs text-slate-400 truncate">
+                  {m.user?.email}
+                </p>
+              </div>
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 capitalize">
+                {m.role}
+              </span>
+              <button
+                onClick={() => removeMember.mutate(m.userId)}
+                disabled={removeMember.isPending}
+                className="p-1 text-slate-300 hover:text-red-500 transition-colors disabled:opacity-50"
+                title="Remove from project"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function ProjectDetailPage({
   params,
@@ -231,6 +399,9 @@ export default function ProjectDetailPage({
           </div>
         ))}
       </div>
+
+      {/* Member Management */}
+      <MembersPanel projectId={id} orgId={project.organizationId} />
 
       {/* Task list */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm">

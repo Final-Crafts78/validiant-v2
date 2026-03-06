@@ -136,7 +136,7 @@ const fetchTasks = async (
   if (filters?.perPage) params.append('perPage', String(filters.perPage));
 
   const queryString = params.toString();
-  const url = `/api/v1/projects/${projectId}/tasks${queryString ? `?${queryString}` : ''}`;
+  const url = `/projects/${projectId}/tasks${queryString ? `?${queryString}` : ''}`;
 
   const response = await get<TasksResponse>(url);
   return response.data.data.tasks;
@@ -146,7 +146,7 @@ const fetchTasks = async (
  * Fetch single task by ID
  */
 const fetchTask = async (taskId: string): Promise<Task> => {
-  const response = await get<TaskResponse>(`/api/v1/tasks/${taskId}`);
+  const response = await get<TaskResponse>(`/tasks/${taskId}`);
   return response.data.data.task;
 };
 
@@ -270,10 +270,7 @@ export function useUpdateTask() {
       projectId: string;
       data: UpdateTaskData;
     }) => {
-      const response = await patch<TaskResponse>(
-        `/api/v1/tasks/${taskId}`,
-        data
-      );
+      const response = await patch<TaskResponse>(`/tasks/${taskId}`, data);
       return response.data.data.task;
     },
 
@@ -386,7 +383,7 @@ export function useCreateTask() {
       data: CreateTaskData;
     }) => {
       const response = await post<TaskResponse>(
-        `/api/v1/projects/${projectId}/tasks`,
+        `/projects/${projectId}/tasks`,
         data
       );
       return response.data.data.task;
@@ -411,7 +408,7 @@ export function useDeleteTask() {
 
   return useMutation({
     mutationFn: async ({ taskId }: { taskId: string; projectId: string }) => {
-      await del(`/api/v1/tasks/${taskId}`);
+      await del(`/tasks/${taskId}`);
     },
 
     // Optimistically remove task from list
@@ -473,9 +470,9 @@ export function useAssignTask() {
       assign?: boolean;
     }) => {
       if (assign) {
-        await post(`/api/v1/tasks/${taskId}/assign`, { userId });
+        await post(`/tasks/${taskId}/assign`, { userId });
       } else {
-        await del(`/api/v1/tasks/${taskId}/assign/${userId}`);
+        await del(`/tasks/${taskId}/assign/${userId}`);
       }
     },
 

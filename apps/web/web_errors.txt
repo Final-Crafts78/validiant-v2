@@ -1,0 +1,3 @@
+﻿src/app/dashboard/projects/[id]/page.tsx(120,22): error TS2339: Property 'user' does not exist on type 'OrganizationMember'.
+src/app/dashboard/projects/[id]/page.tsx(120,42): error TS2339: Property 'user' does not exist on type 'OrganizationMember'.
+src/hooks/useProjects.ts(8,1): error TS6133: 'ProjectMember' is declared but its value is never read.

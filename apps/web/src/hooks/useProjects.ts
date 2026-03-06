@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useWorkspaceStore } from '@/store/workspace';
 import * as projectService from '@/services/project.service';
+import {
+  getProjectMembers,
+  removeProjectMember,
+} from '@/services/project.service';
+import type { ProjectMember } from '@/services/project.service';
 import type { CreateProjectData, UpdateProjectData } from '@validiant/shared';
 
 export const PROJECT_KEYS = {
@@ -64,6 +69,45 @@ export function useDeleteProject() {
     mutationFn: (id: string) => projectService.deleteProject(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: PROJECT_KEYS.byOrg(activeOrgId ?? '') });
+    },
+  });
+}
+export const PROJECT_MEMBER_KEYS = {
+  byProject: (id: string) => ['projects', 'members', id] as const,
+};
+
+export function useProjectMembers(projectId: string) {
+  return useQuery<ProjectMember[]>({
+    queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+    queryFn: () => getProjectMembers(projectId),
+    enabled: !!projectId,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useAddProjectMember(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: {
+      userId: string;
+      role: 'admin' | 'member' | 'viewer';
+    }) => projectService.addProjectMember(projectId, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+      });
+    },
+  });
+}
+
+export function useRemoveProjectMember(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => removeProjectMember(projectId, userId),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+      });
     },
   });
 }
