@@ -9,10 +9,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useWorkspaceStore } from '@/store/workspace';
-import apiClient from '@/lib/api';
+import { organizationsApi } from '@/lib/api';
 import { Building2, ChevronDown, Check } from 'lucide-react';
 
-interface Organization {
+interface LocalOrganization {
   id: string;
   name: string;
   slug?: string;
@@ -27,15 +27,14 @@ export function OrgSwitcher() {
   const setActiveOrg = useWorkspaceStore((s) => s.setActiveOrg);
 
   // Fetch orgs client-side (also used for refreshing after creating a new org)
-  const { data: orgs = [] } = useQuery<Organization[]>({
+  const { data: orgResponse } = useQuery({
     queryKey: ['organizations', 'my'],
-    queryFn: async () => {
-      const { data } = await apiClient.get('/organizations/my');
-      return data?.data?.organizations ?? [];
-    },
+    queryFn: () => organizationsApi.getAll(),
     staleTime: 5 * 60 * 1000,
   });
 
+  const orgs = (orgResponse?.data?.data?.organizations ??
+    []) as unknown as LocalOrganization[];
   const activeOrg = orgs.find((o) => o.id === activeOrgId);
 
   // Close dropdown on outside click
