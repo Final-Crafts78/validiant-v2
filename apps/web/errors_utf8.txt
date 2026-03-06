@@ -1,0 +1,5 @@
+﻿src/app/dashboard/organizations/page.tsx(254,9): error TS2740: Type 'Organization' is missing the following properties from type 'Organization': slug, status, settings, subscription, and 3 more.
+src/components/modals/OrgSettingsModal.tsx(7,24): error TS6133: 'UpdateOrganizationData' is declared but its value is never read.
+src/components/modals/OrgSettingsModal.tsx(24,58): error TS2339: Property 'industry' does not exist on type 'Organization'.
+src/components/modals/OrgSettingsModal.tsx(33,33): error TS2339: Property 'industry' does not exist on type 'Organization'.
+src/components/modals/OrgSettingsModal.tsx(51,9): error TS2353: Object literal may only specify known properties, and 'industry' does not exist in type 'UpdateOrganizationData'.

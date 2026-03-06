@@ -347,11 +347,9 @@ export const transferOrganizationOwnershipSchema = z.object({
  * Organization deletion schema
  */
 export const deleteOrganizationSchema = z.object({
-  confirmationText: z
-    .string()
-    .refine((val) => val === 'DELETE', {
-      message: 'Please type DELETE to confirm',
-    }),
+  confirmationText: z.string().refine((val) => val === 'DELETE', {
+    message: 'Please type DELETE to confirm',
+  }),
   password: z.string().min(1, 'Password is required for confirmation'),
 });
 

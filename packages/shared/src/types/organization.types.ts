@@ -156,7 +156,9 @@ export interface Organization {
   name: string;
   slug: string;
   description?: string;
-  websiteUrl?: string;
+  website?: string;
+  industry?: string;
+  size?: string;
   logoUrl?: string;
   status: OrganizationStatus;
   settings: OrganizationSettings;
@@ -288,7 +290,9 @@ export interface CreateOrganizationData {
   name: string;
   slug?: string;
   description?: string;
-  websiteUrl?: string;
+  website?: string;
+  industry?: string;
+  size?: string;
 }
 
 /**
@@ -297,7 +301,9 @@ export interface CreateOrganizationData {
 export interface UpdateOrganizationData {
   name?: string;
   description?: string;
-  websiteUrl?: string;
+  website?: string;
+  industry?: string;
+  size?: string;
   logoUrl?: string;
   settings?: Partial<OrganizationSettings>;
 }

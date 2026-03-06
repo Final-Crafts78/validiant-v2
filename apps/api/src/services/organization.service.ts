@@ -9,7 +9,12 @@
 
 import { eq, and, isNull, sql, desc, asc } from 'drizzle-orm';
 import { db } from '../db';
-import { organizations, organizationMembers, users } from '../db/schema';
+import {
+  organizations,
+  organizationMembers,
+  users,
+  projects,
+} from '../db/schema';
 import { cache } from '../config/redis.config';
 import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
@@ -392,12 +397,18 @@ export const getUserOrganizations = async (
       settings: organizations.settings,
       createdAt: organizations.createdAt,
       updatedAt: organizations.updatedAt,
-      memberRole: organizationMembers.role,
+      role: organizationMembers.role,
       memberCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${organizationMembers}
         WHERE ${organizationMembers.organizationId} = ${organizations.id}
         AND ${organizationMembers.deletedAt} IS NULL
+      )`,
+      projectCount: sql<number>`(
+        SELECT COUNT(*)
+        FROM ${projects}
+        WHERE ${projects.organizationId} = ${organizations.id}
+        AND ${projects.deletedAt} IS NULL
       )`,
     })
     .from(organizationMembers)
@@ -414,9 +425,10 @@ export const getUserOrganizations = async (
     )
     .orderBy(desc(organizations.createdAt));
 
-  return results.map((result: (typeof results)[number]) => ({
+  return results.map((result: any) => ({
     ...result,
     memberCount: Number(result.memberCount),
+    projectCount: Number(result.projectCount),
   })) as OrganizationWithRole[];
 };
 

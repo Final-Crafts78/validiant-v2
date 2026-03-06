@@ -439,9 +439,9 @@ export const organizationsApi = {
 
   update: (
     id: string,
-    data: Partial<UpdateOrganizationData>
+    data: UpdateOrganizationData
   ): Promise<AxiosResponse<APIResponse<Organization>>> =>
-    patch<APIResponse<Organization>>(`/organizations/${id}`, data),
+    put<APIResponse<Organization>>(`/organizations/${id}`, data),
 
   delete: (
     id: string
@@ -468,4 +468,14 @@ export const organizationsApi = {
     id: string
   ): Promise<AxiosResponse<APIResponse<{ projects: Project[] }>>> =>
     get<APIResponse<{ projects: Project[] }>>(`/organizations/${id}/projects`),
+
+  acceptInvite: (
+    token: string
+  ): Promise<AxiosResponse<APIResponse<Organization>>> =>
+    post<APIResponse<Organization>>('/organizations/accept-invite', { token }),
+
+  leave: (
+    id: string
+  ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
+    post<APIResponse<{ success: boolean }>>(`/organizations/${id}/leave`),
 };
