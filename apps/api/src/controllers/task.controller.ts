@@ -731,7 +731,7 @@ export const markAsTodo = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: TaskStatus.TODO,
+      status: TaskStatus.PENDING,
     });
 
     return c.json({
@@ -871,7 +871,7 @@ export const markAsInReview = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: TaskStatus.IN_REVIEW,
+      status: TaskStatus.IN_PROGRESS,
     });
 
     return c.json({
@@ -1011,7 +1011,7 @@ export const cancelTask = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: TaskStatus.CANCELLED,
+      status: TaskStatus.COMPLETED,
     });
 
     return c.json({
@@ -1315,7 +1315,7 @@ export const reopenTask = async (c: Context) => {
     }
 
     const task = await taskService.updateTask(id, {
-      status: TaskStatus.TODO,
+      status: TaskStatus.PENDING,
     });
 
     return c.json({
