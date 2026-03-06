@@ -1,38 +1,51 @@
-import { get, post } from '@/lib/api';
+import { get, post, patch, del } from '@/lib/api';
 import type { APIResponse } from '@/lib/api';
+import type {
+  Project,
+  CreateProjectData,
+  UpdateProjectData,
+} from '@validiant/shared';
 
-export interface Project {
-  id: string;
-  name: string;
-  status: string;
-  organizationId: string;
-  createdAt: string;
-}
+export type { Project };
 
-export const getOrgProjects = async (orgId: string): Promise<Project[]> => {
-  return get<APIResponse<{ projects: Project[] }>>(
+export const getOrgProjects = async (orgId: string): Promise<Project[]> =>
+  get<APIResponse<{ projects: Project[] }>>(
     `/organizations/${orgId}/projects`
   ).then((res) => res.data.data?.projects ?? []);
-};
 
-export const createProject = async (payload: {
-  orgId: string;
-  name: string;
-}): Promise<Project> => {
-  return post<APIResponse<{ project: Project }>>(
-    `/organizations/${payload.orgId}/projects`,
-    { name: payload.name }
-  ).then((res) => {
-    if (!res.data.data?.project) {
-      throw new Error('Project creation failed to return project data');
-    }
+export const getProjectById = async (id: string): Promise<Project> =>
+  get<APIResponse<{ project: Project }>>(`/projects/${id}`).then((res) => {
+    if (!res.data.data?.project) throw new Error('Project not found');
     return res.data.data.project;
   });
-};
+
+export const createProject = async (
+  payload: CreateProjectData
+): Promise<Project> =>
+  post<APIResponse<{ project: Project }>>(
+    `/organizations/${payload.organizationId}/projects`,
+    payload
+  ).then((res) => {
+    if (!res.data.data?.project) throw new Error('Project creation failed');
+    return res.data.data.project;
+  });
+
+export const updateProject = async (
+  id: string,
+  data: UpdateProjectData
+): Promise<Project> =>
+  patch<APIResponse<{ project: Project }>>(`/projects/${id}`, data).then(
+    (res) => {
+      if (!res.data.data?.project) throw new Error('Update failed');
+      return res.data.data.project;
+    }
+  );
+
+export const deleteProject = async (id: string): Promise<void> =>
+  del(`/projects/${id}`).then(() => undefined);
 
 export const addProjectMember = async (
   projectId: string,
-  payload: { userId: string; role: 'manager' | 'contributor' | 'viewer' }
-): Promise<void> => {
-  return post(`/projects/${projectId}/members`, payload).then(() => undefined);
-};
+  payload: { userId: string; role: 'admin' | 'member' | 'viewer' }
+): Promise<void> =>
+  post(`/projects/${projectId}/members`, payload).then(() => undefined);

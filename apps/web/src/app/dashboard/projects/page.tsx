@@ -1,98 +1,268 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { useWorkspaceStore } from '@/store/workspace';
-import { FolderOpen, Plus } from 'lucide-react';
+import { ProjectStatus, ProjectPriority } from '@validiant/shared';
+import { FolderOpen, Plus, Loader2, AlertCircle, Calendar } from 'lucide-react';
 
+// ── Status badge ──────────────────────────────────────────────────────────────
+const STATUS_STYLES: Record<string, string> = {
+  [ProjectStatus.ACTIVE]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  [ProjectStatus.PLANNING]: 'bg-blue-50    text-blue-700    border-blue-200',
+  [ProjectStatus.ON_HOLD]: 'bg-amber-50   text-amber-700   border-amber-200',
+  [ProjectStatus.COMPLETED]: 'bg-slate-100  text-slate-600   border-slate-200',
+  [ProjectStatus.ARCHIVED]: 'bg-slate-100  text-slate-400   border-slate-200',
+  [ProjectStatus.CANCELLED]: 'bg-red-50     text-red-600     border-red-200',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  [ProjectStatus.ACTIVE]: 'Active',
+  [ProjectStatus.PLANNING]: 'Planning',
+  [ProjectStatus.ON_HOLD]: 'On Hold',
+  [ProjectStatus.COMPLETED]: 'Completed',
+  [ProjectStatus.ARCHIVED]: 'Archived',
+  [ProjectStatus.CANCELLED]: 'Cancelled',
+};
+
+// ── Priority badge ────────────────────────────────────────────────────────────
+const PRIORITY_STYLES: Record<string, string> = {
+  [ProjectPriority.LOW]: 'bg-slate-100 text-slate-500',
+  [ProjectPriority.MEDIUM]: 'bg-blue-50   text-blue-600',
+  [ProjectPriority.HIGH]: 'bg-amber-50  text-amber-700',
+  [ProjectPriority.URGENT]: 'bg-red-50    text-red-700',
+};
+
+// ── Create modal ──────────────────────────────────────────────────────────────
+function CreateProjectModal({ onClose }: { onClose: () => void }) {
+  const createMutation = useCreateProject();
+  const router = useRouter();
+  const { setActiveProject } = useWorkspaceStore();
+
+  const [name, setName] = useState('');
+  const [description, setDesc] = useState('');
+  const [priority, setPriority] = useState<ProjectPriority>(
+    ProjectPriority.MEDIUM
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    try {
+      const project = await createMutation.mutateAsync({
+        name,
+        description,
+        priority,
+      });
+      setActiveProject(project.id);
+      onClose();
+      router.push(`/dashboard/projects/${project.id}`);
+    } catch (error) {
+      console.error('Failed to create project:', error);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
+        <h2 className="text-lg font-bold text-slate-900">New Project</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+              Name *
+            </label>
+            <input
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Q3 Field Audit"
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDesc(e.target.value)}
+              rows={3}
+              placeholder="What is this project about?"
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+              Priority
+            </label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as ProjectPriority)}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={ProjectPriority.LOW}>Low</option>
+              <option value={ProjectPriority.MEDIUM}>Medium</option>
+              <option value={ProjectPriority.HIGH}>High</option>
+              <option value={ProjectPriority.URGENT}>Urgent</option>
+            </select>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <button
+              type="submit"
+              disabled={createMutation.isPending || !name.trim()}
+              className="flex-1 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            >
+              {createMutation.isPending ? 'Creating…' : 'Create Project'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function ProjectsPage() {
   const router = useRouter();
   const { setActiveProject } = useWorkspaceStore();
-  const { data: projects = [], isLoading } = useProjects();
-  const createMutation = useCreateProject();
-  const [showForm, setShowForm] = useState(false);
-  const [name, setName] = useState('');
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    const project = await createMutation.mutateAsync(name.trim());
-    setName('');
-    setShowForm(false);
-    setActiveProject(project.id);
-    router.push(`/dashboard/projects/${project.id}`);
-  };
+  const { data: projects = [], isLoading, isError } = useProjects();
+  const [showCreate, setShowCreate] = useState(false);
 
   if (isLoading)
-    return <div className="p-8 text-slate-400">Loading projects…</div>;
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
+      </div>
+    );
+
+  if (isError)
+    return (
+      <div className="flex flex-col items-center justify-center py-32 gap-3">
+        <AlertCircle className="h-8 w-8 text-red-500" />
+        <p className="text-sm text-slate-500">Failed to load projects.</p>
+      </div>
+    );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-900">Projects</h1>
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900">Projects</h1>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {projects.length} project{projects.length !== 1 ? 's' : ''} in this
+            workspace
+          </p>
+        </div>
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => setShowCreate(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" /> New Project
         </button>
       </div>
 
-      {showForm && (
-        <form
-          onSubmit={handleCreate}
-          className="flex gap-3 bg-white border border-slate-200 rounded-xl p-4"
-        >
-          <input
-            autoFocus
-            type="text"
-            placeholder="Project name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg disabled:opacity-50"
-          >
-            {createMutation.isPending ? 'Creating…' : 'Create'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowForm(false)}
-            className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900"
-          >
-            Cancel
-          </button>
-        </form>
-      )}
-
-      {projects.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl">
+      {/* Empty state */}
+      {projects.length === 0 && (
+        <div className="text-center py-20 bg-white border border-dashed border-slate-200 rounded-2xl">
           <FolderOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500 text-sm">
-            No projects yet. Create your first one.
+          <p className="text-slate-500 text-sm font-medium">No projects yet.</p>
+          <p className="text-slate-400 text-xs mt-1">
+            Create your first project to start tracking work.
           </p>
         </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {projects.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => {
-                setActiveProject(p.id);
-                router.push(`/dashboard/projects/${p.id}`);
-              }}
-              className="bg-white border border-slate-200 rounded-xl p-5 text-left hover:border-blue-400 hover:shadow-sm transition-all"
-            >
-              <h3 className="font-semibold text-slate-900">{p.name}</h3>
-              <p className="text-xs text-slate-400 mt-1 capitalize">
-                {p.status}
+      )}
+
+      {/* Project cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {projects.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => {
+              setActiveProject(p.id);
+              router.push(`/dashboard/projects/${p.id}`);
+            }}
+            className="bg-white border border-slate-200 rounded-xl p-5 text-left hover:border-blue-400 hover:shadow-md transition-all group"
+          >
+            {/* Top row: name + status */}
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h3 className="font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors line-clamp-1">
+                {p.name}
+              </h3>
+              <span
+                className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                  STATUS_STYLES[p.status] ??
+                  STATUS_STYLES[ProjectStatus.PLANNING]
+                }`}
+              >
+                {STATUS_LABELS[p.status] ?? p.status}
+              </span>
+            </div>
+
+            {/* Description */}
+            {p.description && (
+              <p className="text-xs text-slate-500 line-clamp-2 mb-3">
+                {p.description}
               </p>
-            </button>
-          ))}
-        </div>
+            )}
+
+            {/* Progress bar */}
+            <div className="mb-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[11px] text-slate-400 font-medium">
+                  Progress
+                </span>
+                <span className="text-[11px] text-slate-600 font-semibold">
+                  {p.progress ?? 0}%
+                </span>
+              </div>
+              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all"
+                  style={{ width: `${p.progress ?? 0}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Footer meta */}
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Priority */}
+              <span
+                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                  PRIORITY_STYLES[p.priority] ??
+                  PRIORITY_STYLES[ProjectPriority.MEDIUM]
+                }`}
+              >
+                {p.priority}
+              </span>
+
+              {/* Due date */}
+              {p.endDate && (
+                <span className="flex items-center gap-1 text-[11px] text-slate-400">
+                  <Calendar className="w-3 h-3" />
+                  {new Date(p.endDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                </span>
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {showCreate && (
+        <CreateProjectModal onClose={() => setShowCreate(false)} />
       )}
     </div>
   );
