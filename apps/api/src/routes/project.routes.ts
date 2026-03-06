@@ -17,8 +17,10 @@ import {
   updateProjectSchema,
   updateProjectSettingsSchema,
   addProjectMemberSchema,
+  createTaskSchema,
 } from '@validiant/shared';
 import * as projectController from '../controllers/project.controller';
+import * as taskController from '../controllers/task.controller';
 import { authenticate } from '../middleware/auth';
 
 const app = new Hono();
@@ -60,5 +62,13 @@ app.post(
   projectController.addProjectMember
 );
 app.delete('/:id/members/:userId', projectController.removeProjectMember);
+
+// Task sub-routes
+app.get('/:projectId/tasks', taskController.listProjectTasks);
+app.post(
+  '/:projectId/tasks',
+  zValidator('json', createTaskSchema),
+  taskController.createTask
+);
 
 export default app;
