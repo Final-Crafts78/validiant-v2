@@ -6,7 +6,7 @@ export interface Organization {
   id: string;
   name: string;
   slug?: string;
-  industryType?: string;
+  industry?: string;
   logoUrl?: string;
   role?: string; // caller's role in this org
 }
@@ -14,7 +14,7 @@ export interface Organization {
 export interface OrgMember {
   id: string;
   userId: string;
-  role: 'owner' | 'admin' | 'member';
+  role: 'owner' | 'admin' | 'member' | 'guest';
   joinedAt: string;
   user: {
     id: string;
@@ -38,7 +38,7 @@ export const getOrgMembers = async (orgId: string): Promise<OrgMember[]> => {
 
 export const inviteMember = async (
   orgId: string,
-  payload: { email: string; role: 'admin' | 'member' }
+  payload: { email: string; role: 'admin' | 'member' | 'guest' }
 ): Promise<void> => {
   return post(API_CONFIG.ENDPOINTS.ORGANIZATIONS.INVITES(orgId), payload).then(
     () => undefined

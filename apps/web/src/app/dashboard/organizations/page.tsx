@@ -16,7 +16,9 @@ export default function OrganizationsPage() {
   const inviteMutation = useInviteMember(activeOrgId ?? '');
 
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'admin' | 'member'>('member');
+  const [inviteRole, setInviteRole] = useState<'admin' | 'member' | 'guest'>(
+    'member'
+  );
   const [inviteError, setInviteError] = useState('');
 
   const activeOrg = orgs.find((o) => o.id === activeOrgId) ?? orgs[0];
@@ -70,10 +72,8 @@ export default function OrganizationsPage() {
       {activeOrg && (
         <div className="bg-white border border-slate-200 rounded-2xl p-6">
           <h1 className="text-xl font-bold text-slate-900">{activeOrg.name}</h1>
-          {activeOrg.industryType && (
-            <p className="text-sm text-slate-500 mt-1">
-              {activeOrg.industryType}
-            </p>
+          {activeOrg.industry && (
+            <p className="text-sm text-slate-500 mt-1">{activeOrg.industry}</p>
           )}
         </div>
       )}
@@ -132,12 +132,13 @@ export default function OrganizationsPage() {
           <select
             value={inviteRole}
             onChange={(e) =>
-              setInviteRole(e.target.value as 'admin' | 'member')
+              setInviteRole(e.target.value as 'admin' | 'member' | 'guest')
             }
             className="px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
           >
             <option value="member">Member</option>
             <option value="admin">Admin</option>
+            <option value="guest">Guest (read-only)</option>
           </select>
           <button
             type="submit"

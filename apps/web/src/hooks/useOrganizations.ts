@@ -17,7 +17,10 @@ export function useOrganizations() {
 export function useOrgMembers(orgId: string | null) {
   return useQuery({
     queryKey: ORG_KEYS.members(orgId ?? ''),
-    queryFn: () => orgService.getOrgMembers(orgId!),
+    queryFn: () => {
+      if (!orgId) throw new Error('Organization ID is required');
+      return orgService.getOrgMembers(orgId);
+    },
     enabled: !!orgId,
   });
 }
@@ -25,8 +28,10 @@ export function useOrgMembers(orgId: string | null) {
 export function useInviteMember(orgId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { email: string; role: 'admin' | 'member' }) =>
-      orgService.inviteMember(orgId, payload),
+    mutationFn: (payload: {
+      email: string;
+      role: 'admin' | 'member' | 'guest';
+    }) => orgService.inviteMember(orgId, payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ORG_KEYS.members(orgId) });
     },
