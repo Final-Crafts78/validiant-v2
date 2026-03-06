@@ -20,7 +20,6 @@ import {
   AlertTriangle,
   FileText,
   CheckCircle2,
-  Clock,
   Plus,
   Flag,
   Lock,
@@ -63,13 +62,23 @@ export default function DashboardPage() {
     return parts[0] || user.fullName;
   }, [user]);
 
+  const activeTasks = tasks.filter(
+    (t) =>
+      (t.status as string) !== 'Completed' &&
+      (t.status as string) !== 'Verified'
+  ).length;
+
+  const pendingTasks = tasks.filter(
+    (t) => (t.status as string) === 'Pending'
+  ).length;
+
+  const activeProjects = projects.filter((p) => p.status === 'active').length;
+  const orgCount = orgs.length;
+
   const KPI_CARDS = [
     {
       title: 'Active Workflows',
-      value: String(
-        tasks.filter((t) => t.status !== 'Completed' && t.status !== 'Verified')
-          .length
-      ),
+      value: String(activeTasks),
       trend: '+12% this week', // keeping original styling if preferred, though it requested replacing values. The instruction said "Change the title strings to match ('Active Projects', 'Organizations') and update trendColor/trend text accordingly"
       trendColor: 'text-emerald-600',
       icon: Activity,
@@ -78,10 +87,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Pending Verifications',
-      value: String(
-        tasks.filter((t) => t.status === 'Pending' || t.status === 'pending')
-          .length
-      ),
+      value: String(pendingTasks),
       trend: 'Needs attention',
       trendColor: 'text-amber-600',
       icon: ShieldCheck,
@@ -90,7 +96,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Active Projects',
-      value: String(projects.filter((p) => p.status === 'active').length),
+      value: String(activeProjects),
       trend: 'Currently running',
       trendColor: 'text-emerald-600',
       icon: Target,
@@ -99,7 +105,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Organizations',
-      value: String(orgs.length),
+      value: String(orgCount),
       trend: 'Associated workspaces',
       trendColor: 'text-slate-500',
       icon: AlertTriangle,
