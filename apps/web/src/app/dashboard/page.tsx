@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { tasksApi, projectsApi, organizationsApi } from '@/lib/api';
+import { tasksApi, projectsApi } from '@/lib/api';
 import { Task, Project, TaskStatus } from '@validiant/shared';
 import {
   Activity,
@@ -48,15 +48,10 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
     staleTime: 2 * 60 * 1000,
   });
 
-  const { data: orgsRes } = useQuery({
-    queryKey: ['organizations', 'my'],
-    queryFn: () => organizationsApi.getAll(),
-    staleTime: 2 * 60 * 1000,
-  });
+  const { data: orgs = [] } = useOrganizations();
 
   const tasks: Task[] = tasksRes?.data?.data?.tasks ?? [];
   const projects: Project[] = projectsRes?.data?.data?.projects ?? [];
-  const orgs = orgsRes?.data?.data?.organizations ?? [];
 
   // Extract first name from fullName with null-safety — preserved from original
   const firstName = useMemo(() => {
