@@ -6,7 +6,7 @@ import {
   useOrgMembers,
   useInviteMember,
 } from '@/hooks/useOrganizations';
-import { Users, Mail, Shield, Crown } from 'lucide-react';
+import { Users, Mail } from 'lucide-react';
 
 export default function OrganizationsPage() {
   const { activeOrgId, setActiveOrg } = useWorkspaceStore();
@@ -31,8 +31,10 @@ export default function OrganizationsPage() {
         role: inviteRole,
       });
       setInviteEmail('');
-    } catch (err: any) {
-      setInviteError(err?.response?.data?.message ?? 'Failed to send invite');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to send invite';
+      setInviteError(message);
     }
   };
 
