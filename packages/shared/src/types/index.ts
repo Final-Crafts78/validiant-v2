@@ -21,3 +21,6 @@ export * from './time-tracking.types';
 
 // API types
 export * from './api.types';
+
+// Task types
+export * from './task.types';

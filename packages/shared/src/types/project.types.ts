@@ -36,28 +36,11 @@ export enum ProjectPriority {
   URGENT = 'urgent',
 }
 
-/**
- * Task status enumeration
- */
-export enum TaskStatus {
-  TODO = 'todo',
-  IN_PROGRESS = 'in_progress',
-  IN_REVIEW = 'in_review',
-  BLOCKED = 'blocked',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
+import { TaskStatus, TaskPriority } from './task.types';
 
 /**
- * Task priority
+ * Task type enumeration
  */
-export enum TaskPriority {
-  NONE = 'none',
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
 
 /**
  * Task type enumeration
@@ -486,7 +469,6 @@ export const DEFAULT_PROJECT_SETTINGS: ProjectSettings = {
  * Priority weights for sorting
  */
 export const PRIORITY_WEIGHTS: Record<TaskPriority, number> = {
-  [TaskPriority.NONE]: 0,
   [TaskPriority.LOW]: 1,
   [TaskPriority.MEDIUM]: 2,
   [TaskPriority.HIGH]: 3,
@@ -496,13 +478,12 @@ export const PRIORITY_WEIGHTS: Record<TaskPriority, number> = {
 /**
  * Status weights for workflow ordering
  */
-export const STATUS_WEIGHTS: Record<TaskStatus, number> = {
-  [TaskStatus.TODO]: 0,
-  [TaskStatus.IN_PROGRESS]: 1,
-  [TaskStatus.IN_REVIEW]: 2,
-  [TaskStatus.BLOCKED]: 3,
+export const STATUS_WEIGHTS: Record<string, number> = {
+  [TaskStatus.UNASSIGNED]: 0,
+  [TaskStatus.PENDING]: 1,
+  [TaskStatus.IN_PROGRESS]: 2,
+  [TaskStatus.VERIFIED]: 3,
   [TaskStatus.COMPLETED]: 4,
-  [TaskStatus.CANCELLED]: 5,
 };
 
 /**
@@ -510,10 +491,7 @@ export const STATUS_WEIGHTS: Record<TaskStatus, number> = {
  */
 export const isTaskOverdue = (task: Task): boolean => {
   if (!task.dueDate) return false;
-  if (
-    task.status === TaskStatus.COMPLETED ||
-    task.status === TaskStatus.CANCELLED
-  ) {
+  if (task.status === TaskStatus.COMPLETED) {
     return false;
   }
   return new Date(task.dueDate) < new Date();
@@ -524,10 +502,7 @@ export const isTaskOverdue = (task: Task): boolean => {
  */
 export const isTaskDueSoon = (task: Task): boolean => {
   if (!task.dueDate) return false;
-  if (
-    task.status === TaskStatus.COMPLETED ||
-    task.status === TaskStatus.CANCELLED
-  ) {
+  if (task.status === TaskStatus.COMPLETED) {
     return false;
   }
   const now = new Date();
