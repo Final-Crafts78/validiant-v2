@@ -40,7 +40,7 @@ export function ProjectSwitcher() {
       const { data } = await apiClient.get(
         `/organizations/${activeOrgId}/projects`
       );
-      return data?.data ?? [];
+      return data?.data?.projects ?? [];
     },
     enabled: !!activeOrgId,
     staleTime: 5 * 60 * 1000,

@@ -31,7 +31,7 @@ export function OrgSwitcher() {
     queryKey: ['organizations', 'my'],
     queryFn: async () => {
       const { data } = await apiClient.get('/organizations/my');
-      return data?.data ?? [];
+      return data?.data?.organizations ?? [];
     },
     staleTime: 5 * 60 * 1000,
   });
