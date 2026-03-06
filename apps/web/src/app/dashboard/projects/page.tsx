@@ -7,9 +7,10 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ROUTES } from '@/lib/config';
 import { projectsApi } from '@/lib/api';
 import { format } from '@/lib/utils';
@@ -25,6 +26,9 @@ import {
   CheckCircle2,
   Loader2,
   AlertCircle,
+  Archive,
+  ArchiveRestore,
+  Trash2,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -74,6 +78,21 @@ function StatusBadge({ status }: { status: string }) {
 // Project Card
 // ---------------------------------------------------------------------------
 function ProjectCard({ project }: { project: SharedProject }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const progress = project.progress ?? 0;
   const isOverdue =
     project.endDate != null &&
@@ -96,13 +115,82 @@ function ProjectCard({ project }: { project: SharedProject }) {
             <StatusBadge status={project.status} />
           </div>
         </div>
-        <button
-          type="button"
-          aria-label="Project options"
-          className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
-        >
-          <MoreVertical className="h-4 w-4" />
-        </button>
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            type="button"
+            aria-label="Project options"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            <MoreVertical className="h-4 w-4" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-8 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-10 py-1 animate-in fade-in slide-in-from-top-2">
+              <button
+                onClick={() => {
+                  router.push(ROUTES.PROJECT_DETAIL(project.id));
+                  setMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 text-left"
+              >
+                <FolderKanban className="w-4 h-4" /> View Details
+              </button>
+
+              {project.status !== 'archived' ? (
+                <button
+                  onClick={async () => {
+                    await projectsApi.archive(project.id);
+                    queryClient.invalidateQueries({ queryKey: ['projects'] });
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50 text-left"
+                >
+                  <Archive className="w-4 h-4" /> Archive
+                </button>
+              ) : (
+                <button
+                  onClick={async () => {
+                    await projectsApi.unarchive(project.id);
+                    queryClient.invalidateQueries({ queryKey: ['projects'] });
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 text-left"
+                >
+                  <ArchiveRestore className="w-4 h-4" /> Unarchive
+                </button>
+              )}
+
+              {project.status !== 'completed' && (
+                <button
+                  onClick={async () => {
+                    await projectsApi.complete(project.id);
+                    queryClient.invalidateQueries({ queryKey: ['projects'] });
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 text-left"
+                >
+                  <CheckCircle2 className="w-4 h-4" /> Mark Complete
+                </button>
+              )}
+
+              <button
+                onClick={async () => {
+                  if (
+                    !confirm(`Delete "${project.name}"? This cannot be undone.`)
+                  )
+                    return;
+                  await projectsApi.delete(project.id);
+                  queryClient.invalidateQueries({ queryKey: ['projects'] });
+                  setMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
+              >
+                <Trash2 className="w-4 h-4" /> Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Description */}

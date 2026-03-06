@@ -385,6 +385,18 @@ export const projectsApi = {
     id: string
   ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
     del<APIResponse<{ success: boolean }>>(`/projects/${id}`),
+
+  archive: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/projects/${id}/archive`),
+
+  unarchive: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/projects/${id}/unarchive`),
+
+  complete: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/projects/${id}/complete`),
+
+  leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/projects/${id}/leave`),
 };
 
 // ---------------------------------------------------------------------------

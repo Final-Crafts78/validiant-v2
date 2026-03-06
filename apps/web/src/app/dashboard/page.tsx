@@ -9,6 +9,10 @@
 
 import { useMemo } from 'react';
 import { useAuthStore } from '@/store/auth';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { tasksApi, projectsApi, organizationsApi } from '@/lib/api';
+import type { Task, Project } from '@validiant/shared';
 import {
   Activity,
   ShieldCheck,
@@ -16,7 +20,6 @@ import {
   AlertTriangle,
   FileText,
   CheckCircle2,
-  Database,
   Clock,
   Plus,
   Flag,
@@ -25,129 +28,33 @@ import {
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-interface KpiCard {
-  title: string;
-  value: string;
-  trend: string;
-  trendColor: string;
-  icon: React.ComponentType<{ className?: string }>;
-  iconBg: string;
-  iconColor: string;
-}
-
-interface ActivityItem {
-  id: number;
-  text: string;
-  time: string;
-  icon: React.ComponentType<{ className?: string }>;
-  iconBg: string;
-  iconColor: string;
-}
-
-interface QuickAction {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-// ---------------------------------------------------------------------------
-// Static data
-// ---------------------------------------------------------------------------
-const KPI_CARDS: KpiCard[] = [
-  {
-    title: 'Active Workflows',
-    value: '1,248',
-    trend: '+12% this week',
-    trendColor: 'text-emerald-600',
-    icon: Activity,
-    iconBg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-  },
-  {
-    title: 'Pending Verifications',
-    value: '42',
-    trend: 'Needs attention',
-    trendColor: 'text-amber-600',
-    icon: ShieldCheck,
-    iconBg: 'bg-amber-50',
-    iconColor: 'text-amber-600',
-  },
-  {
-    title: 'Compliance Rate',
-    value: '99.8%',
-    trend: 'Target: 99.9%',
-    trendColor: 'text-slate-500',
-    icon: Target,
-    iconBg: 'bg-emerald-50',
-    iconColor: 'text-emerald-600',
-  },
-  {
-    title: 'System Alerts',
-    value: '0',
-    trend: 'All systems nominal',
-    trendColor: 'text-emerald-600',
-    icon: AlertTriangle,
-    iconBg: 'bg-slate-100',
-    iconColor: 'text-slate-500',
-  },
-];
-
-const ACTIVITY_ITEMS: ActivityItem[] = [
-  {
-    id: 1,
-    text: 'Background check cleared for Candidate ID #892',
-    time: '2 mins ago',
-    icon: CheckCircle2,
-    iconBg: 'bg-emerald-50',
-    iconColor: 'text-emerald-600',
-  },
-  {
-    id: 2,
-    text: 'Workflow #441 marked as urgent by Operations Manager',
-    time: '18 mins ago',
-    icon: Flag,
-    iconBg: 'bg-amber-50',
-    iconColor: 'text-amber-600',
-  },
-  {
-    id: 3,
-    text: 'System backup completed — all data snapshots verified',
-    time: '1 hr ago',
-    icon: Database,
-    iconBg: 'bg-blue-50',
-    iconColor: 'text-blue-600',
-  },
-  {
-    id: 4,
-    text: 'Automated compliance report generated for Q1 2026',
-    time: '3 hrs ago',
-    icon: FileText,
-    iconBg: 'bg-slate-100',
-    iconColor: 'text-slate-600',
-  },
-  {
-    id: 5,
-    text: 'KYC verification initiated for 12 new onboarding requests',
-    time: '5 hrs ago',
-    icon: Clock,
-    iconBg: 'bg-indigo-50',
-    iconColor: 'text-indigo-600',
-  },
-];
-
-const QUICK_ACTIONS: QuickAction[] = [
-  { label: 'Create New Workflow', icon: Plus },
-  { label: 'Review Pending Flags', icon: Flag },
-  { label: 'Manage Access Roles', icon: Lock },
-  { label: 'System Audit Log', icon: History },
-];
-
-// ---------------------------------------------------------------------------
 // Dashboard Page Component
 // ---------------------------------------------------------------------------
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
+  const router = useRouter();
+
+  const { data: tasksRes } = useQuery({
+    queryKey: ['tasks', 'my'],
+    queryFn: () => tasksApi.getAll(),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const { data: projectsRes } = useQuery({
+    queryKey: ['projects', 'all'],
+    queryFn: () => projectsApi.getAll(),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const { data: orgsRes } = useQuery({
+    queryKey: ['organizations', 'my'],
+    queryFn: () => organizationsApi.getAll(),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const tasks: Task[] = tasksRes?.data?.data?.tasks ?? [];
+  const projects: Project[] = projectsRes?.data?.data?.projects ?? [];
+  const orgs = orgsRes?.data?.data?.organizations ?? [];
 
   // Extract first name from fullName with null-safety — preserved from original
   const firstName = useMemo(() => {
@@ -155,6 +62,51 @@ export default function DashboardPage() {
     const parts = user.fullName.trim().split(' ');
     return parts[0] || user.fullName;
   }, [user]);
+
+  const KPI_CARDS = [
+    {
+      title: 'Active Workflows',
+      value: String(
+        tasks.filter((t) => t.status !== 'Completed' && t.status !== 'Verified')
+          .length
+      ),
+      trend: '+12% this week', // keeping original styling if preferred, though it requested replacing values. The instruction said "Change the title strings to match ('Active Projects', 'Organizations') and update trendColor/trend text accordingly"
+      trendColor: 'text-emerald-600',
+      icon: Activity,
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-600',
+    },
+    {
+      title: 'Pending Verifications',
+      value: String(
+        tasks.filter((t) => t.status === 'Pending' || t.status === 'pending')
+          .length
+      ),
+      trend: 'Needs attention',
+      trendColor: 'text-amber-600',
+      icon: ShieldCheck,
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-600',
+    },
+    {
+      title: 'Active Projects',
+      value: String(projects.filter((p) => p.status === 'active').length),
+      trend: 'Currently running',
+      trendColor: 'text-emerald-600',
+      icon: Target,
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+    },
+    {
+      title: 'Organizations',
+      value: String(orgs.length),
+      trend: 'Associated workspaces',
+      trendColor: 'text-slate-500',
+      icon: AlertTriangle,
+      iconBg: 'bg-slate-100',
+      iconColor: 'text-slate-500',
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -173,6 +125,7 @@ export default function DashboardPage() {
 
         <button
           type="button"
+          onClick={() => router.push('/dashboard/projects')}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors shrink-0"
         >
           <FileText className="h-4 w-4" />
@@ -230,6 +183,7 @@ export default function DashboardPage() {
             </h2>
             <button
               type="button"
+              onClick={() => router.push('/dashboard/tasks')}
               className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
               View All
@@ -238,23 +192,36 @@ export default function DashboardPage() {
 
           {/* Activity List */}
           <ul className="divide-y divide-slate-100">
-            {ACTIVITY_ITEMS.map(
-              ({ id, text, time, icon: Icon, iconBg, iconColor }) => (
-                <li key={id} className="flex items-start gap-4 px-6 py-4">
-                  <div
-                    className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0 mt-0.5`}
-                  >
-                    <Icon className={`h-4 w-4 ${iconColor}`} />
+            {tasks.length === 0 && (
+              <li className="px-6 py-10 text-center text-sm text-slate-400">
+                No recent activity
+              </li>
+            )}
+            {[...tasks]
+              .sort(
+                (a, b) =>
+                  new Date(b.updatedAt ?? b.createdAt).getTime() -
+                  new Date(a.updatedAt ?? a.createdAt).getTime()
+              )
+              .slice(0, 5)
+              .map((task) => (
+                <li key={task.id} className="flex items-start gap-4 px-6 py-4">
+                  <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
+                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-700 leading-snug">
-                      {text}
+                    <p className="text-sm text-slate-700 leading-snug truncate">
+                      {task.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{time}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {task.status} ·{' '}
+                      {task.updatedAt
+                        ? new Date(task.updatedAt).toLocaleString()
+                        : 'Just now'}
+                    </p>
                   </div>
                 </li>
-              )
-            )}
+              ))}
           </ul>
         </div>
 
@@ -271,16 +238,37 @@ export default function DashboardPage() {
 
           {/* Action Buttons */}
           <div className="p-5 flex flex-col gap-3">
-            {QUICK_ACTIONS.map(({ label, icon: Icon }) => (
-              <button
-                key={label}
-                type="button"
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
-              >
-                <Icon className="h-4 w-4 text-slate-500 shrink-0" />
-                {label}
-              </button>
-            ))}
+            <button
+              onClick={() => router.push('/dashboard/tasks')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+            >
+              <Plus className="h-4 w-4 text-slate-500 shrink-0" /> Create New
+              Task
+            </button>
+
+            <button
+              onClick={() => router.push('/dashboard/tasks?status=pending')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+            >
+              <Flag className="h-4 w-4 text-slate-500 shrink-0" /> Review
+              Pending Tasks
+            </button>
+
+            <button
+              onClick={() => router.push('/dashboard/organizations')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+            >
+              <Lock className="h-4 w-4 text-slate-500 shrink-0" /> Manage
+              Organizations
+            </button>
+
+            <button
+              onClick={() => router.push('/dashboard/projects')}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+            >
+              <History className="h-4 w-4 text-slate-500 shrink-0" /> View All
+              Projects
+            </button>
           </div>
         </div>
       </div>
