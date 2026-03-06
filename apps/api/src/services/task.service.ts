@@ -13,7 +13,7 @@
  * - Non-blocking broadcasts (fire-and-forget)
  */
 
-import { eq, and, isNull, sql, or, desc, asc, inArray } from 'drizzle-orm';
+import { eq, and, isNull, sql, or, desc, asc, inArray, SQL } from 'drizzle-orm';
 import { db } from '../db';
 import { tasks, taskAssignees, projects, users } from '../db/schema';
 import { cache } from '../config/redis.config';
@@ -43,7 +43,7 @@ interface Task {
   parentTaskId?: string;
   position: number;
   tags: string[];
-  customFields: any;
+  customFields: Record<string, unknown>;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -91,6 +91,16 @@ interface TaskAssignee {
 }
 
 /**
+ * Pagination metadata
+ */
+interface Pagination {
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
+
+/**
  * Create task
  * ✅ ELITE: Wrapped in transaction for ACID compliance
  * ✅ REAL-TIME: Broadcasts TASK_CREATED event after successful creation
@@ -107,7 +117,7 @@ export const createTask = async (
     estimatedHours?: number;
     parentTaskId?: string;
     tags?: string[];
-    customFields?: any;
+    customFields?: Record<string, unknown>;
     assigneeIds?: string[];
   }
 ): Promise<Task> => {
@@ -130,7 +140,7 @@ export const createTask = async (
       projectId,
       title: data.title,
       description: data.description,
-      status: data.status || TaskStatus.TODO,
+      status: data.status || TaskStatus.PENDING,
       priority: data.priority || TaskPriority.MEDIUM,
       dueDate: data.dueDate,
       estimatedHours: data.estimatedHours,
@@ -316,14 +326,14 @@ export const updateTask = async (
     estimatedHours?: number;
     actualHours?: number;
     tags?: string[];
-    customFields?: any;
+    customFields?: Record<string, unknown>;
   }
 ): Promise<Task> => {
   // Track if status changed for optimized broadcast
   const statusChanged = data.status !== undefined;
 
   // Build update object with only provided fields
-  const updateData: any = {
+  const updateData: Partial<typeof tasks.$inferInsert> & { updatedAt: Date } = {
     updatedAt: new Date(),
   };
 
@@ -445,13 +455,13 @@ export const listProjectTasks = async (
     page?: number;
     perPage?: number;
   }
-): Promise<{ tasks: TaskWithDetails[]; pagination: any }> => {
+): Promise<{ tasks: TaskWithDetails[]; pagination: Pagination }> => {
   const page = params?.page || 1;
   const perPage = Math.min(params?.perPage || 50, 100);
   const offset = (page - 1) * perPage;
 
   // Build WHERE conditions
-  const conditions: any[] = [
+  const conditions: (SQL | undefined)[] = [
     eq(tasks.projectId, projectId),
     isNull(tasks.deletedAt),
   ];
@@ -546,7 +556,10 @@ export const listProjectTasks = async (
 
   // Get assignees for each task
   const taskIds = taskList.map((t: (typeof taskList)[number]) => t.id);
-  let assigneesByTask: Record<string, any[]> = {};
+  let assigneesByTask: Record<
+    string,
+    { id: string; fullName: string; avatarUrl: string | null; email: string }[]
+  > = {};
 
   if (taskIds.length > 0) {
     const assignees = await db
@@ -555,6 +568,7 @@ export const listProjectTasks = async (
         id: users.id,
         fullName: users.fullName,
         avatarUrl: users.avatarUrl,
+        email: users.email,
       })
       .from(taskAssignees)
       .innerJoin(users, eq(taskAssignees.userId, users.id))
@@ -571,7 +585,12 @@ export const listProjectTasks = async (
       (
         acc: Record<
           string,
-          { id: string; fullName: string; avatarUrl: string | null }[]
+          {
+            id: string;
+            fullName: string;
+            avatarUrl: string | null;
+            email: string;
+          }[]
         >,
         assignee: (typeof assignees)[number]
       ) => {
@@ -582,10 +601,19 @@ export const listProjectTasks = async (
           id: assignee.id,
           fullName: assignee.fullName,
           avatarUrl: assignee.avatarUrl,
+          email: assignee.email,
         });
         return acc;
       },
-      {} as Record<string, any[]>
+      {} as Record<
+        string,
+        {
+          id: string;
+          fullName: string;
+          avatarUrl: string | null;
+          email: string;
+        }[]
+      >
     );
   }
 
@@ -616,7 +644,7 @@ export const getUserTasks = async (
     projectId?: string;
   }
 ): Promise<TaskWithDetails[]> => {
-  const conditions: any[] = [
+  const conditions: (SQL | undefined)[] = [
     eq(taskAssignees.userId, userId),
     isNull(taskAssignees.deletedAt),
     isNull(tasks.deletedAt),

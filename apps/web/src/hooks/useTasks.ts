@@ -35,26 +35,7 @@ import {
 import { get, post, patch, del } from '@/lib/api';
 import { queryKeys, getQueryData, setQueryData } from '@/lib/query-client';
 
-/**
- * Task Status Enum
- */
-export enum TaskStatus {
-  TODO = 'todo',
-  IN_PROGRESS = 'in_progress',
-  IN_REVIEW = 'in_review',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
-
-/**
- * Task Priority Enum
- */
-export enum TaskPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
+import { TaskStatus, TaskPriority } from '@validiant/shared';
 
 /**
  * Task Interface
@@ -72,7 +53,7 @@ export interface Task {
   parentTaskId?: string;
   position: number;
   tags: string[];
-  customFields: Record<string, any>;
+  customFields: Record<string, unknown>;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -235,7 +216,7 @@ export interface UpdateTaskData {
   estimatedHours?: number;
   actualHours?: number;
   tags?: string[];
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 }
 
 /**
@@ -384,7 +365,7 @@ export interface CreateTaskData {
   estimatedHours?: number;
   parentTaskId?: string;
   tags?: string[];
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
   assigneeIds?: string[];
 }
 
