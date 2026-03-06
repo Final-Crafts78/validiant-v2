@@ -1,479 +1,99 @@
-/**
- * Projects Page
- *
- * List and manage projects.
- * Corporate Light Theme — Phase 8 → Phase 24 (live data via react-query).
- */
-
 'use client';
-
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ROUTES } from '@/lib/config';
-import { projectsApi } from '@/lib/api';
-import { format } from '@/lib/utils';
-import type { Project as SharedProject } from '@validiant/shared';
-import { CreateProjectModalTrigger } from '@/components/modals/CreateProjectModal';
-import {
-  FolderKanban,
-  Search,
-  Filter,
-  MoreVertical,
-  Users,
-  Calendar,
-  CheckCircle2,
-  Loader2,
-  AlertCircle,
-  Archive,
-  ArchiveRestore,
-  Trash2,
-} from 'lucide-react';
+import { useProjects, useCreateProject } from '@/hooks/useProjects';
+import { useWorkspaceStore } from '@/store/workspace';
+import { FolderOpen, Plus } from 'lucide-react';
 
-// ---------------------------------------------------------------------------
-// Shared input class
-// ---------------------------------------------------------------------------
-const inputCls =
-  'w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 ' +
-  'placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ' +
-  'focus:border-transparent transition';
-
-// ---------------------------------------------------------------------------
-// Status Badge — pure Tailwind pills
-// ---------------------------------------------------------------------------
-const statusStyles: Record<string, string> = {
-  active: 'bg-blue-50 text-blue-700 border border-blue-200',
-  completed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  'on-hold': 'bg-amber-50 text-amber-700 border border-amber-200',
-  on_hold: 'bg-amber-50 text-amber-700 border border-amber-200',
-  planning: 'bg-slate-100 text-slate-700 border border-slate-200',
-  archived: 'bg-slate-100 text-slate-500 border border-slate-200',
-  cancelled: 'bg-red-50 text-red-600 border border-red-200',
-};
-
-const statusLabels: Record<string, string> = {
-  active: 'Active',
-  completed: 'Completed',
-  'on-hold': 'On Hold',
-  on_hold: 'On Hold',
-  planning: 'Planning',
-  archived: 'Archived',
-  cancelled: 'Cancelled',
-};
-
-function StatusBadge({ status }: { status: string }) {
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-        statusStyles[status] ?? statusStyles['planning']
-      }`}
-    >
-      {statusLabels[status] ?? status}
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Project Card
-// ---------------------------------------------------------------------------
-function ProjectCard({ project }: { project: SharedProject }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const progress = project.progress ?? 0;
-  const isOverdue =
-    project.endDate != null &&
-    new Date(project.endDate) < new Date() &&
-    project.status !== 'completed';
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col">
-      {/* Card Header */}
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          {/* Project icon */}
-          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
-            <FolderKanban className="h-5 w-5 text-blue-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-slate-900 truncate">
-              {project.name}
-            </h3>
-            <StatusBadge status={project.status} />
-          </div>
-        </div>
-        <div className="relative shrink-0" ref={menuRef}>
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            type="button"
-            aria-label="Project options"
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </button>
-
-          {menuOpen && (
-            <div className="absolute right-0 top-8 w-48 bg-white border border-slate-200 rounded-lg shadow-lg z-10 py-1 animate-in fade-in slide-in-from-top-2">
-              <button
-                onClick={() => {
-                  router.push(ROUTES.PROJECT_DETAIL(project.id));
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 text-left"
-              >
-                <FolderKanban className="w-4 h-4" /> View Details
-              </button>
-
-              {project.status !== 'archived' ? (
-                <button
-                  onClick={async () => {
-                    await projectsApi.archive(project.id);
-                    queryClient.invalidateQueries({ queryKey: ['projects'] });
-                    setMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50 text-left"
-                >
-                  <Archive className="w-4 h-4" /> Archive
-                </button>
-              ) : (
-                <button
-                  onClick={async () => {
-                    await projectsApi.unarchive(project.id);
-                    queryClient.invalidateQueries({ queryKey: ['projects'] });
-                    setMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 text-left"
-                >
-                  <ArchiveRestore className="w-4 h-4" /> Unarchive
-                </button>
-              )}
-
-              {project.status !== 'completed' && (
-                <button
-                  onClick={async () => {
-                    await projectsApi.complete(project.id);
-                    queryClient.invalidateQueries({ queryKey: ['projects'] });
-                    setMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 text-left"
-                >
-                  <CheckCircle2 className="w-4 h-4" /> Mark Complete
-                </button>
-              )}
-
-              <button
-                onClick={async () => {
-                  if (
-                    !confirm(`Delete "${project.name}"? This cannot be undone.`)
-                  )
-                    return;
-                  await projectsApi.delete(project.id);
-                  queryClient.invalidateQueries({ queryKey: ['projects'] });
-                  setMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
-              >
-                <Trash2 className="w-4 h-4" /> Delete
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Description */}
-      <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-        {project.description || 'No description'}
-      </p>
-
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-            Progress
-          </span>
-          <span className="text-xs font-semibold text-slate-700">
-            {progress}%
-          </span>
-        </div>
-        {/* Track */}
-        <div className="w-full bg-slate-100 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all"
-            style={{ width: `${progress}%` }}
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          />
-        </div>
-      </div>
-
-      {/* Meta Footer */}
-      <div className="mt-auto pt-4 border-t border-slate-100">
-        <div className="flex flex-wrap items-center justify-between gap-y-2">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Users className="h-3.5 w-3.5 text-slate-400" />—
-            </span>
-            <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-400" />
-              {progress}%
-            </span>
-          </div>
-
-          {/* Due Date */}
-          {project.endDate != null && (
-            <span
-              className={`flex items-center gap-1.5 text-xs ${
-                isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'
-              }`}
-            >
-              <Calendar className="h-3.5 w-3.5 shrink-0" />
-              {format.date(project.endDate, { month: 'short', day: 'numeric' })}
-            </span>
-          )}
-        </div>
-
-        {/* View Details Link */}
-        <Link
-          href={ROUTES.PROJECT_DETAIL(project.id)}
-          className="mt-3 w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-        >
-          View Details
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Empty State
-// ---------------------------------------------------------------------------
-function EmptyState() {
-  return (
-    <div className="bg-white border border-dashed border-slate-200 rounded-xl py-16 text-center">
-      <div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-        <FolderKanban className="h-7 w-7 text-slate-400" />
-      </div>
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">
-        No projects found
-      </h3>
-      <p className="text-sm text-slate-500 mb-6 max-w-xs mx-auto">
-        Create your first project to start organizing your work and
-        collaborating with your team.
-      </p>
-      <CreateProjectModalTrigger />
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Projects Page Component — LIVE DATA via react-query
-// ---------------------------------------------------------------------------
 export default function ProjectsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const router = useRouter();
+  const { setActiveProject } = useWorkspaceStore();
+  const { data: projects = [], isLoading } = useProjects();
+  const createMutation = useCreateProject();
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState('');
 
-  // Fetch projects from API
-  const {
-    data: response,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['projects', 'all'],
-    queryFn: () => projectsApi.getAll(),
-  });
-
-  const liveProjects: SharedProject[] = response?.data?.data?.projects ?? [];
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-        <p className="text-sm font-medium text-slate-500">
-          Loading projects...
-        </p>
-      </div>
-    );
-  }
-
-  // Error state
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center">
-          <AlertCircle className="h-7 w-7 text-red-500" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900">
-          Failed to load projects
-        </h3>
-        <p className="text-sm text-slate-500">
-          There was a problem fetching your projects. Please try refreshing the
-          page.
-        </p>
-      </div>
-    );
-  }
-
-  // Filtered list
-  const filteredProjects = liveProjects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (project.description ?? '')
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === 'all' || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const hasProjects = liveProjects.length > 0;
-
-  // Derived stats
-  const stats = {
-    total: liveProjects.length,
-    active: liveProjects.filter((p) => p.status === 'active').length,
-    completed: liveProjects.filter((p) => p.status === 'completed').length,
-    onHold: liveProjects.filter(
-      (p) =>
-        p.status === 'on_hold' ||
-        p.status === 'planning' ||
-        p.status === ('on-hold' as string)
-    ).length,
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    const project = await createMutation.mutateAsync(name.trim());
+    setName('');
+    setShowForm(false);
+    setActiveProject(project.id);
+    router.push(`/dashboard/projects/${project.id}`);
   };
 
+  if (isLoading)
+    return <div className="p-8 text-slate-400">Loading projects…</div>;
+
   return (
-    <div className="space-y-6">
-      {/* PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Projects</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Manage workspaces and track project milestones
-          </p>
-        </div>
-        <CreateProjectModalTrigger />
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-slate-900">Projects</h1>
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" /> New Project
+        </button>
       </div>
 
-      {hasProjects ? (
-        <>
-          {/* STATS GRID */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Total
-              </p>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-blue-600">{stats.active}</p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Active
-              </p>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-emerald-600">
-                {stats.completed}
-              </p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Completed
-              </p>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-amber-600">
-                {stats.onHold}
-              </p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Planning / On Hold
-              </p>
-            </div>
-          </div>
-
-          {/* FILTERS BAR */}
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <div className="flex flex-col lg:flex-row gap-3">
-              {/* Search */}
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search projects…"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`${inputCls} pl-9 py-2`}
-                />
-              </div>
-
-              {/* Status Filter */}
-              <div className="w-full lg:w-44 relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`${inputCls} pl-9 py-2 appearance-none`}
-                >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="planning">Planning</option>
-                  <option value="on_hold">On Hold</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* PROJECTS GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))
-            ) : (
-              <div className="col-span-full bg-white border border-dashed border-slate-200 rounded-xl py-12 text-center">
-                <p className="text-sm font-medium text-slate-500">
-                  No projects match your current filters.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Pagination info */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              Showing{' '}
-              <span className="font-medium text-slate-700">
-                {filteredProjects.length}
-              </span>{' '}
-              of{' '}
-              <span className="font-medium text-slate-700">
-                {liveProjects.length}
-              </span>{' '}
-              projects
-            </p>
-          </div>
-        </>
-      ) : (
-        <EmptyState />
+      {showForm && (
+        <form
+          onSubmit={handleCreate}
+          className="flex gap-3 bg-white border border-slate-200 rounded-xl p-4"
+        >
+          <input
+            autoFocus
+            type="text"
+            placeholder="Project name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={createMutation.isPending}
+            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg disabled:opacity-50"
+          >
+            {createMutation.isPending ? 'Creating…' : 'Create'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowForm(false)}
+            className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900"
+          >
+            Cancel
+          </button>
+        </form>
       )}
 
-      {/* Modal is now managed by CreateProjectModalTrigger */}
+      {projects.length === 0 ? (
+        <div className="text-center py-16 bg-white border border-slate-200 rounded-2xl">
+          <FolderOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <p className="text-slate-500 text-sm">
+            No projects yet. Create your first one.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {projects.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => {
+                setActiveProject(p.id);
+                router.push(`/dashboard/projects/${p.id}`);
+              }}
+              className="bg-white border border-slate-200 rounded-xl p-5 text-left hover:border-blue-400 hover:shadow-sm transition-all"
+            >
+              <h3 className="font-semibold text-slate-900">{p.name}</h3>
+              <p className="text-xs text-slate-400 mt-1 capitalize">
+                {p.status}
+              </p>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

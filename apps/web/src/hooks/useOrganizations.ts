@@ -1,0 +1,35 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useWorkspaceStore } from '@/store/workspace';
+import * as orgService from '@/services/organization.service';
+
+const ORG_KEYS = {
+  all: ['organizations', 'my'] as const,
+  members: (orgId: string) => ['organizations', orgId, 'members'] as const,
+};
+
+export function useOrganizations() {
+  return useQuery({
+    queryKey: ORG_KEYS.all,
+    queryFn: orgService.getMyOrganizations,
+    staleTime: 1000 * 60 * 5, // 5 min
+  });
+}
+
+export function useOrgMembers(orgId: string | null) {
+  return useQuery({
+    queryKey: ORG_KEYS.members(orgId ?? ''),
+    queryFn: () => orgService.getOrgMembers(orgId!),
+    enabled: !!orgId,
+  });
+}
+
+export function useInviteMember(orgId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { email: string; role: 'admin' | 'member' }) =>
+      orgService.inviteMember(orgId, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ORG_KEYS.members(orgId) });
+    },
+  });
+}

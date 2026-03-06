@@ -59,7 +59,7 @@ export default function OnboardingPage() {
       try {
         const { data } = await apiClient.post('/organizations', {
           name: name.trim(),
-          industry: industry || undefined,
+          industryType: industry || undefined,
         });
 
         const org = data?.data;

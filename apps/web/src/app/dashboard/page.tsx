@@ -26,10 +26,13 @@ import {
   History,
 } from 'lucide-react';
 
+import { useOrganizations } from '@/hooks/useOrganizations';
+import { useWorkspaceStore } from '@/store/workspace';
+
 // ---------------------------------------------------------------------------
-// Dashboard Page Component
+// General Dashboard Page Component
 // ---------------------------------------------------------------------------
-export default function DashboardPage() {
+function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
 
@@ -280,4 +283,37 @@ export default function DashboardPage() {
       </div>
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// BGV Dashboard Stub
+// ---------------------------------------------------------------------------
+function BGVDashboard({ orgId }: { orgId: string }) {
+  return (
+    <div className="p-8 text-center text-slate-500">
+      <p className="text-xl font-semibold mb-2">BGV Dashboard</p>
+      <p className="text-sm">
+        Compliance view is currently being provisioned for organization {orgId}.
+      </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main Dashboard Switcher Component
+// ---------------------------------------------------------------------------
+export default function DashboardPage() {
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  const { data: orgs = [] } = useOrganizations();
+  const activeOrg = orgs.find((o) => o.id === activeOrgId);
+
+  const isBGV =
+    activeOrg?.industryType?.toLowerCase().includes('bgv') ||
+    activeOrg?.industryType?.toLowerCase().includes('legal') ||
+    activeOrg?.industryType?.toLowerCase().includes('compliance');
+
+  if (!activeOrgId)
+    return <div className="p-8 text-slate-400">Loading workspace...</div>;
+  if (isBGV) return <BGVDashboard orgId={activeOrgId} />;
+  return <GeneralDashboard orgId={activeOrgId} />;
 }

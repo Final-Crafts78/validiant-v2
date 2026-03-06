@@ -16,13 +16,13 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useTasks } from '@/hooks/useTasks';
+import { useWorkspaceStore } from '@/store/workspace';
 import { format } from '@/lib/utils';
-import { tasksApi } from '@/lib/api';
 import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
 import { CreateTaskModalTrigger } from '@/components/modals/CreateTaskModal';
-import type { Task } from '@validiant/shared';
+import type { Task } from '@/hooks/useTasks';
 import {
   CheckSquare,
   Search,
@@ -113,7 +113,7 @@ function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
   );
 
   // Graceful display values for fields that may not be populated on plain Task
-  const displayAssignee = task.assigneeId ?? 'Unassigned';
+  const displayAssignee = task.assignees?.[0]?.fullName ?? 'Unassigned';
   const displayProject = task.projectId ?? 'No Project';
   const displayDesc = task.description ?? '';
 
@@ -234,24 +234,17 @@ function TasksPageContent() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // ------------------------------------------------------------------
-  // Live data via react-query
-  // response                      = AxiosResponse<APIResponse<...>>
-  // response.data                 = APIResponse<...>  (our wrapper object)
-  // response.data.data            = { tasks: Task[] } (the live payload)
-  // response.data.data.tasks      = Task[]            (the actual array)
-  // ------------------------------------------------------------------
+  const activeProjectId = useWorkspaceStore((s) => s.activeProjectId);
+
   const {
-    data: response,
+    data: rawTasks = [],
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ['tasks', 'all'],
-    queryFn: () => tasksApi.getAll(),
+  } = useTasks(activeProjectId ?? '', undefined, {
+    enabled: !!activeProjectId,
   });
 
-  // Extract the tasks array from the API response payload: response.data.data.tasks
-  const liveTasks: Task[] = response?.data?.data?.tasks ?? [];
+  const liveTasks = rawTasks as unknown as Task[];
 
   // ------------------------------------------------------------------
   // Loading state
