@@ -13,7 +13,7 @@
  * RESULT: 0ms perceived latency for perfect UX
  *
  * KANBAN BOARD EXAMPLE:
- * - User drags task from "TODO" to "IN_PROGRESS"
+ * - User drags task from "PENDING" to "IN_PROGRESS"
  * - Task moves instantly in UI
  * - API updates database in background
  * - If API fails, task snaps back to original column
@@ -163,7 +163,7 @@ const fetchTask = async (taskId: string): Promise<Task> => {
  * ```tsx
  * function TaskList({ projectId }: { projectId: string }) {
  *   const { data: tasks, isLoading, error } = useTasks(projectId, {
- *     status: TaskStatus.TODO,
+ *     status: TaskStatus.PENDING,
  *     priority: TaskPriority.HIGH,
  *   });
  *

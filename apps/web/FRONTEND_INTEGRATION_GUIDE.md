@@ -166,7 +166,7 @@ function TaskList({ projectId }: { projectId: string }) {
     isLoading,
     error,
   } = useTasks(projectId, {
-    status: TaskStatus.TODO,
+    status: TaskStatus.PENDING,
     priority: TaskPriority.HIGH,
   });
 
@@ -267,7 +267,10 @@ function KanbanBoard({ projectId }: { projectId: string }) {
 
   return (
     <div className="kanban-board">
-      <Column status="todo" tasks={tasks.filter((t) => t.status === 'todo')} />
+      <Column
+        status="pending"
+        tasks={tasks.filter((t) => t.status === 'pending')}
+      />
       <Column
         status="in_progress"
         tasks={tasks.filter((t) => t.status === 'in_progress')}

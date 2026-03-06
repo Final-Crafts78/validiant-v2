@@ -183,7 +183,7 @@ export const createTaskSchema = z.object({
   assigneeId: z.string().uuid().optional(),
   reporterId: z.string().uuid().optional(),
   type: taskTypeSchema.default(TaskType.TASK),
-  status: taskStatusSchema.default(TaskStatus.TODO),
+  status: taskStatusSchema.default(TaskStatus.PENDING),
   priority: taskPrioritySchema.default(TaskPriority.MEDIUM),
   dueDate: z.string().datetime().optional(),
   estimatedHours: z.number().min(0).max(1000).optional(),
