@@ -458,7 +458,7 @@ export const DEFAULT_PROJECT_SETTINGS: ProjectSettings = {
   requireTaskApproval: false,
   enableTimeTracking: true,
   enableCustomFields: true,
-  defaultTaskStatus: TaskStatus.TODO,
+  defaultTaskStatus: TaskStatus.PENDING,
   autoArchiveCompletedTasks: false,
   autoArchiveDays: 30,
   notifyOnTaskAssignment: true,
