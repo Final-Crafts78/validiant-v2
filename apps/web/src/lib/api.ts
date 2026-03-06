@@ -361,7 +361,7 @@ export const tasksApi = {
 export const projectsApi = {
   /** Fetch all projects */
   getAll: (): Promise<AxiosResponse<APIResponse<{ projects: Project[] }>>> =>
-    get<APIResponse<{ projects: Project[] }>>('/projects'),
+    get<APIResponse<{ projects: Project[] }>>('/projects/my'),
 
   /** Fetch a single project by ID */
   getById: (id: string): Promise<AxiosResponse<APIResponse<Project>>> =>
