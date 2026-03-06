@@ -4,12 +4,19 @@ import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { organizationsApi } from '@/lib/api';
 import { Building2, X, Save } from 'lucide-react';
-import { Organization, UpdateOrganizationData } from '@validiant/shared';
+import { UpdateOrganizationData } from '@validiant/shared';
+
+interface OrgForSettings {
+  id: string;
+  name: string;
+  description?: string | null;
+  industry?: string | null;
+}
 
 interface OrgSettingsModalProps {
   open: boolean;
   onClose: () => void;
-  organization: Organization;
+  organization: OrgForSettings;
 }
 
 export function OrgSettingsModal({

@@ -474,8 +474,6 @@ export const organizationsApi = {
   ): Promise<AxiosResponse<APIResponse<Organization>>> =>
     post<APIResponse<Organization>>('/organizations/accept-invite', { token }),
 
-  leave: (
-    id: string
-  ): Promise<AxiosResponse<APIResponse<{ success: boolean }>>> =>
-    post<APIResponse<{ success: boolean }>>(`/organizations/${id}/leave`),
+  leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/organizations/${id}/leave`),
 };
