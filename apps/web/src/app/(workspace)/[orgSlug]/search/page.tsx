@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search as SearchIcon, Filter, X, Command, ArrowRight } from 'lucide-react';
+import { Search as SearchIcon, Filter, Command, ArrowRight } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 export default function SearchPage() {

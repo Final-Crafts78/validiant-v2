@@ -1,14 +1,11 @@
 'use client';
 
 import { 
-  Database, 
   Server, 
   ShieldCheck, 
-  ShieldAlert, 
   Cpu, 
   Globe, 
-  Zap,
-  Activity
+  Zap
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 

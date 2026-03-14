@@ -7,7 +7,6 @@ import { analyticsApi } from '@/lib/api';
 import { 
   BarChart3, 
   TrendingUp, 
-  Users, 
   Clock, 
   AlertCircle,
   Loader2
@@ -42,7 +41,7 @@ export default function AnalyticsPage() {
   const history = historyRes?.data?.data?.data ?? [];
 
   const chartData = useMemo(() => {
-    return history.map((h: any) => ({
+    return history.map((h: { recordedAt: string; metrics: { tasks: { completed: number; pending: number } } }) => ({
       date: new Date(h.recordedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
       throughput: h.metrics.tasks.completed,
       active: h.metrics.tasks.pending
