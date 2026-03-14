@@ -69,7 +69,10 @@ export default function LoginPage() {
           }
 
           if (result.user) {
-            setAuth({ user: result.user });
+            setAuth({
+              user: result.user,
+              accessToken: result.accessToken,
+            });
           }
 
           router.push(ROUTES.DASHBOARD_ROOT);

@@ -57,13 +57,17 @@ export function useRealtime() {
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
-    if (!activeOrgId) {
+    // Guards: Don't connect if not in an org or not authenticated
+    if (!activeOrgId || !userId) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
       return;
     }
+
+    // Read token from auth store (cross-site EventSource requires token in URL)
+    const accessToken = useAuthStore.getState().accessToken;
 
     // Close existing connection if any
     if (eventSourceRef.current) {
@@ -73,11 +77,11 @@ export function useRealtime() {
     console.log('[Realtime] Connecting to SSE stream for Org:', activeOrgId);
 
     // Create new EventSource connection
-    // The relative URL works because the API is on the same domain or proxied
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const es = new EventSource(`${apiBase}/api/v1/realtime/stream`, {
-      withCredentials: true, // Crucial for HttpOnly cookies
-    });
+    const es = new EventSource(
+      `${apiBase}/api/v1/realtime/stream?token=${accessToken}`,
+      { withCredentials: true }
+    );
 
     eventSourceRef.current = es;
 

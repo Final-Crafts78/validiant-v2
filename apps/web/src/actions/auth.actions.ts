@@ -169,6 +169,7 @@ export async function loginAction(
     return {
       success: true,
       user: user as AuthUser,
+      accessToken,
     };
   } catch (error) {
     console.error('[Server Action] Login error:', error);
@@ -241,6 +242,7 @@ export async function registerAction(
     return {
       success: true,
       user: user as AuthUser,
+      accessToken,
     };
   } catch (error) {
     console.error('[Server Action] Register error:', error);
@@ -475,6 +477,7 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
     return {
       success: true,
       user: data.data.user as AuthUser,
+      accessToken,
     };
   } catch (error) {
     console.error('[getCurrentUserAction] Network or unexpected error:', error);

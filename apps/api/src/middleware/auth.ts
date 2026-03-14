@@ -51,6 +51,11 @@ export const authenticate = async (
       token = getCookie(c, 'accessToken') || null;
     }
 
+    // Fallback: Check for token in search params (for EventSource/SSE which doesn't support headers)
+    if (!token) {
+      token = c.req.query('token') || null;
+    }
+
     if (!token) {
       return c.json(
         {

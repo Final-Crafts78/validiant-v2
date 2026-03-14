@@ -41,6 +41,7 @@ export interface AuthUser {
 export interface LoginActionResult {
   success: boolean;
   user?: AuthUser;
+  accessToken?: string;
   error?: string;
   message?: string;
 }
@@ -51,6 +52,7 @@ export interface LoginActionResult {
 export interface RegisterActionResult {
   success: boolean;
   user?: AuthUser;
+  accessToken?: string;
   error?: string;
   message?: string;
 }
@@ -70,6 +72,7 @@ export interface LogoutActionResult {
 export interface GetCurrentUserActionResult {
   success: boolean;
   user?: AuthUser;
+  accessToken?: string;
   error?: string;
   message?: string;
 }

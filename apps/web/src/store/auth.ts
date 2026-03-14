@@ -15,12 +15,13 @@ import type { AuthUser } from '@/types/auth.types';
 interface AuthState {
   // Ephemeral state (not persisted)
   user: AuthUser | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 
   // Actions
-  setAuth: (data: { user: AuthUser }) => void;
-  setUser: (user: AuthUser) => void;
+  setAuth: (data: { user: AuthUser; accessToken?: string }) => void;
+  setUser: (user: AuthUser, accessToken?: string) => void;
   updateUser: (updates: Partial<AuthUser>) => void;
   clearAuth: () => void;
   setLoading: (isLoading: boolean) => void;
@@ -37,6 +38,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()((set, get) => ({
   // Initial state - start with loading false since auth is handled server-side
   user: null,
+  accessToken: null,
   isAuthenticated: false,
   isLoading: false,
 
@@ -60,23 +62,26 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   // Set full auth data (login/register)
-  setAuth: ({ user }) => {
+  setAuth: ({ user, accessToken }) => {
     console.log('[Auth] Setting auth data', {
       userId: user.id,
       email: user.email,
+      hasToken: !!accessToken,
     });
     set({
       user,
+      accessToken: accessToken || get().accessToken,
       isAuthenticated: true,
       isLoading: false,
     });
   },
 
   // Set user data only
-  setUser: (user) => {
+  setUser: (user, accessToken) => {
     console.log('[Auth] Setting user', { userId: user.id, email: user.email });
     set({
       user,
+      accessToken: accessToken || get().accessToken,
       isAuthenticated: true,
       isLoading: false,
     });
@@ -98,6 +103,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     console.log('[Auth] Clearing auth state');
     set({
       user: null,
+      accessToken: null,
       isAuthenticated: false,
       isLoading: false,
     });
