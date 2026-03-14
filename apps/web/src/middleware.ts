@@ -15,7 +15,8 @@ import type { NextRequest } from 'next/server';
 const PROTECTED_ROUTES = [
   '/onboarding',
   '/organizations',
-  '/profile', // Global profile if exists
+  '/profile',
+  '/dashboard',
 ];
 
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
@@ -52,6 +53,7 @@ export function middleware(request: NextRequest) {
     'onboarding',
     'organizations',
     'profile',
+    'dashboard',
   ];
   const firstSegment = pathname.split('/')[1];
   const isOrgScoped =

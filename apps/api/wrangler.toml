@@ -10,6 +10,7 @@ routes = [
 
 # 2. Locks in your Public Environment Variables
 [vars]
+NODE_ENV = "production"
 FRONTEND_URL = "https://www.validiant.in"
 CORS_ORIGIN = "https://www.validiant.in"
 WEB_APP_URL = "https://www.validiant.in"
