@@ -138,7 +138,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <AuthStoreInitializer user={user} />
+      <AuthStoreInitializer user={user} accessToken={accessToken?.value} />
       <WorkspaceInitializer orgs={orgs} />
 
       <DashboardHeader user={user} orgs={orgs} />

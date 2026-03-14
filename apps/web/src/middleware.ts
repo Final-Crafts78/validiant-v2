@@ -69,10 +69,12 @@ export function middleware(request: NextRequest) {
 
   // Redirect authenticated users from auth pages to dashboard
   if (isAuthRoute && isAuthenticated) {
-    // Check if there's a 'from' parameter to redirect back
-    const fromParam = request.nextUrl.searchParams.get('from');
+    // Check if there's a redirect parameter to redirect back
+    const destParam =
+      request.nextUrl.searchParams.get('from') ||
+      request.nextUrl.searchParams.get('redirect');
     const dest = new URL(
-      fromParam && fromParam.startsWith('/') ? fromParam : '/dashboard',
+      destParam && destParam.startsWith('/') ? destParam : '/dashboard',
       request.url
     );
     return NextResponse.redirect(dest);

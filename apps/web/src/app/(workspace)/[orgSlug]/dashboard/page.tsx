@@ -44,7 +44,13 @@ import {
 // ---------------------------------------------------------------------------
 // General Dashboard Page Component
 // ---------------------------------------------------------------------------
-function GeneralDashboard({ orgId }: { orgId: string }) {
+function GeneralDashboard({
+  orgId,
+  orgSlug,
+}: {
+  orgId: string;
+  orgSlug: string;
+}) {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
 
@@ -190,7 +196,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
 
         <button
           type="button"
-          onClick={() => router.push('/dashboard/projects')}
+          onClick={() => router.push(`/${orgSlug}/projects`)}
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors shrink-0"
         >
           <FileText className="h-4 w-4" />
@@ -313,7 +319,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
               </h2>
               <button
                 type="button"
-                onClick={() => router.push('/dashboard/tasks')}
+                onClick={() => router.push(`/${orgSlug}/tasks`)}
                 className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
               >
                 View All
@@ -373,7 +379,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
           {/* Action Buttons */}
           <div className="p-5 flex flex-col gap-3">
             <button
-              onClick={() => router.push('/dashboard/tasks')}
+              onClick={() => router.push(`/${orgSlug}/tasks`)}
               className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
             >
               <Plus className="h-4 w-4 text-slate-500 shrink-0" /> Create New
@@ -381,7 +387,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
             </button>
 
             <button
-              onClick={() => router.push('/dashboard/tasks?status=pending')}
+              onClick={() => router.push(`/${orgSlug}/tasks?status=pending`)}
               className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
             >
               <Flag className="h-4 w-4 text-slate-500 shrink-0" /> Review
@@ -390,7 +396,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
 
             <PermissionGate permission="manageOrg">
               <button
-                onClick={() => router.push('/dashboard/organizations')}
+                onClick={() => router.push(`/${orgSlug}/organizations`)}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
               >
                 <Lock className="h-4 w-4 text-slate-500 shrink-0" /> Manage
@@ -399,7 +405,7 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
             </PermissionGate>
 
             <button
-              onClick={() => router.push('/dashboard/projects')}
+              onClick={() => router.push(`/${orgSlug}/projects`)}
               className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
             >
               <History className="h-4 w-4 text-slate-500 shrink-0" /> View All
@@ -417,19 +423,20 @@ function GeneralDashboard({ orgId }: { orgId: string }) {
 // ---------------------------------------------------------------------------
 export default function DashboardPage() {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  const activeOrgSlug = useWorkspaceStore((s) => s.activeOrgSlug);
   const { isLoading: isOrgsLoading } = useOrganizations();
   const { isGuest, isLoading: isPermsLoading } = usePermissions();
 
   if (isOrgsLoading || isPermsLoading)
     return <div className="p-8 text-slate-400">Loading workspace...</div>;
 
-  if (!activeOrgId)
+  if (!activeOrgId || !activeOrgSlug)
     return <div className="p-8 text-slate-400">No workspace selected.</div>;
 
   // GUEST gets a read-only shell with no action buttons
   if (isGuest) return <GuestDashboard orgId={activeOrgId} />;
 
-  return <GeneralDashboard orgId={activeOrgId} />;
+  return <GeneralDashboard orgId={activeOrgId} orgSlug={activeOrgSlug} />;
 }
 
 function GuestDashboard({ orgId: _orgId }: { orgId: string }) {

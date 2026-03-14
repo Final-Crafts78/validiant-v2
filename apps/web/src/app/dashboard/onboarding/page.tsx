@@ -69,7 +69,7 @@ export default function OnboardingPage() {
           // Invalidate orgs query so the switcher picks it up
           queryClient.invalidateQueries({ queryKey: ['organizations', 'my'] });
           // Navigate to dashboard
-          router.push(ROUTES.DASHBOARD_ROOT);
+          router.push(ROUTES.DASHBOARD(org.slug));
           router.refresh();
         }
       } catch (err: any) {

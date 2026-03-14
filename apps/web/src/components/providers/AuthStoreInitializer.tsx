@@ -17,12 +17,18 @@ import { useRef } from 'react';
 import { useAuthStore } from '@/store/auth';
 import type { AuthUser } from '@/types/auth.types';
 
-export function AuthStoreInitializer({ user }: { user: AuthUser }) {
+export function AuthStoreInitializer({
+  user,
+  accessToken,
+}: {
+  user: AuthUser;
+  accessToken?: string;
+}) {
   const initialized = useRef(false);
 
   if (!initialized.current) {
     // Seed the store immediately on render so child client components don't return null
-    useAuthStore.getState().setUser(user);
+    useAuthStore.getState().setAuth({ user, accessToken });
     initialized.current = true;
   }
 

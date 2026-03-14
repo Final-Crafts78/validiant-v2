@@ -88,9 +88,12 @@ export default async function OrgLayout({
     redirect(ROUTES.ONBOARDING);
   }
 
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('accessToken');
+
   return (
     <>
-      <AuthStoreInitializer user={user} />
+      <AuthStoreInitializer user={user} accessToken={accessToken?.value} />
       <WorkspaceInitializer orgs={orgs} />
 
       <WorkspaceLayoutContent orgSlug={params.orgSlug}>

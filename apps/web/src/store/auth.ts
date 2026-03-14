@@ -70,7 +70,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     });
     set({
       user,
-      accessToken: accessToken || get().accessToken,
+      accessToken: accessToken !== undefined ? accessToken : get().accessToken,
       isAuthenticated: true,
       isLoading: false,
     });
