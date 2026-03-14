@@ -81,12 +81,29 @@ import type { R2Bucket } from '@cloudflare/workers-types';
  * Environment variables interface
  */
 export interface Env {
+  // Required secrets (wrangler secret put)
   DATABASE_URL: string;
   JWT_SECRET: string;
   JWT_REFRESH_SECRET: string;
-  UPSTASH_REDIS_REST_URL?: string;
-  UPSTASH_REDIS_REST_TOKEN?: string;
+  SESSION_SECRET: string;
+  ENCRYPTION_SECRET: string;
+  UPSTASH_REDIS_REST_URL: string;
+  UPSTASH_REDIS_REST_TOKEN: string;
+
+  // Plaintext vars (wrangler.toml [vars])
   CORS_ORIGIN?: string;
+  FRONTEND_URL?: string;
+  WEB_APP_URL?: string;
+  GOOGLE_REDIRECT_URI?: string;
+  GITHUB_REDIRECT_URI?: string;
+
+  // OAuth secrets (wrangler secret put)
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
+
+  // Bindings
   BACKUP_BUCKET?: R2Bucket;
   REALTIME_ROOMS: DurableObjectNamespace;
 }
