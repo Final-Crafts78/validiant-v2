@@ -32,7 +32,7 @@ export function WorkspaceInitializer({ orgs }: WorkspaceInitializerProps) {
     const orgIds = orgs.map((o) => o.id);
     if (!activeOrgId || !orgIds.includes(activeOrgId)) {
       if (orgs.length > 0 && orgs[0]) {
-        setActiveOrg(orgs[0].id);
+        setActiveOrg(orgs[0].id, orgs[0].slug || '');
       }
     }
   }, [orgs, activeOrgId, setActiveOrg]);

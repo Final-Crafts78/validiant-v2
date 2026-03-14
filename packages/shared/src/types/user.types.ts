@@ -10,12 +10,9 @@
  * Defines the hierarchy of user roles in the system
  */
 export const UserRole = {
-  SUPER_ADMIN: 'super_admin',
+  SUPERADMIN: 'superadmin',
   ADMIN: 'admin',
-  MANAGER: 'manager',
-  MEMBER: 'member',
-  GUEST: 'guest',
-  USER: 'member', // Alias for backward compatibility
+  USER: 'user',
 } as const;
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
@@ -26,8 +23,6 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole];
  */
 export const UserStatus = {
   ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  PENDING: 'pending',
   SUSPENDED: 'suspended',
   DELETED: 'deleted',
 } as const;
@@ -58,6 +53,13 @@ export interface UserPreferences {
   emailNotifications: boolean;
   pushNotifications: boolean;
   desktopNotifications: boolean;
+  tableSettings?: {
+    [key: string]: {
+      visibility?: Record<string, boolean>;
+      order?: string[];
+      sorting?: any;
+    };
+  };
 }
 
 /**
@@ -194,7 +196,9 @@ export interface TokenPayload {
   userId: string;
   email: string;
   role: UserRole;
-  sessionId: string;
+  organizationId?: string;
+  permissionsVersion?: number;
+  sessionId?: string;
   iat: number; // Issued at
   exp: number; // Expiration
 }
@@ -265,11 +269,9 @@ export interface UserPermission {
  * Role hierarchy mapping for permission checks
  */
 const roleHierarchy: Record<UserRole, number> = {
-  [UserRole.SUPER_ADMIN]: 5,
-  [UserRole.ADMIN]: 4,
-  [UserRole.MANAGER]: 3,
-  [UserRole.MEMBER]: 2,
-  [UserRole.GUEST]: 1,
+  [UserRole.SUPERADMIN]: 3,
+  [UserRole.ADMIN]: 2,
+  [UserRole.USER]: 1,
 };
 
 /**

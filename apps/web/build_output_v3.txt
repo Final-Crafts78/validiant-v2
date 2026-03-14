@@ -1,0 +1,30 @@
+
+> @validiant/web@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./src/app/dashboard/organizations/page.tsx:57:32
+Type error: Expected 2-3 arguments, but got 1.
+
+[0m [90m 55 |[39m               [33m<[39m[33mbutton[39m[0m
+[0m [90m 56 |[39m                 key[33m=[39m{org[33m.[39mid}[0m
+[0m[31m[1m>[22m[39m[90m 57 |[39m                 onClick[33m=[39m{() [33m=>[39m setActiveOrg(org[33m.[39mid)}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 58 |[39m                 className[33m=[39m{[32m`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${[39m[0m
+[0m [90m 59 |[39m [32m                  org.id === activeOrgId[39m[0m
+[0m [90m 60 |[39m [32m                    ? 'bg-blue-600 text-white border-blue-600'[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error workspace @validiant/web@2.0.0
+npm error location C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c next build

@@ -1,0 +1,160 @@
+﻿
+> validiant-monorepo@1.0.0 type-check C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2
+> turbo run type-check "--filter=@validiant/api"
+
+ΓÇó Packages in scope: @validiant/api
+ΓÇó Running type-check in 1 packages
+ΓÇó Remote caching disabled
+@validiant/api:type-check: cache miss, executing eb169bfb908c3d74
+@validiant/api:type-check: 
+@validiant/api:type-check: > @validiant/api@1.0.0 type-check C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api
+@validiant/api:type-check: > tsc --noEmit
+@validiant/api:type-check: 
+@validiant/api:type-check: src/controllers/csv-import.controller.ts(87,44): error TS2339: Property 'getImportTemplates' does not exist on type 'typeof import("C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/csv-import.service")'.
+@validiant/api:type-check: src/durable-objects/realtime.do.ts(13,18): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Env'.
+@validiant/api:type-check: src/middleware/auth.ts(16,41): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/index.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/middleware/auth.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/auth.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/auth.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/utils/errors.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/organization.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/oauth.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/auth.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/passkey.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/user.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/user.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/user.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/organization.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/organization.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/project.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/project.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/project.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/task.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/task.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/task.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/task.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/case-data.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/middleware/rbac.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/verification.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/verification.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/verification.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/bgv-partner.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/bgv-partner.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/bgv-partner.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/routes/inbound.routes.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/inbound.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/services/csv-import.service.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/controllers/csv-import.controller.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/utils/response.ts'
+@validiant/api:type-check:     Imported via '@validiant/shared' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src/utils/response.ts'
+@validiant/api:type-check: src/routes/invoice.routes.ts(163,54): error TS2339: Property 'status' does not exist on type 'PgTableWithColumns<{ name: "tasks"; schema: undefined; columns: { id: PgColumn<{ name: "id"; tableName: "tasks"; dataType: "string"; columnType: "PgUUID"; data: string; driverParam: string; notNull: true; hasDefault: true; enumValues: undefined; baseColumn: never; }, {}, {}>; ... 35 more ...; slaBreachedNotified: Pg...'.
+@validiant/api:type-check: src/routes/search.routes.ts(66,30): error TS2339: Property 'status' does not exist on type 'PgTableWithColumns<{ name: "tasks"; schema: undefined; columns: { id: PgColumn<{ name: "id"; tableName: "tasks"; dataType: "string"; columnType: "PgUUID"; data: string; driverParam: string; notNull: true; hasDefault: true; enumValues: undefined; baseColumn: never; }, {}, {}>; ... 35 more ...; slaBreachedNotified: Pg...'.
+@validiant/api:type-check: src/services/auth.service.ts(169,22): error TS2339: Property 'MEMBER' does not exist on type '{ readonly SUPERADMIN: "superadmin"; readonly ADMIN: "admin"; readonly USER: "user"; }'.
+@validiant/api:type-check: src/services/csv-import.service.ts(21,10): error TS6133: 'NotFoundError' is declared but its value is never read.
+@validiant/api:type-check: src/services/csv-import.service.ts(72,47): error TS7006: Parameter 'v' implicitly has an 'any' type.
+@validiant/api:type-check: src/services/notification.service.ts(64,74): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogMetadata | undefined'.
+@validiant/api:type-check: src/services/storage.service.ts(35,34): error TS18046: 'error' is of type 'unknown'.
+@validiant/api:type-check: src/services/storage.service.ts(35,49): error TS18046: 'error' is of type 'unknown'.
+@validiant/api:type-check: src/services/storage.service.ts(43,19): error TS18046: 'data' is of type 'unknown'.
+@validiant/api:type-check: src/services/storage.service.ts(44,7): error TS18046: 'data' is of type 'unknown'.
+@validiant/api:type-check: src/services/storage.service.ts(52,17): error TS18046: 'data' is of type 'unknown'.
+@validiant/api:type-check: src/services/storage.service.ts(54,12): error TS18046: 'data' is of type 'unknown'.
+@validiant/api:type-check: src/services/verification.service.ts(8,19): error TS6133: 'isNull' is declared but its value is never read.
+@validiant/api:type-check: src/workers/audit-retention.ts(8,24): error TS6133: 'lt' is declared but its value is never read.
+@validiant/api:type-check: src/workers/sla-monitor.ts(10,17): error TS6133: 'organizations' is declared but its value is never read.
+@validiant/api:type-check: src/workers/sla-monitor.ts(105,53): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Error | LogMetadata | undefined'.
+@validiant/api:type-check: ../../packages/shared/src/constants/index.ts(166,30): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/bgv-status.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via '../bgv-status' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/constants/index.ts'
+@validiant/api:type-check:     Imported via '../bgv-status' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/task.schemas.ts'
+@validiant/api:type-check:     Imported via './bgv-status' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/index.ts'
+@validiant/api:type-check: ../../packages/shared/src/index.ts(8,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/index.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via './types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/index.ts'
+@validiant/api:type-check:     Imported via '../types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/user.schemas.ts'
+@validiant/api:type-check:     Imported via '../types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/organization.schemas.ts'
+@validiant/api:type-check:     Imported via '../types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/project.schemas.ts'
+@validiant/api:type-check:     Imported via '../types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/time-tracking.schemas.ts'
+@validiant/api:type-check:     Imported via '../types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/notification.schemas.ts'
+@validiant/api:type-check: ../../packages/shared/src/index.ts(11,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/index.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/index.ts(14,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/utils/index.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/index.ts(20,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/permissions.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/index.ts(21,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/feature-flags.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(9,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/user.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(13,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/organization.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(16,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/project.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(19,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/time-tracking.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(22,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/notification.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(25,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/verification.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(28,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/bgv-partner.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(44,8): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/task.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(47,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/kyc.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(50,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/inbound-case.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/index.ts(53,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/csv-import.schemas.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/schemas/user.schemas.ts(9,28): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/constants/index.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via '../constants' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/user.schemas.ts'
+@validiant/api:type-check:     Imported via '../constants' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/organization.schemas.ts'
+@validiant/api:type-check:     Imported via '../constants' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/project.schemas.ts'
+@validiant/api:type-check:     Imported via '../constants' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/notification.schemas.ts'
+@validiant/api:type-check:     Imported via './constants' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/index.ts'
+@validiant/api:type-check: ../../packages/shared/src/schemas/user.schemas.ts(11,39): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/user-preferences.schema.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via './user-preferences.schema' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/user.schemas.ts'
+@validiant/api:type-check:     Imported via './user-preferences.schema' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/schemas/index.ts'
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(8,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/user.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via './user.types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/index.ts'
+@validiant/api:type-check:     Imported via './user.types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/organization.types.ts'
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(11,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/organization.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(14,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/project.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(17,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/notification.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(20,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/time-tracking.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/types/index.ts(23,15): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/api.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check: ../../packages/shared/src/types/project.types.ts(39,42): error TS6059: File 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/task.types.ts' is not under 'rootDir' 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/apps/api/src'. 'rootDir' is expected to contain all source files.
+@validiant/api:type-check:   The file is in the program because:
+@validiant/api:type-check:     Imported via './task.types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/project.types.ts'
+@validiant/api:type-check:     Imported via './task.types' from file 'C:/Users/manso/OneDrive/Documents/Validiant-v2/validiant-v2/packages/shared/src/types/index.ts'
+@validiant/api:type-check: ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.
+node.exe : 
+@validiant/api:type-check: 
+ERROR: command finished with 
+error: command (C:\Users\mans
+o\OneDrive\Documents\Validian
+t-v2\validiant-v2\apps\api) C
+:\Users\manso\AppData\Roaming
+\npm\pnpm.cmd run type-check 
+exited (2)
+At C:\Users\manso\AppData\Roa
+ming\npm\pnpm.ps1:24 char:5
++     & "node$exe"  "$basedir
+/node_modules/pnpm/bin/pnpm.c
+js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (@validi  
+  ant/api:...heck exited (   
+ 2):String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+@validiant/api#type-check: 
+command (C:\Users\manso\OneDr
+ive\Documents\Validiant-v2\va
+lidiant-v2\apps\api) C:\Users
+\manso\AppData\Roaming\npm\pn
+pm.cmd run type-check exited 
+(2)
+
+ Tasks:    0 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    11.405s 
+Failed:    @validiant/api#type-check
+
+ ERROR  run failed: command  
+exited (2)
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.

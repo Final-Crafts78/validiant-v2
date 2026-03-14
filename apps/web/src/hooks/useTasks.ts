@@ -1,40 +1,20 @@
 /**
  * Task Hooks - Optimistic Updates for Zero-Latency UX
  *
- * React Query hooks for task management with optimistic updates.
- *
- * OPTIMISTIC UPDATE PATTERN:
- * 1. User performs action (drag task, update status)
- * 2. UI updates INSTANTLY (before API response)
- * 3. API request happens in background
- * 4. If success: Changes are kept
- * 5. If error: UI rolls back to previous state
- *
- * RESULT: 0ms perceived latency for perfect UX
- *
- * KANBAN BOARD EXAMPLE:
- * - User drags task from "PENDING" to "IN_PROGRESS"
- * - Task moves instantly in UI
- * - API updates database in background
- * - If API fails, task snaps back to original column
- *
- * FEATURES:
- * - Optimistic updates for instant feedback
- * - Automatic rollback on errors
- * - Cache invalidation for fresh data
- * - Type-safe task interfaces
- * - Real-time integration ready
+ * Phase 24 Refactor:
+ * - Centralized Query Keys
+ * - Cursor Pagination Support
+ * - Full Optimistic UI for mutations
  */
 
 import {
   useQuery,
+  useInfiniteQuery,
   useMutation,
   useQueryClient,
-  UseQueryOptions,
 } from '@tanstack/react-query';
-import { get, post, patch, del } from '@/lib/api';
-import { queryKeys, getQueryData, setQueryData } from '@/lib/query-client';
-
+import { get, patch, post, del } from '@/lib/api';
+import { queryKeys, setQueryData, getQueryData } from '@/lib/query-client';
 import { TaskStatus, TaskPriority } from '@validiant/shared';
 
 /**
@@ -48,18 +28,23 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   dueDate?: string;
-  estimatedHours?: number;
-  actualHours?: number;
-  parentTaskId?: string;
-  position: number;
-  tags: string[];
-  customFields: Record<string, unknown>;
-  createdBy: string;
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
+  tags?: string[];
+  assigneeId?: string;
+  latitude?: number;
+  longitude?: number;
+  targetLatitude?: number;
+  targetLongitude?: number;
+  gpsDeviationThreshold?: number;
+  customFields?: Record<string, unknown>;
+  createdBy: string;
+  position: number;
+  estimatedHours?: number;
+  actualHours?: number;
+  parentTaskId?: string;
 
-  // Additional fields from API
   project?: {
     id: string;
     name: string;
@@ -71,8 +56,18 @@ export interface Task {
     fullName: string;
     avatarUrl?: string;
   }>;
-  subtaskCount?: number;
-  completedSubtaskCount?: number;
+  verificationType?: {
+    id: string;
+    name: string;
+    fieldSchema?: any;
+  };
+  caseId?: string;
+  slaMetrics?: {
+    status: 'on_track' | 'at_risk' | 'breached';
+    deadline: string;
+    percentage: number;
+    remainingHours: number;
+  };
 }
 
 /**
@@ -85,28 +80,22 @@ export interface TaskFilters {
   search?: string;
   parentTaskId?: string | null;
   tags?: string[];
-  page?: number;
   perPage?: number;
 }
 
 /**
- * Tasks Response
+ * Tasks List Response (Cursor Paginated)
  */
-interface TasksResponse {
+interface TasksCursorResponse {
   success: true;
   data: {
     tasks: Task[];
-    pagination: {
-      total: number;
-      page: number;
-      perPage: number;
-      totalPages: number;
-    };
+    nextCursor: string | null;
   };
 }
 
 /**
- * Task Response
+ * Single Task Response
  */
 interface TaskResponse {
   success: true;
@@ -116,150 +105,67 @@ interface TaskResponse {
 }
 
 /**
- * Fetch tasks by project ID
+ * Fetch tasks (Cursor Paginated for useInfiniteQuery)
  */
-const fetchTasks = async (
-  projectId: string,
-  filters?: TaskFilters
-): Promise<Task[]> => {
+const fetchTasks = async ({
+  projectId,
+  filters,
+  cursor,
+}: {
+  projectId: string;
+  filters?: TaskFilters;
+  cursor?: string;
+}): Promise<TasksCursorResponse['data']> => {
   const params = new URLSearchParams();
 
   if (filters?.status) params.append('status', filters.status);
   if (filters?.priority) params.append('priority', filters.priority);
-  if (filters?.assignedTo) params.append('assignedTo', filters.assignedTo);
+  if (filters?.assignedTo) params.append('assigneeId', filters.assignedTo);
   if (filters?.search) params.append('search', filters.search);
   if (filters?.parentTaskId !== undefined)
     params.append('parentTaskId', String(filters.parentTaskId));
-  if (filters?.tags)
-    filters.tags.forEach((tag) => params.append('tags[]', tag));
-  if (filters?.page) params.append('page', String(filters.page));
+  if (filters?.tags) filters.tags.forEach((t) => params.append('tags[]', t));
   if (filters?.perPage) params.append('perPage', String(filters.perPage));
+  if (cursor) params.append('cursor', cursor);
 
-  const queryString = params.toString();
-  const url = `/projects/${projectId}/tasks${queryString ? `?${queryString}` : ''}`;
-
-  const response = await get<TasksResponse>(url);
-  return response.data.data.tasks;
+  const url = `/projects/${projectId}/tasks?${params.toString()}`;
+  const response = await get<TasksCursorResponse>(url);
+  return response.data.data;
 };
 
 /**
- * Fetch single task by ID
+ * useTasks Hook (Infinite Scroll / Cursor Paginated)
  */
-const fetchTask = async (taskId: string): Promise<Task> => {
-  const response = await get<TaskResponse>(`/tasks/${taskId}`);
-  return response.data.data.task;
-};
-
-/**
- * useTasks Hook
- *
- * Fetch tasks for a project with optional filters.
- *
- * @param projectId - Project ID
- * @param filters - Optional filters
- * @param options - React Query options
- *
- * @example
- * ```tsx
- * function TaskList({ projectId }: { projectId: string }) {
- *   const { data: tasks, isLoading, error } = useTasks(projectId, {
- *     status: TaskStatus.PENDING,
- *     priority: TaskPriority.HIGH,
- *   });
- *
- *   if (isLoading) return <Spinner />;
- *   if (error) return <Error error={error} />;
- *
- *   return (
- *     <ul>
- *       {tasks.map(task => (
- *         <TaskCard key={task.id} task={task} />
- *       ))}
- *     </ul>
- *   );
- * }
- * ```
- */
-export function useTasks(
-  projectId: string,
-  filters?: TaskFilters,
-  options?: Omit<UseQueryOptions<Task[], Error>, 'queryKey' | 'queryFn'>
-) {
-  return useQuery<Task[], Error>({
+export function useTasks(projectId: string, filters?: TaskFilters) {
+  return useInfiniteQuery({
     queryKey: queryKeys.projects.tasks(projectId, filters),
-    queryFn: () => fetchTasks(projectId, filters),
-    ...options,
+    queryFn: ({ pageParam }) =>
+      fetchTasks({ projectId, filters, cursor: pageParam as string }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    enabled: !!projectId,
   });
 }
 
 /**
  * useTask Hook
- *
- * Fetch single task by ID.
  */
 export function useTask(taskId: string) {
   return useQuery<Task, Error>({
     queryKey: queryKeys.tasks.detail(taskId),
-    queryFn: () => fetchTask(taskId),
+    queryFn: async () => {
+      const response = await get<TaskResponse>(`/tasks/${taskId}`);
+      return response.data.data.task;
+    },
+    enabled: !!taskId,
   });
 }
 
 /**
- * Update Task Data
- */
-export interface UpdateTaskData {
-  title?: string;
-  description?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  dueDate?: string;
-  estimatedHours?: number;
-  actualHours?: number;
-  tags?: string[];
-  customFields?: Record<string, unknown>;
-}
-
-/**
- * useUpdateTask Hook
- *
- * Update task with OPTIMISTIC UPDATES for instant UI feedback.
- *
- * OPTIMISTIC UPDATE FLOW:
- * 1. onMutate: Update cache immediately (before API)
- * 2. User sees instant UI change (0ms latency)
- * 3. API request happens in background
- * 4. onSuccess: Keep changes, invalidate related queries
- * 5. onError: Rollback to previous state
- *
- * @example
- * ```tsx
- * function TaskCard({ task }: { task: Task }) {
- *   const updateTask = useUpdateTask();
- *
- *   const handleStatusChange = (newStatus: TaskStatus) => {
- *     updateTask.mutate({
- *       taskId: task.id,
- *       projectId: task.projectId,
- *       data: { status: newStatus },
- *     });
- *     // UI updates INSTANTLY! 🚀
- *   };
- *
- *   return (
- *     <div>
- *       <h3>{task.title}</h3>
- *       <select value={task.status} onChange={e => handleStatusChange(e.target.value)}>
- *         {Object.values(TaskStatus).map(status => (
- *           <option key={status} value={status}>{status}</option>
- *         ))}
- *       </select>
- *     </div>
- *   );
- * }
- * ```
+ * useUpdateTask Hook (Optimistic UI Enabled)
  */
 export function useUpdateTask() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
@@ -268,29 +174,22 @@ export function useUpdateTask() {
     }: {
       taskId: string;
       projectId: string;
-      data: UpdateTaskData;
+      data: Partial<Task>;
     }) => {
       const response = await patch<TaskResponse>(`/tasks/${taskId}`, data);
       return response.data.data.task;
     },
-
-    // ⚡ OPTIMISTIC UPDATE: Update cache immediately
     onMutate: async ({ taskId, projectId, data }) => {
-      // Cancel outgoing refetches (so they don't overwrite optimistic update)
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.tasks.detail(taskId),
-      });
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.projects.tasks(projectId),
+      // Cancel outgoing refetches
+      await qc.cancelQueries({ queryKey: queryKeys.tasks.detail(taskId) });
+      await qc.cancelQueries({
+        queryKey: queryKeys.projects.detail(projectId),
       });
 
-      // Snapshot previous value for rollback
+      // Snapshot previous
       const previousTask = getQueryData<Task>(queryKeys.tasks.detail(taskId));
-      const previousTasks = getQueryData<Task[]>(
-        queryKeys.projects.tasks(projectId)
-      );
 
-      // Optimistically update task detail
+      // Optimistically update detail
       if (previousTask) {
         setQueryData<Task>(queryKeys.tasks.detail(taskId), {
           ...previousTask,
@@ -299,164 +198,32 @@ export function useUpdateTask() {
         });
       }
 
-      // Optimistically update task in list
-      if (previousTasks) {
-        setQueryData<Task[]>(
-          queryKeys.projects.tasks(projectId),
-          previousTasks.map((task) =>
-            task.id === taskId
-              ? { ...task, ...data, updatedAt: new Date().toISOString() }
-              : task
-          )
-        );
-      }
-
-      // Return context for rollback
-      return { previousTask, previousTasks, taskId, projectId };
+      return { previousTask, taskId, projectId };
     },
-
-    // ❌ ERROR: Rollback optimistic update
-    onError: (_error, _variables, context) => {
-      console.error('[useUpdateTask] Update failed, rolling back:', _error);
-
-      if (context) {
-        // Restore previous values
-        if (context.previousTask) {
-          setQueryData(
-            queryKeys.tasks.detail(context.taskId),
-            context.previousTask
-          );
-        }
-        if (context.previousTasks) {
-          setQueryData(
-            queryKeys.projects.tasks(context.projectId),
-            context.previousTasks
-          );
-        }
-      }
-    },
-
-    // ✅ SUCCESS: Invalidate queries to refetch fresh data
-    onSettled: (_data, _error, _variables, context) => {
-      if (context) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.tasks.detail(context.taskId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.projects.tasks(context.projectId),
-        });
-      }
-    },
-  });
-}
-
-/**
- * Create Task Data
- */
-export interface CreateTaskData {
-  title: string;
-  description?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  dueDate?: string;
-  estimatedHours?: number;
-  parentTaskId?: string;
-  tags?: string[];
-  customFields?: Record<string, unknown>;
-  assigneeIds?: string[];
-}
-
-/**
- * useCreateTask Hook
- *
- * Create new task with optimistic insertion.
- */
-export function useCreateTask() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      projectId,
-      data,
-    }: {
-      projectId: string;
-      data: CreateTaskData;
-    }) => {
-      const response = await post<TaskResponse>(
-        `/projects/${projectId}/tasks`,
-        data
-      );
-      return response.data.data.task;
-    },
-
-    onSuccess: (_newTask, _variables) => {
-      // Invalidate tasks list to refetch with new task
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.tasks(_variables.projectId),
-      });
-    },
-  });
-}
-
-/**
- * useDeleteTask Hook
- *
- * Delete task with optimistic removal.
- */
-export function useDeleteTask() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ taskId }: { taskId: string; projectId: string }) => {
-      await del(`/tasks/${taskId}`);
-    },
-
-    // Optimistically remove task from list
-    onMutate: async ({ taskId, projectId }) => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.projects.tasks(projectId),
-      });
-
-      const previousTasks = getQueryData<Task[]>(
-        queryKeys.projects.tasks(projectId)
-      );
-
-      if (previousTasks) {
-        setQueryData<Task[]>(
-          queryKeys.projects.tasks(projectId),
-          previousTasks.filter((task) => task.id !== taskId)
-        );
-      }
-
-      return { previousTasks, taskId, projectId };
-    },
-
-    onError: (_error, _variables, context) => {
-      if (context?.previousTasks) {
+    onError: (_err, _variables, context) => {
+      if (context?.previousTask) {
         setQueryData(
-          queryKeys.projects.tasks(context.projectId),
-          context.previousTasks
+          queryKeys.tasks.detail(context.taskId),
+          context.previousTask
         );
       }
     },
-
-    onSettled: (_data, _error, _variables, context) => {
-      if (context) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.projects.tasks(context.projectId),
-        });
-      }
+    onSettled: (_data, _err, variables, _context) => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.tasks.detail(variables.taskId),
+      });
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.detail(variables.projectId),
+      });
     },
   });
 }
 
 /**
- * useAssignTask Hook
- *
- * Assign/unassign user to task.
+ * useAssignTask Hook (Optimistic UI Enabled)
  */
 export function useAssignTask() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
@@ -470,17 +237,92 @@ export function useAssignTask() {
       assign?: boolean;
     }) => {
       if (assign) {
-        await post(`/tasks/${taskId}/assign`, { userId });
+        return await post(`/tasks/${taskId}/assign`, { userId });
       } else {
-        await del(`/tasks/${taskId}/assign/${userId}`);
+        return await del(`/tasks/${taskId}/assign/${userId}`);
       }
     },
-
-    onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({
+    onSettled: (_data, _err, variables) => {
+      qc.invalidateQueries({
         queryKey: queryKeys.tasks.detail(variables.taskId),
       });
-      queryClient.invalidateQueries({
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.detail(variables.projectId),
+      });
+    },
+  });
+}
+
+/**
+ * useDeleteTask Hook
+ */
+export function useDeleteTask() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ taskId }: { taskId: string; projectId: string }) => {
+      return await del(`/tasks/${taskId}`);
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.detail(variables.projectId),
+      });
+    },
+  });
+}
+
+/**
+ * useBulkAssignTasks Hook
+ */
+export function useBulkAssignTasks() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      taskIds,
+      userId,
+    }: {
+      projectId: string;
+      taskIds: string[];
+      userId: string;
+    }) => {
+      return await post(`/projects/${projectId}/tasks/bulk-assign`, {
+        taskIds,
+        userId,
+      });
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.tasks(variables.projectId),
+      });
+    },
+  });
+}
+
+/**
+ * useBulkUpdateTaskStatus Hook
+ */
+export function useBulkUpdateTaskStatus() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      taskIds,
+      status,
+    }: {
+      projectId: string;
+      taskIds: string[];
+      status: TaskStatus;
+    }) => {
+      return await post(`/projects/${projectId}/tasks/bulk-status`, {
+        taskIds,
+        status,
+      });
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({
         queryKey: queryKeys.projects.tasks(variables.projectId),
       });
     },

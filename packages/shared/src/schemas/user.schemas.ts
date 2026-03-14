@@ -8,6 +8,7 @@
 import { z } from 'zod';
 import { VALIDATION } from '../constants';
 import { UserRole, UserStatus, OAuthProvider } from '../types';
+import { UserPreferencesSchema } from './user-preferences.schema';
 
 /**
  * User role enum schema
@@ -108,17 +109,7 @@ export const phoneNumberSchema = z
 /**
  * User preferences schema
  */
-export const userPreferencesSchema = z.object({
-  theme: z.enum(['light', 'dark', 'system']),
-  language: z.string().min(2).max(5),
-  timezone: z.string(),
-  dateFormat: z.enum(['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD']),
-  timeFormat: z.enum(['12h', '24h']),
-  weekStartsOn: z.union([z.literal(0), z.literal(1), z.literal(6)]),
-  emailNotifications: z.boolean(),
-  pushNotifications: z.boolean(),
-  desktopNotifications: z.boolean(),
-});
+export const userPreferencesSchema = UserPreferencesSchema;
 
 /**
  * Notification preferences schema

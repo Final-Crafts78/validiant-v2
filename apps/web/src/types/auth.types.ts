@@ -5,7 +5,10 @@
  * The API returns a simplified user object, not the full User type from shared package.
  */
 
-import type { NotificationPreferences } from '@validiant/shared';
+import type {
+  NotificationPreferences,
+  UserPreferences,
+} from '@validiant/shared';
 
 /**
  * Auth User Response
@@ -24,7 +27,10 @@ export interface AuthUser {
   bio?: string;
   phoneNumber?: string;
   notificationPreferences?: NotificationPreferences;
+  preferences?: UserPreferences;
   role?: string;
+  activeOrganizationId?: string;
+  permissions?: string[];
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }

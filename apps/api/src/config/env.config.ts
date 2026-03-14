@@ -128,6 +128,11 @@ const envSchema = z.object({
     .string()
     .default('true')
     .transform((val) => val === 'true'),
+
+  // Phase 13 - External Integrations
+  ENCRYPTION_SECRET: z
+    .string()
+    .min(32, 'Encryption secret must be at least 32 characters'),
 });
 
 /**
@@ -174,6 +179,7 @@ const parseEnv = (runtimeEnv?: Record<string, unknown>) => {
       ENABLE_SWAGGER: true,
       ENABLE_WEBHOOKS: true,
       ENABLE_2FA: true,
+      ENCRYPTION_SECRET: 'placeholder_enc_secret_32chars_min_xxxxxxxxx',
     } as any;
   }
 

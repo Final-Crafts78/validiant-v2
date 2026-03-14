@@ -1,0 +1,72 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe : Failed to compile.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Us
+ers\manso\AppData\Roaming\ 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Failed   
+  to compile.:String) [],    
+ RemoteException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+./src/app/dashboard/tasks/pag
+e.tsx
+Module not found: Can't 
+resolve 'react-hot-toast'
+
+https://nextjs.org/docs/messa
+ges/module-not-found
+
+./src/components/cases/Action
+Panel.tsx
+Module not found: Can't 
+resolve 'sonner'
+
+https://nextjs.org/docs/messa
+ges/module-not-found
+
+Import trace for requested 
+module:
+./src/app/dashboard/cases/[ca
+seId]/page.tsx
+
+./src/components/cases/CaseFi
+eldGrid.tsx
+Module not found: Can't 
+resolve 'react-hot-toast'
+
+https://nextjs.org/docs/messa
+ges/module-not-found
+
+Import trace for requested 
+module:
+./src/app/dashboard/cases/[ca
+seId]/page.tsx
+
+./src/components/cases/Eviden
+ceUploadField.tsx
+Module not found: Can't 
+resolve 'react-hot-toast'
+
+https://nextjs.org/docs/messa
+ges/module-not-found
+
+Import trace for requested 
+module:
+./src/components/cases/CaseFi
+eldGrid.tsx
+./src/app/dashboard/cases/[ca
+seId]/page.tsx
+
+
+> Build failed because of 
+webpack errors

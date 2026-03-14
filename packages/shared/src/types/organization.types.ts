@@ -53,7 +53,8 @@ export enum OrganizationMemberRole {
 export const OrganizationRole = {
   OWNER: 'owner',
   ADMIN: 'admin',
-  MEMBER: 'member',
+  MANAGER: 'manager',
+  EXECUTIVE: 'executive',
   VIEWER: 'viewer',
 } as const;
 

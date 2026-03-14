@@ -3,6 +3,7 @@
  *
  * Client component for dashboard navigation with server-side logout.
  * Phase 22: Added OrgSwitcher and ProjectSwitcher for workspace context.
+ * Phase 23: Fixed dynamic routes and added Settings Hub connectivity.
  */
 
 'use client';
@@ -11,6 +12,7 @@ import { useMemo, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth';
+import { useWorkspaceStore } from '@/store/workspace';
 import { logoutAction } from '@/actions/auth.actions';
 import { ROUTES } from '@/lib/config';
 import {
@@ -20,10 +22,12 @@ import {
   Building2,
   User,
   LogOut,
+  Settings,
 } from 'lucide-react';
 import type { AuthUser } from '@/types/auth.types';
 import { OrgSwitcher } from './OrgSwitcher';
 import { ProjectSwitcher } from './ProjectSwitcher';
+import { NotificationBell } from '../notifications/NotificationBell';
 
 /**
  * Navigation item type
@@ -33,37 +37,6 @@ interface NavItem {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
 }
-
-/**
- * Navigation items
- */
-const navItems: NavItem[] = [
-  {
-    name: 'Dashboard',
-    href: ROUTES.DASHBOARD,
-    icon: LayoutDashboard,
-  },
-  {
-    name: 'Projects',
-    href: ROUTES.PROJECTS,
-    icon: FolderKanban,
-  },
-  {
-    name: 'Tasks',
-    href: ROUTES.TASKS,
-    icon: CheckSquare,
-  },
-  {
-    name: 'Organizations',
-    href: ROUTES.ORGANIZATIONS,
-    icon: Building2,
-  },
-  {
-    name: 'Profile',
-    href: ROUTES.PROFILE,
-    icon: User,
-  },
-];
 
 /**
  * Dashboard Header Props
@@ -86,7 +59,49 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const activeOrgSlug = useWorkspaceStore((state) => state.activeOrgSlug);
   const [isPending, startTransition] = useTransition();
+
+  /**
+   * Computed Navigation Items
+   * Handles dynamic routes based on the active organization slug.
+   */
+  const navItems = useMemo<NavItem[]>(() => {
+    const slug = activeOrgSlug || 'org'; // fallback if slug is not yet loaded
+
+    return [
+      {
+        name: 'Dashboard',
+        href: ROUTES.DASHBOARD(slug),
+        icon: LayoutDashboard,
+      },
+      {
+        name: 'Projects',
+        href: ROUTES.PROJECTS(slug),
+        icon: FolderKanban,
+      },
+      {
+        name: 'Tasks',
+        href: ROUTES.TASKS(slug),
+        icon: CheckSquare,
+      },
+      {
+        name: 'Organizations',
+        href: ROUTES.ORGANIZATIONS,
+        icon: Building2,
+      },
+      {
+        name: 'Settings',
+        href: ROUTES.SETTINGS(slug),
+        icon: Settings,
+      },
+      {
+        name: 'Profile',
+        href: ROUTES.PROFILE(slug),
+        icon: User,
+      },
+    ];
+  }, [activeOrgSlug]);
 
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
@@ -102,33 +117,29 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
   const handleLogout = () => {
     startTransition(async () => {
       try {
-        // Call server action to clear cookies
         await logoutAction();
-
-        // Clear client-side state
         clearAuth();
-
-        // Redirect to login
         router.push(ROUTES.LOGIN);
-        router.refresh(); // Refresh to clear any cached data
+        router.refresh();
       } catch (error) {
         console.error('Logout error:', error);
-        // Still clear client state and redirect on error
         clearAuth();
         router.push(ROUTES.LOGIN);
       }
     });
   };
 
+  const dashboardHref = activeOrgSlug
+    ? ROUTES.DASHBOARD(activeOrgSlug)
+    : ROUTES.ORGANIZATIONS;
+
   return (
     <>
-      {/* Top Navigation Bar */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
-            {/* Logo + Context Switchers */}
             <div className="flex items-center gap-4">
-              <Link href={ROUTES.DASHBOARD} className="flex items-center gap-2">
+              <Link href={dashboardHref} className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                   <LayoutDashboard className="h-5 w-5 text-white" />
                 </div>
@@ -137,7 +148,6 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 </span>
               </Link>
 
-              {/* Workspace Context Switchers */}
               {orgs.length > 0 && (
                 <div className="hidden md:flex items-center gap-2">
                   <span className="text-slate-300">/</span>
@@ -148,10 +158,9 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
               )}
             </div>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = pathname.startsWith(item.href);
                 const Icon = item.icon;
                 return (
                   <Link
@@ -170,9 +179,8 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
               })}
             </nav>
 
-            {/* Right Side */}
             <div className="flex items-center gap-4">
-              {/* User Menu */}
+              <NotificationBell />
               <div className="hidden md:flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">
@@ -180,7 +188,6 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                   </p>
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
-                {/* ✅ FIXED: Use user.avatarUrl to match AuthUser type */}
                 {user.avatarUrl ? (
                   <img
                     src={user.avatarUrl}
@@ -196,7 +203,6 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 )}
               </div>
 
-              {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 disabled={isPending}
@@ -210,11 +216,10 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
         </div>
       </header>
 
-      {/* Mobile Web Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50">
         <div className="flex items-center justify-around h-16 px-2">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
+          {navItems.slice(0, 5).map((item) => {
+            const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
               <Link

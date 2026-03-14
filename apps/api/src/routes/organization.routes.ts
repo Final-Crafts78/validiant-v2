@@ -35,6 +35,8 @@ import {
   updateOrganizationSettingsSchema,
   addOrganizationMemberSchema,
   updateMemberRoleSchema,
+  createCustomRoleSchema,
+  updateCustomRoleSchema,
 } from '@validiant/shared';
 import * as organizationController from '../controllers/organization.controller';
 import * as projectController from '../controllers/project.controller';
@@ -255,5 +257,43 @@ app.get('/:id/my-role', organizationController.getMyRole);
  * Response: 200 OK with { isMember: boolean }
  */
 app.get('/:id/is-member', organizationController.checkMembership);
+
+// ============================================================================
+// CUSTOM ROLE ENDPOINTS (Phase 5)
+// ============================================================================
+
+/**
+ * GET /:id/roles
+ * List all custom and system roles for the organization
+ */
+app.get('/:id/roles', organizationController.getOrganizationRoles);
+
+/**
+ * POST /:id/roles
+ * Create a new custom role
+ * Validation: createCustomRoleSchema
+ */
+app.post(
+  '/:id/roles',
+  zValidator('json', createCustomRoleSchema),
+  organizationController.createCustomRole
+);
+
+/**
+ * PATCH /:id/roles/:roleId
+ * Update custom role permissions or metadata
+ * Validation: updateCustomRoleSchema
+ */
+app.patch(
+  '/:id/roles/:roleId',
+  zValidator('json', updateCustomRoleSchema),
+  organizationController.updateCustomRole
+);
+
+/**
+ * DELETE /:id/roles/:roleId
+ * Delete custom role
+ */
+app.delete('/:id/roles/:roleId', organizationController.deleteCustomRole);
 
 export default app;

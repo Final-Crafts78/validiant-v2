@@ -36,39 +36,15 @@ import {
   decodeToken,
 } from '../utils/jwt';
 import { cache } from '../config/redis.config';
-import { userRegistrationSchema, userLoginSchema } from '@validiant/shared';
+import {
+  userRegistrationSchema,
+  userLoginSchema,
+  PLATFORM_ROLE_PERMISSIONS,
+} from '@validiant/shared';
+import * as organizationService from '../services/organization.service';
 import type { User } from '../db/schema';
 
-/**
- * Dynamic cookie options factory.
- *
- * Resolves the correct sameSite and domain policy at request time by
- * inspecting the FRONTEND_URL environment binding:
- *
- * Production (validiant.in):
- *   - sameSite: 'lax'          — safe for same-site requests; no CSRF risk
- *   - domain:   '.validiant.in' — shared across www. and api. subdomains
- *
- * Development / staging (any other origin):
- *   - sameSite: 'none'         — cross-domain delivery required
- *   - domain:   undefined      — host-only, no domain attribute emitted
- *
- * secure: true is unconditional — both environments use HTTPS exclusively.
- */
-const getCookieOptions = (c: Context, maxAge: number) => {
-  const { FRONTEND_URL } = env<{ FRONTEND_URL?: string }>(c);
-  // Strictly identify if we are on the production validiant.in domain
-  const isProd = FRONTEND_URL && FRONTEND_URL.includes('validiant.in');
-
-  return {
-    httpOnly: true,
-    secure: true,
-    sameSite: isProd ? ('lax' as const) : ('none' as const),
-    domain: isProd ? '.validiant.in' : undefined,
-    path: '/',
-    maxAge,
-  };
-};
+import { getCookieOptions, setUserPrefsCookie } from '../utils/cookie';
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
@@ -136,11 +112,32 @@ export const register = async (c: Context) => {
       })
       .returning();
 
+    // Resolve initial permission context
+    const orgs = await organizationService.getUserOrganizations(user.id);
+    const activeOrg = orgs[0];
+    const platformPerms = PLATFORM_ROLE_PERMISSIONS[user.role || 'user'] || [];
+    let orgPerms: string[] = [];
+
+    if (activeOrg) {
+      orgPerms = await organizationService.resolvePermissions(
+        activeOrg.id,
+        user.id
+      );
+    }
+
+    // Merge and deduplicate permissions
+    const permissions = Array.from(new Set([...platformPerms, ...orgPerms]));
+
     const accessToken = await generateToken({
+      sub: user.id,
       userId: user.id,
       email: user.email,
+      role: user.role,
+      organizationId: activeOrg?.id,
+      permissions,
     });
     const refreshToken = await generateRefreshToken({
+      sub: user.id,
       userId: user.id,
       email: user.email,
     });
@@ -157,6 +154,11 @@ export const register = async (c: Context) => {
       refreshToken,
       getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
     );
+
+    // Initial user preferences (Mini-Phase 6)
+    setUserPrefsCookie(c, {
+      theme: (user.preferences as any)?.theme || 'light',
+    });
 
     return c.json(
       {
@@ -233,11 +235,32 @@ export const login = async (c: Context) => {
       );
     }
 
+    // Resolve initial permission context (Phase 5: Permission Injection)
+    const orgs = await organizationService.getUserOrganizations(user.id);
+    const activeOrg = orgs[0];
+    const platformPerms = PLATFORM_ROLE_PERMISSIONS[user.role || 'user'] || [];
+    let orgPerms: string[] = [];
+
+    if (activeOrg) {
+      orgPerms = await organizationService.resolvePermissions(
+        activeOrg.id,
+        user.id
+      );
+    }
+
+    // Merge and deduplicate permissions
+    const permissions = Array.from(new Set([...platformPerms, ...orgPerms]));
+
     const accessToken = await generateToken({
+      sub: user.id,
       userId: user.id,
       email: user.email,
+      role: user.role,
+      organizationId: activeOrg?.id,
+      permissions,
     });
     const refreshToken = await generateRefreshToken({
+      sub: user.id,
       userId: user.id,
       email: user.email,
     });
@@ -254,6 +277,11 @@ export const login = async (c: Context) => {
       refreshToken,
       getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
     );
+
+    // Set user preferences cookie for theme flash prevention (Mini-Phase 6)
+    setUserPrefsCookie(c, {
+      theme: (user.preferences as any)?.theme || 'light',
+    });
 
     return c.json({
       success: true,
@@ -397,7 +425,13 @@ export const getMe = async (c: Context) => {
 
     return c.json({
       success: true,
-      data: { user: formatUserResponse(dbUser) as any },
+      data: {
+        user: {
+          ...formatUserResponse(dbUser),
+          activeOrganizationId: user.organizationId,
+          permissions: user.permissions || [],
+        },
+      },
     });
   } catch (error) {
     console.error('Get me error:', error);
@@ -405,6 +439,130 @@ export const getMe = async (c: Context) => {
       {
         success: false,
         error: 'Failed to get user',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Switch Organization
+ * POST /api/v1/auth/switch-org
+ *
+ * Regenerates the access token with permissions for the selected organization.
+ */
+export const switchOrganization = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const { organizationId } = (await c.req.json()) as {
+      organizationId: string;
+    };
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        },
+        401
+      );
+    }
+
+    // 1. Verify user is a member of the organization
+    const isMember = await organizationService.isMember(
+      organizationId,
+      user.userId
+    );
+
+    if (!isMember) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'You are not a member of this organization',
+        },
+        403
+      );
+    }
+
+    // 2. Resolve platform and organization permissions
+    const [dbUser] = await db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.id, user.userId))
+      .limit(1);
+
+    if (!dbUser) {
+      return c.json(
+        {
+          success: false,
+          error: 'User not found',
+          message: 'User account no longer exists',
+        },
+        404
+      );
+    }
+
+    const platformPerms =
+      PLATFORM_ROLE_PERMISSIONS[dbUser.role || 'user'] || [];
+    const orgPerms = await organizationService.resolvePermissions(
+      organizationId,
+      user.userId
+    );
+
+    const permissions = Array.from(new Set([...platformPerms, ...orgPerms]));
+
+    // 3. Generate new tokens with new organizationId and permissions
+    const accessToken = await generateToken({
+      sub: user.userId,
+      userId: user.userId,
+      email: user.email,
+      role: dbUser.role,
+      organizationId: organizationId,
+      permissions,
+    });
+
+    const refreshToken = await generateRefreshToken({
+      sub: user.userId,
+      userId: user.userId,
+      email: user.email,
+    });
+
+    setCookie(
+      c,
+      'accessToken',
+      accessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
+    setCookie(
+      c,
+      'refreshToken',
+      refreshToken,
+      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
+    );
+
+    // Sync preferences on org switch (Mini-Phase 6)
+    setUserPrefsCookie(c, {
+      theme: (dbUser.preferences as any)?.theme || 'light',
+      // brandConfig will be added in Mini-Phase 10
+    });
+
+    return c.json({
+      success: true,
+      data: {
+        accessToken,
+        refreshToken,
+        message: 'Workspace switched successfully',
+      },
+    });
+  } catch (error) {
+    console.error('Switch org error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Switch failed',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500

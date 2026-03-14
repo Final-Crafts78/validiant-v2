@@ -12,6 +12,7 @@ import type { Context, Next } from 'hono';
 import { and, eq } from 'drizzle-orm';
 import { db, schema } from '../db';
 import type { UserContext } from './auth';
+import { PermissionKey, PLATFORM_ROLE_PERMISSIONS } from '@validiant/shared';
 
 /**
  * Verify user has the required Organization role.
@@ -110,5 +111,52 @@ export const requireProjectRole = (allowedRoles: string[]) => {
       console.error('RBAC project check failed:', error);
       return c.json({ success: false, error: 'Permission check failed' }, 500);
     }
+  };
+};
+
+/**
+ * Generic Permission Checker (Edge-Native, No DB)
+ *
+ * Verifies the user has a specific permission by:
+ * 1. Checking the 'permissions' array in the JWT (Phase 5 compliance)
+ * 2. Falling back to the Platfrom Role permission map (Phase 3 compliance)
+ */
+export const requirePermission = (action: PermissionKey) => {
+  return async (c: Context, next: Next): Promise<Response | void> => {
+    const user = c.get('user') as UserContext | undefined;
+    if (!user || !user.userId) {
+      return c.json({ success: false, error: 'Authentication required' }, 401);
+    }
+
+    // 1. Check direct permissions in JWT (if available)
+    const jwtPermissions = user.permissions;
+    if (jwtPermissions?.includes(action)) {
+      await next();
+      return;
+    }
+
+    // 2. Fallback: Check Platform Role permissions
+    if (user.role) {
+      const rolePermissions = PLATFORM_ROLE_PERMISSIONS[user.role];
+      if (rolePermissions?.includes(action)) {
+        await next();
+        return;
+      }
+    }
+
+    // Special Case: superadmin always has access
+    if (user.role === 'superadmin') {
+      await next();
+      return;
+    }
+
+    return c.json(
+      {
+        success: false,
+        error: 'Forbidden',
+        message: `Insufficient permissions: ${action}`,
+      },
+      403
+    );
   };
 };

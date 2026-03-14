@@ -163,38 +163,34 @@ export const PROJECT_STATUS = {
   PLANNING: 'planning',
 } as const;
 
+import { BGV_STATUSES } from '../bgv-status';
+
 /**
  * Task status values
+ * Deprecated: Use BgvStatus and BGV_STATUSES from bgv-status.ts
  */
 export const TASK_STATUS = {
-  UNASSIGNED: 'Unassigned',
-  PENDING: 'Pending',
-  IN_PROGRESS: 'In Progress',
-  COMPLETED: 'Completed',
-  VERIFIED: 'Verified',
+  UNASSIGNED: 'UNASSIGNED',
+  ASSIGNED: 'ASSIGNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED',
+  ON_HOLD: 'ON_HOLD',
+  CANCELLED: 'CANCELLED',
 } as const;
 
 /**
  * Task statuses array (for Zod enum validation)
+ * Deprecated: Use BGV_STATUSES from bgv-status.ts
  */
-export const TASK_STATUSES = [
-  'Unassigned',
-  'Pending',
-  'In Progress',
-  'Completed',
-  'Verified',
-] as const;
+export const TASK_STATUSES = BGV_STATUSES;
 
 /**
  * Valid status transitions (state machine)
+ * Deprecated: Use getValidTransitions from bgv-status.ts
  */
-export const VALID_TRANSITIONS: Record<string, string[]> = {
-  Unassigned: ['Pending'],
-  Pending: ['In Progress', 'Unassigned'],
-  'In Progress': ['Completed', 'Pending'],
-  Completed: ['Verified', 'In Progress'],
-  Verified: [],
-} as const;
+export const VALID_TRANSITIONS = {}; // Empty since logic moved to bgv-status.ts
 
 /**
  * Task priority values

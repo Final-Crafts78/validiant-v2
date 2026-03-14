@@ -15,6 +15,7 @@ import { Context } from 'hono';
 import { z } from 'zod';
 import { sql } from 'drizzle-orm';
 import * as userService from '../services/user.service';
+import { setUserPrefsCookie } from '../utils/cookie';
 import {
   updateUserProfileSchema,
   updateUserPreferencesSchema,
@@ -141,6 +142,11 @@ export const updateUserPreferences = async (c: Context) => {
       user.userId,
       preferences
     );
+
+    // Sync userPrefs cookie for theme flash prevention (Mini-Phase 6)
+    setUserPrefsCookie(c, {
+      theme: (updatedUser.preferences as any)?.theme || 'light',
+    });
 
     return c.json({
       success: true,

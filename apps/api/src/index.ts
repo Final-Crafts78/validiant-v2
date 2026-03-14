@@ -7,13 +7,16 @@
 
 import { app } from './app';
 import { runAllEnterpriseBackups } from './services/backup.service';
+import { checkSLAs } from './workers/sla-monitor';
+import { rollupAnalytics } from './workers/analytics-rollup';
+import { purgeAuditLogs } from './workers/audit-retention';
 
 export default {
   // 1. Standard HTTP requests handled by Hono
   fetch: app.fetch,
 
   // 2. Scheduled Cron Jobs handled natively by Cloudflare
-  // Configure in wrangler.toml: [triggers] crons = ["0 * * * *"]
+  // Configure in wrangler.toml under [triggers] crons
   async scheduled(
     event: ScheduledEvent,
     _env: import('./app').Env,
@@ -22,25 +25,28 @@ export default {
     ctx.waitUntil(
       (async () => {
         try {
-          // SLA check: find overdue tasks and alert project managers
-          // SELECT tasks WHERE status = 'Pending' AND createdAt < NOW() - 72 hours
-          // Then call sendEmail() to notify Project Managers
-          // eslint-disable-next-line no-console
+          // Initialize global env for DB access within workers
+          (globalThis as any).__ENV__ = _env;
+
           console.log(
-            `[cron] SLA check at ${new Date(event.scheduledTime).toISOString()}`
+            `[cron] Running background jobs at ${new Date(event.scheduledTime).toISOString()}`
           );
 
-          // Automated Enterprise R2 Backups
-          await runAllEnterpriseBackups(
-            (
-              _env as unknown as {
-                BACKUP_BUCKET: import('@cloudflare/workers-types').R2Bucket;
-              }
-            ).BACKUP_BUCKET
-          );
+          // 1. SLA Monitoring (Mini-Phase 26)
+          await checkSLAs();
+
+          // 2. Automated Enterprise R2 Backups (Mini-Phase 24)
+          if (_env.BACKUP_BUCKET) {
+            await runAllEnterpriseBackups(_env.BACKUP_BUCKET);
+          }
+
+          // 3. Analytics Rollup (Mini-Phase 27)
+          await rollupAnalytics();
+
+          // 4. Audit Retention (Mini-Phase 28)
+          await purgeAuditLogs();
         } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('[cron] SLA check failed:', error);
+          console.error('[cron] Background job failed:', error);
         }
       })()
     );

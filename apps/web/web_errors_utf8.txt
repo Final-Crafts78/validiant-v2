@@ -1,0 +1,137 @@
+﻿src/app/auth/login/page.tsx(75,23): error TS2345: Argument of type '(orgSlug: string) => string' is not assignable to parameter of type 'string'.
+src/app/auth/register/page.tsx(163,21): error TS2345: Argument of type '(orgSlug: string) => string' is not assignable to parameter of type 'string'.
+src/app/dashboard/onboarding/page.tsx(68,11): error TS2554: Expected 2-3 arguments, but got 1.
+src/app/dashboard/onboarding/page.tsx(72,23): error TS2345: Argument of type '(orgSlug: string) => string' is not assignable to parameter of type 'string'.
+src/app/dashboard/organizations/page.tsx(57,32): error TS2554: Expected 2-3 arguments, but got 1.
+src/app/dashboard/page.tsx(85,36): error TS2339: Property 'tasks' does not exist on type '{ data: any; recordedAt: string; }'.
+src/app/dashboard/page.tsx(86,45): error TS2339: Property 'tasks' does not exist on type '{ data: any; recordedAt: string; }'.
+src/app/dashboard/page.tsx(89,36): error TS2339: Property 'sla' does not exist on type '{ data: any; recordedAt: string; }'.
+src/app/dashboard/page.tsx(110,33): error TS2339: Property 'map' does not exist on type '{ data: { metrics: any; recordedAt: string; }[]; }'.
+src/app/dashboard/page.tsx(110,38): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/app/dashboard/page.tsx(415,11): error TS2339: Property 'isGuest' does not exist on type '{ permissions: string[]; has: (permission: "org:create" | "org:read" | "org:update" | "org:delete" | "org:admin" | "org:settings" | "org:branding" | "user:read" | "user:create" | "user:update" | ... 27 more ... | "project:delete") => boolean; ... 5 more ...; can: { ...; }; }'.
+src/app/dashboard/page.tsx(415,20): error TS2339: Property 'isLoading' does not exist on type '{ permissions: string[]; has: (permission: "org:create" | "org:read" | "org:update" | "org:delete" | "org:admin" | "org:settings" | "org:branding" | "user:read" | "user:create" | "user:update" | ... 27 more ... | "project:delete") => boolean; ... 5 more ...; can: { ...; }; }'.
+src/app/dashboard/projects/[id]/page.tsx(222,59): error TS2554: Expected 1-2 arguments, but got 3.
+src/app/dashboard/settings/audit/page.tsx(43,9): error TS6133: '_meta' is declared but its value is never read.
+src/app/dashboard/settings/audit/page.tsx(43,32): error TS2339: Property 'meta' does not exist on type 'APIResponse<{ data: any[]; meta: { page: number; limit: number; }; }>'.
+src/app/dashboard/settings/audit/page.tsx(102,23): error TS2339: Property 'length' does not exist on type 'never[] | { data: any[]; meta: { page: number; limit: number; }; }'.
+  Property 'length' does not exist on type '{ data: any[]; meta: { page: number; limit: number; }; }'.
+src/app/dashboard/settings/audit/page.tsx(115,24): error TS2339: Property 'map' does not exist on type 'never[] | { data: any[]; meta: { page: number; limit: number; }; }'.
+  Property 'map' does not exist on type '{ data: any[]; meta: { page: number; limit: number; }; }'.
+src/app/dashboard/settings/audit/page.tsx(215,30): error TS2339: Property 'length' does not exist on type 'never[] | { data: any[]; meta: { page: number; limit: number; }; }'.
+  Property 'length' does not exist on type '{ data: any[]; meta: { page: number; limit: number; }; }'.
+src/app/dashboard/settings/audit/page.tsx(238,30): error TS2339: Property 'length' does not exist on type 'never[] | { data: any[]; meta: { page: number; limit: number; }; }'.
+  Property 'length' does not exist on type '{ data: any[]; meta: { page: number; limit: number; }; }'.
+src/app/dashboard/settings/branding/page.tsx(30,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/dashboard/settings/branding/page.tsx(31,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/dashboard/settings/branding/page.tsx(32,21): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/app/dashboard/settings/roles/page.tsx(101,9): error TS6133: 'createMutation' is declared but its value is never read.
+src/app/dashboard/settings/roles/page.tsx(112,25): error TS2532: Object is possibly 'undefined'.
+src/app/dashboard/tasks/page.tsx(18,1): error TS6133: 'format' is declared but its value is never read.
+src/app/dashboard/tasks/page.tsx(28,35): error TS2307: Cannot find module '@tanstack/react-table' or its corresponding type declarations.
+src/app/dashboard/tasks/page.tsx(101,50): error TS2554: Expected 1-2 arguments, but got 3.
+src/app/dashboard/tasks/page.tsx(191,9): error TS2353: Object literal may only specify known properties, and 'assigneeId' does not exist in type '{ projectId: string; taskIds: string[]; userId: string; }'.
+src/app/dashboard/tasks/page.tsx(206,9): error TS2561: Object literal may only specify known properties, but 'statusKey' does not exist in type '{ projectId: string; taskIds: string[]; status: TaskStatus; }'. Did you mean to write 'status'?
+src/app/dashboard/tasks/page.tsx(210,11): error TS18046: 'result.data' is of type 'unknown'.
+src/app/dashboard/tasks/page.tsx(212,14): error TS18046: 'result.data' is of type 'unknown'.
+src/app/dashboard/tasks/page.tsx(386,16): error TS2304: Cannot find name 'TasksTable'.
+src/app/page.tsx(27,19): error TS2345: Argument of type '(orgSlug: string) => string' is not assignable to parameter of type 'string'.
+src/components/auth/PermissionGate.tsx(3,31): error TS2724: '"@/hooks/usePermissions"' has no exported member named 'PermissionKey'. Did you mean 'Permissions'?
+src/components/auth/PermissionGate.tsx(31,16): error TS2339: Property 'isLoading' does not exist on type '{ permissions: string[]; has: (permission: "org:create" | "org:read" | "org:update" | "org:delete" | "org:admin" | "org:settings" | "org:branding" | "user:read" | "user:create" | "user:update" | ... 27 more ... | "project:delete") => boolean; ... 5 more ...; can: { ...; }; }'.
+src/components/auth/PermissionGate.tsx(36,10): error TS7053: Element implicitly has an 'any' type because expression of type 'PermissionKey' can't be used to index type '{ manageOrg: boolean; manageMembers: boolean; inviteMembers: boolean; viewSettings: boolean; editSettings: boolean; deleteOrg: boolean; viewBilling: boolean; manageBilling: boolean; viewProjects: boolean; ... 11 more ...; toggleFeatures: boolean; }'.
+src/components/cases/ActionPanel.tsx(53,15): error TS2339: Property 'verificationType' does not exist on type 'Task'.
+src/components/cases/CaseFieldGrid.tsx(52,24): error TS2339: Property 'verificationType' does not exist on type 'Task'.
+src/components/cases/CaseSlaBanner.tsx(2,10): error TS6133: 'Clock' is declared but its value is never read.
+src/components/cases/CaseSlaBanner.tsx(12,24): error TS2339: Property 'slaMetrics' does not exist on type 'Task'.
+src/components/cases/CaseSlaBanner.tsx(29,9): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ on_track: string; at_risk: string; breached: string; }'.
+src/components/cases/CaseSlaBanner.tsx(49,23): error TS2339: Property 'verificationType' does not exist on type 'Task'.
+src/components/cases/EvidenceUploadField.tsx(46,11): error TS2322: Type 'number' is not assignable to type 'string'.
+src/components/cases/EvidenceUploadField.tsx(113,13): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/components/CommandPalette.tsx(171,16): error TS2345: Argument of type '(q: string) => Promise<void>' is not assignable to parameter of type '(...args: unknown[]) => unknown'.
+  Types of parameters 'q' and 'args' are incompatible.
+    Type 'unknown' is not assignable to type 'string'.
+src/components/CommandPalette.tsx(331,19): error TS2532: Object is possibly 'undefined'.
+src/components/dashboard/OrgSwitcher.tsx(79,17): error TS2554: Expected 2-3 arguments, but got 1.
+src/components/landing/Metrics.tsx(12,11): error TS2532: Object is possibly 'undefined'.
+src/components/notifications/NotificationBell.tsx(31,45): error TS2339: Property 'filter' does not exist on type 'Notification[] | NonNullable<NoInfer<TQueryFnData>>'.
+  Property 'filter' does not exist on type 'NonNullable<NoInfer<TQueryFnData>>'.
+src/components/notifications/NotificationBell.tsx(31,53): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/components/notifications/NotificationBell.tsx(32,43): error TS2339: Property 'some' does not exist on type 'Notification[] | NonNullable<NoInfer<TQueryFnData>>'.
+  Property 'some' does not exist on type 'NonNullable<NoInfer<TQueryFnData>>'.
+src/components/notifications/NotificationBell.tsx(33,6): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/components/notifications/NotificationBell.tsx(99,31): error TS2339: Property 'length' does not exist on type 'Notification[] | NoInfer<TQueryFnData>'.
+  Property 'length' does not exist on type 'NoInfer<TQueryFnData>'.
+src/components/notifications/NotificationBell.tsx(107,29): error TS2339: Property 'map' does not exist on type 'Notification[] | NoInfer<TQueryFnData>'.
+  Property 'map' does not exist on type 'NoInfer<TQueryFnData>'.
+src/components/providers/WorkspaceInitializer.tsx(35,9): error TS2554: Expected 2-3 arguments, but got 1.
+src/components/tasks/BulkActionBar.tsx(8,39): error TS6133: 'CheckCircle2' is declared but its value is never read.
+src/components/tasks/BulkAssignModal.tsx(38,10): error TS2339: Property 'members' does not exist on type 'Organization'.
+src/components/tasks/BulkAssignModal.tsx(46,7): error TS2322: Type '{ children: Element; open: boolean; onClose: () => void; title: string; description: string; }' is not assignable to type 'IntrinsicAttributes & DialogProps'.
+  Property 'onClose' does not exist on type 'IntrinsicAttributes & DialogProps'.
+src/components/tasks/BulkAssignModal.tsx(71,15): error TS2322: Type '{ value: string; onValueChange: Dispatch<SetStateAction<string>>; options: any; placeholder: string; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+  Property 'options' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+src/components/tasks/BulkStatusModal.tsx(10,10): error TS6133: 'Settings2' is declared but its value is never read.
+src/components/tasks/BulkStatusModal.tsx(41,7): error TS2322: Type '{ children: Element; open: boolean; onClose: () => void; title: string; description: string; }' is not assignable to type 'IntrinsicAttributes & DialogProps'.
+  Property 'onClose' does not exist on type 'IntrinsicAttributes & DialogProps'.
+src/components/tasks/BulkStatusModal.tsx(65,13): error TS2322: Type '{ value: string; onValueChange: Dispatch<SetStateAction<string>>; options: { label: string; value: "UNASSIGNED" | "ASSIGNED" | "IN_PROGRESS" | "PENDING_REVIEW" | "VERIFIED" | "REJECTED" | "ON_HOLD" | "CANCELLED"; }[]; placeholder: string; }' is not assignable to type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+  Property 'options' does not exist on type 'IntrinsicAttributes & SelectSharedProps & { value?: string | undefined; defaultValue?: string | undefined; onValueChange?(value: string): void; }'.
+src/components/tasks/TaskDetailSlideOver.tsx(39,11): error TS2304: Cannot find name 'Circle'.
+src/components/tasks/TaskDetailSlideOver.tsx(57,11): error TS2304: Cannot find name 'CheckCircle2'.
+src/components/tasks/TaskDetailSlideOver.tsx(63,11): error TS2304: Cannot find name 'Ban'.
+src/components/tasks/TaskDetailSlideOver.tsx(200,45): error TS2304: Cannot find name 'Circle'.
+src/components/tasks/TasksTable.tsx(9,27): error TS2307: Cannot find module '@tanstack/react-table' or its corresponding type declarations.
+src/components/tasks/TasksTable.tsx(12,47): error TS2307: Cannot find module '@tanstack/react-table' or its corresponding type declarations.
+src/components/tasks/TasksTable.tsx(96,20): error TS7031: Binding element 'table' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(106,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(124,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(143,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(154,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(176,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/components/tasks/TasksTable.tsx(183,18): error TS7031: Binding element 'row' implicitly has an 'any' type.
+src/hooks/useCaseHub.ts(86,7): error TS6133: 'caseId' is declared but its value is never read.
+src/hooks/useNotifications.ts(34,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<Notification[], Error, Notification[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<never[] | { data: Notification[]; }>' is not assignable to type 'QueryFunction<Notification[], readonly unknown[]>'.
+      Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Notification[] | Promise<Notification[]>'.
+        Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Promise<Notification[]>'.
+          Type 'never[] | { data: Notification[]; }' is not assignable to type 'Notification[]'.
+            Type '{ data: Notification[]; }' is missing the following properties from type 'Notification[]': length, pop, push, concat, and 29 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Notification[], Error, Notification[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<never[] | { data: Notification[]; }>' is not assignable to type 'unique symbol | QueryFunction<Notification[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<never[] | { data: Notification[]; }>' is not assignable to type 'QueryFunction<Notification[], readonly unknown[], never>'.
+        Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Notification[] | Promise<Notification[]>'.
+          Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Promise<Notification[]>'.
+            Type 'never[] | { data: Notification[]; }' is not assignable to type 'Notification[]'.
+              Type '{ data: Notification[]; }' is missing the following properties from type 'Notification[]': length, pop, push, concat, and 29 more.
+  Overload 3 of 3, '(options: UseQueryOptions<Notification[], Error, Notification[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<never[] | { data: Notification[]; }>' is not assignable to type 'unique symbol | QueryFunction<Notification[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<never[] | { data: Notification[]; }>' is not assignable to type 'QueryFunction<Notification[], readonly unknown[], never>'.
+        Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Notification[] | Promise<Notification[]>'.
+          Type 'Promise<never[] | { data: Notification[]; }>' is not assignable to type 'Promise<Notification[]>'.
+            Type 'never[] | { data: Notification[]; }' is not assignable to type 'Notification[]'.
+              Type '{ data: Notification[]; }' is missing the following properties from type 'Notification[]': length, pop, push, concat, and 29 more.
+src/hooks/useTasks.ts(191,15): error TS6133: 'err' is declared but its value is never read.
+src/hooks/useTasks.ts(191,20): error TS6133: 'variables' is declared but its value is never read.
+src/hooks/useTasks.ts(199,17): error TS6133: 'data' is declared but its value is never read.
+src/hooks/useTasks.ts(199,23): error TS6133: 'err' is declared but its value is never read.
+src/hooks/useTasks.ts(199,39): error TS6133: 'context' is declared but its value is never read.
+src/hooks/useTasks.ts(233,17): error TS6133: 'data' is declared but its value is never read.
+src/hooks/useTasks.ts(233,23): error TS6133: 'err' is declared but its value is never read.
+src/hooks/useTasks.ts(254,17): error TS6133: 'data' is declared but its value is never read.
+src/hooks/useTasks.ts(283,17): error TS6133: 'data' is declared but its value is never read.
+src/hooks/useTasks.ts(312,17): error TS6133: 'data' is declared but its value is never read.
+src/store/workspace.ts(49,36): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+../../packages/shared/src/constants/index.ts(166,24): error TS6133: 'SYSTEM_STATUS_METADATA' is declared but its value is never read.
+../../packages/shared/src/index.ts(11,1): error TS2308: Module './types' has already exported a member named 'UserPreferences'. Consider explicitly re-exporting to resolve the ambiguity.
+../../packages/shared/src/utils/index.ts(336,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+../../packages/shared/src/utils/index.ts(337,29): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+../../packages/shared/src/utils/index.ts(344,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+../../packages/shared/src/utils/index.ts(345,29): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+

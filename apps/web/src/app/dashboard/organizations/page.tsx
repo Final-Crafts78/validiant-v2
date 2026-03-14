@@ -54,7 +54,7 @@ export default function OrganizationsPage() {
             {orgs.map((org) => (
               <button
                 key={org.id}
-                onClick={() => setActiveOrg(org.id)}
+                onClick={() => setActiveOrg(org.id, org.slug)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   org.id === activeOrgId
                     ? 'bg-blue-600 text-white border-blue-600'

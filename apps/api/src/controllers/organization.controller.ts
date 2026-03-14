@@ -387,9 +387,10 @@ export const updateOrganizationSettings = async (c: Context) => {
       typeof updateOrganizationSettingsSchema
     >;
 
+    // We cast to any here because settings is complex and inferred as Partial
     const organization = await organizationService.updateOrganizationSettings(
       id,
-      settings
+      settings as any
     );
 
     return c.json({
@@ -794,6 +795,283 @@ export const removeMember = async (c: Context) => {
       {
         success: false,
         error: 'Failed to remove member',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * List custom roles for organization
+ * GET /api/v1/organizations/:id/roles
+ */
+export const getOrganizationRoles = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Organization ID is required',
+        },
+        400
+      );
+    }
+
+    // Check if user is a member
+    const isMember = await organizationService.isMember(id, user.userId);
+    if (!isMember) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'You are not a member of this organization',
+        },
+        403
+      );
+    }
+
+    const roles = await organizationService.getOrganizationRoles(id);
+
+    return c.json({
+      success: true,
+      data: { roles },
+    });
+  } catch (error) {
+    console.error('Get organization roles error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to get roles',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Create custom role
+ * POST /api/v1/organizations/:id/roles
+ */
+export const createCustomRole = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Organization ID is required',
+        },
+        400
+      );
+    }
+
+    // Check if user is owner or admin
+    const roleCheck = await checkOrganizationRole(id, user.userId, [
+      OrganizationRole.OWNER,
+      OrganizationRole.ADMIN,
+    ]);
+
+    if (!roleCheck.hasPermission) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'Insufficient permissions. Required roles: owner, admin',
+        },
+        403
+      );
+    }
+
+    const validatedData = await c.req.json();
+    const role = await organizationService.createCustomRole(id, validatedData);
+
+    return c.json(
+      {
+        success: true,
+        message: 'Custom role created successfully',
+        data: { role },
+      },
+      201
+    );
+  } catch (error) {
+    console.error('Create custom role error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to create role',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Update custom role
+ * PATCH /api/v1/organizations/:id/roles/:roleId
+ */
+export const updateCustomRole = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+    const roleId = c.req.param('roleId');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id || !roleId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Organization ID and Role ID are required',
+        },
+        400
+      );
+    }
+
+    // Check if user is owner or admin
+    const roleCheck = await checkOrganizationRole(id, user.userId, [
+      OrganizationRole.OWNER,
+      OrganizationRole.ADMIN,
+    ]);
+
+    if (!roleCheck.hasPermission) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'Insufficient permissions. Required roles: owner, admin',
+        },
+        403
+      );
+    }
+
+    const validatedData = await c.req.json();
+    const role = await organizationService.updateCustomRole(
+      roleId,
+      validatedData
+    );
+
+    return c.json({
+      success: true,
+      message: 'Custom role updated successfully',
+      data: { role },
+    });
+  } catch (error) {
+    console.error('Update custom role error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to update role',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Delete custom role
+ * DELETE /api/v1/organizations/:id/roles/:roleId
+ */
+export const deleteCustomRole = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+    const roleId = c.req.param('roleId');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id || !roleId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Organization ID and Role ID are required',
+        },
+        400
+      );
+    }
+
+    // Check if user is owner or admin
+    const roleCheck = await checkOrganizationRole(id, user.userId, [
+      OrganizationRole.OWNER,
+      OrganizationRole.ADMIN,
+    ]);
+
+    if (!roleCheck.hasPermission) {
+      return c.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'Insufficient permissions. Required roles: owner, admin',
+        },
+        403
+      );
+    }
+
+    await organizationService.deleteCustomRole(roleId);
+
+    return c.json({
+      success: true,
+      message: 'Custom role deleted successfully',
+      data: null,
+    });
+  } catch (error) {
+    console.error('Delete custom role error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to delete role',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500

@@ -219,8 +219,14 @@ export const updateProfile = async (
  */
 export const updatePreferences = async (
   userId: string,
-  preferences: any
+  newPreferences: any
 ): Promise<User> => {
+  const existingUser = await getUserById(userId);
+  const preferences = {
+    ...(existingUser.preferences || {}),
+    ...newPreferences,
+  };
+
   const userResult = await db
     .update(users)
     .set({

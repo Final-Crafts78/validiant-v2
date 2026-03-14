@@ -644,5 +644,28 @@ export const isProjectMember = async (
   return !!member;
 };
 
+/**
+ * Get project member role
+ */
+export const getProjectMemberRole = async (
+  projectId: string,
+  userId: string
+): Promise<string | null> => {
+  const memberResult = await db
+    .select({ role: projectMembers.role })
+    .from(projectMembers)
+    .where(
+      and(
+        eq(projectMembers.projectId, projectId),
+        eq(projectMembers.userId, userId),
+        isNull(projectMembers.deletedAt)
+      )
+    )
+    .limit(1);
+  const member = memberResult[0];
+
+  return member ? member.role : null;
+};
+
 // ✅ Export ProjectStatus and ProjectPriority for backward compatibility with controllers
 export { ProjectStatus, ProjectPriority };

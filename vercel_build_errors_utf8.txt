@@ -1,0 +1,155 @@
+﻿
+> validiant-monorepo@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2
+> turbo run build "--filter=@validiant/web" "--force"
+
+ΓÇó Packages in scope: @validiant/web
+ΓÇó Running build in 1 packages
+ΓÇó Remote caching disabled
+@validiant/ui:build: cache bypass, force executing 4685452810448fc0
+@validiant/shared:build: cache bypass, force executing de41f98bd694ea08
+@validiant/shared:build: 
+@validiant/shared:build: > @validiant/shared@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\packages\shared
+@validiant/shared:build: > tsup src/index.ts --format cjs,esm --dts
+@validiant/shared:build: 
+@validiant/ui:build: 
+@validiant/ui:build: > @validiant/ui@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\packages\ui
+@validiant/ui:build: > tsup src/index.ts --format cjs,esm --dts --minify --clean
+@validiant/ui:build: 
+@validiant/ui:build: [34mCLI[39m Building entry: src/index.ts
+@validiant/ui:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@validiant/ui:build: [34mCLI[39m tsup v8.5.1
+@validiant/shared:build: [34mCLI[39m Building entry: src/index.ts
+@validiant/shared:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@validiant/shared:build: [34mCLI[39m tsup v8.5.1
+@validiant/ui:build: [34mCLI[39m Target: es2020
+@validiant/shared:build: [34mCLI[39m Target: es2020
+@validiant/ui:build: [34mCLI[39m Cleaning output folder
+@validiant/shared:build: [34mCJS[39m Build start
+@validiant/shared:build: [34mESM[39m Build start
+@validiant/ui:build: [34mCJS[39m Build start
+@validiant/ui:build: [34mESM[39m Build start
+@validiant/ui:build: [32mCJS[39m [1mdist\index.js [22m[32m26.73 KB[39m
+@validiant/ui:build: [32mCJS[39m ΓÜí∩╕Å Build success in 170ms
+@validiant/ui:build: [32mESM[39m [1mdist\index.mjs [22m[32m24.83 KB[39m
+@validiant/ui:build: [32mESM[39m ΓÜí∩╕Å Build success in 170ms
+@validiant/shared:build: 
+@validiant/shared:build: [43m[30m WARN [39m[49m [33mΓû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:12:6:
+@validiant/shared:build: [37m      12 Γöé       [32m"types"[37m: "./dist/index.d.ts"
+@validiant/shared:build:          Γò╡       [32m~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build:   The "import" condition comes earlier and will be used for all "import" statements:
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:11:6:
+@validiant/shared:build: [37m      11 Γöé       [32m"import"[37m: "./dist/index.mjs",
+@validiant/shared:build:          Γò╡       [32m~~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build:   The "require" condition comes earlier and will be used for all "require" calls:
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:10:6:
+@validiant/shared:build: [37m      10 Γöé       [32m"require"[37m: "./dist/index.js",
+@validiant/shared:build:          Γò╡       [32m~~~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build: 
+@validiant/shared:build: 
+@validiant/shared:build: 
+@validiant/shared:build: [43m[30m WARN [39m[49m [33mΓû▓ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:12:6:
+@validiant/shared:build: [37m      12 Γöé       [32m"types"[37m: "./dist/index.d.ts"
+@validiant/shared:build:          Γò╡       [32m~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build:   The "import" condition comes earlier and will be used for all "import" statements:
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:11:6:
+@validiant/shared:build: [37m      11 Γöé       [32m"import"[37m: "./dist/index.mjs",
+@validiant/shared:build:          Γò╡       [32m~~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build:   The "require" condition comes earlier and will be used for all "require" calls:
+@validiant/shared:build: 
+@validiant/shared:build:     package.json:10:6:
+@validiant/shared:build: [37m      10 Γöé       [32m"require"[37m: "./dist/index.js",
+@validiant/shared:build:          Γò╡       [32m~~~~~~~~~[0m
+@validiant/shared:build: 
+@validiant/shared:build: 
+@validiant/shared:build: 
+@validiant/shared:build: [32mCJS[39m [1mdist\index.js [22m[32m126.01 KB[39m
+@validiant/shared:build: [32mCJS[39m ΓÜí∩╕Å Build success in 192ms
+@validiant/shared:build: [32mESM[39m [1mdist\index.mjs [22m[32m97.87 KB[39m
+@validiant/shared:build: [32mESM[39m ΓÜí∩╕Å Build success in 191ms
+@validiant/ui:build: [34mDTS[39m Build start
+@validiant/shared:build: [34mDTS[39m Build start
+@validiant/ui:build: [32mDTS[39m ΓÜí∩╕Å Build success in 8190ms
+@validiant/ui:build: [32mDTS[39m [1mdist\index.d.ts  [22m[32m13.08 KB[39m
+@validiant/ui:build: [32mDTS[39m [1mdist\index.d.mts [22m[32m13.08 KB[39m
+@validiant/shared:build: [32mDTS[39m ΓÜí∩╕Å Build success in 9140ms
+@validiant/shared:build: [32mDTS[39m [1mdist\index.d.ts  [22m[32m295.96 KB[39m
+@validiant/shared:build: [32mDTS[39m [1mdist\index.d.mts [22m[32m295.96 KB[39m
+@validiant/web:build: cache bypass, force executing ae2f5587b873f672
+@validiant/web:build: 
+@validiant/web:build: > @validiant/web@2.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+@validiant/web:build: > next build
+@validiant/web:build: 
+@validiant/web:build:   Γû▓ Next.js 14.2.35
+@validiant/web:build: 
+@validiant/web:build:    Creating an optimized production build ...
+@validiant/web:build:  Γ£ô Compiled successfully
+@validiant/web:build:    Skipping linting
+@validiant/web:build:    Checking validity of types ...
+@validiant/web:build:    Collecting page data ...
+@validiant/web:build:    Generating static pages (0/23) ...
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:    Generating static pages (5/23) 
+@validiant/web:build:    Generating static pages (11/23) 
+@validiant/web:build:  ΓÜá metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+@validiant/web:build:    Generating static pages (17/23) 
+@validiant/web:build:  Γ£ô Generating static pages (23/23)
+@validiant/web:build:    Finalizing page optimization ...
+@validiant/web:build:    Collecting build traces ...
+@validiant/web:build: 
+@validiant/web:build: Route (app)                              Size     First Load JS
+@validiant/web:build: Γöî Γùï /                                    12.6 kB         109 kB
+@validiant/web:build: Γö£ Γùï /_not-found                          878 B          88.4 kB
+@validiant/web:build: Γö£ Γùï /accept-invite                       2.53 kB         116 kB
+@validiant/web:build: Γö£ ╞Æ /api/auth/session-expired            0 B                0 B
+@validiant/web:build: Γö£ Γùï /auth/error                          1.04 kB        97.3 kB
+@validiant/web:build: Γö£ Γùï /auth/forgot-password                2.98 kB         152 kB
+@validiant/web:build: Γö£ Γùï /auth/login                          7.28 kB         126 kB
+@validiant/web:build: Γö£ Γùï /auth/register                       9.03 kB         134 kB
+@validiant/web:build: Γö£ Γùï /auth/reset-password                 4.69 kB         160 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard                           109 kB          257 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/cases/[caseId]            15 kB           178 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/onboarding                7.22 kB         126 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/organizations             5.33 kB         130 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/profile                   6.77 kB         123 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/projects                  5.17 kB         154 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/projects/[id]             5.09 kB         156 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings                  141 B          87.7 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings/audit            8.31 kB         138 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings/branding         8.52 kB         162 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings/general          6.99 kB         161 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings/members          5.91 kB         140 kB
+@validiant/web:build: Γö£ ╞Æ /dashboard/settings/roles            5.91 kB         140 kB
+@validiant/web:build: Γöö ╞Æ /dashboard/tasks                     67 kB           232 kB
+@validiant/web:build: + First Load JS shared by all            87.5 kB
+@validiant/web:build:   Γö£ chunks/5686-70e6258161df5309.js      31.9 kB
+@validiant/web:build:   Γö£ chunks/aef20c65-e007c485c7ba1b7b.js  53.6 kB
+@validiant/web:build:   Γöö other shared chunks (total)          2 kB
+@validiant/web:build: 
+@validiant/web:build: 
+@validiant/web:build: ╞Æ Middleware                             26.8 kB
+@validiant/web:build: 
+@validiant/web:build: Γùï  (Static)   prerendered as static content
+@validiant/web:build: ╞Æ  (Dynamic)  server-rendered on demand
+@validiant/web:build: 
+
+ Tasks:    3 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    1m14.899s 
+

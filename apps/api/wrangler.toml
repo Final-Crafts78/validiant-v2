@@ -17,3 +17,20 @@ GOOGLE_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/google/callback"
 
 [observability]
 enabled = true
+
+[[kv_namespaces]]
+binding = "DENYLIST"
+id = "DENYLIST_KV_ID_PLACEHOLDER" # To be replaced by user in Cloudflare Dash
+preview_id = "DENYLIST_KV_PREVIEW_ID_PLACEHOLDER"
+
+[durable_objects]
+bindings = [
+  { name = "REALTIME_ROOMS", class_name = "RealtimeRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RealtimeRoom"]
+
+[triggers]
+crons = ["*/5 * * * *"]

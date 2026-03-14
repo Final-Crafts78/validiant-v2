@@ -3,37 +3,37 @@
  *
  * List and manage tasks.
  * Corporate Light Theme — Phase 9 (live data via react-query).
- *
- * Data flow:
- *   tasksApi.getAll()
- *     → AxiosResponse<APIResponse<Task[]>>
- *     → response.data       = APIResponse<Task[]>   (our wrapper)
- *     → response.data.data  = { tasks: Task[] }     (the live payload)
- *     → response.data.data.tasks = Task[]           (the actual array)
  */
 
 'use client';
 
 import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useTasks } from '@/hooks/useTasks';
+import { useRBAC } from '@/hooks/useRBAC';
+import { useOrganization } from '@/hooks/useOrganizations';
 import { useWorkspaceStore } from '@/store/workspace';
-import { format } from '@/lib/utils';
+import { useAuthStore } from '@/store/auth';
+import { canFeature } from '@validiant/shared';
 import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
+import { TasksBoard } from '@/components/tasks/TasksBoard';
 import { CreateTaskModalTrigger } from '@/components/modals/CreateTaskModal';
-import type { Task } from '@/hooks/useTasks';
+import { BulkActionBar } from '@/components/tasks/BulkActionBar';
+import { BulkAssignModal } from '@/components/tasks/BulkAssignModal';
+import { BulkStatusModal } from '@/components/tasks/BulkStatusModal';
+import { useBulkAssignTasks, useBulkUpdateTaskStatus } from '@/hooks/useTasks';
+import { TasksTable } from '@/components/tasks/TasksTable';
+import { type RowSelectionState } from '@validiant/ui';
+import { useMemo } from 'react';
+import { toast } from 'react-hot-toast';
 import {
   CheckSquare,
   Search,
   Filter,
-  Circle,
-  CheckCircle2,
-  Clock,
   AlertCircle,
-  User,
-  Loader2,
   Upload,
+  Loader2,
 } from 'lucide-react';
 import { TaskStatus } from '@validiant/shared';
 
@@ -44,166 +44,6 @@ const inputCls =
   'w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 ' +
   'placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 ' +
   'focus:border-transparent transition';
-
-// ---------------------------------------------------------------------------
-// Priority Badge
-// TaskPriority enum values: 'none' | 'low' | 'medium' | 'high' | 'urgent'
-// ---------------------------------------------------------------------------
-type TaskPriorityValue = Task['priority'];
-
-function PriorityBadge({ priority }: { priority: TaskPriorityValue }) {
-  const styles: Record<string, string> = {
-    none: 'bg-slate-100 text-slate-500 border border-slate-200',
-    low: 'bg-slate-100 text-slate-700 border border-slate-200',
-    medium: 'bg-blue-50 text-blue-700 border border-blue-200',
-    high: 'bg-amber-50 text-amber-700 border border-amber-200',
-    urgent: 'bg-red-50 text-red-700 border border-red-200',
-  };
-
-  const labels: Record<string, string> = {
-    none: 'None',
-    low: 'Low',
-    medium: 'Medium',
-    high: 'High',
-    urgent: 'Urgent',
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-        styles[priority] ?? styles['none']
-      }`}
-    >
-      {labels[priority] ?? priority}
-    </span>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Task Row
-//
-// Uses the real Task type from @validiant/shared.
-//
-// Mapping notes (plain Task — no populated relations):
-//   assigneeId  → displayed as-is with a fallback of 'Unassigned'
-//   projectId   → displayed as-is with a fallback of 'No Project'
-//   description → optional on real Task, guarded with || ''
-//   dueDate     → optional Date on real Task, rendered only when present
-//
-// TaskStatus enum values used in statusIcon:
-//   'todo' | 'in_progress' | 'in_review' | 'blocked' | 'completed' | 'cancelled'
-// ---------------------------------------------------------------------------
-function TaskRow({ task, onClick }: { task: Task; onClick?: () => void }) {
-  const isOverdue =
-    task.dueDate != null &&
-    new Date(task.dueDate) < new Date() &&
-    task.status !== TaskStatus.COMPLETED &&
-    task.status !== TaskStatus.VERIFIED;
-
-  // Map all known TaskStatus values to an icon; unknown statuses get a fallback.
-  const statusIconMap: Partial<Record<TaskStatus, React.ReactNode>> = {
-    [TaskStatus.PENDING]: (
-      <Circle className="h-5 w-5 text-slate-400 shrink-0" />
-    ),
-    [TaskStatus.IN_PROGRESS]: (
-      <Clock className="h-5 w-5 text-blue-600 shrink-0" />
-    ),
-    [TaskStatus.VERIFIED]: (
-      <Clock className="h-5 w-5 text-amber-500 shrink-0" />
-    ),
-    [TaskStatus.COMPLETED]: (
-      <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
-    ),
-    [TaskStatus.UNASSIGNED]: (
-      <Circle className="h-5 w-5 text-slate-300 shrink-0" />
-    ),
-  };
-  const statusIcon = statusIconMap[task.status] ?? (
-    <Circle className="h-5 w-5 text-slate-400 shrink-0" />
-  );
-
-  // Graceful display values for fields that may not be populated on plain Task
-  const displayAssignee = task.assignees?.[0]?.fullName ?? 'Unassigned';
-  const displayProject = task.projectId ?? 'No Project';
-  const displayDesc = task.description ?? '';
-
-  return (
-    <div
-      className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer"
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') onClick?.();
-      }}
-    >
-      <div className="flex items-start gap-4">
-        {/* Status Icon */}
-        <button
-          type="button"
-          aria-label={`Task status: ${task.status}`}
-          className="mt-0.5 shrink-0"
-        >
-          {statusIcon}
-        </button>
-
-        {/* Task Details */}
-        <div className="flex-1 min-w-0">
-          {/* Title row */}
-          <div className="flex items-start justify-between gap-3 mb-1.5">
-            <div className="flex-1 min-w-0">
-              <h3
-                className={`text-base font-semibold leading-snug ${
-                  task.status === TaskStatus.COMPLETED
-                    ? 'text-slate-400 line-through'
-                    : 'text-slate-900'
-                }`}
-              >
-                {task.title}
-              </h3>
-            </div>
-            <PriorityBadge priority={task.priority} />
-          </div>
-
-          {/* Description — optional on real Task */}
-          {displayDesc && (
-            <p className="text-sm text-slate-500 line-clamp-1 mb-3">
-              {displayDesc}
-            </p>
-          )}
-
-          {/* Task meta */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2">
-            {/* Assignee */}
-            <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              <User className="h-3.5 w-3.5 shrink-0" />
-              {displayAssignee}
-            </span>
-
-            {/* Project */}
-            <span className="flex items-center gap-1.5 text-xs text-slate-500">
-              <CheckSquare className="h-3.5 w-3.5 shrink-0" />
-              {displayProject}
-            </span>
-
-            {/* Due Date — optional on real Task */}
-            {task.dueDate != null && (
-              <span
-                className={`flex items-center gap-1.5 text-xs ${
-                  isOverdue ? 'text-red-600 font-medium' : 'text-slate-500'
-                }`}
-              >
-                {isOverdue && <AlertCircle className="h-3.5 w-3.5 shrink-0" />}
-                Due{' '}
-                {format.date(task.dueDate, { month: 'short', day: 'numeric' })}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Empty State
@@ -232,33 +72,67 @@ function EmptyState() {
 function TasksPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const pathname = usePathname();
+
+  // URL State Synced Filters
+  const searchQuery = searchParams.get('q') || '';
+  const statusFilter = searchParams.get('status') || 'all';
+  const priorityFilter = searchParams.get('priority') || 'all';
+  const viewMode = (searchParams.get('view') as 'table' | 'board') || 'table';
+
   const [bulkUploadOpen, setBulkUploadOpen] = useState(false);
-  // const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [bulkAssignOpen, setBulkAssignOpen] = useState(false);
+  const [bulkStatusOpen, setBulkStatusOpen] = useState(false);
 
-  const openTask = (taskId: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('taskId', taskId);
-    router.push(`?${params.toString()}`, { scroll: false });
-  };
+  // Bulk Operations Hooks
+  const bulkAssign = useBulkAssignTasks();
+  const bulkUpdateStatus = useBulkUpdateTaskStatus();
 
+  // Workspace Context
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
   const activeProjectId = useWorkspaceStore((s) => s.activeProjectId);
 
-  const {
-    data: rawTasks = [],
-    isLoading,
-    isError,
-  } = useTasks(activeProjectId ?? '', undefined, {
-    enabled: !!activeProjectId,
-  });
+  // Data Fetching
+  const { data, isLoading, isError } = useTasks(activeProjectId ?? '');
 
-  const liveTasks = rawTasks as unknown as Task[];
+  const { data: org } = useOrganization(activeOrgId);
+  const { orgRole } = useRBAC(activeOrgId ?? '', activeProjectId ?? '');
+  const user = useAuthStore((s) => s.user);
+
+  const liveTasks = useMemo(() => {
+    return data?.pages.flatMap((page) => page.tasks) ?? [];
+  }, [data]);
+
+  // Feature Flag Cache
+  const boardEnabled = canFeature('BOARD_VIEW', org?.settings);
+
+  // URL State Helpers
+  const updateQuery = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    Object.entries(updates).forEach(([key, value]) => {
+      if (
+        value === null ||
+        value === 'all' ||
+        (key === 'view' && value === 'table')
+      ) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const openTask = (taskId: string) => {
+    updateQuery({ taskId });
+  };
 
   // ------------------------------------------------------------------
-  // Loading state
+  // Role-Based UI Tweak
   // ------------------------------------------------------------------
+  const isExecutive = orgRole === 'executive';
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -268,9 +142,6 @@ function TasksPageContent() {
     );
   }
 
-  // ------------------------------------------------------------------
-  // Error state
-  // ------------------------------------------------------------------
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -281,21 +152,19 @@ function TasksPageContent() {
           Failed to load tasks
         </h3>
         <p className="text-sm text-slate-500">
-          There was a problem fetching your tasks. Please try refreshing the
-          page.
+          There was a problem fetching your tasks.
         </p>
       </div>
     );
   }
 
-  // ------------------------------------------------------------------
-  // Derived filtered list (applied to the live array)
-  // Status filter values match TaskStatus enum: 'todo' | 'in_progress' |
-  //   'in_review' | 'blocked' | 'completed' | 'cancelled'
-  // Priority filter values match TaskPriority enum: 'none' | 'low' |
-  //   'medium' | 'high' | 'urgent'
-  // ------------------------------------------------------------------
+  // Filter Logic
   const filteredTasks = liveTasks.filter((task) => {
+    if (isExecutive) {
+      const isAssignedToMe = task.assignees?.some((a) => a.id === user?.id);
+      if (!isAssignedToMe) return false;
+    }
+
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (task.description ?? '')
@@ -308,10 +177,49 @@ function TasksPageContent() {
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  // ------------------------------------------------------------------
-  // Stats — derived from the full liveTasks array (unfiltered),
-  // so the metric cards always reflect the true totals.
-  // ------------------------------------------------------------------
+  const selectedTaskIds = Object.keys(rowSelection);
+  const selectedCount = selectedTaskIds.length;
+
+  const handleBulkAssign = async (assigneeId: string) => {
+    try {
+      await bulkAssign.mutateAsync({
+        taskIds: selectedTaskIds,
+        userId: assigneeId,
+        projectId: activeProjectId || '',
+      });
+      toast.success(`Successfully assigned ${selectedCount} tasks`);
+      setRowSelection({});
+      setBulkAssignOpen(false);
+    } catch (error) {
+      toast.error('Failed to assign tasks in bulk');
+    }
+  };
+
+  const handleBulkStatusChange = async (statusKey: TaskStatus) => {
+    try {
+      const result = await bulkUpdateStatus.mutateAsync({
+        taskIds: selectedTaskIds,
+        status: statusKey,
+        projectId: activeProjectId || '',
+      });
+
+      const resultData = (result as any)?.data?.data;
+      if (resultData?.failed?.length > 0) {
+        toast.error(
+          `${resultData.failed.length} tasks failed to update status (logic violation)`
+        );
+      } else {
+        toast.success(`Successfully updated ${selectedCount} tasks`);
+      }
+
+      setRowSelection({});
+      setBulkStatusOpen(false);
+    } catch (error) {
+      toast.error('Failed to update task statuses');
+    }
+  };
+
+  // Stats
   const stats = {
     total: liveTasks.length,
     pending: liveTasks.filter((t) => t.status === TaskStatus.PENDING).length,
@@ -325,151 +233,169 @@ function TasksPageContent() {
 
   return (
     <div className="space-y-6">
-      {/* ===================================================================
-          PAGE HEADER
-      =================================================================== */}
+      {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Tasks</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900">
+            {isExecutive ? 'My Queue' : 'Tasks'}
+          </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Manage and track all your tasks
+            {isExecutive
+              ? 'Your assigned tasks and action items'
+              : 'Manage and track all your tasks'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setBulkUploadOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shrink-0"
-          >
-            <Upload className="h-4 w-4" />
-            Bulk Upload
-          </button>
-          <CreateTaskModalTrigger />
+          {!isExecutive && (
+            <>
+              <button
+                type="button"
+                onClick={() => setBulkUploadOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shrink-0"
+              >
+                <Upload className="h-4 w-4" />
+                Bulk Upload
+              </button>
+              <CreateTaskModalTrigger />
+            </>
+          )}
         </div>
       </div>
 
       {hasTasks ? (
         <>
-          {/* =================================================================
-              STATS GRID — 4 columns
-              Counts derived from liveTasks (unfiltered totals)
-          ================================================================= */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Total */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Total
-              </p>
-            </div>
-
-            {/* Pending */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-slate-900">
-                {stats.pending}
-              </p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Pending
-              </p>
-            </div>
-
-            {/* In Progress */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-blue-600">
-                {stats.inProgress}
-              </p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                In Progress
-              </p>
-            </div>
-
-            {/* Completed */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
-              <p className="text-3xl font-bold text-emerald-600">
-                {stats.completed}
-              </p>
-              <p className="text-sm font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                Completed
-              </p>
-            </div>
-          </div>
-
-          {/* =================================================================
-              FILTERS BAR
-              Select option values match real TaskStatus / TaskPriority enums
-          ================================================================= */}
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <div className="flex flex-col lg:flex-row gap-3">
-              {/* Search */}
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search tasks…"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`${inputCls} pl-9 py-2`}
-                />
-              </div>
-
-              {/* Status Filter — values mirror TaskStatus enum */}
-              <div className="w-full lg:w-44 relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className={`${inputCls} pl-9 py-2 appearance-none`}
-                >
-                  <option value="all">All Status</option>
-                  <option value={TaskStatus.UNASSIGNED}>Unassigned</option>
-                  <option value={TaskStatus.PENDING}>Pending</option>
-                  <option value={TaskStatus.IN_PROGRESS}>In Progress</option>
-                  <option value={TaskStatus.VERIFIED}>Verified</option>
-                  <option value={TaskStatus.COMPLETED}>Completed</option>
-                </select>
-              </div>
-
-              {/* Priority Filter — values mirror TaskPriority enum */}
-              <div className="w-full lg:w-44">
-                <select
-                  value={priorityFilter}
-                  onChange={(e) => setPriorityFilter(e.target.value)}
-                  className={`${inputCls} px-3 py-2 appearance-none`}
-                >
-                  <option value="all">All Priority</option>
-                  <option value="urgent">Urgent</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
-                  <option value="none">None</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* =================================================================
-              TASK LIST
-              Renders filteredTasks; EmptyState shown if filter yields nothing
-          ================================================================= */}
-          <div className="space-y-4">
-            {filteredTasks.length > 0 ? (
-              filteredTasks.map((task) => (
-                <TaskRow
-                  key={task.id}
-                  task={task}
-                  onClick={() => openTask(task.id)}
-                />
-              ))
-            ) : (
-              <div className="bg-white border border-dashed border-slate-200 rounded-xl py-12 text-center">
-                <p className="text-sm font-medium text-slate-500">
-                  No tasks match your current filters.
+          {/* STATS & VIEW TOGGLE */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+                <p className="text-3xl font-bold text-slate-900">
+                  {stats.total}
                 </p>
+                <p className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
+                  Total
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+                <p className="text-3xl font-bold text-slate-900">
+                  {stats.pending}
+                </p>
+                <p className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
+                  Pending
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center border-b-2 border-b-blue-600">
+                <p className="text-3xl font-bold text-blue-600">
+                  {stats.inProgress}
+                </p>
+                <p className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
+                  In Progress
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center border-b-2 border-b-emerald-600">
+                <p className="text-3xl font-bold text-emerald-600">
+                  {stats.completed}
+                </p>
+                <p className="text-xs font-semibold text-slate-500 mt-1 uppercase tracking-wide">
+                  Completed
+                </p>
+              </div>
+            </div>
+
+            {boardEnabled && !isExecutive && (
+              <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shrink-0 self-start lg:self-auto">
+                <button
+                  onClick={() => updateQuery({ view: 'table' })}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    viewMode === 'table'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  Table
+                </button>
+                <button
+                  onClick={() => updateQuery({ view: 'board' })}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    viewMode === 'board'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  Board
+                </button>
               </div>
             )}
           </div>
 
-          {/* Pagination info */}
+          {!isExecutive && (
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+              <div className="flex flex-col lg:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Search tasks..."
+                    value={searchQuery}
+                    onChange={(e) => updateQuery({ q: e.target.value })}
+                    className={`${inputCls} pl-9 py-2`}
+                  />
+                </div>
+
+                <div className="w-full lg:w-44 relative">
+                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => updateQuery({ status: e.target.value })}
+                    className={`${inputCls} pl-9 py-2 appearance-none`}
+                  >
+                    <option value="all">All Status</option>
+                    <option value={TaskStatus.UNASSIGNED}>Unassigned</option>
+                    <option value={TaskStatus.PENDING}>Pending</option>
+                    <option value={TaskStatus.IN_PROGRESS}>In Progress</option>
+                    <option value={TaskStatus.VERIFIED}>Verified</option>
+                    <option value={TaskStatus.COMPLETED}>Completed</option>
+                  </select>
+                </div>
+
+                <div className="w-full lg:w-44">
+                  <select
+                    value={priorityFilter}
+                    onChange={(e) => updateQuery({ priority: e.target.value })}
+                    className={`${inputCls} px-3 py-2 appearance-none`}
+                  >
+                    <option value="all">All Priority</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TASK CONTENT */}
+          <div className="min-h-[400px]">
+            {viewMode === 'board' && boardEnabled ? (
+              <TasksBoard tasks={filteredTasks} onTaskClick={openTask} />
+            ) : (
+              <TasksTable
+                tasks={filteredTasks}
+                onTaskClick={openTask}
+                rowSelection={rowSelection}
+                onRowSelectionChange={setRowSelection}
+              />
+            )}
+          </div>
+
+          <BulkActionBar
+            selectedCount={selectedCount}
+            onClear={() => setRowSelection({})}
+            onAssign={() => setBulkAssignOpen(true)}
+            onStatusChange={() => setBulkStatusOpen(true)}
+          />
+
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-500">
               Showing{' '}
@@ -488,7 +414,7 @@ function TasksPageContent() {
         <EmptyState />
       )}
 
-      {/* Task Detail Slide-Over — opens when ?taskId is present */}
+      {/* Task Detail Slide-Over */}
       <TaskDetailSlideOver />
 
       {/* Bulk Upload Wizard Modal */}
@@ -497,7 +423,20 @@ function TasksPageContent() {
         onClose={() => setBulkUploadOpen(false)}
       />
 
-      {/* Modal managed by Trigger */}
+      {/* Bulk Operations Modals */}
+      <BulkAssignModal
+        open={bulkAssignOpen}
+        onClose={() => setBulkAssignOpen(false)}
+        onConfirm={handleBulkAssign}
+        count={selectedCount}
+      />
+
+      <BulkStatusModal
+        open={bulkStatusOpen}
+        onClose={() => setBulkStatusOpen(false)}
+        onConfirm={handleBulkStatusChange}
+        count={selectedCount}
+      />
     </div>
   );
 }

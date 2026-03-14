@@ -74,6 +74,7 @@ const accessTokenCookieOptions = {
   sameSite: 'Lax' as const,
   maxAge: 3600, // 1 hour
   path: '/',
+  domain: isProduction ? '.validiant.in' : undefined,
 };
 
 const refreshTokenCookieOptions = {
@@ -82,6 +83,7 @@ const refreshTokenCookieOptions = {
   sameSite: 'Lax' as const,
   maxAge: 604800, // 7 days
   path: '/',
+  domain: isProduction ? '.validiant.in' : undefined,
 };
 
 // ============================================================================
@@ -317,15 +319,10 @@ app.post(
       );
 
       // Set tokens as HttpOnly cookies (SECURE - same as OAuth)
+      setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
       setCookie(
         c,
-        'access_token',
-        tokens.accessToken,
-        accessTokenCookieOptions
-      );
-      setCookie(
-        c,
-        'refresh_token',
+        'refreshToken',
         tokens.refreshToken,
         refreshTokenCookieOptions
       );
@@ -336,6 +333,7 @@ app.post(
         sameSite: 'Lax' as const,
         maxAge: 3600,
         path: '/',
+        domain: isProduction ? '.validiant.in' : undefined,
       });
 
       logger.info('Passkey authentication successful', {

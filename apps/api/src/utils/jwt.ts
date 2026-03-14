@@ -12,10 +12,13 @@ import { env } from '../config/env.config';
  * JWT payload structure
  */
 export interface TokenPayload extends JWTPayload {
+  sub: string;
   userId: string;
   email: string;
   role?: string;
   organizationId?: string;
+  permissions?: string[]; // Mini-Phase 5: Custom Role Permissions
+  permissionsVersion?: number; // Mini-Phase 1 compliance
   exp?: number;
 }
 
@@ -32,7 +35,7 @@ const getSecretKey = (): Uint8Array => {
  */
 export const generateToken = async (
   payload: Omit<TokenPayload, 'iat' | 'exp'>,
-  expiresIn: string = '7d'
+  expiresIn: string = '15m'
 ): Promise<string> => {
   const secret = getSecretKey();
 
@@ -107,5 +110,5 @@ export const extractBearerToken = (
 export const generateRefreshToken = async (
   payload: Omit<TokenPayload, 'iat' | 'exp'>
 ): Promise<string> => {
-  return generateToken(payload, '30d');
+  return generateToken(payload, '7d');
 };

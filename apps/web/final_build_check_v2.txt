@@ -1,0 +1,30 @@
+
+> @validiant/web@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./src/app/dashboard/settings/roles/page.tsx:101:9
+Type error: 'createMutation' is declared but its value is never read.
+
+[0m [90m  99 |[39m   [36mconst[39m activeOrgId [33m=[39m useWorkspaceStore((state) [33m=>[39m state[33m.[39mactiveOrgId)[33m;[39m[0m
+[0m [90m 100 |[39m   [36mconst[39m { data[33m:[39m roles[33m,[39m isLoading[33m:[39m isLoadingRoles } [33m=[39m useOrgRoles(activeOrgId)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 101 |[39m   [36mconst[39m createMutation [33m=[39m useCreateCustomRole(activeOrgId [33m||[39m [32m''[39m)[33m;[39m[0m
+[0m [90m     |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 102 |[39m[0m
+[0m [90m 103 |[39m   [36mconst[39m [selectedRoleId[33m,[39m setSelectedRoleId] [33m=[39m useState[33m<[39m[33mstring[39m [33m|[39m [36mnull[39m[33m>[39m([36mnull[39m)[33m;[39m[0m
+[0m [90m 104 |[39m   [36mconst[39m [isCreating[33m,[39m setIsCreating] [33m=[39m useState([36mfalse[39m)[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error workspace @validiant/web@2.0.0
+npm error location C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c next build

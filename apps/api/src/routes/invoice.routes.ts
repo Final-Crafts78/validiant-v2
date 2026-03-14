@@ -108,7 +108,7 @@ invoiceRoutes.get('/project/:projectId', async (c) => {
         const hoursToComplete =
           (t.completedAt.getTime() - t.createdAt.getTime()) / (1000 * 60 * 60);
         slaStatus = hoursToComplete <= 72 ? 'On Time' : 'Overdue';
-      } else if (t.status !== 'Completed' && t.status !== 'Verified') {
+      } else if (t.statusKey !== 'COMPLETED' && t.statusKey !== 'VERIFIED') {
         const hoursElapsed =
           (now.getTime() - t.createdAt.getTime()) / (1000 * 60 * 60);
         slaStatus = hoursElapsed > 72 ? 'Overdue' : 'In Progress';
@@ -123,7 +123,7 @@ invoiceRoutes.get('/project/:projectId', async (c) => {
           escCsv(t.title),
           escCsv(t.clientName),
           escCsv(t.pincode),
-          escCsv(t.status),
+          escCsv(t.statusKey),
           escCsv(t.priority),
           escCsv(t.createdAt.toISOString()),
           escCsv(t.completedAt?.toISOString()),
@@ -160,10 +160,10 @@ invoiceRoutes.get('/project/:projectId/summary', async (c) => {
       .select({
         totalTasks: sql<number>`COUNT(${schema.tasks.id})`.mapWith(Number),
         completedTasks:
-          sql<number>`COUNT(CASE WHEN ${schema.tasks.status} IN ('Completed', 'Verified') THEN 1 END)`.mapWith(
+          sql<number>`COUNT(CASE WHEN ${schema.tasks.statusKey} IN ('COMPLETED', 'VERIFIED') THEN 1 END)`.mapWith(
             Number
           ),
-        totalTimeSeconds: sql<number>`COALESCE(SUM(te.duration), 0)`.mapWith(
+        totalTimeSeconds: sql<number>`COALESCE(SUM(${schema.timeEntries.duration}), 0)`.mapWith(
           Number
         ),
       })

@@ -1,0 +1,119 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe :  ΓÜá Compiled 
+with warnings
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Us
+ers\manso\AppData\Roaming\ 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: ( ΓÜá Co  
+  mpiled with warnings:Str   
+ ing) [], RemoteException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+./src/app/dashboard/tasks/pag
+e.tsx
+Attempted import error: 
+'useBulkAssignTasks' is not 
+exported from 
+'@/hooks/useTasks' (imported 
+as 'useBulkAssignTasks').
+
+Import trace for requested 
+module:
+./src/app/dashboard/tasks/pag
+e.tsx
+
+./src/app/dashboard/tasks/pag
+e.tsx
+Attempted import error: 
+'useBulkUpdateTaskStatus' is 
+not exported from 
+'@/hooks/useTasks' (imported 
+as 
+'useBulkUpdateTaskStatus').
+
+Import trace for requested 
+module:
+./src/app/dashboard/tasks/pag
+e.tsx
+
+./src/app/dashboard/tasks/pag
+e.tsx
+Attempted import error: 
+'useBulkAssignTasks' is not 
+exported from 
+'@/hooks/useTasks' (imported 
+as 'useBulkAssignTasks').
+
+Import trace for requested 
+module:
+./src/app/dashboard/tasks/pag
+e.tsx
+
+./src/app/dashboard/tasks/pag
+e.tsx
+Attempted import error: 
+'useBulkUpdateTaskStatus' is 
+not exported from 
+'@/hooks/useTasks' (imported 
+as 
+'useBulkUpdateTaskStatus').
+
+Import trace for requested 
+module:
+./src/app/dashboard/tasks/pag
+e.tsx
+
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./src/app/accept-invite/page.
+tsx:24:9
+Type error: 'setActiveOrg' 
+is declared but its value is 
+never read.
+
+[0m [90m 22 |[39m   
+[36mconst[39m token 
+[33m=[39m searchParams[33m
+.[39m[36mget[39m([32m'tok
+en'[39m)[33m;[39m[0m
+[0m [90m 23 |[39m   
+[36mconst[39m user 
+[33m=[39m 
+useAuthStore((state) 
+[33m=>[39m state[33m.[39m
+user)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m
+ 24 |[39m   [36mconst[39m 
+setActiveOrg [33m=[39m 
+useWorkspaceStore((state) 
+[33m=>[39m state[33m.[39m
+setActiveOrg)[33m;[39m[0m
+[0m [90m    |[39m         
+[31m[1m^[22m[39m[0m
+[0m [90m 25 |[39m[0m
+[0m [90m 26 |[39m   
+[36mconst[39m 
+[status[33m,[39m 
+setStatus] [33m=[39m 
+useState[33m<[39m[0m
+[0m [90m 27 |[39m     
+[32m'idle'[39m [33m|[39m 
+[32m'loading'[39m 
+[33m|[39m 
+[32m'success'[39m 
+[33m|[39m 
+[32m'error'[39m[0m
+Next.js build worker exited 
+with code: 1 and signal: null

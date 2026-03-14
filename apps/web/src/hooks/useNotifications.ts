@@ -1,0 +1,100 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { get, patch, del } from '@/lib/api';
+import { queryKeys } from '@/lib/query-keys';
+import { useWorkspaceStore } from '@/store/workspace';
+
+/**
+ * Notification Interface
+ */
+export interface Notification {
+  id: string;
+  userId: string;
+  organizationId: string;
+  type: string;
+  title: string;
+  body: string;
+  priority: 'urgent' | 'high' | 'normal';
+  actionUrl: string | null;
+  metadata: Record<string, any>;
+  groupKey: string | null;
+  isGrouped: boolean;
+  readAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Hook for fetching user notifications
+ */
+export const useNotifications = () => {
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+
+  return useQuery<Notification[]>({
+    queryKey: queryKeys.notifications.list(activeOrgId || ''),
+    queryFn: async () => {
+      if (!activeOrgId) return [];
+      const response = await get<{ data: Notification[] }>(
+        '/notifications'
+      );
+      return response.data.data;
+    },
+    enabled: !!activeOrgId,
+  });
+};
+
+/**
+ * Mutation to mark a notification as read
+ */
+export const useMarkAsRead = () => {
+  const queryClient = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+
+  return useMutation({
+    mutationFn: (id: string) => patch(`/api/v1/notifications/${id}/read`, {}),
+    onSuccess: () => {
+      if (activeOrgId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.notifications.list(activeOrgId),
+        });
+      }
+    },
+  });
+};
+
+/**
+ * Mutation to mark all notifications as read
+ */
+export const useMarkAllAsRead = () => {
+  const queryClient = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+
+  return useMutation({
+    mutationFn: () => patch('/api/v1/notifications/read-all', {}),
+    onSuccess: () => {
+      if (activeOrgId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.notifications.list(activeOrgId),
+        });
+      }
+    },
+  });
+};
+
+/**
+ * Mutation to delete a notification
+ */
+export const useDeleteNotification = () => {
+  const queryClient = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+
+  return useMutation({
+    mutationFn: (id: string) => del(`/api/v1/notifications/${id}`),
+    onSuccess: () => {
+      if (activeOrgId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.notifications.list(activeOrgId),
+        });
+      }
+    },
+  });
+};

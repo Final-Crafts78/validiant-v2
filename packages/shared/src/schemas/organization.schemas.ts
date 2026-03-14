@@ -83,22 +83,139 @@ export const organizationSlugSchema = z
   .toLowerCase();
 
 /**
+ * Custom Status schema for organization settings (Phase 9)
+ */
+export const customStatusSchema = z.object({
+  key: z.string().min(1).max(50),
+  label: z.string().min(1).max(100),
+  insertAfter: z.string().min(1).max(50),
+  color: z.string().min(1).max(50),
+  icon: z.string().min(1).max(50),
+  requiresNote: z.boolean().default(false),
+});
+
+/**
+ * White-Label Branding Config (Phase 10)
+ */
+export const brandConfigSchema = z.object({
+  accentPrimary: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .default('#4f46e5'),
+  logoUrl: z.string().url().optional(),
+  faviconUrl: z.string().url().optional(),
+  displayName: z.string().optional(),
+  loginPageHeroText: z.string().optional(),
+});
+
+/**
+ * SLA Engine Configuration (Phase 10)
+ */
+export const slaConfigSchema = z.object({
+  calcMode: z.enum(['calendar', 'business_hours']).default('calendar'),
+  atRiskThresholdPercent: z.number().min(5).max(50).default(20),
+  businessHours: z
+    .object({
+      timezone: z.string().default('UTC'),
+      workDays: z.array(z.number().min(0).max(6)).default([1, 2, 3, 4, 5]),
+      start: z.string().default('09:00'),
+      end: z.string().default('17:00'),
+    })
+    .optional(),
+  orgHolidays: z.array(z.string()).default([]),
+  slaExcludeHolidays: z.boolean().default(true),
+});
+
+/**
+ * Case Reference Config (Phase 10)
+ */
+export const caseRefConfigSchema = z.object({
+  prefix: z.string().max(10).default('CASE'),
+  includeYear: z.boolean().default(true),
+  paddingLength: z.number().min(3).max(10).default(5),
+  separator: z.enum(['-', '_', '', '/']).default('-'),
+});
+
+/**
+ * Priority Level Config (Phase 10)
+ */
+export const priorityLevelSchema = z.object({
+  key: z.string(),
+  label: z.string(),
+  color: z.string(),
+  slaMultiplier: z.number().default(1.0),
+});
+
+export const priorityConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  levels: z.array(priorityLevelSchema).default([
+    { key: 'low', label: 'Low', color: 'blue', slaMultiplier: 1.5 },
+    { key: 'medium', label: 'Medium', color: 'gray', slaMultiplier: 1.0 },
+    { key: 'high', label: 'High', color: 'orange', slaMultiplier: 0.75 },
+    { key: 'urgent', label: 'Urgent', color: 'red', slaMultiplier: 0.5 },
+  ]),
+});
+
+/**
+ * Rejection Reason Config (Phase 10)
+ */
+export const rejectionReasonSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  requiresNote: z.boolean().default(false),
+});
+
+export const rejectionConfigSchema = z.object({
+  reasons: z.array(rejectionReasonSchema).default([]),
+  allowFreeformRejection: z.boolean().default(true),
+});
+
+/**
+ * Navigation Config (Phase 10)
+ */
+export const navigationConfigSchema = z.object({
+  showAnalytics: z.boolean().default(true),
+  showImport: z.boolean().default(true),
+  casesLabel: z.string().default('Cases'),
+  analyticsLabel: z.string().default('Analytics'),
+});
+
+/**
+ * Notification Policy (Phase 10)
+ */
+export const notificationPolicySchema = z.object({
+  emailNotificationsEnabled: z.boolean().default(true),
+  notificationPolicy: z.record(z.any()).optional(), // Defaults by role
+});
+
+/**
  * Organization settings schema
  */
 export const organizationSettingsSchema = z.object({
-  allowMemberInvites: z.boolean(),
-  requireTwoFactor: z.boolean(),
-  defaultProjectVisibility: z.enum(['public', 'private']),
-  allowPublicProjects: z.boolean(),
-  allowGuestAccess: z.boolean(),
-  sessionTimeout: z.number().min(5).max(1440).optional(), // Minutes
+  // Basic Settings
+  allowMemberInvites: z.boolean().default(true),
+  requireTwoFactor: z.boolean().default(false),
+  defaultProjectVisibility: z.enum(['public', 'private']).default('private'),
+  allowPublicProjects: z.boolean().default(false),
+  allowGuestAccess: z.boolean().default(false),
+  sessionTimeout: z.number().min(5).max(1440).optional(),
   ipWhitelist: z.array(z.string().ip()).optional(),
   customDomain: z.string().url().optional(),
-  brandingColor: z
-    .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/)
-    .optional(),
-  logoUrl: z.string().url().optional(),
+
+  // Enterprise Config Hub (Phase 10)
+  brandConfig: brandConfigSchema.default({}),
+  slaConfig: slaConfigSchema.default({}),
+  auditLogRetentionDays: z.number().default(365),
+  caseRefConfig: caseRefConfigSchema.default({}),
+  priorityConfig: priorityConfigSchema.default({}),
+  rejectionConfig: rejectionConfigSchema.default({}),
+  navigationConfig: navigationConfigSchema.default({}),
+  notificationPolicy: notificationPolicySchema.default({}),
+  enabledFeatures: z.array(z.string()).default([]),
+  disabledFeatures: z.array(z.string()).default([]),
+  customStatuses: z.array(customStatusSchema).optional(),
+  analyticsKpiConfig: z.record(z.any()).optional(),
+  csvImportTemplates: z.array(z.any()).default([]),
 });
 
 /**
@@ -404,6 +521,22 @@ export const organizationStatsRequestSchema = z.object({
 });
 
 /**
+ * Custom role creation schema (Phase 5)
+ */
+export const createCustomRoleSchema = z.object({
+  name: z.string().min(2, 'Role name must be at least 2 characters').max(50),
+  description: z.string().max(200).optional(),
+  permissions: z
+    .array(z.string())
+    .min(1, 'At least one permission is required'),
+});
+
+/**
+ * Custom role update schema (Phase 5)
+ */
+export const updateCustomRoleSchema = createCustomRoleSchema.partial();
+
+/**
  * Type inference helpers
  */
 export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
@@ -429,3 +562,5 @@ export type OrganizationFiltersInput = z.infer<
   typeof organizationFiltersSchema
 >;
 export type TeamFiltersInput = z.infer<typeof teamFiltersSchema>;
+export type CreateCustomRoleInput = z.infer<typeof createCustomRoleSchema>;
+export type UpdateCustomRoleInput = z.infer<typeof updateCustomRoleSchema>;

@@ -14,11 +14,17 @@ import {
   organizationMembers,
   users,
   projects,
+  orgRoles,
 } from '../db/schema';
 import { cache } from '../config/redis.config';
 import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
-import { OrganizationRole } from '@validiant/shared';
+import {
+  OrganizationRole,
+  ORG_ROLE_PERMISSIONS,
+  PermissionKey,
+  OrgSettings,
+} from '@validiant/shared';
 
 /**
  * Organization interface
@@ -29,10 +35,10 @@ interface Organization {
   slug: string;
   description?: string;
   website?: string;
-  industry?: string;
+  industryType?: string;
   size?: string;
   logoUrl?: string;
-  settings: any;
+  settings: OrgSettings;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,6 +66,7 @@ interface OrganizationMember {
 interface OrganizationWithRole extends Organization {
   memberRole: OrganizationRole;
   memberCount: number;
+  projectCount: number;
 }
 
 /**
@@ -75,7 +82,8 @@ const generateSlug = async (name: string): Promise<string> => {
   let counter = 1;
   let uniqueSlug = slug;
 
-  while (true) {
+  let isUnique = false;
+  while (!isUnique) {
     const existingResult = await db
       .select({ id: organizations.id })
       .from(organizations)
@@ -85,10 +93,12 @@ const generateSlug = async (name: string): Promise<string> => {
       .limit(1);
     const existing = existingResult[0];
 
-    if (!existing) break;
-
-    uniqueSlug = `${slug}-${counter}`;
-    counter++;
+    if (!existing) {
+      isUnique = true;
+    } else {
+      uniqueSlug = `${slug}-${counter}`;
+      counter++;
+    }
   }
 
   return uniqueSlug;
@@ -104,7 +114,7 @@ export const createOrganization = async (
     name: string;
     description?: string;
     website?: string;
-    industry?: string;
+    industryType?: string;
     size?: string;
   }
 ): Promise<Organization> => {
@@ -121,7 +131,7 @@ export const createOrganization = async (
       ownerId: userId,
       description: data.description,
       website: data.website,
-      industry: data.industry,
+      industryType: data.industryType,
       size: data.size,
       settings: {},
     })
@@ -131,7 +141,7 @@ export const createOrganization = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
@@ -189,7 +199,7 @@ export const getOrganizationById = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
@@ -224,7 +234,7 @@ export const getOrganizationBySlug = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
@@ -250,13 +260,18 @@ export const updateOrganization = async (
     name?: string;
     description?: string;
     website?: string;
-    industry?: string;
+    industryType?: string;
     size?: string;
     logoUrl?: string;
   }
 ): Promise<Organization> => {
   // Build update object
-  const updateData: any = {
+  const updateData: Partial<
+    Omit<Organization, 'id' | 'createdAt' | 'updatedAt' | 'settings'>
+  > & {
+    updatedAt: Date;
+    slug?: string;
+  } = {
     updatedAt: new Date(),
   };
 
@@ -274,8 +289,8 @@ export const updateOrganization = async (
     updateData.website = data.website;
   }
 
-  if (data.industry !== undefined) {
-    updateData.industry = data.industry;
+  if (data.industryType !== undefined) {
+    updateData.industryType = data.industryType;
   }
 
   if (data.size !== undefined) {
@@ -302,7 +317,7 @@ export const updateOrganization = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
@@ -324,7 +339,7 @@ export const updateOrganization = async (
  */
 export const updateOrganizationSettings = async (
   organizationId: string,
-  settings: any
+  settings: Partial<OrgSettings>
 ): Promise<Organization> => {
   const organizationResult = await db
     .update(organizations)
@@ -341,7 +356,7 @@ export const updateOrganizationSettings = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
@@ -391,13 +406,13 @@ export const getUserOrganizations = async (
       slug: organizations.slug,
       description: organizations.description,
       website: organizations.website,
-      industry: organizations.industry,
+      industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
       settings: organizations.settings,
       createdAt: organizations.createdAt,
       updatedAt: organizations.updatedAt,
-      role: organizationMembers.role,
+      memberRole: organizationMembers.role,
       memberCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${organizationMembers}
@@ -425,11 +440,14 @@ export const getUserOrganizations = async (
     )
     .orderBy(desc(organizations.createdAt));
 
-  return results.map((result: any) => ({
-    ...result,
-    memberCount: Number(result.memberCount),
-    projectCount: Number(result.projectCount),
-  })) as OrganizationWithRole[];
+  return (results as unknown[]).map((result) => {
+    const r = result as Record<string, unknown>;
+    return {
+      ...r,
+      memberCount: Number(r.memberCount),
+      projectCount: Number(r.projectCount),
+    };
+  }) as unknown as OrganizationWithRole[];
 };
 
 /**
@@ -642,4 +660,130 @@ export const isMember = async (
   const member = memberResult[0];
 
   return !!member;
+};
+
+/**
+ * List custom roles for organization
+ */
+export const getOrganizationRoles = async (organizationId: string) => {
+  return await db
+    .select()
+    .from(orgRoles)
+    .where(
+      and(
+        eq(orgRoles.organizationId, organizationId),
+        isNull(orgRoles.deletedAt)
+      )
+    );
+};
+
+/**
+ * Create a custom role
+ */
+export const createCustomRole = async (
+  organizationId: string,
+  data: {
+    name: string;
+    description?: string;
+    permissions: string[];
+  }
+) => {
+  const [role] = await db
+    .insert(orgRoles)
+    .values({
+      id: crypto.randomUUID(),
+      organizationId,
+      name: data.name,
+      description: data.description,
+      permissions: data.permissions,
+      isSystem: false,
+    })
+    .returning();
+
+  return role;
+};
+
+/**
+ * Update a custom role
+ */
+export const updateCustomRole = async (
+  roleId: string,
+  data: {
+    name?: string;
+    description?: string;
+    permissions?: string[];
+  }
+) => {
+  const [role] = await db
+    .update(orgRoles)
+    .set({
+      ...data,
+      updatedAt: new Date(),
+    })
+    .where(eq(orgRoles.id, roleId))
+    .returning();
+
+  return role;
+};
+
+/**
+ * Delete a custom role
+ */
+export const deleteCustomRole = async (roleId: string) => {
+  // Soft delete
+  await db
+    .update(orgRoles)
+    .set({
+      deletedAt: new Date(),
+    })
+    .where(eq(orgRoles.id, roleId));
+};
+
+/**
+ * Resolve permissions for a user within an organization
+ * Resolves both base roles and custom roles (Phase 5)
+ */
+export const resolvePermissions = async (
+  organizationId: string,
+  userId: string
+): Promise<PermissionKey[]> => {
+  // 1. Get member record (including potential customRoleId)
+  const [member] = await db
+    .select({
+      role: organizationMembers.role,
+      customRoleId: organizationMembers.customRoleId,
+    })
+    .from(organizationMembers)
+    .where(
+      and(
+        eq(organizationMembers.organizationId, organizationId),
+        eq(organizationMembers.userId, userId),
+        isNull(organizationMembers.deletedAt)
+      )
+    )
+    .limit(1);
+
+  if (!member) return [];
+
+  // 2. Resolve Custom Role Permissions (if applicable)
+  if (member.customRoleId) {
+    const [customRole] = await db
+      .select({ permissions: orgRoles.permissions })
+      .from(orgRoles)
+      .where(eq(orgRoles.id, member.customRoleId))
+      .limit(1);
+
+    if (customRole && Array.isArray(customRole.permissions)) {
+      return customRole.permissions as PermissionKey[];
+    }
+  }
+
+  // 3. Fallback to System Org Role Permissions
+  // We use current Role but can fall back to viewer safely
+  const baseRole = (member.role || 'viewer').toLowerCase();
+
+  return (
+    (ORG_ROLE_PERMISSIONS[baseRole as OrganizationRole] as PermissionKey[]) ||
+    (ORG_ROLE_PERMISSIONS.viewer as PermissionKey[])
+  );
 };

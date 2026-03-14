@@ -4,7 +4,6 @@
     "module": "ESNext",
     "lib": ["ES2021", "WebWorker"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "removeComments": true,
     "strict": true,
     "esModuleInterop": true,
@@ -23,7 +22,11 @@
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "baseUrl": ".",
+    "paths": {
+      "@validiant/shared": ["../../packages/shared/src/index.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]

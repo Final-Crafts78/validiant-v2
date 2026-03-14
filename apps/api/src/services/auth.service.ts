@@ -10,8 +10,9 @@
  * Phase 7.0 Enhancement: Migrated to Edge-native jose library
  */
 
-import bcrypt from 'bcryptjs';
-import { SignJWT, jwtVerify, errors as joseErrors } from 'jose';
+import { jwtVerify, errors as joseErrors } from 'jose';
+import { hashPassword, verifyPassword } from '../utils/password';
+import { generateToken } from '../utils/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../db';
@@ -57,60 +58,43 @@ interface SessionData {
   userId: string;
   email: string;
   role: UserRole;
-  deviceInfo?: any;
+  deviceInfo?: Record<string, unknown>;
   createdAt: Date;
 }
 
-/**
- * Hash password using bcrypt
- */
-const hashPassword = async (password: string): Promise<string> => {
-  return await bcrypt.hash(password, env.BCRYPT_ROUNDS);
-};
+// PBKDF2 utilities shifted to ../utils/password.ts
 
-/**
- * Verify password against hash
- */
-const verifyPassword = async (
-  password: string,
-  hash: string
-): Promise<boolean> => {
-  return await bcrypt.compare(password, hash);
-};
-
-/**
- * Generate JWT access token (Edge-native with jose)
- */
 const generateAccessToken = async (
   userId: string,
   email: string,
   role: UserRole,
   sessionId: string
 ): Promise<string> => {
-  const secret = new TextEncoder().encode(env.JWT_SECRET);
-  return await new SignJWT({ userId, email, role, sessionId })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .setIssuer('validiant-api')
-    .setAudience('validiant-client')
-    .sign(secret);
+  return await generateToken(
+    {
+      userId,
+      email,
+      role,
+      sessionId,
+      sub: userId,
+    },
+    '15m'
+  );
 };
 
-/**
- * Generate JWT refresh token (Edge-native with jose)
- */
 const generateRefreshToken = async (
   userId: string,
   sessionId: string
 ): Promise<string> => {
-  const secret = new TextEncoder().encode(env.JWT_REFRESH_SECRET);
-  return await new SignJWT({ userId, sessionId, type: 'refresh' })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .setIssuer('validiant-api')
-    .sign(secret);
+  return await generateToken(
+    {
+      userId,
+      sessionId,
+      type: 'refresh',
+      sub: userId,
+    },
+    '7d'
+  );
 };
 
 /**
@@ -122,7 +106,7 @@ export const generateTokens = async (
   userId: string,
   email: string,
   role: UserRole,
-  deviceInfo?: any
+  deviceInfo?: Record<string, unknown>
 ): Promise<Tokens> => {
   const sessionId = uuidv4();
 
@@ -145,7 +129,7 @@ export const generateTokens = async (
   return {
     accessToken,
     refreshToken,
-    expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
+    expiresIn: 7 * 24 * 60 * 60, // 7 days (Refresh Token TTL)
   };
 };
 
@@ -182,7 +166,7 @@ export const register = async (data: {
       email: email.toLowerCase(),
       passwordHash,
       fullName,
-      role: UserRole.MEMBER as UserRole,
+      role: UserRole.USER as UserRole,
       status: UserStatus.ACTIVE,
       emailVerified: false,
     })
@@ -250,9 +234,13 @@ export const login = async (data: {
   }
 
   // Verify password
+  if (!userWithPassword.passwordHash) {
+    throw new UnauthorizedError('Invalid email or password');
+  }
+
   const isPasswordValid = await verifyPassword(
     password,
-    userWithPassword.passwordHash!
+    userWithPassword.passwordHash
   );
 
   if (!isPasswordValid) {

@@ -7,16 +7,12 @@ import {
 } from '@/services/project.service';
 import type { ProjectMember } from '@/services/project.service';
 import type { CreateProjectData, UpdateProjectData } from '@validiant/shared';
-
-export const PROJECT_KEYS = {
-  byOrg: (orgId: string) => ['projects', 'org', orgId] as const,
-  detail: (id: string) => ['projects', 'detail', id] as const,
-};
+import { queryKeys } from '@/lib/query-keys';
 
 export function useProjects() {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
   return useQuery({
-    queryKey: PROJECT_KEYS.byOrg(activeOrgId ?? ''),
+    queryKey: queryKeys.projects.org(activeOrgId ?? ''),
     queryFn: () => projectService.getOrgProjects(activeOrgId ?? ''),
     enabled: !!activeOrgId,
     staleTime: 2 * 60 * 1000,
@@ -25,7 +21,7 @@ export function useProjects() {
 
 export function useProject(id: string) {
   return useQuery({
-    queryKey: PROJECT_KEYS.detail(id),
+    queryKey: queryKeys.projects.detail(id),
     queryFn: () => projectService.getProjectById(id),
     enabled: !!id,
     staleTime: 2 * 60 * 1000,
@@ -44,7 +40,9 @@ export function useCreateProject() {
       });
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: PROJECT_KEYS.byOrg(activeOrgId ?? '') });
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
     },
   });
 }
@@ -56,8 +54,10 @@ export function useUpdateProject(id: string) {
     mutationFn: (data: UpdateProjectData) =>
       projectService.updateProject(id, data),
     onSuccess: (updated) => {
-      qc.setQueryData(PROJECT_KEYS.detail(id), updated);
-      qc.invalidateQueries({ queryKey: PROJECT_KEYS.byOrg(activeOrgId ?? '') });
+      qc.setQueryData(queryKeys.projects.detail(id), updated);
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
     },
   });
 }
@@ -68,17 +68,16 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: (id: string) => projectService.deleteProject(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: PROJECT_KEYS.byOrg(activeOrgId ?? '') });
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
     },
   });
 }
-export const PROJECT_MEMBER_KEYS = {
-  byProject: (id: string) => ['projects', 'members', id] as const,
-};
 
 export function useProjectMembers(projectId: string) {
   return useQuery<ProjectMember[]>({
-    queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+    queryKey: queryKeys.projects.members(projectId),
     queryFn: () => getProjectMembers(projectId),
     enabled: !!projectId,
     staleTime: 60 * 1000,
@@ -94,7 +93,7 @@ export function useAddProjectMember(projectId: string) {
     }) => projectService.addProjectMember(projectId, payload),
     onSuccess: () => {
       qc.invalidateQueries({
-        queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+        queryKey: queryKeys.projects.members(projectId),
       });
     },
   });
@@ -106,7 +105,7 @@ export function useRemoveProjectMember(projectId: string) {
     mutationFn: (userId: string) => removeProjectMember(projectId, userId),
     onSuccess: () => {
       qc.invalidateQueries({
-        queryKey: PROJECT_MEMBER_KEYS.byProject(projectId),
+        queryKey: queryKeys.projects.members(projectId),
       });
     },
   });

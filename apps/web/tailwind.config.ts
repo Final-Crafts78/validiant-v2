@@ -5,11 +5,11 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
       colors: {
-        // Custom brand colors
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',
@@ -36,29 +36,40 @@ const config: Config = {
           900: '#0f172a',
           950: '#020617',
         },
+        surface: {
+          base: 'var(--color-surface-base)',
+          subtle: 'var(--color-surface-subtle)',
+          muted: 'var(--color-surface-muted)',
+          inverse: 'var(--color-surface-inverse)',
+        },
+        text: {
+          base: 'var(--color-text-base)',
+          subtle: 'var(--color-text-subtle)',
+          muted: 'var(--color-text-muted)',
+          inverse: 'var(--color-text-inverse)',
+        },
+        border: {
+          base: 'var(--color-border-base)',
+          subtle: 'var(--color-border-subtle)',
+          strong: 'var(--color-border-strong)',
+        },
+        accent: {
+          base: 'var(--color-accent-base)',
+          subtle: 'var(--color-accent-subtle)',
+          strong: 'var(--color-accent-strong)',
+          text: 'var(--color-accent-text)',
+        },
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          base: 'var(--color-positive-base)',
+          subtle: 'var(--color-positive-subtle)',
+          strong: 'var(--color-positive-strong)',
+          text: 'var(--color-positive-text)',
         },
         warning: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          base: 'var(--color-warning-base)',
+          subtle: 'var(--color-warning-subtle)',
+          strong: 'var(--color-warning-strong)',
+          text: 'var(--color-warning-text)',
         },
         danger: {
           50: '#fef2f2',
@@ -71,30 +82,16 @@ const config: Config = {
           700: '#b91c1c',
           800: '#991b1b',
           900: '#7f1d1d',
+          950: '#450a0a',
+          base: 'var(--color-critical-base)',
+          subtle: 'var(--color-critical-subtle)',
+          strong: 'var(--color-critical-strong)',
+          text: 'var(--color-critical-text)',
         },
       },
       fontFamily: {
-        sans: [
-          'Inter',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'sans-serif',
-        ],
-      },
-      fontSize: {
-        xs: ['0.75rem', { lineHeight: '1rem' }],
-        sm: ['0.875rem', { lineHeight: '1.25rem' }],
-        base: ['1rem', { lineHeight: '1.5rem' }],
-        lg: ['1.125rem', { lineHeight: '1.75rem' }],
-        xl: ['1.25rem', { lineHeight: '1.75rem' }],
-        '2xl': ['1.5rem', { lineHeight: '2rem' }],
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-        '5xl': ['3rem', { lineHeight: '1' }],
-        '6xl': ['3.75rem', { lineHeight: '1' }],
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
       },
       spacing: {
         '18': '4.5rem',
@@ -107,19 +104,23 @@ const config: Config = {
         xl: '1rem',
         '2xl': '1.5rem',
       },
-      boxShadow: {
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        DEFAULT:
-          '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      transitionDuration: {
+        fast: 'var(--motion-duration-fast)',
+        base: 'var(--motion-duration-base)',
+        slow: 'var(--motion-duration-slow)',
+      },
+      transitionTimingFunction: {
+        base: 'var(--motion-easing-base)',
+        in: 'var(--motion-easing-in)',
+        out: 'var(--motion-easing-out)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'slide-down': 'slideDown 0.3s ease-out',
+        'fade-in':
+          'fadeIn var(--motion-duration-base) var(--motion-easing-base)',
+        'slide-up':
+          'slideUp var(--motion-duration-base) var(--motion-easing-out)',
+        'slide-down':
+          'slideDown var(--motion-duration-base) var(--motion-easing-out)',
         grow: 'grow 2s linear forwards',
       },
       keyframes: {

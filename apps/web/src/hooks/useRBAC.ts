@@ -2,20 +2,17 @@
 /**
  * useRBAC Hook (Role-Based Access Control)
  *
- * TanStack Query hook that fetches the logged-in user's org/project roles
- * and returns computed permissions for conditional UI rendering.
- *
- * Usage:
- *   const { isOrgOwner, canEditTask } = useRBAC(orgId, projectId);
+ * Refactored for Phase 24 Centralized Keys.
  */
 
 import { useQuery } from '@tanstack/react-query';
-import apiClient from '@/lib/api';
-import { useAuthStore } from '@/store/auth';
+import { get } from '@/lib/api';
+import { useAuth } from './useAuth';
+import { queryKeys } from '@/lib/query-keys';
 
 interface OrgMembership {
   id: string;
-  role: 'owner' | 'admin' | 'member';
+  role: 'owner' | 'admin' | 'member' | 'manager' | 'executive' | 'viewer';
   organizationId: string;
 }
 
@@ -29,17 +26,15 @@ interface ProjectMembership {
  * Hook to check RBAC permissions for a given organization and/or project.
  */
 export function useRBAC(orgId?: string, projectId?: string) {
-  const user = useAuthStore((s) => s.user);
-  const isSuperAdmin = user?.role === 'superadmin';
+  const { user } = useAuth();
+  const isSuperAdmin = (user as any)?.role === 'superadmin';
 
   // Fetch org membership
   const orgQuery = useQuery<OrgMembership>({
-    queryKey: ['orgMembership', orgId],
+    queryKey: queryKeys.memberships.org(orgId ?? ''),
     queryFn: async () => {
-      const { data } = await apiClient.get(
-        `/organizations/${orgId}/my-membership`
-      );
-      return data?.data;
+      const { data } = await get<any>(`/organizations/${orgId}/my-membership`);
+      return data.data;
     },
     enabled: !!orgId && !!user,
     staleTime: 5 * 60 * 1000,
@@ -47,12 +42,10 @@ export function useRBAC(orgId?: string, projectId?: string) {
 
   // Fetch project membership
   const projectQuery = useQuery<ProjectMembership>({
-    queryKey: ['projectMembership', projectId],
+    queryKey: queryKeys.memberships.project(projectId ?? ''),
     queryFn: async () => {
-      const { data } = await apiClient.get(
-        `/projects/${projectId}/my-membership`
-      );
-      return data?.data;
+      const { data } = await get<any>(`/projects/${projectId}/my-membership`);
+      return data.data;
     },
     enabled: !!projectId && !!user,
     staleTime: 5 * 60 * 1000,

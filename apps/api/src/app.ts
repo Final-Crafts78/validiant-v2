@@ -25,6 +25,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
+import { UserContext } from './middleware/auth';
 
 // Import all routes
 import authRoutes from './routes/auth.routes';
@@ -50,7 +51,13 @@ import searchRoutes from './routes/search.routes';
 import automationRoutes from './routes/automation.routes';
 import backupRoutes from './routes/backup.routes';
 import ssoRoutes from './routes/sso.routes';
+import verificationRoutes from './routes/verification.routes';
+import bgvPartnerRoutes from './routes/bgv-partner.routes';
+import inboundRoutes from './routes/inbound.routes';
+import csvImportRoutes from './routes/csv-import.routes';
+import realtimeRoutes from './routes/realtime.routes';
 import { rateLimit } from './middleware/rateLimit';
+import { tenantIsolation } from './middleware/tenant';
 import { initEnv } from './config/env.config';
 
 // ---------------------------------------------------------------------------
@@ -81,6 +88,7 @@ export interface Env {
   UPSTASH_REDIS_REST_TOKEN?: string;
   CORS_ORIGIN?: string;
   BACKUP_BUCKET?: R2Bucket;
+  REALTIME_ROOMS: DurableObjectNamespace;
 }
 
 /**
@@ -104,7 +112,7 @@ const allowedOrigins: string[] = [
  * Create Hono application with full type safety
  */
 export const createHonoApp = () => {
-  const app = new Hono<{ Bindings: Env }>();
+  const app = new Hono<{ Bindings: Env; Variables: { user: UserContext } }>();
 
   // ============================================================================
   // MIDDLEWARE
@@ -112,7 +120,7 @@ export const createHonoApp = () => {
 
   // Edge Env Injector (Passes Cloudflare secrets to global scope for the DB Proxy)
   app.use('*', async (c, next) => {
-    (globalThis as any).__ENV__ = c.env;
+    (globalThis as { __ENV__?: Env }).__ENV__ = c.env;
     initEnv(c.env as unknown as Record<string, unknown>);
     await next();
   });
@@ -145,7 +153,13 @@ export const createHonoApp = () => {
       },
       credentials: true, // Required for HttpOnly cookie pass-through
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+      allowHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Cookie',
+        'X-Org-Id',
+        'X-Signature',
+      ],
       exposeHeaders: ['Set-Cookie'],
       maxAge: 86400, // 24 hours preflight cache
     });
@@ -159,6 +173,9 @@ export const createHonoApp = () => {
   app.use('/api/v1/passkey/*', rateLimit(20, 60, 'rl:passkey'));
   // General API: 200 requests per 60 seconds
   app.use('/api/v1/*', rateLimit(200, 60, 'rl:api'));
+
+  // Tenant Isolation: Automatically scope every request
+  app.use('/api/v1/*', tenantIsolation);
 
   // ============================================================================
   // HEALTH CHECK
@@ -216,6 +233,11 @@ export const createHonoApp = () => {
   app.route('/api/v1/automations', automationRoutes);
   app.route('/api/v1/backups', backupRoutes);
   app.route('/api/v1/sso', ssoRoutes);
+  app.route('/api/v1/verifications', verificationRoutes);
+  app.route('/api/v1/partners', bgvPartnerRoutes);
+  app.route('/api/v1/inbound', inboundRoutes);
+  app.route('/api/v1/import/csv', csvImportRoutes);
+  app.route('/api/v1/realtime', realtimeRoutes);
 
   // ============================================================================
   // ERROR HANDLING

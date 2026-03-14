@@ -86,6 +86,7 @@ export const createTask = async (c: Context) => {
           ? new Date(validatedData.dueDate)
           : undefined,
         estimatedHours: validatedData.estimatedHours ?? undefined,
+        orgId: c.get('orgId'),
       }
     );
 
@@ -228,14 +229,18 @@ export const updateTask = async (c: Context) => {
       typeof updateTaskSchema
     >;
 
-    const task = await taskService.updateTask(id, {
-      ...validatedData,
-      dueDate: validatedData.dueDate
-        ? new Date(validatedData.dueDate)
-        : undefined,
-      estimatedHours: validatedData.estimatedHours ?? undefined,
-      actualHours: validatedData.actualHours ?? undefined,
-    });
+    const task = await taskService.updateTask(
+      id,
+      {
+        ...validatedData,
+        dueDate: validatedData.dueDate
+          ? new Date(validatedData.dueDate)
+          : undefined,
+        estimatedHours: validatedData.estimatedHours ?? undefined,
+        actualHours: validatedData.actualHours ?? undefined,
+      },
+      user.userId
+    );
 
     return c.json({
       success: true,
@@ -378,7 +383,7 @@ export const listProjectTasks = async (c: Context) => {
       search: validatedQuery.search,
       parentTaskId: validatedQuery.parentTaskId,
       tags: validatedQuery.tags,
-      page: validatedQuery.page,
+      cursor: validatedQuery.cursor,
       perPage: validatedQuery.perPage,
     });
 
@@ -1329,6 +1334,183 @@ export const reopenTask = async (c: Context) => {
       {
         success: false,
         error: 'Failed to reopen task',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Bulk assign tasks
+ * PATCH /api/v1/tasks/bulk-assign
+ */
+export const bulkAssignTasks = async (c: Context) => {
+  try {
+    const user = c.get('user');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    const { taskIds, assigneeId } = await c.req.json();
+
+    if (!Array.isArray(taskIds) || taskIds.length === 0) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'taskIds must be a non-empty array',
+        },
+        400
+      );
+    }
+
+    if (!assigneeId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'assigneeId is required',
+        },
+        400
+      );
+    }
+
+    // Verify access to all tasks and project membership for assignee
+    for (const taskId of taskIds) {
+      const task = await taskService.getTaskById(taskId);
+      const hasAccess = await checkProjectAccess(task.projectId, user.userId);
+      if (!hasAccess) {
+        return c.json(
+          {
+            success: false,
+            error: 'Forbidden',
+            message: `You do not have permission for task ${taskId}`,
+          },
+          403
+        );
+      }
+
+      const isMember = await projectService.isProjectMember(
+        task.projectId,
+        assigneeId
+      );
+      if (!isMember) {
+        return c.json(
+          {
+            success: false,
+            error: 'Bad Request',
+            message: `Assignee is not a member of the project for task ${taskId}`,
+          },
+          400
+        );
+      }
+    }
+
+    const result = await taskService.bulkAssignTasks(taskIds, assigneeId);
+
+    return c.json({
+      success: true,
+      message: 'Bulk assignment completed',
+      data: result,
+    });
+  } catch (error) {
+    console.error('Bulk assign error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to bulk assign tasks',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
+ * Bulk update task status
+ * PATCH /api/v1/tasks/bulk-status
+ */
+export const bulkUpdateStatus = async (c: Context) => {
+  try {
+    const user = c.get('user');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    const { taskIds, statusKey } = await c.req.json();
+
+    if (!Array.isArray(taskIds) || taskIds.length === 0) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'taskIds must be a non-empty array',
+        },
+        400
+      );
+    }
+
+    if (!statusKey) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'statusKey is required',
+        },
+        400
+      );
+    }
+
+    // Access check
+    for (const taskId of taskIds) {
+      const task = await taskService.getTaskById(taskId);
+      const hasAccess = await checkProjectAccess(task.projectId, user.userId);
+      if (!hasAccess) {
+        return c.json(
+          {
+            success: false,
+            error: 'Forbidden',
+            message: `You do not have permission for task ${taskId}`,
+          },
+          403
+        );
+      }
+    }
+
+    const result = await taskService.bulkUpdateStatus(
+      taskIds,
+      statusKey as TaskStatus,
+      user.userId
+    );
+
+    return c.json({
+      success: true,
+      message: 'Bulk status update completed',
+      data: result,
+    });
+  } catch (error) {
+    console.error('Bulk status update error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to bulk update status',
         message: error instanceof Error ? error.message : 'Unknown error',
       },
       500

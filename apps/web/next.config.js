@@ -1,3 +1,7 @@
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // React strict mode for better development experience
@@ -6,8 +10,8 @@ const nextConfig = {
   // Enable SWC minification for faster builds
   swcMinify: true,
 
-  // Transpile shared package
-  transpilePackages: ['@validiant/shared'],
+  // Transpile shared package and config
+  transpilePackages: ['@validiant/shared', '@validiant/config'],
 
   // Image optimization
   images: {
@@ -68,4 +72,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

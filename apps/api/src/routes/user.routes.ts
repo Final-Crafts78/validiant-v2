@@ -8,7 +8,7 @@
  * - GET /me - Get current user profile
  * - PUT /me - Update current user profile
  * - DELETE /me - Delete current user account
- * - PUT /me/preferences - Update user preferences
+ * - PATCH /me/preferences - Update user preferences
  * - PUT /me/notifications - Update notification preferences
  * - GET /search - Search users
  * - GET /check-email - Check email availability
@@ -89,13 +89,13 @@ app.put(
 app.delete('/me', userController.deleteCurrentUser);
 
 /**
- * PUT /me/preferences
+ * PATCH /me/preferences
  * Update user preferences (theme, language, timezone, etc.)
  *
  * Validation: updateUserPreferencesSchema
  * Response: 200 OK with updated user object
  */
-app.put(
+app.patch(
   '/me/preferences',
   zValidator('json', updateUserPreferencesSchema),
   userController.updateUserPreferences

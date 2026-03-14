@@ -13,14 +13,17 @@ import type { Context, Next } from 'hono';
 import { getCookie } from 'hono/cookie';
 import { verifyToken, extractBearerToken } from '../utils/jwt';
 
+import { UserRole, PermissionKey } from '@validiant/shared';
+
 /**
  * User context type
  */
 export interface UserContext {
   userId: string;
   email: string;
-  role?: string;
+  role?: UserRole;
   organizationId?: string;
+  permissions?: PermissionKey[];
 }
 
 /**
@@ -68,8 +71,9 @@ export const authenticate = async (
     c.set('user', {
       userId: payload.userId,
       email: payload.email,
-      role: payload.role,
+      role: payload.role as UserRole,
       organizationId: payload.organizationId,
+      permissions: (payload as any).permissions,
     } as UserContext);
 
     await next();
@@ -104,8 +108,9 @@ export const optionalAuth = async (c: Context, next: Next): Promise<void> => {
       c.set('user', {
         userId: payload.userId,
         email: payload.email,
-        role: payload.role,
+        role: payload.role as UserRole,
         organizationId: payload.organizationId,
+        permissions: (payload as any).permissions,
       } as UserContext);
     }
   } catch {

@@ -65,11 +65,11 @@ export default function OnboardingPage() {
         const org = data?.data;
         if (org?.id) {
           // Set this new org as active workspace
-          setActiveOrg(org.id);
+          setActiveOrg(org.id, org.slug);
           // Invalidate orgs query so the switcher picks it up
           queryClient.invalidateQueries({ queryKey: ['organizations', 'my'] });
           // Navigate to dashboard
-          router.push(ROUTES.DASHBOARD);
+          router.push(ROUTES.DASHBOARD_ROOT);
           router.refresh();
         }
       } catch (err: any) {

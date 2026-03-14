@@ -1,0 +1,30 @@
+
+> @validiant/web@2.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./src/app/dashboard/settings/audit/page.tsx:43:9
+Type error: '_meta' is declared but its value is never read.
+
+[0m [90m 41 |[39m   [36mconst[39m logs [33m=[39m logsRes[33m?[39m[33m.[39mdata[33m?[39m[33m.[39mdata [33m||[39m [][33m;[39m[0m
+[0m [90m 42 |[39m   [90m// Note: meta is used for internal pagination logic[39m[0m
+[0m[31m[1m>[22m[39m[90m 43 |[39m   [36mconst[39m _meta [33m=[39m logsRes[33m?[39m[33m.[39mdata[33m?[39m[33m.[39mmeta[33m;[39m[0m
+[0m [90m    |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 44 |[39m[0m
+[0m [90m 45 |[39m   [36mconst[39m handleExport [33m=[39m () [33m=>[39m {[0m
+[0m [90m 46 |[39m     [90m// Direct browser download for CSV[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error workspace @validiant/web@2.0.0
+npm error location C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c next build

@@ -1,77 +1,57 @@
 /**
  * Analytics Controller
- *
- * Project-scoped analytics with parallel Drizzle aggregation queries.
- * All queries are tenant-isolated by projectId.
  */
 
 import { Context } from 'hono';
-import { eq, and, sql } from 'drizzle-orm';
-import { db, schema } from '../db';
+import * as analyticsService from '../services/analytics.service';
+import { logger } from '../utils/logger';
+import { OrgAnalyticsSnapshot } from '../db/schema';
 
-/**
- * GET /api/v1/analytics/project/:projectId
- * Returns dashboard stats: status counts, priority counts, and recent completions.
- */
-export const getProjectAnalytics = async (c: Context) => {
+export const getLatestMetrics = async (c: Context) => {
   try {
-    const projectId = c.req.param('projectId');
+    const orgId = c.get('organizationId');
+    if (!orgId) {
+      return c.json({ error: 'Organization ID required' }, 400);
+    }
 
-    // Run all aggregations in parallel to minimize Edge execution time
-    const [statusCounts, priorityCounts, recentTasks] = await Promise.all([
-      // 1. Tasks Grouped by Status
-      db
-        .select({
-          status: schema.tasks.status,
-          count: sql<number>`count(${schema.tasks.id})`.mapWith(Number),
-        })
-        .from(schema.tasks)
-        .where(eq(schema.tasks.projectId, projectId))
-        .groupBy(schema.tasks.status),
+    const snapshot = await analyticsService.getLatestSnapshot(orgId);
 
-      // 2. Tasks Grouped by Priority
-      db
-        .select({
-          priority: schema.tasks.priority,
-          count: sql<number>`count(${schema.tasks.id})`.mapWith(Number),
-        })
-        .from(schema.tasks)
-        .where(eq(schema.tasks.projectId, projectId))
-        .groupBy(schema.tasks.priority),
-
-      // 3. Recently completed or verified tasks (Limit 5)
-      db
-        .select({
-          id: schema.tasks.id,
-          title: schema.tasks.title,
-          status: schema.tasks.status,
-          completedAt: schema.tasks.completedAt,
-        })
-        .from(schema.tasks)
-        .where(
-          and(
-            eq(schema.tasks.projectId, projectId),
-            sql`${schema.tasks.status} IN ('Completed', 'Verified')`
-          )
-        )
-        .orderBy(sql`${schema.tasks.completedAt} DESC`)
-        .limit(5),
-    ]);
+    if (!snapshot) {
+      return c.json({ message: 'No metrics recorded yet' }, 404);
+    }
 
     return c.json({
-      success: true,
-      data: {
-        statusCounts,
-        priorityCounts,
-        recentTasks,
-        totalTasks: statusCounts.reduce(
-          (acc: number, curr: { count: number }) => acc + curr.count,
-          0
-        ),
-      },
+      data: snapshot.metrics,
+      recordedAt: snapshot.recordedAt,
     });
   } catch (error) {
-    console.error('Analytics error:', error);
-    return c.json({ success: false, error: 'Failed to fetch analytics' }, 500);
+    logger.error(
+      '[Analytics Controller] getLatestMetrics error:',
+      error as Error
+    );
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+};
+
+export const getHistory = async (c: Context) => {
+  try {
+    const orgId = c.get('organizationId');
+    const days = Number(c.req.query('days')) || 7;
+
+    if (!orgId) {
+      return c.json({ error: 'Organization ID required' }, 400);
+    }
+
+    const snapshots = await analyticsService.getAnalyticsTrend(orgId, days);
+
+    return c.json({
+      data: snapshots.map((s: OrgAnalyticsSnapshot) => ({
+        recordedAt: s.recordedAt,
+        metrics: s.metrics,
+      })),
+    });
+  } catch (error) {
+    logger.error('[Analytics Controller] getHistory error:', error as Error);
+    return c.json({ error: 'Internal server error' }, 500);
   }
 };

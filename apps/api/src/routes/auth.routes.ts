@@ -89,6 +89,25 @@ authRoutes.get('/me', authenticate, authController.getMe);
  */
 authRoutes.post('/logout', authenticate, authController.logout);
 
+/**
+ * POST /switch-org
+ * Switch active organization and regenerate tokens with updated permissions
+ *
+ * Requires: authenticate middleware
+ * Response: 200 OK with new tokens
+ */
+authRoutes.post(
+  '/switch-org',
+  authenticate,
+  zValidator(
+    'json',
+    z.object({
+      organizationId: z.string().uuid('Invalid organization ID'),
+    })
+  ),
+  authController.switchOrganization
+);
+
 // ============================================================================
 // PASSWORD RESET FUNNEL
 // Both routes are registered directly on authRoutes BEFORE export.

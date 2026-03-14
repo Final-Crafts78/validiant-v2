@@ -160,7 +160,7 @@ export default function RegisterPage() {
           setAuth({ user: result.user });
         }
 
-        router.push(ROUTES.DASHBOARD);
+        router.push(ROUTES.DASHBOARD_ROOT);
         router.refresh();
       } catch (error) {
         console.error('Registration error:', error);

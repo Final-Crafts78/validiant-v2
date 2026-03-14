@@ -491,3 +491,47 @@ export const organizationsApi = {
   leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
     post<APIResponse<null>>(`/organizations/${id}/leave`),
 };
+
+// ---------------------------------------------------------------------------
+// Analytics API Service
+// ---------------------------------------------------------------------------
+
+export const analyticsApi = {
+  /** Fetch the latest materialized metrics for the current organization */
+  getLatest: (): Promise<
+    AxiosResponse<APIResponse<{ data: any; recordedAt: string }>>
+  > => get<APIResponse<{ data: any; recordedAt: string }>>('/analytics/latest'),
+
+  /** Fetch metric history for the current organization */
+  getHistory: (
+    days: number = 7
+  ): Promise<
+    AxiosResponse<APIResponse<{ data: { metrics: any; recordedAt: string }[] }>>
+  > =>
+    get<APIResponse<{ data: { metrics: any; recordedAt: string }[] }>>(
+      `/analytics/history?days=${days}`
+    ),
+};
+
+// ---------------------------------------------------------------------------
+// Activity (Audit Log) API Service
+// ---------------------------------------------------------------------------
+
+export const activityApi = {
+  /** Fetch paginated audit logs */
+  getLogs: (
+    page: number = 1,
+    limit: number = 50
+  ): Promise<
+    AxiosResponse<
+      APIResponse<{ data: any[]; meta: { page: number; limit: number } }>
+    >
+  > => get(`/activity?page=${page}&limit=${limit}`),
+
+  /** Get the download URL for CSV export */
+  getExportUrl: (): string => {
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+    return `${baseUrl.replace(/\/+$/, '')}/api/v1/activity/export`;
+  },
+};

@@ -72,7 +72,7 @@ export default function LoginPage() {
             setAuth({ user: result.user });
           }
 
-          router.push(ROUTES.DASHBOARD);
+          router.push(ROUTES.DASHBOARD_ROOT);
           router.refresh();
         })
         .catch((error) => {

@@ -36,7 +36,9 @@
       "@/store/*": ["./src/store/*"],
       "@/services/*": ["./src/services/*"],
       "@/types/*": ["./src/types/*"],
-      "@/styles/*": ["./src/styles/*"]
+      "@/styles/*": ["./src/styles/*"],
+      "@validiant/ui": ["../../packages/ui/src/index.ts"],
+      "@validiant/shared": ["../../packages/shared/src/index.ts"]
     },
 
     // Next.js specific

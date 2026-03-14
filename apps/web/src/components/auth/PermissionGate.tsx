@@ -1,10 +1,11 @@
 'use client';
 
-import { usePermissions, type PermissionKey } from '@/hooks/usePermissions';
+import { PermissionKey } from '@validiant/shared';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface PermissionGateProps {
-  /** The permission to check */
-  permission: PermissionKey;
+  /** The permission to check or the high-level capability flag */
+  permission: PermissionKey | string;
   /** Optional fallback if no permission — defaults to null */
   fallback?: React.ReactNode;
   children: React.ReactNode;
@@ -28,10 +29,15 @@ export function PermissionGate({
   fallback = null,
   children,
 }: PermissionGateProps) {
-  const { can, isLoading } = usePermissions();
+  const { can, has, isLoading } = usePermissions();
 
   // Don't flash content while role is loading
   if (isLoading) return null;
 
-  return can[permission] ? <>{children}</> : <>{fallback}</>;
+  // Check if it's a high-level flag (can.xxx) or a direct ABAC key
+  const isAllowed =
+    (can as Record<string, boolean>)[permission] === true ||
+    has(permission as PermissionKey);
+
+  return isAllowed ? <>{children}</> : <>{fallback}</>;
 }

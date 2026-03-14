@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useProject,
@@ -10,7 +10,7 @@ import {
   useAddProjectMember,
   useRemoveProjectMember,
 } from '@/hooks/useProjects';
-import { useTasks, Task } from '@/hooks/useTasks';
+import { useTasks } from '@/hooks/useTasks';
 import { useWorkspaceStore } from '@/store/workspace';
 import { organizationsApi } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
@@ -219,9 +219,10 @@ export default function ProjectDetailPage({
   const updateMutation = useUpdateProject(id);
   const deleteMutation = useDeleteProject();
 
-  const { data: rawTasks = [] } = useTasks(id, undefined, { enabled: !!id });
-  // Cast to Task[] from @validiant/shared
-  const tasks = rawTasks as Task[];
+  const { data: tasksData } = useTasks(id);
+  const tasks = useMemo(() => {
+    return tasksData?.pages.flatMap((page) => page.tasks) ?? [];
+  }, [tasksData]);
 
   const handleDelete = async () => {
     if (!confirm('Delete this project? This cannot be undone.')) return;

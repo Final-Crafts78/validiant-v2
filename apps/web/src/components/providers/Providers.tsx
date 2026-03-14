@@ -3,6 +3,7 @@
  *
  * Wraps the application with all necessary providers:
  * - QueryClientProvider (TanStack Query)
+ * - RealtimeProvider (SSE)
  * - Future providers (theme, auth context, etc.)
  */
 
@@ -11,6 +12,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
+import { RealtimeProvider } from './RealtimeProvider';
 
 /**
  * Props for Providers component
@@ -50,7 +52,7 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <RealtimeProvider>{children}</RealtimeProvider>
       {/* React Query Devtools - only in development */}
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>

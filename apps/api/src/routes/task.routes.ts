@@ -17,8 +17,11 @@ import {
   updateTaskSchema,
   assignTaskSchema,
   bulkUploadTaskSchema,
+  bulkAssignTasksSchema,
+  bulkUpdateTaskStatusSchema,
 } from '@validiant/shared';
 import * as taskController from '../controllers/task.controller';
+import * as caseDataController from '../controllers/case-data.controller';
 import { authenticate } from '../middleware/auth';
 
 const app = new Hono();
@@ -48,7 +51,31 @@ app.post(
   zValidator('json', assignTaskSchema),
   taskController.assignTask
 );
+app.patch(
+  '/bulk-assign',
+  zValidator('json', bulkAssignTasksSchema),
+  taskController.bulkAssignTasks
+);
+app.patch(
+  '/bulk-status',
+  zValidator('json', bulkUpdateTaskStatusSchema),
+  taskController.bulkUpdateStatus
+);
 app.post('/:id/complete', taskController.completeTask);
 app.post('/:id/reopen', taskController.reopenTask);
+
+// Case Data & Documents (Phase 16/20/21)
+app.get('/case/:caseId', caseDataController.getCaseHub);
+app.get('/:taskId/data', caseDataController.getTaskData);
+app.patch('/:taskId/fields', caseDataController.updateFieldValues);
+app.post('/:taskId/documents', caseDataController.logDocument);
+app.post('/:taskId/evidence', caseDataController.uploadEvidence);
+
+// Phase 21: Presigned URL Pipeline
+app.post('/:taskId/upload-url', caseDataController.getUploadUrl);
+app.post(
+  '/:taskId/documents/:fileId/confirm',
+  caseDataController.confirmUpload
+);
 
 export default app;

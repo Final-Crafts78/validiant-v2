@@ -1,0 +1,347 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe : <w> [webpack.cache
+.PackFileCacheStrategy] 
+Skipped not serializable 
+cache item 'Compilation/modul
+es|C:\Users\manso\OneDrive\Do
+cuments\Validiant-v2\validian
+t-v2\node_modules\.pnpm\next@
+14.2.35_@playwright+te_351571
+a2f2e06b1366bd488be34dee5a\no
+de_modules\next\dist\build\we
+bpack\loaders\css-loader\src\
+index.js??ruleSet[1].rules[14
+].oneOf[12].use[2]!C:\Users\m
+anso\OneDrive\Documents\Valid
+iant-v2\validiant-v2\node_mod
+ules\.pnpm\next@14.2.35_@play
+wright+te_351571a2f2e06b1366b
+d488be34dee5a\node_modules\ne
+xt\dist\build\webpack\loaders
+\postcss-loader\src\index.js?
+?ruleSet[1].rules[14].oneOf[1
+2].use[3]!C:\Users\manso\OneD
+rive\Documents\Validiant-v2\v
+alidiant-v2\apps\web\src\app\
+globals.css': No serializer 
+registered for 
+PostCSSSyntaxError
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Us
+ers\manso\AppData\Roaming\ 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (<w> [we  
+  bpack.ca...tCSSSyntaxErr   
+ or:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+<w> while serializing webpack
+/lib/cache/PackFileCacheStrat
+egy.PackContentItems -> 
+webpack/lib/NormalModule -> 
+webpack/lib/ModuleBuildError 
+-> PostCSSSyntaxError
+Failed to compile.
+
+./src/app/globals.css:7:1
+Syntax error: C:\Users\manso\
+OneDrive\Documents\Validiant-
+v2\validiant-v2\apps\web\src\
+app\globals.css The 
+`text-primary-600` class 
+does not exist. If 
+`text-primary-600` is a 
+custom class, make sure it 
+is defined within a `@layer` 
+directive.
+
+ [90m 5 | [39m[90m */[39m
+ [90m 6 | [39m
+[1m[31m>[39m[22m[90m 7 
+| [39m[36m@tailwind[39m 
+base[33m;[39m
+ [90m   | 
+[39m[1m[31m^[39m[22m
+ [90m 8 | 
+[39m[36m@tailwind[39m 
+components[33m;[39m
+ [90m 9 | 
+[39m[36m@tailwind[39m 
+utilities[33m;[39m
+
+./src/app/globals.css
+Syntax error: C:\Users\manso\
+OneDrive\Documents\Validiant-
+v2\validiant-v2\apps\web\src\
+app\globals.css The 
+`text-primary-600` class 
+does not exist. If 
+`text-primary-600` is a 
+custom class, make sure it 
+is defined within a `@layer` 
+directive. (7:1)
+
+ [90m 5 | [39m[90m */[39m
+ [90m 6 | [39m
+[1m[31m>[39m[22m[90m 7 
+| [39m[36m@tailwind[39m 
+base[33m;[39m
+ [90m   | 
+[39m[1m[31m^[39m[22m
+ [90m 8 | 
+[39m[36m@tailwind[39m 
+components[33m;[39m
+ [90m 9 | 
+[39m[36m@tailwind[39m 
+utilities[33m;[39m
+
+    at tryRunOrWebpackError (
+C:\Users\manso\OneDrive\Docum
+ents\Validiant-v2\validiant-v
+2\node_modules\.pnpm\next@14.
+2.35_@playwright+te_351571a2f
+2e06b1366bd488be34dee5a\node_
+modules\next\dist\compiled\we
+bpack\bundle5.js:28:312989)
+    at 
+__webpack_require_module__ (C
+:\Users\manso\OneDrive\Docume
+nts\Validiant-v2\validiant-v2
+\node_modules\.pnpm\next@14.2
+.35_@playwright+te_351571a2f2
+e06b1366bd488be34dee5a\node_m
+odules\next\dist\compiled\web
+pack\bundle5.js:28:131165)
+    at __nested_webpack_requi
+re_153728__ (C:\Users\manso\O
+neDrive\Documents\Validiant-v
+2\validiant-v2\node_modules\.
+pnpm\next@14.2.35_@playwright
++te_351571a2f2e06b1366bd488be
+34dee5a\node_modules\next\dis
+t\compiled\webpack\bundle5.js
+:28:130607)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\comp
+iled\webpack\bundle5.js:28:13
+1454
+    at symbolIterator (C:\Use
+rs\manso\OneDrive\Documents\V
+alidiant-v2\validiant-v2\node
+_modules\.pnpm\next@14.2.35_@
+playwright+te_351571a2f2e06b1
+366bd488be34dee5a\node_module
+s\next\dist\compiled\neo-asyn
+c\async.js:1:14444)
+    at done (C:\Users\manso\O
+neDrive\Documents\Validiant-v
+2\validiant-v2\node_modules\.
+pnpm\next@14.2.35_@playwright
++te_351571a2f2e06b1366bd488be
+34dee5a\node_modules\next\dis
+t\compiled\neo-async\async.js
+:1:14824)
+    at Hook.eval [as 
+callAsync] (eval at create (C
+:\Users\manso\OneDrive\Docume
+nts\Validiant-v2\validiant-v2
+\node_modules\.pnpm\next@14.2
+.35_@playwright+te_351571a2f2
+e06b1366bd488be34dee5a\node_m
+odules\next\dist\compiled\web
+pack\bundle5.js:13:28858), 
+<anonymous>:15:1)
+    at 
+Hook.CALL_ASYNC_DELEGATE [as 
+_callAsync] (C:\Users\manso\O
+neDrive\Documents\Validiant-v
+2\validiant-v2\node_modules\.
+pnpm\next@14.2.35_@playwright
++te_351571a2f2e06b1366bd488be
+34dee5a\node_modules\next\dis
+t\compiled\webpack\bundle5.js
+:13:26012)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\comp
+iled\webpack\bundle5.js:28:13
+0328
+    at symbolIterator (C:\Use
+rs\manso\OneDrive\Documents\V
+alidiant-v2\validiant-v2\node
+_modules\.pnpm\next@14.2.35_@
+playwright+te_351571a2f2e06b1
+366bd488be34dee5a\node_module
+s\next\dist\compiled\neo-asyn
+c\async.js:1:14402)
+-- inner error --
+Syntax error: C:\Users\manso\
+OneDrive\Documents\Validiant-
+v2\validiant-v2\apps\web\src\
+app\globals.css The 
+`text-primary-600` class 
+does not exist. If 
+`text-primary-600` is a 
+custom class, make sure it 
+is defined within a `@layer` 
+directive. (7:1)
+
+ [90m 5 | [39m[90m */[39m
+ [90m 6 | [39m
+[1m[31m>[39m[22m[90m 7 
+| [39m[36m@tailwind[39m 
+base[33m;[39m
+ [90m   | 
+[39m[1m[31m^[39m[22m
+ [90m 8 | 
+[39m[36m@tailwind[39m 
+components[33m;[39m
+ [90m 9 | 
+[39m[36m@tailwind[39m 
+utilities[33m;[39m
+
+    at Object.<anonymous> (C:
+\Users\manso\OneDrive\Documen
+ts\Validiant-v2\validiant-v2\
+node_modules\.pnpm\next@14.2.
+35_@playwright+te_351571a2f2e
+06b1366bd488be34dee5a\node_mo
+dules\next\dist\build\webpack
+\loaders\css-loader\src\index
+.js??ruleSet[1].rules[14].one
+Of[12].use[2]!C:\Users\manso\
+OneDrive\Documents\Validiant-
+v2\validiant-v2\node_modules\
+.pnpm\next@14.2.35_@playwrigh
+t+te_351571a2f2e06b1366bd488b
+e34dee5a\node_modules\next\di
+st\build\webpack\loaders\post
+css-loader\src\index.js??rule
+Set[1].rules[14].oneOf[12].us
+e[3]!C:\Users\manso\OneDrive\
+Documents\Validiant-v2\validi
+ant-v2\apps\web\src\app\globa
+ls.css:1:7)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\comp
+iled\webpack\bundle5.js:28:92
+2493
+    at Hook.eval [as call] 
+(eval at create (C:\Users\man
+so\OneDrive\Documents\Validia
+nt-v2\validiant-v2\node_modul
+es\.pnpm\next@14.2.35_@playwr
+ight+te_351571a2f2e06b1366bd4
+88be34dee5a\node_modules\next
+\dist\compiled\webpack\bundle
+5.js:13:28636), 
+<anonymous>:7:1)
+    at Hook.CALL_DELEGATE 
+[as _call] (C:\Users\manso\On
+eDrive\Documents\Validiant-v2
+\validiant-v2\node_modules\.p
+npm\next@14.2.35_@playwright+
+te_351571a2f2e06b1366bd488be3
+4dee5a\node_modules\next\dist
+\compiled\webpack\bundle5.js:
+13:25906)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\comp
+iled\webpack\bundle5.js:28:13
+1198
+    at tryRunOrWebpackError (
+C:\Users\manso\OneDrive\Docum
+ents\Validiant-v2\validiant-v
+2\node_modules\.pnpm\next@14.
+2.35_@playwright+te_351571a2f
+2e06b1366bd488be34dee5a\node_
+modules\next\dist\compiled\we
+bpack\bundle5.js:28:312943)
+    at 
+__webpack_require_module__ (C
+:\Users\manso\OneDrive\Docume
+nts\Validiant-v2\validiant-v2
+\node_modules\.pnpm\next@14.2
+.35_@playwright+te_351571a2f2
+e06b1366bd488be34dee5a\node_m
+odules\next\dist\compiled\web
+pack\bundle5.js:28:131165)
+    at __nested_webpack_requi
+re_153728__ (C:\Users\manso\O
+neDrive\Documents\Validiant-v
+2\validiant-v2\node_modules\.
+pnpm\next@14.2.35_@playwright
++te_351571a2f2e06b1366bd488be
+34dee5a\node_modules\next\dis
+t\compiled\webpack\bundle5.js
+:28:130607)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\comp
+iled\webpack\bundle5.js:28:13
+1454
+    at symbolIterator (C:\Use
+rs\manso\OneDrive\Documents\V
+alidiant-v2\validiant-v2\node
+_modules\.pnpm\next@14.2.35_@
+playwright+te_351571a2f2e06b1
+366bd488be34dee5a\node_module
+s\next\dist\compiled\neo-asyn
+c\async.js:1:14444)
+
+Generated code for C:\Users\m
+anso\OneDrive\Documents\Valid
+iant-v2\validiant-v2\node_mod
+ules\.pnpm\next@14.2.35_@play
+wright+te_351571a2f2e06b1366b
+d488be34dee5a\node_modules\ne
+xt\dist\build\webpack\loaders
+\css-loader\src\index.js??rul
+eSet[1].rules[14].oneOf[12].u
+se[2]!C:\Users\manso\OneDrive
+\Documents\Validiant-v2\valid
+iant-v2\node_modules\.pnpm\ne
+xt@14.2.35_@playwright+te_351
+571a2f2e06b1366bd488be34dee5a
+\node_modules\next\dist\build
+\webpack\loaders\postcss-load
+er\src\index.js??ruleSet[1].r
+ules[14].oneOf[12].use[3]!C:\
+Users\manso\OneDrive\Document
+s\Validiant-v2\validiant-v2\a
+pps\web\src\app\globals.css
+
+Import trace for requested 
+module:
+./src/app/globals.css
+
+
+> Build failed because of 
+webpack errors

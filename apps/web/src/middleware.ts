@@ -13,22 +13,14 @@ import type { NextRequest } from 'next/server';
  * These routes require authentication
  */
 const PROTECTED_ROUTES = [
-  '/dashboard',
-  '/projects',
-  '/tasks',
+  '/onboarding',
   '/organizations',
-  '/profile',
-  '/settings',
+  '/profile', // Global profile if exists
 ];
 
-/**
- * Auth route patterns
- * These routes should redirect to dashboard if already authenticated
- */
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
-// ✅ NEW: routes that are accessible while authenticated but NOT gated
-const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/dashboard/onboarding'];
+const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/onboarding'];
 
 /**
  * Check if path matches any route pattern
@@ -52,8 +44,21 @@ export function middleware(request: NextRequest) {
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
   const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
-  // Unauthenticated → login
-  if (isProtectedRoute && !isSemiPublic && !isAuthenticated) {
+  // ✅ Org-scoped detection: If first segment isn't a known global path, it's an org slug
+  const publicKeywords = [
+    '',
+    'auth',
+    'api',
+    'onboarding',
+    'organizations',
+    'profile',
+  ];
+  const firstSegment = pathname.split('/')[1];
+  const isOrgScoped =
+    firstSegment !== undefined && !publicKeywords.includes(firstSegment);
+
+  // Unauthenticated → login (Gate all protected or org-scoped routes)
+  if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);

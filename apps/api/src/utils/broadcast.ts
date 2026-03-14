@@ -1,27 +1,10 @@
 /**
- * Real-Time Broadcast Helper
+ * Real-Time Broadcast Helper (Durable Objects / SSE Version)
  *
- * HTTP-to-WebSocket bridge for triggering real-time updates.
- *
- * Architecture:
- * 1. Hono service completes database transaction
- * 2. Calls broadcastToProject() with event type and payload
- * 3. Makes HTTP POST to PartyKit room URL
- * 4. PartyKit broadcasts to all connected WebSocket clients
- * 5. Frontend React Query invalidates and refetches data
- *
- * Non-Blocking:
- * - Broadcast happens asynchronously (fire-and-forget)
- * - API responses are not delayed
- * - Errors are logged but don't affect API responses
- *
- * Lightweight Payloads:
- * - Only send IDs and minimal data
- * - Frontend fetches full data via React Query
- * - Reduces WebSocket bandwidth
+ * Replaces PartyKit with Cloudflare Durable Objects for secure,
+ * organization-scoped server-sent events.
  */
 
-import { env } from '../config/env.config';
 import { logger } from './logger';
 
 /**
@@ -44,7 +27,7 @@ export enum BroadcastEvent {
   MEMBER_REMOVED = 'MEMBER_REMOVED',
   MEMBER_ROLE_CHANGED = 'MEMBER_ROLE_CHANGED',
 
-  // Comment Events (future)
+  // Comment Events
   COMMENT_CREATED = 'COMMENT_CREATED',
   COMMENT_UPDATED = 'COMMENT_UPDATED',
   COMMENT_DELETED = 'COMMENT_DELETED',
@@ -54,160 +37,120 @@ export enum BroadcastEvent {
  * Broadcast Payload Interface
  */
 interface BroadcastPayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
- * Get PartyKit URL
+ * Broadcast event to an organization-scoped Durable Object
  *
- * Automatically detects development vs production
+ * @param orgId - Organization ID
+ * @param eventType - Type of event
+ * @param payload - Event payload
  */
-const getPartyKitURL = (): string => {
-  // Development: PartyKit runs on localhost:1999
-  if (env.NODE_ENV === 'development') {
-    return 'http://localhost:1999';
-  }
-
-  // Production: Use PartyKit deployment URL
-  // TODO: Replace with actual production URL after deployment
-  return env.PARTYKIT_URL || 'https://validiant-realtime.partykit.dev';
-};
-
-/**
- * Broadcast event to a project room
- *
- * This is the main function used by Hono services to trigger real-time updates.
- *
- * @param projectId - Project ID (room identifier)
- * @param eventType - Type of event (TASK_UPDATED, etc.)
- * @param payload - Event payload (keep lightweight - IDs only)
- * @param excludeUserId - Optional user ID to exclude from broadcast
- *
- * @example
- * ```typescript
- * // After creating a task
- * await broadcastToProject(
- *   task.projectId,
- *   BroadcastEvent.TASK_CREATED,
- *   { taskId: task.id, status: task.status }
- * );
- * ```
- */
-export const broadcastToProject = async (
-  projectId: string,
+export const broadcastToOrg = async (
+  orgId: string,
   eventType: BroadcastEvent | string,
-  payload: BroadcastPayload,
-  excludeUserId?: string
+  payload: BroadcastPayload
 ): Promise<void> => {
   try {
-    const partyKitURL = getPartyKitURL();
-    const roomURL = `${partyKitURL}/parties/main/${projectId}`;
+    // Access global environments attached to the worker from app.ts
+    const env = (globalThis as any).__ENV__;
 
-    // Make HTTP POST to PartyKit room
-    // This is non-blocking - we don't await the response
-    fetch(roomURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
-        payload: {
-          ...payload,
-          projectId, // Always include projectId in payload
+    if (!env || !env.REALTIME_ROOMS) {
+      logger.warn(
+        '[broadcast] REALTIME_ROOMS binding not available. Skipping broadcast.'
+      );
+      return;
+    }
+
+    const rooms = env.REALTIME_ROOMS as DurableObjectNamespace;
+    const id = rooms.idFromName(orgId);
+    const room = rooms.get(id);
+
+    // Make an internal fetch call to the DO
+    // Cloudflare Workers handle internal DO fetches over a virtual bus.
+    // Path: /internal/broadcast (handled in realtime.do.ts)
+    // Non-blocking catch-all.
+    room
+      .fetch('http://realtime/internal/broadcast', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        excludeUserId,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          logger.error('PartyKit broadcast failed:', {
-            status: response.status,
-            projectId,
+        body: JSON.stringify({
+          eventType,
+          payload: {
+            ...payload,
+            orgId,
+          },
+        }),
+      })
+      .then((res) => {
+        if (!res.ok) {
+          logger.error('[broadcast] DO broadcast failed:', {
+            status: res.status,
+            orgId,
             eventType,
-          });
-        } else {
-          logger.debug('Broadcast sent:', {
-            projectId,
-            eventType,
-            payload,
           });
         }
       })
-      .catch((error) => {
-        // Log error but don't throw - broadcast failure should not break API
-        logger.error('PartyKit broadcast error:', {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          projectId,
+      .catch((err: any) => {
+        logger.error('[broadcast] DO fetch error:', {
+          err: err?.message || 'Unknown error',
+          orgId,
           eventType,
         });
       });
   } catch (error) {
-    // Catch any synchronous errors (shouldn't happen)
-    logger.error('Broadcast setup error:', error as Error);
+    logger.error(
+      '[broadcast] Setup error:',
+      error instanceof Error ? error : new Error(String(error))
+    );
   }
-};
-
-/**
- * Broadcast to multiple projects
- *
- * Useful when an action affects multiple projects.
- *
- * @param projectIds - Array of project IDs
- * @param eventType - Type of event
- * @param payload - Event payload
- */
-export const broadcastToProjects = async (
-  projectIds: string[],
-  eventType: BroadcastEvent | string,
-  payload: BroadcastPayload
-): Promise<void> => {
-  // Broadcast to each project in parallel
-  await Promise.all(
-    projectIds.map((projectId) =>
-      broadcastToProject(projectId, eventType, payload)
-    )
-  );
 };
 
 /**
  * Broadcast task event helper
  *
- * Convenience function for task-related events.
- * Automatically includes taskId in payload.
- *
+ * @param orgId - Organization ID
  * @param projectId - Project ID
  * @param taskId - Task ID
- * @param eventType - Event type (defaults to TASK_UPDATED)
- * @param additionalData - Additional payload data
+ * @param eventType - Event type
+ * @param additionalData - Additional payload
  */
 export const broadcastTaskEvent = async (
+  orgId: string,
   projectId: string,
   taskId: string,
   eventType: BroadcastEvent = BroadcastEvent.TASK_UPDATED,
-  additionalData?: Record<string, any>
+  additionalData?: Record<string, unknown>
 ): Promise<void> => {
-  await broadcastToProject(projectId, eventType, {
+  await broadcastToOrg(orgId, eventType, {
+    projectId,
     taskId,
     ...additionalData,
   });
 };
 
 /**
- * Broadcast project event helper
- *
- * Convenience function for project-related events.
- *
- * @param projectId - Project ID
- * @param eventType - Event type
- * @param additionalData - Additional payload data
+ * Backward compatibility: Broadcast to project
+ * Note: Since Phase 25, architecture is Org-scoped.
+ * This now requires orgId or it will log a warning.
  */
-export const broadcastProjectEvent = async (
+export const broadcastToProject = async (
   projectId: string,
-  eventType: BroadcastEvent,
-  additionalData?: Record<string, any>
+  eventType: BroadcastEvent | string,
+  payload: BroadcastPayload,
+  orgId?: string
 ): Promise<void> => {
-  await broadcastToProject(projectId, eventType, {
-    ...additionalData,
+  if (!orgId) {
+    logger.warn(
+      '[broadcast] broadcastToProject called without orgId. SSE requires orgId.'
+    );
+    return;
+  }
+  await broadcastToOrg(orgId, eventType, {
+    ...payload,
+    projectId,
   });
 };

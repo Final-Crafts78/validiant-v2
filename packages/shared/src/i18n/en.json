@@ -1,0 +1,31 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search...",
+    "noData": "No data found",
+    "error": "An error occurred"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email Address",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset Password"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "new": "New Task",
+    "empty": "No tasks yet"
+  }
+}

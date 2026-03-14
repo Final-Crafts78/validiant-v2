@@ -24,11 +24,12 @@ import {
   Calendar,
   Tag,
   AlertCircle,
-  Loader2,
-  CheckCircle2,
-  Circle,
-  Ban,
   Search,
+  Loader2,
+  ChevronRight,
+  Circle,
+  CheckCircle2,
+  Ban,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -303,6 +304,34 @@ export function TaskDetailSlideOver() {
                   </p>
                 )}
               </div>
+
+              {/* Case Hub Redirection (Phase 16) */}
+              {(task as any).customFields?.caseId && (
+                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-bold text-primary">
+                      Verification Case detected
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    This task is part of a verification pipeline. Use the Case
+                    Command Center for immersive field management and SLA
+                    tracking.
+                  </p>
+                  <button
+                    onClick={() =>
+                      router.push(
+                        `/dashboard/cases/${(task as any).customFields?.caseId}`
+                      )
+                    }
+                    className="w-full py-2 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    Open Case Command Center
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
 
               {/* Description */}
               {task.description && (

@@ -1,83 +1,90 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
-import { useWorkspaceStore } from '@/store/workspace';
-import { organizationsApi } from '@/lib/api';
-import { OrganizationMemberRole } from '@validiant/shared';
+import { PermissionKey } from '@validiant/shared';
 
-// ── Role order for comparisons ────────────────────────────────────────────────
-const ROLE_WEIGHT: Record<string, number> = {
-  [OrganizationMemberRole.OWNER]: 4,
-  [OrganizationMemberRole.ADMIN]: 3,
-  [OrganizationMemberRole.MEMBER]: 2,
-  [OrganizationMemberRole.GUEST]: 1,
-};
-
-const atLeast = (role: string, min: string) =>
-  (ROLE_WEIGHT[role] ?? 0) >= (ROLE_WEIGHT[min] ?? 0);
-
-// ── Hook ──────────────────────────────────────────────────────────────────────
+/**
+ * usePermissions Hook (ABAC Permission Engine)
+ *
+ * Primary hook for conditional UI rendering and access control.
+ * Uses reactive permissions from the JWT (provided via useAuthStore).
+ *
+ * ELITE PATTERN: Zero network requests for permission checks.
+ */
 export function usePermissions() {
-  const user = useAuthStore((s) => s.user);
-  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  const { user, isLoading } = useAuthStore((s) => ({
+    user: s.user,
+    isLoading: s.isLoading,
+  }));
+  const permissions = (user?.permissions as string[]) || [];
 
-  const { data: membersRes, isLoading } = useQuery({
-    queryKey: ['org-members', activeOrgId],
-    queryFn: () => {
-      if (!activeOrgId) throw new Error('No active organization');
-      return organizationsApi.getMembers(activeOrgId);
-    },
-    enabled: !!activeOrgId && !!user?.id,
-    staleTime: 5 * 60 * 1000,
-  });
+  /**
+   * Check if user has a specific permission
+   */
+  const has = (permission: PermissionKey): boolean =>
+    permissions.includes(permission);
 
-  const members = membersRes?.data?.data?.members ?? [];
-  const myMembership = members.find((m) => m.userId === user?.id);
+  /**
+   * Check if user has any of the given permissions
+   */
+  const hasAny = (perms: PermissionKey[]): boolean =>
+    perms.some((p) => permissions.includes(p));
 
-  // Default to GUEST if we can't find membership yet (while loading)
-  const role = (myMembership?.role as string) ?? OrganizationMemberRole.GUEST;
-
-  const isOwner = role === OrganizationMemberRole.OWNER;
-  const isAdmin = atLeast(role, OrganizationMemberRole.ADMIN);
-  const isMember = atLeast(role, OrganizationMemberRole.MEMBER);
-  const isGuest = role === OrganizationMemberRole.GUEST;
+  /**
+   * Check if user has all of the given permissions
+   */
+  const hasAll = (perms: PermissionKey[]): boolean =>
+    perms.every((p) => permissions.includes(p));
 
   return {
-    role,
-    isOwner,
-    isAdmin,
-    isMember,
-    isGuest,
+    permissions,
+    has,
+    hasAny,
+    hasAll,
     isLoading,
+    isGuest: user?.role === 'guest',
 
-    // Granular permission flags — use these directly in components
+    // Auth context
+    userId: user?.id,
+    activeOrgId: user?.activeOrganizationId,
+    role: user?.role,
+
+    // Granular can flags (derived from ABAC keys)
     can: {
-      // Org-level
-      manageOrg: isAdmin,
-      manageMembers: isAdmin,
-      inviteMembers: isAdmin,
-      viewBilling: isOwner,
-      deleteOrg: isOwner,
+      // Organization Management
+      manageOrg: has('org:update') || has('org:admin'),
+      manageMembers: has('user:admin') || has('user:roles'),
+      inviteMembers: has('user:invite'),
+      viewSettings: has('org:read'),
+      editSettings: has('org:settings') || has('org:update'),
+      deleteOrg: has('org:delete'),
 
-      // Project-level
-      createProjects: isMember,
-      editProjects: isMember,
-      deleteProjects: isAdmin,
-      addProjectMember: isAdmin,
+      // Billing
+      viewBilling: has('billing:read'),
+      manageBilling: has('billing:manage'),
 
-      // Task-level
-      createTasks: isMember,
-      editAnyTask: isAdmin,
-      deleteTasks: isAdmin,
-      assignTasks: isAdmin,
+      // Projects
+      viewProjects: has('project:read'),
+      createProjects: has('project:create'),
+      editProjects: has('project:update'),
+      deleteProjects: has('project:delete'),
 
-      // Views
-      viewSettings: isAdmin,
-      viewAnalytics: isMember,
+      // Tasks & KYC
+      viewTasks: has('task:read'),
+      createTasks: has('task:create'),
+      editTasks: has('task:update'),
+      deleteTasks: has('task:delete'),
+      verifyTasks: has('task:verify'),
+      assignTasks: has('task:assign'),
+
+      // Compliance
+      viewAudit: has('audit:read'),
+      exportAudit: has('audit:export'),
+
+      // Infrastructure
+      toggleFeatures: has('feature:toggle'),
     },
   };
 }
 
 export type Permissions = ReturnType<typeof usePermissions>;
-export type PermissionKey = keyof Permissions['can'];

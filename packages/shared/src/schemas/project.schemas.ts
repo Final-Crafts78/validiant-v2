@@ -261,6 +261,7 @@ export const taskListQuerySchema = z.object({
   search: z.string().optional(),
   parentTaskId: z.string().uuid().optional(),
   tags: z.array(z.string()).optional(),
+  cursor: z.string().optional(),
 });
 
 /**

@@ -1,294 +1,109 @@
-# Validiant API
+# Validiant API (Enterprise Edition)
 
-## Backend API Server
+## Edge-Native Cloudflare Workers API
 
-Express.js REST API with PostgreSQL, Prisma ORM, and JWT authentication.
+High-performance, edge-first REST API built with Hono, Drizzle ORM, and Neon Serverless PostgreSQL. Optimized for sub-100ms global latency and infinite scalability.
+
+---
+
+## Technical Architecture (Phase 24)
+
+- **Runtime**: [Cloudflare Workers](https://workers.cloudflare.com/) (V8 Isolate)
+- **Framework**: [Hono](https://hono.dev/) (Edge-native web framework)
+- **Database**: [Neon.tech](https://neon.tech/) (Serverless PostgreSQL)
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) (Type-safe SQL builder)
+- **File Storage**: [Supabase Storage](https://supabase.com/storage) (S3-compatible)
+- **Caching & Counters**: [Cloudflare KV](https://www.cloudflare.com/products/workers-kv/)
+- **Real-time Engine**: [Cloudflare Durable Objects](https://developers.cloudflare.com/workers/runtime-apis/durable-objects/)
+
+---
+
+## Performance & Optimization
+
+### Cursor Pagination
+
+We utilize **Cursor-based Pagination** for all large datasets (e.g., `/api/v1/tasks`).
+
+- **O(log N)** lookup performance.
+- Eliminates `OFFSET` performance degradation.
+- Consistent sorting even as new items are added.
+
+### TanStack Query Key Factory
+
+Query keys are centralized in the web application to ensure precise cache invalidation and prevent stale data.
+
+### Optimistic UIs
+
+The frontend utilizes TanStack Query's `onMutate` to provide instantaneous feedback for common actions like status changes or task assignments.
 
 ---
 
 ## Features
 
-- 🔒 **JWT Authentication** - Secure token-based auth
-- 📦 **PostgreSQL Database** - Robust relational database
-- 🔧 **Prisma ORM** - Type-safe database access
-- ✅ **Validation** - Request validation with Zod
-- 🛡️ **Security** - Helmet, CORS, rate limiting
-- 📝 **Logging** - Morgan HTTP request logger
-- ⚡ **TypeScript** - Full type safety
+- 🔒 **Edge JWT Authentication** - Validated at the closest edge node.
+- 📦 **Serverless PostgreSQL** - Scales to zero, handles massive bursts.
+- 🔧 **Drizzle ORM** - Zero-overhead SQL generation.
+- ✅ **Schema Validation** - Powered by Zod and Hono's validator.
+- 🛡️ **Edge Security** - Built-in rate limiting and WAF at the Cloudflare layer.
+- 📝 **Forensic Logging** - Cryptographically hashed audit logs for compliance.
 
 ---
 
-## Tech Stack
-
-- **Node.js** + **Express** - Server framework
-- **TypeScript** - Type-safe development
-- **Prisma** - Database ORM
-- **PostgreSQL** - Database
-- **JWT** - Authentication
-- **Bcrypt** - Password hashing
-- **Zod** - Schema validation
-- **Helmet** - Security headers
-- **CORS** - Cross-origin support
-- **Morgan** - HTTP logging
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js >= 18.0.0
-- PostgreSQL >= 14.0
-- npm >= 9.0.0
-
-### Installation
-
-1. **Install dependencies**
-
-```bash
-npm install
-```
-
-2. **Configure environment**
-
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-3. **Set up database**
-
-```bash
-# Generate Prisma client
-npm run prisma:generate
-
-# Run migrations
-npm run prisma:migrate
-```
-
-### Development
-
-```bash
-# Start dev server with hot reload
-npm run dev
-
-# Server will run on http://localhost:5000
-```
-
-### Production
-
-```bash
-# Build
-npm run build
-
-# Start production server
-npm start
-```
-
----
-
-## Database Management
-
-```bash
-# Open Prisma Studio
-npm run prisma:studio
-
-# Create new migration
-npm run prisma:migrate
-
-# Deploy migrations (production)
-npm run prisma:migrate:prod
-
-# Seed database
-npm run prisma:seed
-
-# Push schema without migration
-npm run db:push
-
-# Reset database (⚠️ deletes all data)
-npm run db:reset
-```
-
----
-
-## API Endpoints
+## Core Endpoints
 
 ### Base URL
 
 ```
-http://localhost:5000/api/v1
+https://api.validiant.com/api/v1
 ```
 
 ### Authentication
 
-#### Register User
+- `POST /auth/login` - Secure login
+- `POST /auth/register` - User registration
+- `GET /auth/me` - Profile retrieval
 
-```http
-POST /auth/register
-Content-Type: application/json
+### Organizations
 
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!",
-  "firstName": "John",
-  "lastName": "Doe"
-}
-```
+- `GET /organizations/my` - List my organizations
+- `PUT /organizations/:id` - Update branding & settings
+- `POST /organizations/:id/invites` - Generate secure tokens
 
-**Response:** `201 Created`
+### Tasks & Cases
 
-```json
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": "uuid",
-      "email": "user@example.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "createdAt": "2026-02-13T17:00:00.000Z",
-      "updatedAt": "2026-02-13T17:00:00.000Z"
-    },
-    "accessToken": "jwt_access_token",
-    "refreshToken": "jwt_refresh_token"
-  }
-}
-```
-
-#### Login
-
-```http
-POST /auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
-```
-
-**Response:** `200 OK` (same as register)
-
-#### Get Current User
-
-```http
-GET /auth/me
-Authorization: Bearer {accessToken}
-```
-
-**Response:** `200 OK`
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe",
-    "createdAt": "2026-02-13T17:00:00.000Z",
-    "updatedAt": "2026-02-13T17:00:00.000Z"
-  }
-}
-```
-
-#### Logout
-
-```http
-POST /auth/logout
-Authorization: Bearer {accessToken}
-```
-
-**Response:** `200 OK`
+- `GET /api/v1/tasks` - List tasks (Cursor Paginated)
+- `PATCH /api/v1/tasks/:id` - Update status/assignment
 
 ---
 
-## Error Responses
+## Development
 
-All errors follow this format:
+### Prerequisites
 
-```json
-{
-  "success": false,
-  "error": "ERROR_CODE",
-  "message": "Human-readable error message"
-}
-```
+- Node.js >= 20.x
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-setup/)
 
-### Common Error Codes
+### Local Setup
 
-| Code                    | Status | Description             |
-| ----------------------- | ------ | ----------------------- |
-| `VALIDATION_ERROR`      | 422    | Invalid input data      |
-| `INVALID_CREDENTIALS`   | 401    | Wrong email/password    |
-| `UNAUTHORIZED`          | 401    | Missing/invalid token   |
-| `TOKEN_EXPIRED`         | 401    | Token has expired       |
-| `NOT_FOUND`             | 404    | Resource not found      |
-| `ALREADY_EXISTS`        | 409    | Resource already exists |
-| `INTERNAL_SERVER_ERROR` | 500    | Server error            |
+1. **Install Dependencies**
 
----
+   ```bash
+   npm install
+   ```
 
-## Environment Variables
+2. **Run Local Server**
 
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/validiant
+   ```bash
+   npm run dev
+   ```
 
-# Server
-PORT=5000
-NODE_ENV=development
-
-# JWT
-JWT_SECRET=your-secret-key-here
-JWT_ACCESS_EXPIRATION=15m
-JWT_REFRESH_EXPIRATION=7d
-
-# CORS
-CORS_ORIGIN=http://localhost:3000,http://localhost:8081
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# Bcrypt
-BCRYPT_ROUNDS=10
-```
-
----
-
-## Project Structure
-
-```
-apps/api/
-├── prisma/
-│   └── schema.prisma        # Database schema
-├── src/
-│   ├── config/
-│   │   └── index.ts          # App configuration
-│   ├── controllers/
-│   │   └── auth.controller.ts # Auth logic
-│   ├── lib/
-│   │   └── prisma.ts         # Prisma client
-│   ├── middleware/
-│   │   ├── auth.ts           # Auth middleware
-│   │   ├── errorHandler.ts   # Error handling
-│   │   └── validate.ts       # Validation
-│   ├── routes/
-│   │   └── auth.routes.ts    # Auth routes
-│   ├── utils/
-│   │   ├── jwt.ts            # JWT utilities
-│   │   ├── password.ts       # Password utilities
-│   │   └── response.ts       # Response helpers
-│   ├── app.ts               # Express app setup
-│   └── index.ts             # Server entry point
-├── .env.example             # Environment template
-├── package.json             # Dependencies
-└── tsconfig.json            # TypeScript config
-```
+3. **Database Migrations**
+   ```bash
+   npm run db:push
+   ```
 
 ---
 
 ## License
 
-MIT
+Proprietary - Validiant Enterprise

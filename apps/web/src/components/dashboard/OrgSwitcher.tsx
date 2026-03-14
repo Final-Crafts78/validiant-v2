@@ -76,7 +76,7 @@ export function OrgSwitcher() {
             <button
               key={org.id}
               onClick={() => {
-                setActiveOrg(org.id);
+                setActiveOrg(org.id, org.slug || '');
                 setOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${

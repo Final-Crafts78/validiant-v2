@@ -302,6 +302,27 @@ export const haversineDistance = (
 };
 
 /**
+ * Checks if a point is within a specific threshold (in meters) of a target
+ */
+export const isWithinThreshold = (
+  actual: { lat: number; lng: number },
+  target: { lat: number; lng: number },
+  thresholdMeters: number
+): { isWithin: boolean; distance: number } => {
+  const distanceKm = haversineDistance(
+    actual.lat,
+    actual.lng,
+    target.lat,
+    target.lng
+  );
+  const distanceMeters = distanceKm * 1000;
+  return {
+    isWithin: distanceMeters <= thresholdMeters,
+    distance: distanceMeters,
+  };
+};
+
+/**
  * Extract latitude and longitude from a Google Maps URL.
  * Returns null if no coordinates are found.
  */
@@ -310,7 +331,7 @@ export const extractGoogleMapsCoordinates = (
 ): { latitude: number; longitude: number } | null => {
   // Match patterns like @12.345,67.890 or !3d12.345!4d67.890
   const atMatch = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-  if (atMatch) {
+  if (atMatch && atMatch[1] !== undefined && atMatch[2] !== undefined) {
     return {
       latitude: parseFloat(atMatch[1]),
       longitude: parseFloat(atMatch[2]),
@@ -318,7 +339,7 @@ export const extractGoogleMapsCoordinates = (
   }
 
   const dMatch = url.match(/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/);
-  if (dMatch) {
+  if (dMatch && dMatch[1] !== undefined && dMatch[2] !== undefined) {
     return {
       latitude: parseFloat(dMatch[1]),
       longitude: parseFloat(dMatch[2]),

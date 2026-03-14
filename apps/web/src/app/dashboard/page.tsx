@@ -30,14 +30,25 @@ import {
 
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { useWorkspaceStore } from '@/store/workspace';
+import { analyticsApi } from '@/lib/api';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 // ---------------------------------------------------------------------------
 // General Dashboard Page Component
 // ---------------------------------------------------------------------------
-function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
+function GeneralDashboard({ orgId }: { orgId: string }) {
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
 
+  // 1. Data Fetching
   const { data: tasksRes } = useQuery({
     queryKey: ['tasks', 'my'],
     queryFn: () => tasksApi.getAll(),
@@ -50,51 +61,101 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
     staleTime: 2 * 60 * 1000,
   });
 
+  const { data: analyticsRes, isLoading: isAnalyticsLoading } = useQuery({
+    queryKey: ['analytics', 'latest', orgId],
+    queryFn: () => analyticsApi.getLatest(),
+    refetchInterval: 15 * 60 * 1000, // Sync with rollup worker
+  });
+
+  const { data: historyRes } = useQuery({
+    queryKey: ['analytics', 'history', orgId],
+    queryFn: () => analyticsApi.getHistory(7),
+  });
+
   const { data: orgs = [] } = useOrganizations();
 
   const tasks: Task[] = tasksRes?.data?.data?.tasks ?? [];
   const projects: Project[] = projectsRes?.data?.data?.projects ?? [];
+  const latestMetrics = analyticsRes?.data?.data?.data;
 
-  // Extract first name from fullName with null-safety — preserved from original
+  // 2. Computed Metrics (Fallback to local if no snapshot yet)
+  const stats = useMemo(() => {
+    if (latestMetrics) {
+      return {
+        activeTasks: latestMetrics.tasks.pending,
+        pendingVerifications: latestMetrics.tasks.byStatus?.['PENDING'] || 0,
+        activeProjects: projects.filter((p) => p.status === 'active').length,
+        orgCount: orgs.length,
+        slaBreached: latestMetrics.sla.breached,
+      };
+    }
+
+    // Fallback calculation
+    return {
+      activeTasks: tasks.filter(
+        (t) =>
+          t.status !== TaskStatus.COMPLETED && t.status !== TaskStatus.VERIFIED
+      ).length,
+      pendingVerifications: tasks.filter((t) => t.status === TaskStatus.PENDING)
+        .length,
+      activeProjects: projects.filter((p) => p.status === 'active').length,
+      orgCount: orgs.length,
+      slaBreached: 0,
+    };
+  }, [latestMetrics, tasks, projects, orgs]);
+
+  // 3. Trend Formatting
+  const chartData = useMemo(() => {
+    const history = historyRes?.data?.data?.data;
+    if (!history || !Array.isArray(history)) return [];
+    return history.map(
+      (h: {
+        recordedAt: string;
+        metrics: { tasks: { completed: number; pending: number } };
+      }) => ({
+        date: new Date(h.recordedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }),
+        completed: h.metrics.tasks.completed,
+        active: h.metrics.tasks.pending,
+      })
+    );
+  }, [historyRes]);
+
+  // Extract first name from fullName with null-safety
   const firstName = useMemo(() => {
     if (!user || !user.fullName) return 'Enterprise User';
     const parts = user.fullName.trim().split(' ');
     return parts[0] || user.fullName;
   }, [user]);
 
-  const activeTasks = tasks.filter(
-    (t) => t.status !== TaskStatus.COMPLETED && t.status !== TaskStatus.VERIFIED
-  ).length;
-
-  const pendingTasks = tasks.filter(
-    (t) => t.status === TaskStatus.PENDING
-  ).length;
-
-  const activeProjects = projects.filter((p) => p.status === 'active').length;
-  const orgCount = orgs.length;
-
   const KPI_CARDS = [
     {
       title: 'Active Workflows',
-      value: String(activeTasks),
-      trend: '+12% this week', // keeping original styling if preferred, though it requested replacing values. The instruction said "Change the title strings to match ('Active Projects', 'Organizations') and update trendColor/trend text accordingly"
-      trendColor: 'text-emerald-600',
+      value: String(stats.activeTasks),
+      trend:
+        stats.slaBreached > 0
+          ? `${stats.slaBreached} SLAs breached`
+          : 'Optimized flow',
+      trendColor: stats.slaBreached > 0 ? 'text-rose-600' : 'text-emerald-600',
       icon: Activity,
       iconBg: 'bg-blue-50',
       iconColor: 'text-blue-600',
     },
     {
       title: 'Pending Verifications',
-      value: String(pendingTasks),
-      trend: 'Needs attention',
-      trendColor: 'text-amber-600',
+      value: String(stats.pendingVerifications),
+      trend: stats.pendingVerifications > 10 ? 'High volume' : 'Managed queue',
+      trendColor:
+        stats.pendingVerifications > 10 ? 'text-amber-600' : 'text-slate-500',
       icon: ShieldCheck,
       iconBg: 'bg-amber-50',
       iconColor: 'text-amber-600',
     },
     {
       title: 'Active Projects',
-      value: String(activeProjects),
+      value: String(stats.activeProjects),
       trend: 'Currently running',
       trendColor: 'text-emerald-600',
       icon: Target,
@@ -103,7 +164,7 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
     },
     {
       title: 'Organizations',
-      value: String(orgCount),
+      value: String(stats.orgCount),
       trend: 'Associated workspaces',
       trendColor: 'text-slate-500',
       icon: AlertTriangle,
@@ -179,54 +240,123 @@ function GeneralDashboard({ orgId: _orgId }: { orgId: string }) {
         {/* -----------------------------------------------------------------
             LEFT PANEL — Recent Operational Activity (2 columns)
         ----------------------------------------------------------------- */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm">
-          {/* Panel Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-            <h2 className="text-base font-semibold text-slate-900">
-              Recent Operational Activity
-            </h2>
-            <button
-              type="button"
-              onClick={() => router.push('/dashboard/tasks')}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              View All
-            </button>
+        <div className="lg:col-span-2 space-y-6">
+          {/* Analytics Chart (Phase 27) */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-base font-semibold text-slate-900">
+                Operational Velocity (7-Day Trend)
+              </h2>
+              {isAnalyticsLoading && (
+                <span className="text-xs text-slate-400 animate-pulse">
+                  Syncing...
+                </span>
+              )}
+            </div>
+
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#f1f5f9"
+                  />
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#fff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="completed"
+                    stroke="#2563eb"
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: '#2563eb', strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
+                    name="Completed Tasks"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="active"
+                    stroke="#94a3b8"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name="Active Workflows"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          {/* Activity List */}
-          <ul className="divide-y divide-slate-100">
-            {tasks.length === 0 && (
-              <li className="px-6 py-10 text-center text-sm text-slate-400">
-                No recent activity
-              </li>
-            )}
-            {[...tasks]
-              .sort(
-                (a, b) =>
-                  new Date(b.updatedAt ?? b.createdAt).getTime() -
-                  new Date(a.updatedAt ?? a.createdAt).getTime()
-              )
-              .slice(0, 5)
-              .map((task) => (
-                <li key={task.id} className="flex items-start gap-4 px-6 py-4">
-                  <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-700 leading-snug truncate">
-                      {task.title}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-400">
-                      {task.status} ·{' '}
-                      {task.updatedAt
-                        ? new Date(task.updatedAt).toLocaleString()
-                        : 'Just now'}
-                    </p>
-                  </div>
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
+            {/* Panel Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+              <h2 className="text-base font-semibold text-slate-900">
+                Recent Operational Activity
+              </h2>
+              <button
+                type="button"
+                onClick={() => router.push('/dashboard/tasks')}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                View All
+              </button>
+            </div>
+
+            {/* Activity List */}
+            <ul className="divide-y divide-slate-100">
+              {tasks.length === 0 && (
+                <li className="px-6 py-10 text-center text-sm text-slate-400">
+                  No recent activity
                 </li>
-              ))}
-          </ul>
+              )}
+              {[...tasks]
+                .sort(
+                  (a, b) =>
+                    new Date(b.updatedAt ?? b.createdAt).getTime() -
+                    new Date(a.updatedAt ?? a.createdAt).getTime()
+                )
+                .slice(0, 5)
+                .map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex items-start gap-4 px-6 py-4"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-slate-700 leading-snug truncate">
+                        {task.title}
+                      </p>
+                      <p className="mt-1 text-xs text-slate-400">
+                        {task.status} ·{' '}
+                        {task.updatedAt
+                          ? new Date(task.updatedAt).toLocaleString()
+                          : 'Just now'}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
 
         {/* -----------------------------------------------------------------

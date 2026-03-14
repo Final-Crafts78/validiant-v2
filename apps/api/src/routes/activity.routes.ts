@@ -13,11 +13,18 @@ const activityRoutes = new Hono();
 
 activityRoutes.use('*', authenticate);
 
-// Enterprise Audit Trail: Only Org Owners and Admins can view complete logs
+// Enterprise Audit Trail: Paginated logs scoped by organization
 activityRoutes.get(
-  '/organization/:orgId',
-  requireOrgRole(['owner', 'admin']),
+  '/',
+  requireOrgRole(['owner', 'admin', 'manager']),
   activityController.getOrganizationAuditLogs
+);
+
+// Compliance Export: CSV dump
+activityRoutes.get(
+  '/export',
+  requireOrgRole(['owner', 'admin', 'manager']),
+  activityController.exportAuditLogs
 );
 
 export default activityRoutes;

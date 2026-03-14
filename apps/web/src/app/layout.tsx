@@ -5,7 +5,7 @@
  */
 
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers/Providers';
 
@@ -13,6 +13,12 @@ import { Providers } from '@/components/providers/Providers';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -90,13 +96,45 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Additional meta tags */}
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+        {/* Theme Flash Prevention (Mini-Phase 6) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var prefs = {};
+                  var cookie = document.cookie.split('; ').find(row => row.startsWith('userPrefs='));
+                  if (cookie) {
+                    prefs = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+                  }
+                  
+                  var theme = prefs.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', theme);
+                  
+                  if (prefs.brandConfig) {
+                    var root = document.documentElement;
+                    if (prefs.brandConfig.accentPrimary) root.style.setProperty('--color-accent-base', prefs.brandConfig.accentPrimary);
+                    if (prefs.brandConfig.surfaceBase) root.style.setProperty('--color-surface-base', prefs.brandConfig.surfaceBase);
+                  }
+                } catch (e) {
+                  console.error('Theme initialization failed', e);
+                }
+              })()
+            `,
+          }}
+        />
       </head>
       <body className={`${inter.className} antialiased`}>
         <Providers>{children}</Providers>

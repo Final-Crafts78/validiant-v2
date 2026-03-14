@@ -63,7 +63,7 @@ searchRoutes.get('/', async (c) => {
         id: schema.tasks.id,
         title: schema.tasks.title,
         description: schema.tasks.description,
-        status: schema.tasks.status,
+        statusKey: schema.tasks.statusKey,
         priority: schema.tasks.priority,
         clientName: schema.tasks.clientName,
         pincode: schema.tasks.pincode,

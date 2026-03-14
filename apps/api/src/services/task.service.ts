@@ -13,9 +13,17 @@
  * - Non-blocking broadcasts (fire-and-forget)
  */
 
-import { eq, and, isNull, sql, or, desc, asc, inArray, SQL } from 'drizzle-orm';
+import { eq, and, isNull, sql, or, desc, inArray, SQL } from 'drizzle-orm';
 import { db } from '../db';
-import { tasks, taskAssignees, projects, users } from '../db/schema';
+import {
+  tasks,
+  taskAssignees,
+  projects,
+  users,
+  caseFieldValues,
+  verificationTypes,
+  organizations,
+} from '../db/schema';
 import { cache } from '../config/redis.config';
 import {
   NotFoundError,
@@ -25,7 +33,12 @@ import {
 } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { broadcastTaskEvent, BroadcastEvent } from '../utils/broadcast';
-import { TaskStatus, TaskPriority } from '@validiant/shared';
+import {
+  TaskStatus,
+  TaskPriority,
+  getValidTransitions,
+} from '@validiant/shared';
+import * as projectService from './project.service';
 
 /**
  * Task interface
@@ -58,6 +71,11 @@ interface TaskWithDetails extends Task {
     id: string;
     name: string;
     organizationId: string;
+    organization?: {
+      id: string;
+      name: string;
+      settings: Record<string, unknown>;
+    };
   };
   assignees?: Array<{
     id: string;
@@ -72,6 +90,44 @@ interface TaskWithDetails extends Task {
     fullName: string;
     avatarUrl?: string;
   };
+  verificationType?: {
+    id: string;
+    code: string;
+    name: string;
+    fieldSchema: unknown[];
+    slaOverrideHours?: number;
+  };
+  slaMetrics?: {
+    status: 'on_track' | 'at_risk' | 'breached';
+    percentage: number;
+    remainingHours: number;
+  };
+}
+
+interface TaskListItem {
+  id: string;
+  title: string;
+  description: string | null;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueDate: Date | null;
+  estimatedHours: number | null;
+  actualHours: number | null;
+  parentTaskId: string | null;
+  position: number;
+  tags: string[] | null;
+  createdAt: Date;
+  updatedAt: Date;
+  completedAt: Date | null;
+  subtaskCount: number;
+}
+
+interface TaskAssigneeItem {
+  taskId: string;
+  id: string;
+  fullName: string;
+  avatarUrl: string | null;
+  email: string;
 }
 
 /**
@@ -90,16 +146,30 @@ interface TaskAssignee {
   };
 }
 
-/**
- * Pagination metadata
- */
-interface Pagination {
-  total: number;
-  page: number;
-  perPage: number;
-  totalPages: number;
-}
+const calculateSlaMetrics = (
+  createdAt: Date,
+  slaHours: number = 72
+): TaskWithDetails['slaMetrics'] => {
+  const now = new Date();
+  const elapsedMs = now.getTime() - createdAt.getTime();
+  const elapsedHours = elapsedMs / (1000 * 60 * 60);
 
+  const percentage = Math.min(100, (elapsedHours / slaHours) * 100);
+  const remainingHours = Math.max(0, slaHours - elapsedHours);
+
+  let status: 'on_track' | 'at_risk' | 'breached' = 'on_track';
+  if (elapsedHours >= slaHours) {
+    status = 'breached';
+  } else if (elapsedHours >= slaHours * 0.8) {
+    status = 'at_risk';
+  }
+
+  return {
+    status,
+    percentage: Math.round(percentage * 100) / 100,
+    remainingHours: Math.round(remainingHours * 10) / 10,
+  };
+};
 /**
  * Create task
  * ✅ ELITE: Wrapped in transaction for ACID compliance
@@ -119,6 +189,7 @@ export const createTask = async (
     tags?: string[];
     customFields?: Record<string, unknown>;
     assigneeIds?: string[];
+    orgId?: string;
   }
 ): Promise<Task> => {
   // Proceed without db.transaction() because neon-http does not support interactive transactions
@@ -140,7 +211,7 @@ export const createTask = async (
       projectId,
       title: data.title,
       description: data.description,
-      status: data.status || TaskStatus.PENDING,
+      statusKey: data.status || TaskStatus.PENDING,
       priority: data.priority || TaskPriority.MEDIUM,
       dueDate: data.dueDate,
       estimatedHours: data.estimatedHours,
@@ -148,14 +219,14 @@ export const createTask = async (
       position,
       tags: data.tags || [],
       customFields: data.customFields || {},
-      createdBy: userId,
+      createdById: userId,
     })
     .returning({
       id: tasks.id,
       projectId: tasks.projectId,
       title: tasks.title,
       description: tasks.description,
-      status: tasks.status,
+      status: tasks.statusKey,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       estimatedHours: tasks.estimatedHours,
@@ -164,7 +235,7 @@ export const createTask = async (
       position: tasks.position,
       tags: tasks.tags,
       customFields: tasks.customFields,
-      createdBy: tasks.createdBy,
+      createdBy: tasks.createdById,
       createdAt: tasks.createdAt,
       updatedAt: tasks.updatedAt,
       completedAt: tasks.completedAt,
@@ -195,13 +266,23 @@ export const createTask = async (
 
   logger.info('Task created', { taskId: task.id, projectId, userId });
 
-  // ✅ REAL-TIME: Broadcast to project room
+  // ✅ REAL-TIME: Broadcast to organization
   // Non-blocking - happens in background
-  await broadcastTaskEvent(projectId, task.id, BroadcastEvent.TASK_CREATED, {
-    status: task.status,
-    priority: task.priority,
-    createdBy: userId,
-  });
+  if (data.orgId) {
+    await broadcastTaskEvent(
+      data.orgId,
+      projectId,
+      task.id,
+      BroadcastEvent.TASK_CREATED,
+      {
+        status: task.status,
+        priority: task.priority,
+        createdBy: userId,
+      }
+    );
+  } else {
+    logger.warn('Broadcast skipped for newTask: orgId not provided');
+  }
 
   return task as Task;
 };
@@ -225,7 +306,7 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
       projectId: tasks.projectId,
       title: tasks.title,
       description: tasks.description,
-      status: tasks.status,
+      status: tasks.statusKey,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       estimatedHours: tasks.estimatedHours,
@@ -234,7 +315,7 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
       position: tasks.position,
       tags: tasks.tags,
       customFields: tasks.customFields,
-      createdBy: tasks.createdBy,
+      createdBy: tasks.createdById,
       createdAt: tasks.createdAt,
       updatedAt: tasks.updatedAt,
       completedAt: tasks.completedAt,
@@ -243,6 +324,11 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
         id: projects.id,
         name: projects.name,
         organizationId: projects.organizationId,
+        organization: {
+          id: organizations.id,
+          name: organizations.name,
+          settings: organizations.settings,
+        },
       },
       // Created by user
       createdByUser: {
@@ -261,13 +347,26 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
         SELECT COUNT(*)
         FROM ${tasks} as subtasks
         WHERE subtasks.parent_task_id = ${tasks.id}
-        AND subtasks.status = 'completed'
+        AND subtasks.status_key = 'completed'
         AND subtasks.deleted_at IS NULL
       )`,
+      // Verification Type (Phase 11)
+      verificationType: {
+        id: verificationTypes.id,
+        code: verificationTypes.code,
+        name: verificationTypes.name,
+        fieldSchema: verificationTypes.fieldSchema,
+        slaOverrideHours: verificationTypes.slaOverrideHours,
+      },
     })
     .from(tasks)
     .innerJoin(projects, eq(tasks.projectId, projects.id))
-    .innerJoin(users, eq(tasks.createdBy, users.id))
+    .innerJoin(organizations, eq(projects.organizationId, organizations.id))
+    .innerJoin(users, eq(tasks.createdById, users.id))
+    .leftJoin(
+      verificationTypes,
+      eq(tasks.verificationTypeId, verificationTypes.id)
+    )
     .where(
       and(
         eq(tasks.id, taskId),
@@ -298,11 +397,34 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
       )
     );
 
+  // Get case field values
+  const fieldValues = await db
+    .select({
+      fieldKey: caseFieldValues.fieldKey,
+      value: sql`COALESCE(${caseFieldValues.valueText}, ${caseFieldValues.valueNumber}::text, ${caseFieldValues.valueBoolean}::text, ${caseFieldValues.valueJson}::text)`,
+    })
+    .from(caseFieldValues)
+    .where(eq(caseFieldValues.taskId, taskId));
+
+  // Calculate SLA
+  const slaHours = task.verificationType?.slaOverrideHours || 72;
+  const slaMetrics = calculateSlaMetrics(task.createdAt, slaHours);
+
   const result: TaskWithDetails = {
     ...task,
     subtaskCount: Number(task.subtaskCount),
     completedSubtaskCount: Number(task.completedSubtaskCount),
     assignees: assigneeList.length > 0 ? assigneeList : undefined,
+    customFields: {
+      ...((task.customFields as Record<string, unknown>) || {}),
+      ...Object.fromEntries(
+        fieldValues.map((fv: { fieldKey: string; value: unknown }) => [
+          fv.fieldKey,
+          fv.value,
+        ])
+      ),
+    },
+    slaMetrics,
   } as TaskWithDetails;
 
   // Cache for 5 minutes
@@ -327,10 +449,38 @@ export const updateTask = async (
     actualHours?: number;
     tags?: string[];
     customFields?: Record<string, unknown>;
-  }
+  },
+  userId?: string
 ): Promise<Task> => {
-  // Track if status changed for optimized broadcast
-  const statusChanged = data.status !== undefined;
+  const existingTask = await getTaskById(taskId);
+  const statusChanged =
+    data.status !== undefined && data.status !== existingTask.status;
+
+  // Enforce transition matrix if status is changing
+  if (statusChanged && userId) {
+    const role = await projectService.getProjectMemberRole(
+      existingTask.projectId,
+      userId
+    );
+    const validTransitions = getValidTransitions(
+      existingTask.status,
+      (
+        existingTask.project?.organization as TaskWithDetails['project'] & {
+          settings: Record<string, unknown>;
+        }
+      )?.settings || {},
+      role || 'member'
+    );
+
+    const isValid = validTransitions.some(
+      (t: { key: string }) => t.key === data.status
+    );
+    if (!isValid) {
+      throw new BadRequestError(
+        `Invalid status transition from ${existingTask.status} to ${data.status}`
+      );
+    }
+  }
 
   // Build update object with only provided fields
   const updateData: Partial<typeof tasks.$inferInsert> & { updatedAt: Date } = {
@@ -341,7 +491,7 @@ export const updateTask = async (
   if (data.description !== undefined) updateData.description = data.description;
 
   if (data.status !== undefined) {
-    updateData.status = data.status;
+    updateData.statusKey = data.status;
     // Set completed_at if status is completed, otherwise clear it
     if (data.status === TaskStatus.COMPLETED) {
       updateData.completedAt = new Date();
@@ -373,7 +523,7 @@ export const updateTask = async (
       projectId: tasks.projectId,
       title: tasks.title,
       description: tasks.description,
-      status: tasks.status,
+      status: tasks.statusKey,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       estimatedHours: tasks.estimatedHours,
@@ -382,29 +532,25 @@ export const updateTask = async (
       position: tasks.position,
       tags: tasks.tags,
       customFields: tasks.customFields,
-      createdBy: tasks.createdBy,
+      createdBy: tasks.createdById,
       createdAt: tasks.createdAt,
       updatedAt: tasks.updatedAt,
       completedAt: tasks.completedAt,
     });
   const task = taskResult[0];
 
-  // Clear cache
-  await cache.del(`task:${taskId}`);
-
-  logger.info('Task updated', { taskId });
-
-  // ✅ REAL-TIME: Broadcast to project room
-  // Use TASK_STATUS_CHANGED for status updates (optimized for frontend)
-  // Use TASK_UPDATED for general updates
   const eventType = statusChanged
     ? BroadcastEvent.TASK_STATUS_CHANGED
     : BroadcastEvent.TASK_UPDATED;
 
-  await broadcastTaskEvent(task.projectId, task.id, eventType, {
-    status: task.status,
-    priority: task.priority,
-  });
+  const orgId = existingTask.project?.organizationId;
+
+  if (orgId) {
+    await broadcastTaskEvent(orgId, task.projectId, task.id, eventType, {
+      status: task.status,
+      priority: task.priority,
+    });
+  }
 
   return task as Task;
 };
@@ -434,10 +580,17 @@ export const deleteTask = async (taskId: string): Promise<void> => {
   // Clear cache
   await cache.del(`task:${taskId}`);
 
-  logger.info('Task deleted', { taskId });
-
-  // ✅ REAL-TIME: Broadcast to project room
-  await broadcastTaskEvent(task.projectId, taskId, BroadcastEvent.TASK_DELETED);
+  // ✅ REAL-TIME: Broadcast to organization
+  const taskDetails = await getTaskById(taskId);
+  const orgId = taskDetails.project?.organizationId;
+  if (orgId) {
+    await broadcastTaskEvent(
+      orgId,
+      taskDetails.projectId,
+      taskId,
+      BroadcastEvent.TASK_DELETED
+    );
+  }
 };
 
 /**
@@ -452,13 +605,11 @@ export const listProjectTasks = async (
     search?: string;
     parentTaskId?: string | null;
     tags?: string[];
-    page?: number;
+    cursor?: string;
     perPage?: number;
   }
-): Promise<{ tasks: TaskWithDetails[]; pagination: Pagination }> => {
-  const page = params?.page || 1;
+): Promise<{ tasks: TaskWithDetails[]; nextCursor: string | null }> => {
   const perPage = Math.min(params?.perPage || 50, 100);
-  const offset = (page - 1) * perPage;
 
   // Build WHERE conditions
   const conditions: (SQL | undefined)[] = [
@@ -467,7 +618,7 @@ export const listProjectTasks = async (
   ];
 
   if (params?.status) {
-    conditions.push(eq(tasks.status, params.status));
+    conditions.push(eq(tasks.statusKey, params.status));
   }
 
   if (params?.priority) {
@@ -505,31 +656,42 @@ export const listProjectTasks = async (
     );
   }
 
-  // ✅ ELITE: Filter by tags with explicit ::jsonb cast for GIN index optimization
+  // Filter by tags
   if (params?.tags && params.tags.length > 0) {
     conditions.push(
       sql`${tasks.tags} @> ${JSON.stringify(params.tags)}::jsonb`
     );
   }
 
+  // Cursor handling (CreatedAt + ID)
+  // Format: "ISOString|UUID"
+  if (params?.cursor) {
+    try {
+      const [createdAtStr, id] = params.cursor.split('|');
+      const createdAt = new Date(createdAtStr);
+
+      // Sort: ASC(position), DESC(createdAt), DESC(id)
+      // To keep it simple for now and efficient, we'll use DESC(createdAt), DESC(id)
+      conditions.push(
+        or(
+          sql`${tasks.createdAt} < ${createdAt}`,
+          and(eq(tasks.createdAt, createdAt), sql`${tasks.id} < ${id}`)
+        )
+      );
+    } catch (e) {
+      logger.error('Invalid cursor provided', { cursor: params.cursor });
+    }
+  }
+
   const whereClause = and(...conditions);
 
-  // Get total count
-  const countResult = await db
-    .select({ count: sql<number>`COUNT(*)` })
-    .from(tasks)
-    .where(whereClause);
-  const { count } = countResult[0];
-
-  const total = Number(count);
-
-  // Get tasks
+  // Get tasks (fetch one extra to check for next cursor)
   const taskList = await db
     .select({
       id: tasks.id,
       title: tasks.title,
       description: tasks.description,
-      status: tasks.status,
+      status: tasks.statusKey,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       estimatedHours: tasks.estimatedHours,
@@ -540,7 +702,6 @@ export const listProjectTasks = async (
       createdAt: tasks.createdAt,
       updatedAt: tasks.updatedAt,
       completedAt: tasks.completedAt,
-      // Subtask count subquery
       subtaskCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${tasks} as subtasks
@@ -550,19 +711,26 @@ export const listProjectTasks = async (
     })
     .from(tasks)
     .where(whereClause)
-    .orderBy(asc(tasks.position), desc(tasks.createdAt))
-    .limit(perPage)
-    .offset(offset);
+    .orderBy(desc(tasks.createdAt), desc(tasks.id))
+    .limit(perPage + 1);
 
-  // Get assignees for each task
-  const taskIds = taskList.map((t: (typeof taskList)[number]) => t.id);
+  const hasNextPage = taskList.length > perPage;
+  const slicedTasks = hasNextPage ? taskList.slice(0, perPage) : taskList;
+
+  let nextCursor: string | null = null;
+  if (hasNextPage) {
+    const lastTask = slicedTasks[slicedTasks.length - 1];
+    nextCursor = `${lastTask.createdAt.toISOString()}|${lastTask.id}`;
+  }
+
+  const taskIds = (slicedTasks as TaskListItem[]).map((t) => t.id);
   let assigneesByTask: Record<
     string,
     { id: string; fullName: string; avatarUrl: string | null; email: string }[]
   > = {};
 
   if (taskIds.length > 0) {
-    const assignees = await db
+    const assignees = (await db
       .select({
         taskId: taskAssignees.taskId,
         id: users.id,
@@ -578,26 +746,13 @@ export const listProjectTasks = async (
           isNull(taskAssignees.deletedAt),
           isNull(users.deletedAt)
         )
-      );
+      )) as TaskAssigneeItem[];
 
-    // Group assignees by task ID
     assigneesByTask = assignees.reduce(
-      (
-        acc: Record<
-          string,
-          {
-            id: string;
-            fullName: string;
-            avatarUrl: string | null;
-            email: string;
-          }[]
-        >,
-        assignee: (typeof assignees)[number]
-      ) => {
-        if (!acc[assignee.taskId]) {
-          acc[assignee.taskId] = [];
-        }
-        acc[assignee.taskId].push({
+      (acc, assignee: TaskAssigneeItem) => {
+        const tid = assignee.taskId;
+        if (!acc[tid]) acc[tid] = [];
+        acc[tid].push({
           id: assignee.id,
           fullName: assignee.fullName,
           avatarUrl: assignee.avatarUrl,
@@ -617,7 +772,7 @@ export const listProjectTasks = async (
     );
   }
 
-  const tasksWithDetails = taskList.map((task: (typeof taskList)[number]) => ({
+  const tasksWithDetails = (slicedTasks as TaskListItem[]).map((task) => ({
     ...task,
     subtaskCount: Number(task.subtaskCount),
     assignees: assigneesByTask[task.id] || undefined,
@@ -625,12 +780,7 @@ export const listProjectTasks = async (
 
   return {
     tasks: tasksWithDetails,
-    pagination: {
-      total,
-      page,
-      perPage,
-      totalPages: Math.ceil(total / perPage),
-    },
+    nextCursor,
   };
 };
 
@@ -652,7 +802,7 @@ export const getUserTasks = async (
   ];
 
   if (params?.status) {
-    conditions.push(eq(tasks.status, params.status));
+    conditions.push(eq(tasks.statusKey, params.status));
   }
 
   if (params?.projectId) {
@@ -665,7 +815,7 @@ export const getUserTasks = async (
       projectId: tasks.projectId,
       title: tasks.title,
       description: tasks.description,
-      status: tasks.status,
+      status: tasks.statusKey,
       priority: tasks.priority,
       dueDate: tasks.dueDate,
       estimatedHours: tasks.estimatedHours,
@@ -745,15 +895,21 @@ export const assignTask = async (
 
   logger.info('Task assigned', { taskId, userId });
 
-  // ✅ REAL-TIME: Broadcast to project room
-  await broadcastTaskEvent(
-    task.projectId,
-    taskId,
-    BroadcastEvent.TASK_ASSIGNED,
-    {
-      assigneeId: userId,
-    }
-  );
+  // ✅ REAL-TIME: Broadcast to organization
+  const taskDetails = await getTaskById(taskId);
+  const orgId = taskDetails.project?.organizationId;
+
+  if (orgId) {
+    await broadcastTaskEvent(
+      orgId,
+      taskDetails.projectId,
+      taskId,
+      BroadcastEvent.TASK_ASSIGNED,
+      {
+        assigneeId: userId,
+      }
+    );
+  }
 
   return assignee as TaskAssignee;
 };
@@ -790,35 +946,137 @@ export const unassignTask = async (
 
   logger.info('Task unassigned', { taskId, userId });
 
-  // ✅ REAL-TIME: Broadcast to project room
-  await broadcastTaskEvent(
-    task.projectId,
-    taskId,
-    BroadcastEvent.TASK_ASSIGNED,
-    {
-      assigneeId: userId,
-      removed: true,
-    }
-  );
+  // ✅ REAL-TIME: Broadcast to organization
+  const taskDetails = await getTaskById(taskId);
+  const orgId = taskDetails.project?.organizationId;
+
+  if (orgId) {
+    await broadcastTaskEvent(
+      orgId,
+      taskDetails.projectId,
+      taskId,
+      BroadcastEvent.TASK_ASSIGNED,
+      {
+        assigneeId: userId,
+        removed: true,
+      }
+    );
+  }
 };
 
 /**
- * Update task position (for drag and drop)
+ * Get task by Case ID (Atomic Reference)
  */
+export const getTaskByCaseId = async (
+  organizationId: string,
+  caseId: string
+): Promise<TaskWithDetails> => {
+  const taskResult = await db
+    .select({ id: tasks.id })
+    .from(tasks)
+    .where(
+      and(
+        eq(tasks.organizationId, organizationId),
+        eq(tasks.caseId, caseId),
+        isNull(tasks.deletedAt)
+      )
+    )
+    .limit(1);
+
+  const taskStub = taskResult[0];
+  if (!taskStub) {
+    throw new NotFoundError(`Case with ID ${caseId} not found`);
+  }
+
+  return await getTaskById(taskStub.id);
+};
+
+/**
+ * Bulk assign tasks to a user
+ */
+export const bulkAssignTasks = async (
+  taskIds: string[],
+  userId: string
+): Promise<{ succeeded: string[]; failed: string[] }> => {
+  const succeeded: string[] = [];
+  const failed: string[] = [];
+
+  for (const taskId of taskIds) {
+    try {
+      // We reuse the existing assignTask logic which handles duplicate assignment check
+      await assignTask(taskId, userId);
+      succeeded.push(taskId);
+    } catch (error) {
+      logger.error('Bulk assign failed for task', { taskId, error });
+      failed.push(taskId);
+    }
+  }
+
+  return { succeeded, failed };
+};
+
+/**
+ * Bulk update task status with transition matrix enforcement
+ */
+export const bulkUpdateStatus = async (
+  taskIds: string[],
+  statusKey: TaskStatus,
+  userId: string
+): Promise<{
+  succeeded: string[];
+  failed: { taskId: string; reason: string }[];
+  summary: string;
+}> => {
+  const succeeded: string[] = [];
+  const failed: { taskId: string; reason: string }[] = [];
+
+  for (const taskId of taskIds) {
+    try {
+      await updateTask(taskId, { status: statusKey }, userId);
+      succeeded.push(taskId);
+    } catch (error) {
+      const err = error as Error & { message?: string };
+      logger.error('Bulk status update failed for task', {
+        taskId,
+        error: err,
+      });
+      failed.push({
+        taskId,
+        reason: err?.message || 'Unknown error',
+      });
+    }
+  }
+
+  const summary = `Successfully updated ${succeeded.length} tasks. ${failed.length} failed.`;
+
+  return { succeeded, failed, summary };
+};
+
 export const updateTaskPosition = async (
   taskId: string,
-  newPosition: number
+  position: number
 ): Promise<void> => {
   await db
     .update(tasks)
-    .set({
-      position: newPosition,
-      updatedAt: new Date(),
-    })
-    .where(and(eq(tasks.id, taskId), isNull(tasks.deletedAt)));
+    .set({ position, updatedAt: new Date() })
+    .where(eq(tasks.id, taskId));
 
   // Clear cache
   await cache.del(`task:${taskId}`);
+};
+
+/**
+ * Complete task successfully
+ */
+export const completeTask = async (taskId: string): Promise<Task> => {
+  return await updateTask(taskId, { status: TaskStatus.COMPLETED });
+};
+
+/**
+ * Reopen task
+ */
+export const reopenTask = async (taskId: string): Promise<Task> => {
+  return await updateTask(taskId, { status: TaskStatus.IN_PROGRESS });
 };
 
 // ✅ Export TaskStatus and TaskPriority for backward compatibility with controllers

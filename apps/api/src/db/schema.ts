@@ -94,6 +94,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   createdTasks: many(tasks, { relationName: 'TaskCreator' }),
   passwordResetTokens: many(passwordResetTokens),
   passkeyCredentials: many(passkeyCredentials),
+  notifications: many(notifications),
 }));
 
 // ============================================================================
@@ -205,14 +206,17 @@ export const organizations = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
     description: text('description'),
-    slug: text('slug').unique(),
+    slug: text('slug').unique().notNull(), // Globally unique URL identifier
     website: text('website'),
-    domain: text('domain').unique(), // For SSO auto-discovery (e.g. validiant.com)
+    domain: text('domain').unique(), // For SSO auto-discovery
     ssoEnabled: boolean('sso_enabled').notNull().default(false),
-    industry: text('industry'),
+    industryType: text('industry_type').notNull().default('bgv'), // Spec: default 'bgv'
     size: text('size'),
     logoUrl: text('logo_url'),
-    settings: jsonb('settings').default({}),
+    auditLogRetentionDays: integer('audit_log_retention_days')
+      .default(90)
+      .notNull(),
+    settings: jsonb('settings').default({}), // Extensible enterprise configuration
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -226,6 +230,7 @@ export const organizations = pgTable(
   },
   (table) => ({
     ownerIdx: index('organizations_owner_id_idx').on(table.ownerId),
+    slugIdx: index('organizations_slug_idx').on(table.slug),
   })
 );
 
@@ -240,6 +245,43 @@ export const organizationsRelations = relations(
     members: many(organizationMembers),
     projects: many(projects),
     invitations: many(organizationInvitations),
+    orgRoles: many(orgRoles),
+    notifications: many(notifications),
+  })
+);
+
+// ============================================================================
+// ORGANIZATION ROLES TABLE (Phase 5 Placeholder)
+// ============================================================================
+
+export const orgRoles = pgTable(
+  'org_roles',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    key: varchar('key', { length: 50 }).notNull(),
+    description: text('description'),
+    inheritsFrom: varchar('inherits_from', { length: 50 }),
+    permissions: jsonb('permissions').notNull().default([]),
+    isDefault: boolean('is_default').notNull().default(false),
+    createdById: uuid('created_by_id').references(() => users.id),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
+  },
+  (table) => ({
+    orgIdx: index('org_roles_org_id_idx').on(table.organizationId),
+    keyIdx: unique('org_roles_org_key_unique').on(
+      table.organizationId,
+      table.key
+    ),
   })
 );
 
@@ -257,10 +299,27 @@ export const organizationMembers = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    role: text('role').notNull(), // 'owner' | 'admin' | 'member'
+
+    // Spec: admin, owner, member, manager, executive, viewer
+    role: text('role').notNull().default('member'),
+
+    // Phase 5: references custom roles
+    customRoleId: uuid('custom_role_id').references(() => orgRoles.id, {
+      onDelete: 'set null',
+    }),
+
+    // Who invited this member
+    invitedById: uuid('invited_by_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+
     joinedAt: timestamp('joined_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
+    tosAcceptedAt: timestamp('tos_accepted_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
     deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
   },
   (table) => ({
@@ -465,14 +524,13 @@ export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
 // TASK TABLE
 // ============================================================================
 
-// Type annotation to avoid circular reference error
-export const tasks: ReturnType<typeof pgTable> = pgTable(
+export const tasks = pgTable(
   'tasks',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     title: text('title').notNull(),
     description: text('description'),
-    status: text('status').notNull().default('Unassigned'), // 'Unassigned' | 'Pending' | 'In Progress' | 'Completed' | 'Verified'
+    statusKey: text('status_key').notNull().default('UNASSIGNED'),
     priority: text('priority').notNull().default('medium'), // 'low' | 'medium' | 'high' | 'urgent'
     position: real('position').default(0),
 
@@ -483,6 +541,9 @@ export const tasks: ReturnType<typeof pgTable> = pgTable(
     mapUrl: text('map_url'),
     latitude: real('latitude'),
     longitude: real('longitude'),
+    targetLatitude: real('target_latitude'),
+    targetLongitude: real('target_longitude'),
+    gpsDeviationThreshold: integer('gps_deviation_threshold').default(100),
 
     // Phase 18: Geocoding confidence fields
     geocodeConfidence: integer('geocode_confidence'), // 0 to 100
@@ -499,6 +560,9 @@ export const tasks: ReturnType<typeof pgTable> = pgTable(
     }),
 
     // References
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
     projectId: uuid('project_id')
       .notNull()
       .references(() => projects.id, { onDelete: 'cascade' }),
@@ -529,13 +593,29 @@ export const tasks: ReturnType<typeof pgTable> = pgTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
+
+    // Integration & Architecture Hub (Phase 11/14)
+    caseId: text('case_id'), // Atomic case reference (e.g. CASE-2024-001)
+    verificationTypeId: uuid('verification_type_id').references(
+      () => verificationTypes.id
+    ),
+
+    // SLA Notifications tracking
+    slaAtRiskNotified: boolean('sla_at_risk_notified').default(false).notNull(),
+    slaBreachedNotified: boolean('sla_breached_notified')
+      .default(false)
+      .notNull(),
   },
   (table) => ({
     projectIdx: index('tasks_project_id_idx').on(table.projectId),
     assigneeIdx: index('tasks_assignee_id_idx').on(table.assigneeId),
     parentTaskIdx: index('tasks_parent_task_id_idx').on(table.parentTaskId),
-    statusIdx: index('tasks_status_idx').on(table.status),
+    statusIdx: index('tasks_status_idx').on(table.statusKey),
     priorityIdx: index('tasks_priority_idx').on(table.priority),
+    caseIdUnique: unique('tasks_org_case_id_unique').on(
+      table.organizationId,
+      table.caseId
+    ),
   })
 );
 
@@ -561,6 +641,13 @@ export const tasksRelations = relations(tasks, ({ one, many }) => ({
   }),
   subtasks: many(tasks, { relationName: 'ParentTask' }),
   assignees: many(taskAssignees),
+  verificationType: one(verificationTypes, {
+    fields: [tasks.verificationTypeId],
+    references: [verificationTypes.id],
+  }),
+  fieldValues: many(caseFieldValues),
+  documentUploads: many(caseDocumentUploads),
+  deliveryLogs: many(outboundDeliveryLogs),
 }));
 
 // ============================================================================
@@ -625,6 +712,7 @@ export const taskComments = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
+    mentions: jsonb('mentions').$type<string[]>().default([]),
     attachmentUrl: text('attachment_url'),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
@@ -676,6 +764,10 @@ export const activityLogs = pgTable(
     details: text('details'),
     deviceType: varchar('device_type', { length: 50 }),
     ipAddress: varchar('ip_address', { length: 50 }),
+    userAgent: text('user_agent'), // Forensic auditing Requirement
+    appVersion: varchar('app_version', { length: 20 }), // Forensic auditing Requirement
+    prevHash: varchar('prev_hash', { length: 64 }), // Cryptographic Hash Chain
+    contentHash: varchar('content_hash', { length: 64 }), // SHA-256 of current row content
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -734,41 +826,6 @@ export const timeEntriesRelations = relations(timeEntries, ({ one }) => ({
   }),
   user: one(users, {
     fields: [timeEntries.userId],
-    references: [users.id],
-  }),
-}));
-
-// ============================================================================
-// NOTIFICATIONS (Phase 20 - In-App Notifications)
-// ============================================================================
-
-export const notifications = pgTable(
-  'notifications',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    type: varchar('type', { length: 50 }).notNull(), // 'task_assigned' | 'comment_added' | 'status_changed' | 'kyc_completed' | 'sla_alert'
-    title: text('title').notNull(),
-    content: text('content'),
-    entityId: uuid('entity_id'), // ID of the related task/project/org
-    entityType: varchar('entity_type', { length: 50 }), // 'task' | 'project' | 'organization'
-    isRead: boolean('is_read').notNull().default(false),
-    readAt: timestamp('read_at', { mode: 'date', withTimezone: true }),
-    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => ({
-    userIdx: index('notifications_user_id_idx').on(table.userId),
-    unreadIdx: index('notifications_unread_idx').on(table.userId, table.isRead),
-  })
-);
-
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-  user: one(users, {
-    fields: [notifications.userId],
     references: [users.id],
   }),
 }));
@@ -883,9 +940,6 @@ export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type TimeEntry = typeof timeEntries.$inferSelect;
 export type NewTimeEntry = typeof timeEntries.$inferInsert;
 
-export type Notification = typeof notifications.$inferSelect;
-export type NewNotification = typeof notifications.$inferInsert;
-
 export type Automation = typeof automations.$inferSelect;
 export type NewAutomation = typeof automations.$inferInsert;
 
@@ -893,3 +947,354 @@ export type OrganizationInvitation =
   typeof organizationInvitations.$inferSelect;
 export type NewOrganizationInvitation =
   typeof organizationInvitations.$inferInsert;
+// ============================================================================
+// VERIFICATION TYPES (Phase 11 - Product Architecture)
+// ============================================================================
+
+export const verificationTypes = pgTable(
+  'verification_types',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    code: varchar('code', { length: 50 }).notNull(), // e.g. 'ID_VERIFY', 'CRIMINAL_CHECK'
+    name: text('name').notNull(),
+    slaOverrideHours: integer('sla_override_hours'),
+    isActive: boolean('is_active').notNull().default(true),
+    fieldSchema: jsonb('field_schema').notNull().default([]), // Array of FieldDefinition
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    orgIdx: index('vt_org_idx').on(table.organizationId),
+    orgCodeIdx: unique('vt_org_code_unique').on(
+      table.organizationId,
+      table.code
+    ),
+    activeIdx: index('vt_active_idx').on(table.organizationId, table.isActive),
+  })
+);
+
+export const verificationTypesRelations = relations(
+  verificationTypes,
+  ({ one, many }) => ({
+    organization: one(organizations, {
+      fields: [verificationTypes.organizationId],
+      references: [organizations.id],
+    }),
+    tasks: many(tasks),
+    schemaVersions: many(fieldSchemaVersions),
+  })
+);
+
+export const fieldSchemaVersions = pgTable(
+  'field_schema_versions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    verificationTypeId: uuid('verification_type_id')
+      .notNull()
+      .references(() => verificationTypes.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+    fieldSchema: jsonb('field_schema').notNull(),
+    createdById: uuid('created_by_id').references(() => users.id),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    vtIdx: index('fsv_vt_idx').on(table.verificationTypeId),
+    vtVersionIdx: unique('fsv_vt_version_unique').on(
+      table.verificationTypeId,
+      table.version
+    ),
+  })
+);
+
+// ============================================================================
+// CASE DATA STORAGE (Phase 12 - EAV Pattern)
+// ============================================================================
+
+export const caseFieldValues = pgTable(
+  'case_field_values',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    taskId: uuid('task_id')
+      .notNull()
+      .references(() => tasks.id, { onDelete: 'cascade' }),
+    fieldKey: text('field_key').notNull(),
+    filledBy: uuid('filled_by').references(() => users.id),
+
+    // Typed value storage
+    valueText: text('value_text'),
+    valueNumber: real('value_number'),
+    valueDate: timestamp('value_date', { mode: 'date', withTimezone: true }),
+    valueBoolean: boolean('value_boolean'),
+    valueJson: jsonb('value_json'), // for multi-select/GPS/complex results
+
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    taskFieldIdx: index('cfv_task_field_idx').on(table.taskId, table.fieldKey),
+  })
+);
+
+export const caseFieldValuesRelations = relations(
+  caseFieldValues,
+  ({ one }) => ({
+    task: one(tasks, {
+      fields: [caseFieldValues.taskId],
+      references: [tasks.id],
+    }),
+    user: one(users, {
+      fields: [caseFieldValues.filledBy],
+      references: [users.id],
+    }),
+  })
+);
+
+export const caseDocumentUploads = pgTable(
+  'case_document_uploads',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    taskId: uuid('task_id')
+      .notNull()
+      .references(() => tasks.id, { onDelete: 'cascade' }),
+    fieldKey: text('field_key').notNull(),
+
+    fileName: text('file_name').notNull(),
+    fileUrl: text('file_url').notNull(),
+    mimeType: varchar('mime_type', { length: 100 }),
+    fileSize: integer('file_size'), // in bytes
+
+    uploadedBy: uuid('uploaded_by').references(() => users.id),
+    status: text('status').notNull().default('pending'), // 'pending' | 'verified' | 'tampered'
+    uploadHash: text('upload_hash'), // For integrity
+    tampered: boolean('tampered').default(false),
+    outsideRange: boolean('outside_range').default(false),
+    geoTag: jsonb('geo_tag'), // { latitude, longitude, accuracy, timestamp }
+
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    taskIdx: index('cdu_task_idx').on(table.taskId),
+  })
+);
+
+// ============================================================================
+// NOTIFICATIONS TABLE (Phase 26 - Operational Awareness)
+// ============================================================================
+
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    type: varchar('type', { length: 50 }).notNull(), // 'task_assigned', 'sla_warning', 'sla_breached', etc.
+    title: text('title').notNull(),
+    body: text('body').notNull(),
+    priority: varchar('priority', { length: 20 }).notNull().default('normal'), // 'urgent', 'high', 'normal'
+    actionUrl: text('action_url'),
+    metadata: jsonb('metadata').default({}),
+    groupKey: varchar('group_key', { length: 100 }),
+    isGrouped: boolean('is_grouped').default(false),
+    readAt: timestamp('read_at', { mode: 'date', withTimezone: true }),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
+  },
+  (table) => ({
+    userIdIdx: index('notifications_user_id_idx').on(table.userId),
+    orgIdIdx: index('notifications_org_id_idx').on(table.organizationId),
+    readAtIdx: index('notifications_read_at_idx').on(table.readAt),
+    groupKeyIdx: index('notifications_group_key_idx').on(table.groupKey),
+  })
+);
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  organization: one(organizations, {
+    fields: [notifications.organizationId],
+    references: [organizations.id],
+  }),
+}));
+
+// ============================================================================
+// PARTNER CONNECTIVITY (Phase 13 - External Integrations)
+// ============================================================================
+
+export const bgvPartners = pgTable(
+  'bgv_partners',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    partnerKey: varchar('partner_key', { length: 50 }).notNull(), // Unique key for inbound route
+    name: text('name').notNull(),
+    logoUrl: text('logo_url'),
+
+    // Security
+    inboundApiToken: text('inbound_api_token'), // Hashed
+    outboundApiKey: text('outbound_api_key'), // Encrypted (AES-256-GCM)
+    webhookSigningSecret: text('webhook_signing_secret'), // Encrypted
+    allowedIps: jsonb('allowed_ips').$type<string[]>().default([]),
+    rateLimit: integer('rate_limit').default(60), // req per min
+
+    isActive: boolean('is_active').notNull().default(true),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    orgPartnerUnique: unique('bgv_partners_org_key_unique').on(
+      table.organizationId,
+      table.partnerKey
+    ),
+    apiKeyIdx: index('bgv_partners_key_idx').on(table.partnerKey),
+  })
+);
+
+export const bgvPartnersRelations = relations(bgvPartners, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [bgvPartners.organizationId],
+    references: [organizations.id],
+  }),
+  deliveryLogs: many(outboundDeliveryLogs),
+}));
+
+export const outboundDeliveryLogs = pgTable(
+  'outbound_delivery_logs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    taskId: uuid('task_id')
+      .notNull()
+      .references(() => tasks.id, { onDelete: 'cascade' }),
+    partnerId: uuid('partner_id')
+      .notNull()
+      .references(() => bgvPartners.id, { onDelete: 'cascade' }),
+
+    triggerStatus: text('trigger_status').notNull(), // Status that triggered the delivery
+    payloadSent: jsonb('payload_sent'),
+    responseStatus: integer('response_status'),
+    responseBody: text('response_body'),
+
+    attemptNumber: integer('attempt_number').default(1),
+    deliveredAt: timestamp('delivered_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
+    failedAt: timestamp('failed_at', { mode: 'date', withTimezone: true }),
+    error: text('error'),
+
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    taskIdx: index('odl_task_idx').on(table.taskId),
+    partnerIdx: index('odl_partner_idx').on(table.partnerId),
+  })
+);
+
+export const outboundDeliveryLogsRelations = relations(
+  outboundDeliveryLogs,
+  ({ one }) => ({
+    task: one(tasks, {
+      fields: [outboundDeliveryLogs.taskId],
+      references: [tasks.id],
+    }),
+    partner: one(bgvPartners, {
+      fields: [outboundDeliveryLogs.partnerId],
+      references: [bgvPartners.id],
+    }),
+  })
+);
+
+// ============================================================================
+// ANALYTICS SNAPSHOTS (Phase 27)
+// ============================================================================
+
+export const orgAnalyticsSnapshots = pgTable(
+  'org_analytics_snapshots',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    recordedAt: timestamp('recorded_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    metrics: jsonb('metrics').$type<Record<string, any>>().notNull(),
+  },
+  (table) => ({
+    orgIdx: index('org_analytics_snapshots_org_idx').on(table.organizationId),
+    recordedAtIdx: index('org_analytics_snapshots_recorded_at_idx').on(
+      table.recordedAt
+    ),
+  })
+);
+
+export const orgAnalyticsSnapshotsRelations = relations(
+  orgAnalyticsSnapshots,
+  ({ one }) => ({
+    organization: one(organizations, {
+      fields: [orgAnalyticsSnapshots.organizationId],
+      references: [organizations.id],
+    }),
+  })
+);
+
+// ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+
+export type VerificationType = typeof verificationTypes.$inferSelect;
+export type NewVerificationType = typeof verificationTypes.$inferInsert;
+
+export type FieldSchemaVersion = typeof fieldSchemaVersions.$inferSelect;
+export type NewFieldSchemaVersion = typeof fieldSchemaVersions.$inferInsert;
+
+export type CaseFieldValue = typeof caseFieldValues.$inferSelect;
+export type NewCaseFieldValue = typeof caseFieldValues.$inferInsert;
+
+export type CaseDocumentUpload = typeof caseDocumentUploads.$inferSelect;
+export type NewCaseDocumentUpload = typeof caseDocumentUploads.$inferInsert;
+
+export type BgvPartner = typeof bgvPartners.$inferSelect;
+export type NewBgvPartner = typeof bgvPartners.$inferInsert;
+
+export type OutboundDeliveryLog = typeof outboundDeliveryLogs.$inferSelect;
+export type NewOutboundDeliveryLog = typeof outboundDeliveryLogs.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
+
+export type OrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferSelect;
+export type NewOrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferInsert;

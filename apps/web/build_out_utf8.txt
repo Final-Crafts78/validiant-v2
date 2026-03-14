@@ -1,0 +1,76 @@
+﻿node.exe :  Γ¿» Failed to 
+load next.config.js, see 
+more info here https://nextjs
+.org/docs/messages/next-confi
+g-error
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Us
+ers\manso\AppData\Roaming\ 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: ( Γ¿» Fa  
+  iled to ...xt-config-err   
+ or:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+> Build error occurred
+Error: Cannot find module 
+'next-intl/plugin'
+Require stack:
+- C:\Users\manso\OneDrive\Doc
+uments\Validiant-v2\validiant
+-v2\apps\web\next.config.js
+    at Function.<anonymous> (
+node:internal/modules/cjs/loa
+der:1383:15)
+    at C:\Users\manso\OneDriv
+e\Documents\Validiant-v2\vali
+diant-v2\node_modules\.pnpm\n
+ext@14.2.35_@playwright+te_35
+1571a2f2e06b1366bd488be34dee5
+a\node_modules\next\dist\serv
+er\require-hook.js:55:36
+    at defaultResolveImpl (no
+de:internal/modules/cjs/loade
+r:1025:19)
+    at 
+resolveForCJSWithHooks (node:
+internal/modules/cjs/loader:1
+030:22)
+    at Function._load (node:i
+nternal/modules/cjs/loader:11
+92:37)
+    at 
+TracingChannel.traceSync (nod
+e:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:i
+nternal/modules/cjs/loader:23
+7:24)
+    at Module.<anonymous> (no
+de:internal/modules/cjs/loade
+r:1463:12)
+    at mod.require (C:\Users\
+manso\OneDrive\Documents\Vali
+diant-v2\validiant-v2\node_mo
+dules\.pnpm\next@14.2.35_@pla
+ywright+te_351571a2f2e06b1366
+bd488be34dee5a\node_modules\n
+ext\dist\server\require-hook.
+js:65:28)
+    at require (node:internal
+/modules/helpers:147:16) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\manso\\OneDri
+ve\\Documents\\Validiant-v2\\
+validiant-v2\\apps\\web\\next
+.config.js'
+  ]
+}

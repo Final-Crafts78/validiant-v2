@@ -1,0 +1,365 @@
+'use client';
+
+import React, { useState } from 'react';
+import {
+  Shield,
+  Plus,
+  Check,
+  X,
+  Info,
+  Users,
+  Lock,
+  Layout,
+  FileText,
+  Loader2,
+  Save,
+  ChevronRight,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useWorkspaceStore } from '@/store/workspace';
+import { useOrgRoles } from '@/hooks/useOrganizations';
+
+const PERMISSION_GROUPS = [
+  {
+    name: 'Cases & Field Work',
+    icon: FileText,
+    permissions: [
+      {
+        key: 'cases.read',
+        label: 'View Cases',
+        description: 'Can search and view case details.',
+      },
+      {
+        key: 'cases.create',
+        label: 'Create Cases',
+        description: 'Can initiate new verification requests.',
+      },
+      {
+        key: 'cases.update',
+        label: 'Update Cases',
+        description: 'Can modify case fields and status.',
+      },
+      {
+        key: 'cases.verify',
+        label: 'Verify Evidence',
+        description: 'Can approve/verify forensic evidence.',
+      },
+      {
+        key: 'cases.delete',
+        label: 'Archive Cases',
+        description: 'Can archive or delete case records.',
+      },
+    ],
+  },
+  {
+    name: 'Team Management',
+    icon: Users,
+    permissions: [
+      {
+        key: 'users.invite',
+        label: 'Invite Members',
+        description: 'Can generate magic links for new users.',
+      },
+      {
+        key: 'users.manage',
+        label: 'Manage Members',
+        description: 'Can remove users or change their roles.',
+      },
+      {
+        key: 'roles.manage',
+        label: 'Manage Roles',
+        description: 'Can create and edit custom roles.',
+      },
+    ],
+  },
+  {
+    name: 'Organization & Whitelabel',
+    icon: Layout,
+    permissions: [
+      {
+        key: 'branding.update',
+        label: 'Update Branding',
+        description: 'Can change logo, colors, and display name.',
+      },
+      {
+        key: 'billing.manage',
+        label: 'Billing & Subscription',
+        description: 'Can manage enterprise plan and invoices.',
+      },
+      {
+        key: 'audit.read',
+        label: 'View Audit Logs',
+        description: 'Can access security and activity logs.',
+      },
+    ],
+  },
+];
+
+export default function RolesSettings() {
+  const activeOrgId = useWorkspaceStore((state) => state.activeOrgId);
+  const { data: roles, isLoading: isLoadingRoles } = useOrgRoles(activeOrgId);
+
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newRoleName, setNewRoleName] = useState('');
+
+  const selectedRole = roles?.find((r) => r.id === selectedRoleId);
+
+  // Default to first role if none selected
+  React.useEffect(() => {
+    if (roles?.length && !selectedRoleId) {
+      setSelectedRoleId(roles?.[0]?.id || '');
+    }
+  }, [roles, selectedRoleId]);
+
+  const togglePermission = (permKey: string) => {
+    // Logic for updating permissions will go here in next phase
+    console.log('Toggle permission:', permKey);
+  };
+
+  if (isLoadingRoles) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-24">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Roles & Permissions
+          </h1>
+          <p className="text-slate-500 text-sm">
+            Define granular access control for your team members.
+          </p>
+        </div>
+        <button
+          onClick={() => setIsCreating(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          Create New Role
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Roles Sidebar */}
+        <div className="lg:col-span-1 space-y-3">
+          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+            Available Roles
+          </h3>
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            {roles?.map((role) => (
+              <button
+                key={role.id}
+                onClick={() => setSelectedRoleId(role.id)}
+                className={cn(
+                  'w-full flex items-center justify-between p-4 text-left transition-all border-b border-slate-50 last:border-0 group',
+                  selectedRoleId === role.id
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'hover:bg-slate-50 text-slate-600'
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <Shield
+                    className={cn(
+                      'w-4 h-4',
+                      selectedRoleId === role.id
+                        ? 'text-primary-600'
+                        : 'text-slate-400'
+                    )}
+                  />
+                  <div>
+                    <p className="text-sm font-bold">{role.name}</p>
+                    <p className="text-[10px] uppercase font-medium text-slate-400">
+                      {role.isDefault ? 'System' : 'Custom'}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight
+                  className={cn(
+                    'w-4 h-4 transition-transform',
+                    selectedRoleId === role.id
+                      ? 'translate-x-0 opacity-100'
+                      : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Permissions Builder */}
+        <div className="lg:col-span-3">
+          {selectedRole ? (
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900">
+                      {selectedRole.name}
+                    </h2>
+                    <p className="text-xs text-slate-500 max-w-md">
+                      {selectedRole.description ||
+                        'Configurable permissions for this role.'}
+                    </p>
+                  </div>
+                </div>
+                {selectedRole.isDefault && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-lg border border-slate-200">
+                    <Lock className="w-3 h-3" />
+                    READ ONLY (SYSTEM ROLE)
+                  </div>
+                )}
+              </div>
+
+              <div className="p-6 space-y-8">
+                {PERMISSION_GROUPS.map((group) => {
+                  const Icon = group.icon;
+                  return (
+                    <div key={group.name} className="space-y-4">
+                      <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <Icon className="w-4 h-4 text-slate-400" />
+                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                          {group.name}
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {group.permissions.map((perm) => {
+                          const isEnabled =
+                            selectedRole.permissions.includes(perm.key) ||
+                            selectedRole.key === 'owner';
+                          return (
+                            <button
+                              key={perm.key}
+                              disabled={selectedRole.isDefault}
+                              onClick={() => togglePermission(perm.key)}
+                              className={cn(
+                                'flex items-start gap-4 p-4 rounded-2xl border transition-all text-left group',
+                                isEnabled
+                                  ? 'bg-emerald-50/30 border-emerald-100 ring-1 ring-emerald-500/10'
+                                  : 'bg-white border-slate-100 hover:border-slate-200'
+                              )}
+                            >
+                              <div
+                                className={cn(
+                                  'mt-1 w-5 h-5 rounded-md flex items-center justify-center transition-all',
+                                  isEnabled
+                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
+                                    : 'bg-slate-100 text-slate-300'
+                                )}
+                              >
+                                {isEnabled ? (
+                                  <Check className="w-3.5 h-3.5" />
+                                ) : (
+                                  <X className="w-3.5 h-3.5" />
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <p
+                                  className={cn(
+                                    'text-sm font-bold',
+                                    isEnabled
+                                      ? 'text-slate-900'
+                                      : 'text-slate-500'
+                                  )}
+                                >
+                                  {perm.label}
+                                </p>
+                                <p className="text-[10px] text-slate-400 leading-relaxed font-medium mt-0.5">
+                                  {perm.description}
+                                </p>
+                              </div>
+                              <Info className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!selectedRole.isDefault && (
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+                  <button className="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all">
+                    <Save className="w-4 h-4" />
+                    Save Changes
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-20 bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-3xl text-center">
+              <Shield className="w-12 h-12 text-slate-300 mb-4" />
+              <h3 className="text-lg font-bold text-slate-900">
+                No Role Selected
+              </h3>
+              <p className="text-sm text-slate-500 mt-1 max-w-xs">
+                Select a role from the sidebar to view and manage its
+                permissions.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Create Role Modal Placeholder */}
+      {isCreating && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold text-slate-900">
+                Create Custom Role
+              </h3>
+              <button
+                onClick={() => setIsCreating(false)}
+                className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500">
+                  Role Name
+                </label>
+                <input
+                  type="text"
+                  value={newRoleName}
+                  onChange={(e) => setNewRoleName(e.target.value)}
+                  placeholder="e.g. Regional Manager"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 outline-none"
+                />
+              </div>
+              <p className="text-[10px] text-slate-400 leading-relaxed italic">
+                Custom roles inherit from the basic 'Member' role and allow you
+                to add specific granular permissions.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsCreating(false)}
+                className="flex-1 py-3 text-slate-600 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setIsCreating(false)}
+                className="flex-1 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary-200 transition-all"
+              >
+                Create Role
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

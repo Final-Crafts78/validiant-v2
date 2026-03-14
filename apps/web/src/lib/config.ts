@@ -126,27 +126,29 @@ export const ROUTES = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
 
+  DASHBOARD_ROOT: '/dashboard',
+
   // Protected routes - Dashboard
-  DASHBOARD: '/dashboard',
+  DASHBOARD: (orgSlug: string) => `/${orgSlug}/dashboard`,
 
   // Projects
-  PROJECTS: '/dashboard/projects',
-  PROJECT_DETAIL: (id: string) => `/dashboard/projects/${id}`,
+  PROJECTS: (orgSlug: string) => `/${orgSlug}/projects`,
+  PROJECT_DETAIL: (orgSlug: string, id: string) => `/${orgSlug}/projects/${id}`,
 
   // Tasks
-  TASKS: '/dashboard/tasks',
-  TASK_DETAIL: (id: string) => `/dashboard/tasks/${id}`,
+  TASKS: (orgSlug: string) => `/${orgSlug}/tasks`,
+  TASK_DETAIL: (orgSlug: string, id: string) => `/${orgSlug}/tasks/${id}`,
 
   // Organizations
-  ORGANIZATIONS: '/dashboard/organizations',
-  ORGANIZATION_DETAIL: (id: string) => `/dashboard/organizations/${id}`,
+  ORGANIZATIONS: '/organizations',
+  ORGANIZATION_DETAIL: (id: string) => `/organizations/${id}`,
 
   // Profile
-  PROFILE: '/dashboard/profile',
-  SETTINGS: '/dashboard/settings',
+  PROFILE: (orgSlug: string) => `/${orgSlug}/profile`,
+  SETTINGS: (orgSlug: string) => `/${orgSlug}/settings`,
 
   // Onboarding
-  ONBOARDING: '/dashboard/onboarding',
+  ONBOARDING: '/onboarding',
 
   // Invite
   ACCEPT_INVITE: '/accept-invite',

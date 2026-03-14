@@ -9,9 +9,6 @@
     "start": "wrangler dev",
     "deploy": "wrangler deploy --dry-run",
     "deploy:prod": "wrangler deploy",
-    "party:dev": "partykit dev",
-    "party:deploy": "partykit deploy",
-    "dev:all": "concurrently \"npm run dev\" \"npm run party:dev\"",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit",
     "db:generate": "drizzle-kit generate:pg",
@@ -59,7 +56,6 @@
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.20.13",
-    "partykit": "^0.0.111",
     "typescript": "^5.3.3",
     "wrangler": "latest"
   },
