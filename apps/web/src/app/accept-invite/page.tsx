@@ -61,7 +61,7 @@ function AcceptInviteContent() {
       setStatus('success');
 
       setTimeout(() => {
-        router.push(ROUTES.ORGANIZATIONS);
+        router.push(ROUTES.DASHBOARD_ROOT);
       }, 2000);
     } catch (err: unknown) {
       setStatus('error');
