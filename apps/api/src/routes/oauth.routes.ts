@@ -54,35 +54,19 @@ const unlinkProviderSchema = z.object({
 });
 
 /**
- * Cookie Configuration
+ * Helper: Resolve dynamic cookie options based on active environment.
+ * Ensures that values like domain and secure flags are determined AFTER initEnv.
  */
-const isProduction = env.NODE_ENV === 'production';
-
-const accessTokenCookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: 'Lax' as const,
-  maxAge: 3600, // 1 hour
-  path: '/',
-  domain: isProduction ? '.validiant.in' : undefined,
-};
-
-const refreshTokenCookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: 'Lax' as const,
-  maxAge: 604800, // 7 days
-  path: '/',
-  domain: isProduction ? '.validiant.in' : undefined,
-};
-
-// stateCookieOptions intentionally has NO domain — remains host-only for strict CSRF security
-const stateCookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: 'Lax' as const,
-  maxAge: 600, // 10 minutes
-  path: '/',
+const getOAuthCookieOptions = (maxAge: number, isHostOnly = false) => {
+  const isProd = env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: true, // OAuth cookies should always be secure on Edge
+    sameSite: 'Lax' as const,
+    maxAge,
+    path: '/',
+    domain: !isHostOnly && isProd ? '.validiant.in' : undefined,
+  };
 };
 
 // ============================================================================
@@ -101,7 +85,7 @@ app.get('/google', async (c) => {
     const { authUrl, state } = await initiateGoogleOAuth();
 
     // Store state in HttpOnly cookie (CSRF protection)
-    setCookie(c, 'oauth_state', state, stateCookieOptions);
+    setCookie(c, 'oauth_state', state, getOAuthCookieOptions(600, true));
 
     logger.info('Google OAuth initiated', { state });
 
@@ -159,21 +143,23 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     );
 
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(
+      c,
+      'accessToken',
+      tokens.accessToken,
+      getOAuthCookieOptions(3600)
+    );
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      refreshTokenCookieOptions
+      getOAuthCookieOptions(604800)
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      secure: isProduction,
-      sameSite: 'Lax' as const,
-      maxAge: 3600,
-      path: '/',
-      domain: isProduction ? '.validiant.in' : undefined,
+      ...getOAuthCookieOptions(3600),
+      httpOnly: false,
     });
 
     logger.info('Google OAuth successful', {
@@ -221,7 +207,7 @@ app.get('/github', async (c) => {
     const { authUrl, state } = await initiateGitHubOAuth();
 
     // Store state in HttpOnly cookie (CSRF protection)
-    setCookie(c, 'oauth_state', state, stateCookieOptions);
+    setCookie(c, 'oauth_state', state, getOAuthCookieOptions(600, true));
 
     logger.info('GitHub OAuth initiated', { state });
 
@@ -279,21 +265,23 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
     );
 
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(
+      c,
+      'accessToken',
+      tokens.accessToken,
+      getOAuthCookieOptions(3600)
+    );
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      refreshTokenCookieOptions
+      getOAuthCookieOptions(604800)
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      secure: isProduction,
-      sameSite: 'Lax' as const,
-      maxAge: 3600,
-      path: '/',
-      domain: isProduction ? '.validiant.in' : undefined,
+      ...getOAuthCookieOptions(3600),
+      httpOnly: false,
     });
 
     logger.info('GitHub OAuth successful', {

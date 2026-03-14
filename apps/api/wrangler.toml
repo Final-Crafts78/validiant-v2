@@ -14,6 +14,7 @@ FRONTEND_URL = "https://www.validiant.in"
 CORS_ORIGIN = "https://www.validiant.in"
 WEB_APP_URL = "https://www.validiant.in"
 GOOGLE_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/google/callback"
+GITHUB_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/github/callback"
 
 [observability]
 enabled = true

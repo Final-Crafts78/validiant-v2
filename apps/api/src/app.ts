@@ -106,6 +106,7 @@ const allowedOrigins: string[] = [
   'http://localhost:3000',
   'https://validiant.in',
   'https://www.validiant.in',
+  'https://app.validiant.in',
 ];
 
 /**
