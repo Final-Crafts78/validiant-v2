@@ -175,7 +175,26 @@ export const createHonoApp = () => {
   app.use('/api/v1/*', rateLimit(200, 60, 'rl:api'));
 
   // Tenant Isolation: Automatically scope every request
-  app.use('/api/v1/*', tenantIsolation);
+  // Skip isolation for public auth and oauth routes
+  app.use('/api/v1/*', async (c, next) => {
+    const path = c.req.path;
+    const publicPaths = [
+      '/api/v1/oauth',
+      '/api/v1/auth/login',
+      '/api/v1/auth/register',
+      '/api/v1/auth/refresh',
+      '/api/v1/auth/forgot-password',
+      '/api/v1/auth/reset-password',
+      '/api/v1/webhook',
+      '/api/v1/inbound',
+    ];
+
+    if (publicPaths.some((p) => path.startsWith(p))) {
+      return next();
+    }
+
+    return tenantIsolation(c, next);
+  });
 
   // ============================================================================
   // HEALTH CHECK

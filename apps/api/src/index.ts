@@ -10,6 +10,10 @@ import { runAllEnterpriseBackups } from './services/backup.service';
 import { checkSLAs } from './workers/sla-monitor';
 import { rollupAnalytics } from './workers/analytics-rollup';
 import { purgeAuditLogs } from './workers/audit-retention';
+import { RealtimeRoom } from './durable-objects/realtime.do';
+
+// Export Durable Objects for Cloudflare Workers runtime
+export { RealtimeRoom };
 
 export default {
   // 1. Standard HTTP requests handled by Hono

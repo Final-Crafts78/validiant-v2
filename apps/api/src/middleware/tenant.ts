@@ -30,6 +30,7 @@ export const tenantIsolation = async (
 ): Promise<Response | void> => {
   if (
     c.req.path.includes('/auth/') ||
+    c.req.path.includes('/oauth/') ||
     c.req.path.includes('/inbound/') ||
     c.req.path.includes('/webhook') ||
     c.req.path === '/api/v1/contact'
