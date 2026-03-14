@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10}} />
                 <Tooltip cursor={{fill: '#f8fafc'}} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                  { [0, 1, 2, 3].map((entry, index) => (
+                  { [0, 1, 2, 3].map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={['#cbd5e1', '#3b82f6', '#f59e0b', '#10b981'][index]} />
                   ))}
                 </Bar>
