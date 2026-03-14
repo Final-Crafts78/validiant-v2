@@ -66,8 +66,10 @@ export function useRealtime() {
       return;
     }
 
-    // Read token from auth store (cross-site EventSource requires token in URL)
+    // Read token from auth store
     const accessToken = useAuthStore.getState().accessToken;
+
+    if (!accessToken) return;
 
     // Close existing connection if any
     if (eventSourceRef.current) {
@@ -109,7 +111,7 @@ export function useRealtime() {
       es.close();
       eventSourceRef.current = null;
     };
-  }, [activeOrgId, queryClient]);
+  }, [activeOrgId, userId, queryClient, useAuthStore((s) => s.accessToken)]);
 }
 
 /**

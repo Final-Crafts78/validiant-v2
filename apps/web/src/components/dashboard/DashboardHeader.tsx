@@ -87,7 +87,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
       },
       {
         name: 'Organizations',
-        href: ROUTES.ORGANIZATIONS,
+        href: ROUTES.ORGANIZATIONS(slug),
         icon: Building2,
       },
       {
@@ -131,7 +131,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
 
   const dashboardHref = activeOrgSlug
     ? ROUTES.DASHBOARD(activeOrgSlug)
-    : ROUTES.ORGANIZATIONS;
+    : '/dashboard';
 
   return (
     <>

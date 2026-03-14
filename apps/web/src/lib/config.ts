@@ -140,7 +140,7 @@ export const ROUTES = {
   TASK_DETAIL: (orgSlug: string, id: string) => `/${orgSlug}/tasks/${id}`,
 
   // Organizations
-  ORGANIZATIONS: '/organizations',
+  ORGANIZATIONS: (orgSlug: string) => `/${orgSlug}/organizations`,
   ORGANIZATION_DETAIL: (id: string) => `/organizations/${id}`,
 
   // Profile

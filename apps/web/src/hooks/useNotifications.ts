@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, patch, del } from '@/lib/api';
 import { queryKeys } from '@/lib/query-keys';
 import { useWorkspaceStore } from '@/store/workspace';
+import { useAuthStore } from '@/store/auth';
 
 /**
  * Notification Interface
@@ -28,17 +29,18 @@ export interface Notification {
  */
 export const useNotifications = () => {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   return useQuery<Notification[]>({
     queryKey: queryKeys.notifications.list(activeOrgId || ''),
     queryFn: async () => {
-      if (!activeOrgId) return [];
+      if (!activeOrgId || !accessToken) return [];
       const response = await get<{ data: Notification[] }>(
         '/notifications'
       );
       return response.data.data;
     },
-    enabled: !!activeOrgId,
+    enabled: !!activeOrgId && !!accessToken,
   });
 };
 
