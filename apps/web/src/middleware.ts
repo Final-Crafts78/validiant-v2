@@ -13,7 +13,7 @@ import type { NextRequest } from 'next/server';
  * These routes require authentication
  */
 const PROTECTED_ROUTES = [
-  '/onboarding',
+  '/dashboard/onboarding',
   '/organizations',
   '/profile',
   '/dashboard',
@@ -21,7 +21,7 @@ const PROTECTED_ROUTES = [
 
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
-const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/onboarding'];
+const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/dashboard/onboarding'];
 
 /**
  * Check if path matches any route pattern

@@ -148,7 +148,7 @@ export const ROUTES = {
   SETTINGS: (orgSlug: string) => `/${orgSlug}/settings`,
 
   // Onboarding
-  ONBOARDING: '/onboarding',
+  ONBOARDING: '/dashboard/onboarding',
 
   // Invite
   ACCEPT_INVITE: '/accept-invite',

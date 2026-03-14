@@ -12,7 +12,12 @@ This document tracks known issues, architectural quirks, and deployment "gotchas
 **Cause**: The native browser `EventSource` API has limited support for custom headers and cross-site cookies. Even with `withCredentials: true`, `SameSite=Lax` cookies may not be sent from `www.validiant.in` to `api.validiant.in`.
 **Fix**: Pass the `accessToken` as a query parameter (`?token=...`) in the EventSource URL. The `auth.middleware.ts` has been updated to check this query parameter as a fallback.
 
-## 3. Middleware Path Collision (Tenant Isolation)
+## 3. Onboarding Route Mismatch (404 on Login)
+**Symptom**: After successful login, users with no organizations are redirected to `/onboarding` which results in a `404 Not Found`.
+**Cause**: `ROUTES.ONBOARDING` was set to `/onboarding`, but the actual page is located at `/dashboard/onboarding`. The `dashboard` layout redirects users to this non-existent path.
+**Fix**: Update `ROUTES.ONBOARDING` in `lib/config.ts` to `/dashboard/onboarding` and update `middleware.ts` to reflect the correct path in `PROTECTED_ROUTES` and `SEMI_PUBLIC_ROUTES`.
+
+## 4. Middleware Path Collision (Tenant Isolation)
 **Symptom**: Navigation to `/dashboard` redirects to `/auth/login` even after successful auth.
 **Cause**: The Next.js middleware misidentifies the first path segment (e.g., `dashboard`) as an organization slug because it wasn't in the `publicKeywords` list. This triggers "Org-Scoped" isolation logic which requires an active session.
 **Fix**: Explicitly add global routes (`auth`, `api`, `dashboard`, `profile`, `onboard`, `organizations`) to the `publicKeywords` array in `apps/web/src/middleware.ts`.
