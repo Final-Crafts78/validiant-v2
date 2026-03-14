@@ -62,7 +62,7 @@ const getOAuthCookieOptions = (maxAge: number, isHostOnly = false) => {
   return {
     httpOnly: true,
     secure: true, // OAuth cookies should always be secure on Edge
-    sameSite: 'Lax' as const,
+    sameSite: 'None' as const,
     maxAge,
     path: '/',
     domain: !isHostOnly && isProd ? '.validiant.in' : undefined,
