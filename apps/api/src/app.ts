@@ -103,7 +103,11 @@ export interface Env {
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
 
-  // Bindings
+  // Optional secrets
+  RESEND_API_KEY?: string;
+  REDIS_URL?: string;
+
+  // Cloudflare resource bindings
   BACKUP_BUCKET?: R2Bucket;
   REALTIME_ROOMS: DurableObjectNamespace;
 }
