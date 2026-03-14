@@ -80,7 +80,7 @@ const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 function clearAuthCookies() {
   const cookieStore = cookies();
 
-  console.log(
+  console.warn(
     '[clearAuthCookies] Force clearing cookies with overwrite method'
   );
 
@@ -276,7 +276,7 @@ export async function updateProfileAction(payload: {
     };
   }
 
-  console.log('[updateProfileAction] Payload:', payload);
+  console.warn('[updateProfileAction] Payload:', payload);
 
   try {
     const response = await fetch(`${API_BASE_URL}/users/me`, {
@@ -289,7 +289,7 @@ export async function updateProfileAction(payload: {
       cache: 'no-store',
     });
 
-    console.log('[updateProfileAction] Response status:', response.status);
+    console.warn('[updateProfileAction] Response status:', response.status);
 
     const data = await response.json();
 
@@ -308,7 +308,7 @@ export async function updateProfileAction(payload: {
       };
     }
 
-    console.log('[updateProfileAction] Profile updated successfully');
+    console.warn('[updateProfileAction] Profile updated successfully');
 
     // Force Next.js to dump the old cached data
     revalidatePath('/dashboard/profile');
@@ -385,7 +385,7 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
     const accessToken = cookieStore.get('accessToken')?.value;
 
     if (!accessToken) {
-      console.log('[getCurrentUserAction] No access token found');
+      console.warn('[getCurrentUserAction] No access token found');
       return {
         success: false,
         error: 'Unauthenticated',
@@ -393,7 +393,7 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log(
+    console.warn(
       '[getCurrentUserAction] Fetching user from API:',
       `${API_BASE_URL}/auth/me`
     );
@@ -409,7 +409,10 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       cache: 'no-store', // Always fetch fresh data
     });
 
-    console.log('[getCurrentUserAction] API response status:', response.status);
+    console.warn(
+      '[getCurrentUserAction] API response status:',
+      response.status
+    );
 
     // CRITICAL: If unauthorized or forbidden, clear cookies
     if (response.status === 401 || response.status === 403) {
@@ -469,7 +472,7 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       };
     }
 
-    console.log(
+    console.warn(
       '[getCurrentUserAction] Successfully fetched user:',
       data.data.user.email
     );

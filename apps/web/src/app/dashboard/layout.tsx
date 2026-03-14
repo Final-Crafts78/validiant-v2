@@ -29,7 +29,7 @@ export const dynamic = 'force-dynamic';
 /**
  * Fetch user data server-side
  */
-async function getCurrentUser(): Promise<AuthUser | null> {
+async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
   try {
     const cookieStore = cookies();
     const accessToken = cookieStore.get('accessToken');
@@ -55,16 +55,22 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     });
 
     if (response.status === 401 || response.status === 403) {
-      redirect('/api/auth/session-expired');
+      redirect(
+        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+      );
     }
 
     if (!response.ok) {
-      redirect('/api/auth/session-expired');
+      redirect(
+        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+      );
     }
 
     const data = await response.json();
     if (!data.success || !data.data || !data.data.user) {
-      redirect('/api/auth/session-expired');
+      redirect(
+        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+      );
     }
 
     return data.data.user as AuthUser;
@@ -72,7 +78,9 @@ async function getCurrentUser(): Promise<AuthUser | null> {
     if (error instanceof Error && error.message.includes('NEXT_REDIRECT'))
       throw error;
     logger.error('[Dashboard Layout] Error fetching user:', error);
-    redirect('/api/auth/session-expired');
+    redirect(
+      `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+    );
   }
 }
 
@@ -111,18 +119,18 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect(ROUTES.LOGIN);
-  }
-
   const headersList = headers();
   const currentPath =
     headersList.get('x-pathname') ||
     headersList.get('x-invoke-path') ||
     headersList.get('x-next-url') ||
-    '';
+    '/dashboard';
+
+  const user = await getCurrentUser(currentPath);
+
+  if (!user) {
+    redirect(ROUTES.LOGIN);
+  }
 
   if (!user.emailVerified && !currentPath.includes('/dashboard/onboarding')) {
     redirect('/auth/verify-email');

@@ -120,7 +120,7 @@ apiClient.interceptors.request.use(
  * Response Interceptor
  *
  * Handles errors globally:
- * - 401: Clear Zustand auth state, then redirect to /auth/login (session expired)
+ * - 401: Clear Zustand auth state, then redirect to /api/auth/session-expired
  * - 403: Show permission error
  * - 500: Show server error
  */
@@ -147,12 +147,13 @@ apiClient.interceptors.response.use(
 
     // Handle authentication errors (401)
     if (statusCode === 401) {
-      // Check if we're not already on login page to avoid redirect loop
+      // Check if we're not already on an auth page or session-expired to avoid redirect loop
+      // Widening guard to '/auth/' covers login, register, forgot-password, etc.
       if (
         typeof window !== 'undefined' &&
-        !window.location.pathname.includes('/auth/login')
+        !window.location.pathname.includes('/auth/')
       ) {
-        logger.warn('[API] Authentication required, redirecting to login...');
+        logger.warn('[API] Authentication required, redirecting to session-expired handler...');
 
         // CRITICAL FIX: Clear Zustand auth state before redirecting.
         // Without this, the login page's auth guard sees isAuthenticated=true
@@ -160,9 +161,9 @@ apiClient.interceptors.response.use(
         // infinite redirect loop.
         useAuthStore.getState().clearAuth();
 
-        // Redirect to login page
+        // Redirect to session-expired handler to clear HttpOnly cookies
         window.location.href =
-          '/auth/login?redirect=' +
+          '/api/auth/session-expired?redirect=' +
           encodeURIComponent(window.location.pathname);
       }
     }

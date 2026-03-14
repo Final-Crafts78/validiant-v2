@@ -20,6 +20,10 @@ import { ROUTES } from '@/lib/config';
  * Clears authentication cookies and redirects to login
  */
 export async function GET(request: Request) {
+  // ADD: extract redirect param
+  const { searchParams } = new URL(request.url);
+  const redirectTo = searchParams.get('redirect');
+
   const cookieStore = cookies();
 
   // Cookie configuration mirroring auth.actions.ts
@@ -34,6 +38,8 @@ export async function GET(request: Request) {
   console.log('[Session Cleanup] Clearing authentication cookies');
 
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
+  // CRITICAL: Uses explicit overwrite method + delete() fallback to force browser compliance.
+  // Mirrors clearAuthCookies() in auth.actions.ts
   cookieStore.set({
     name: 'accessToken',
     value: '',
@@ -52,11 +58,17 @@ export async function GET(request: Request) {
     name: 'accessToken',
     ...COOKIE_OPTIONS,
   });
+
   cookieStore.delete({
     name: 'refreshToken',
     ...COOKIE_OPTIONS,
   });
 
-  // Redirect back to login
-  return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+  // Redirect back to login, preserving the intended destination if provided
+  const loginUrl = new URL(ROUTES.LOGIN, request.url);
+  if (redirectTo && redirectTo.startsWith('/')) {
+    loginUrl.searchParams.set('redirect', redirectTo);
+  }
+
+  return NextResponse.redirect(loginUrl);
 }
