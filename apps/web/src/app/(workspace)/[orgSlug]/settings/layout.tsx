@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   Settings as SettingsIcon,
   Palette,
@@ -13,45 +13,46 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const settingsNav = [
-  {
-    name: 'General',
-    href: '/dashboard/settings/general',
-    icon: SettingsIcon,
-  },
-  {
-    name: 'Branding',
-    href: '/dashboard/settings/branding',
-    icon: Palette,
-  },
-  {
-    name: 'Members',
-    href: '/dashboard/settings/members',
-    icon: Users,
-  },
-  {
-    name: 'Roles',
-    href: '/dashboard/settings/roles',
-    icon: ShieldCheck,
-  },
-  {
-    name: 'Case Config',
-    href: '/dashboard/settings/config',
-    icon: Layers,
-  },
-  {
-    name: 'Audit Log',
-    href: '/dashboard/settings/audit',
-    icon: History,
-  },
-];
-
 export default function SettingsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { orgSlug } = useParams() as { orgSlug: string };
+
+  const settingsNav = [
+    {
+      name: 'General',
+      href: `/${orgSlug}/settings/general`,
+      icon: SettingsIcon,
+    },
+    {
+      name: 'Branding',
+      href: `/${orgSlug}/settings/branding`,
+      icon: Palette,
+    },
+    {
+      name: 'Members',
+      href: `/${orgSlug}/settings/members`,
+      icon: Users,
+    },
+    {
+      name: 'Roles',
+      href: `/${orgSlug}/settings/roles`,
+      icon: ShieldCheck,
+    },
+    {
+      name: 'Case Config',
+      href: `/${orgSlug}/settings/config`,
+      icon: Layers,
+    },
+    {
+      name: 'Audit Log',
+      href: `/${orgSlug}/settings/audit`,
+      icon: History,
+    },
+  ];
 
   return (
     <div className="flex flex-col md:flex-row gap-8">

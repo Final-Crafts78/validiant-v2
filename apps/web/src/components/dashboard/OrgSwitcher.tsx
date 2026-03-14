@@ -7,6 +7,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useWorkspaceStore } from '@/store/workspace';
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { Building2, ChevronDown, Check } from 'lucide-react';
@@ -20,6 +21,7 @@ interface LocalOrganization {
 }
 
 export function OrgSwitcher() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
@@ -78,6 +80,10 @@ export function OrgSwitcher() {
               onClick={() => {
                 setActiveOrg(org.id, org.slug || '');
                 setOpen(false);
+                // Redirect to the new organization's dashboard
+                if (org.slug) {
+                  router.push(`/${org.slug}/dashboard`);
+                }
               }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left transition-colors ${
                 org.id === activeOrgId

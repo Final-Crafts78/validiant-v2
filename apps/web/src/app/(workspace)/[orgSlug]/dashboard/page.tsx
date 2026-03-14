@@ -434,12 +434,20 @@ export default function DashboardPage() {
     return <div className="p-8 text-slate-400">No workspace selected.</div>;
 
   // GUEST gets a read-only shell with no action buttons
-  if (isGuest) return <GuestDashboard orgId={activeOrgId} />;
+  if (isGuest) {
+    return <GuestDashboard orgId={activeOrgId} orgSlug={activeOrgSlug} />;
+  }
 
   return <GeneralDashboard orgId={activeOrgId} orgSlug={activeOrgSlug} />;
 }
 
-function GuestDashboard({ orgId: _orgId }: { orgId: string }) {
+function GuestDashboard({
+  orgId: _orgId,
+  orgSlug,
+}: {
+  orgId: string;
+  orgSlug: string;
+}) {
   const router = useRouter();
   const { data: tasksRes } = useQuery({
     queryKey: ['tasks', 'my'],
@@ -474,7 +482,7 @@ function GuestDashboard({ orgId: _orgId }: { orgId: string }) {
               <li
                 key={task.id}
                 className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer"
-                onClick={() => router.push('/dashboard/tasks')}
+                onClick={() => router.push(`/${orgSlug}/tasks`)}
               >
                 <CheckCircle2 className="w-4 h-4 text-slate-300 shrink-0" />
                 <div className="flex-1 min-w-0">

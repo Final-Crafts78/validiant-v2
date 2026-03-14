@@ -209,9 +209,9 @@ function MembersPanel({
 export default function ProjectDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; orgSlug: string };
 }) {
-  const { id } = params;
+  const { id, orgSlug } = params;
   const router = useRouter();
   const { setActiveProject } = useWorkspaceStore();
 
@@ -229,7 +229,7 @@ export default function ProjectDetailPage({
     try {
       await deleteMutation.mutateAsync(id);
       setActiveProject(null as unknown as string);
-      router.push('/dashboard/projects');
+      router.push(`/${orgSlug}/projects`);
     } catch (error) {
       console.error('Failed to delete project:', error);
     }
@@ -267,7 +267,7 @@ export default function ProjectDetailPage({
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Back nav */}
       <button
-        onClick={() => router.push('/dashboard/projects')}
+        onClick={() => router.push(`/${orgSlug}/projects`)}
         className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" /> All Projects
@@ -409,7 +409,7 @@ export default function ProjectDetailPage({
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h2 className="text-base font-semibold text-slate-900">Tasks</h2>
           <button
-            onClick={() => router.push('/dashboard/tasks')}
+            onClick={() => router.push(`/${orgSlug}/tasks`)}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
             Manage Tasks

@@ -6,6 +6,7 @@ import {
   WorkspaceSidebar,
   SidebarExpandTrigger,
 } from '@/components/workspace/WorkspaceSidebar';
+import { CommandPalette } from '@/components/CommandPalette';
 import { cn } from '@validiant/ui';
 
 interface WorkspaceLayoutContentProps {
@@ -50,6 +51,9 @@ export function WorkspaceLayoutContent({
           {children}
         </div>
       </main>
+
+      {/* Portals and Global Components */}
+      <CommandPalette />
 
       {/* Portal target for SidebarPortal is inside WorkspaceSidebar */}
     </div>

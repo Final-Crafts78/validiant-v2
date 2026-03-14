@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useWorkspaceStore } from '@/store/workspace';
 import {
   useOrganizations,
@@ -9,6 +10,8 @@ import {
 import { Users, Mail } from 'lucide-react';
 
 export default function OrganizationsPage() {
+  const router = useRouter();
+  const { orgSlug: _orgSlug } = useParams() as { orgSlug: string };
   const { activeOrgId, setActiveOrg } = useWorkspaceStore();
   const { data: orgs = [], isLoading: orgsLoading } = useOrganizations();
   const { data: members = [], isLoading: membersLoading } =
@@ -54,7 +57,10 @@ export default function OrganizationsPage() {
             {orgs.map((org) => (
               <button
                 key={org.id}
-                onClick={() => setActiveOrg(org.id, org.slug)}
+                onClick={() => {
+                  setActiveOrg(org.id, org.slug);
+                  router.push(`/${org.slug}/dashboard`);
+                }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   org.id === activeOrgId
                     ? 'bg-blue-600 text-white border-blue-600'

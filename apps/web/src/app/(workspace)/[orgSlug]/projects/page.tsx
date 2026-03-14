@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { useWorkspaceStore } from '@/store/workspace';
 import { ProjectStatus, ProjectPriority } from '@validiant/shared';
@@ -35,9 +35,8 @@ const PRIORITY_STYLES: Record<string, string> = {
 };
 
 // ── Create modal ──────────────────────────────────────────────────────────────
-function CreateProjectModal({ onClose }: { onClose: () => void }) {
+function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
   const createMutation = useCreateProject();
-  const router = useRouter();
   const { setActiveProject } = useWorkspaceStore();
 
   const [name, setName] = useState('');
@@ -56,8 +55,7 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
         priority,
       });
       setActiveProject(project.id);
-      onClose();
-      router.push(`/dashboard/projects/${project.id}`);
+      onClose(project.id);
     } catch (error) {
       console.error('Failed to create project:', error);
     }
@@ -118,7 +116,7 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => onClose()}
               className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg"
             >
               Cancel
@@ -133,6 +131,7 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function ProjectsPage() {
   const router = useRouter();
+  const { orgSlug } = useParams() as { orgSlug: string };
   const { setActiveProject } = useWorkspaceStore();
   const { data: projects = [], isLoading, isError } = useProjects();
   const [showCreate, setShowCreate] = useState(false);
@@ -189,7 +188,7 @@ export default function ProjectsPage() {
             key={p.id}
             onClick={() => {
               setActiveProject(p.id);
-              router.push(`/dashboard/projects/${p.id}`);
+              router.push(`/${orgSlug}/projects/${p.id}`);
             }}
             className="bg-white border border-slate-200 rounded-xl p-5 text-left hover:border-blue-400 hover:shadow-md transition-all group"
           >
@@ -262,7 +261,12 @@ export default function ProjectsPage() {
       </div>
 
       {showCreate && (
-        <CreateProjectModal onClose={() => setShowCreate(false)} />
+        <CreateProjectModal
+          onClose={(newId) => {
+            setShowCreate(false);
+            if (newId) router.push(`/${orgSlug}/projects/${newId}`);
+          }}
+        />
       )}
     </div>
   );
