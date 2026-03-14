@@ -16,7 +16,7 @@ import { z } from 'zod';
 /**
  * Environment schema with validation
  */
-const envSchema = z.object({
+export const envSchema = z.object({
   // Server
   NODE_ENV: z
     .enum(['development', 'production', 'test'])

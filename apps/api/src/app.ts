@@ -103,6 +103,9 @@ export interface Env {
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
 
+  // Runtime
+  NODE_ENV?: string;
+
   // Optional secrets
   RESEND_API_KEY?: string;
   REDIS_URL?: string;
