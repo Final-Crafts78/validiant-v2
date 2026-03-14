@@ -57,8 +57,8 @@ const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
  */
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax' as const,
+  secure: true, // MUST be true for SameSite=None
+  sameSite: 'none' as const, // Match Hono backend exactly
   path: '/',
   domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
 };

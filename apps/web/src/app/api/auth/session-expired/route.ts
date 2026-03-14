@@ -29,13 +29,13 @@ export async function GET(request: Request) {
   // Cookie configuration mirroring auth.actions.ts
   const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
+    secure: true, // MUST be true for SameSite=None
+    sameSite: 'none' as const, // Match Hono backend exactly
     path: '/',
     domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
   };
 
-  console.log('[Session Cleanup] Clearing authentication cookies');
+  console.warn('[Session Cleanup] Clearing authentication cookies');
 
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
   // CRITICAL: Uses explicit overwrite method + delete() fallback to force browser compliance.
