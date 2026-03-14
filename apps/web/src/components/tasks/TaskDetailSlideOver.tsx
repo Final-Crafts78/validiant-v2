@@ -16,6 +16,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksApi } from '@/lib/api';
+import { useWorkspaceStore } from '@/store/workspace';
 import { Task, TaskStatus } from '@validiant/shared';
 import {
   X,
@@ -84,6 +85,7 @@ export function TaskDetailSlideOver() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const activeOrgSlug = useWorkspaceStore((s) => s.activeOrgSlug);
   const taskId = searchParams.get('taskId');
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -322,7 +324,7 @@ export function TaskDetailSlideOver() {
                   <button
                     onClick={() =>
                       router.push(
-                        `/dashboard/cases/${(task as any).customFields?.caseId}`
+                        `/${activeOrgSlug}/cases/${(task as any).customFields?.caseId}`
                       )
                     }
                     className="w-full py-2 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"

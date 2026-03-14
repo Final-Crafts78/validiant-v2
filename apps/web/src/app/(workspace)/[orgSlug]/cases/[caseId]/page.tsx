@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function CaseCommandCenterPage() {
-  const { caseId } = useParams() as { caseId: string };
+  const { caseId, orgSlug } = useParams() as { caseId: string; orgSlug: string };
   const router = useRouter();
   const { data: task, isLoading, error } = useCaseHub(caseId);
 
@@ -64,7 +64,7 @@ export default function CaseCommandCenterPage() {
       {/* Navigation Breadcrumbs */}
       <div className="flex items-center gap-2 text-sm text-gray-400">
         <button
-          onClick={() => router.push('/dashboard/tasks')}
+          onClick={() => router.push(`/${orgSlug}/tasks`)}
           className="hover:text-primary-600 transition-colors"
         >
           Command Center

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCommandPaletteStore } from '@/store/command-palette';
+import { useWorkspaceStore } from '@/store/workspace';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 import { get } from '@/lib/api';
 import { debounce } from '@/lib/utils';
@@ -34,7 +35,33 @@ interface CommandItem {
   category: 'Pages' | 'Actions' | 'Recent' | 'Tasks' | 'Users' | 'Search';
   onSelect: () => void;
   shortcut?: string;
-  meta?: any;
+  meta?: {
+    url: string;
+    [key: string]: unknown;
+  };
+}
+
+interface SearchTask {
+  id: string;
+  title: string;
+  clientName?: string;
+  customFields?: {
+    caseId?: string;
+  };
+}
+
+interface SearchUser {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
+interface RecentItem {
+  id: string;
+  title: string;
+  description?: string;
+  category: string;
+  url: string;
 }
 
 const RECENT_KEY = 'validiant_recent_commands';
@@ -42,6 +69,7 @@ const RECENT_KEY = 'validiant_recent_commands';
 export const CommandPalette: React.FC = () => {
   const router = useRouter();
   const { isOpen, query, close, setQuery } = useCommandPaletteStore();
+  const activeOrgSlug = useWorkspaceStore((state) => state.activeOrgSlug);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<CommandItem[]>([]);
@@ -57,7 +85,7 @@ export const CommandPalette: React.FC = () => {
       try {
         const parsed = JSON.parse(saved);
         // Map back to CommandItem (only static ones or navigation ones)
-        const items = parsed.map((p: any) => ({
+        const items = parsed.map((p: RecentItem) => ({
           ...p,
           icon:
             p.category === 'Users'
@@ -122,8 +150,8 @@ export const CommandPalette: React.FC = () => {
         description: 'Go to overview',
         icon: Home,
         category: 'Pages',
-        onSelect: () => router.push('/dashboard'),
-        meta: { url: '/dashboard' },
+        onSelect: () => router.push(`/${activeOrgSlug}/dashboard`),
+        meta: { url: `/${activeOrgSlug}/dashboard` },
       },
       {
         id: 'nav-tasks',
@@ -131,8 +159,8 @@ export const CommandPalette: React.FC = () => {
         description: 'View all verification tasks',
         icon: Zap,
         category: 'Pages',
-        onSelect: () => router.push('/dashboard/tasks'),
-        meta: { url: '/dashboard/tasks' },
+        onSelect: () => router.push(`/${activeOrgSlug}/tasks`),
+        meta: { url: `/${activeOrgSlug}/tasks` },
       },
       {
         id: 'nav-organizations',
@@ -140,8 +168,8 @@ export const CommandPalette: React.FC = () => {
         description: 'Manage teams and entities',
         icon: Users,
         category: 'Pages',
-        onSelect: () => router.push('/dashboard/organizations'),
-        meta: { url: '/dashboard/organizations' },
+        onSelect: () => router.push(`/organizations`),
+        meta: { url: '/organizations' },
       },
       {
         id: 'nav-settings',
@@ -149,8 +177,8 @@ export const CommandPalette: React.FC = () => {
         description: 'Account and system preferences',
         icon: Settings,
         category: 'Pages',
-        onSelect: () => router.push('/dashboard/settings'),
-        meta: { url: '/dashboard/settings' },
+        onSelect: () => router.push(`/${activeOrgSlug}/settings`),
+        meta: { url: `/${activeOrgSlug}/settings` },
       },
       {
         id: 'action-new-case',
@@ -158,11 +186,11 @@ export const CommandPalette: React.FC = () => {
         description: 'Initiate a new BGV case',
         icon: Plus,
         category: 'Actions',
-        onSelect: () => router.push('/dashboard/cases/new'),
+        onSelect: () => router.push(`/${activeOrgSlug}/cases/new`),
         shortcut: 'N',
       },
     ],
-    [router]
+    [router, activeOrgSlug]
   );
 
   // Global Search Logic
@@ -178,7 +206,7 @@ export const CommandPalette: React.FC = () => {
         try {
           const response = await get<{
             success: boolean;
-            data: { tasks: any[]; users: any[] };
+            data: { tasks: SearchTask[]; users: SearchUser[] };
           }>(`/search?q=${encodeURIComponent(q)}`);
 
           if (response.data.success) {
@@ -190,8 +218,13 @@ export const CommandPalette: React.FC = () => {
               description: `Task in ${t.clientName || 'General'}`,
               icon: Zap,
               category: 'Tasks',
-              onSelect: () => router.push(`/dashboard/tasks/${t.id}`),
-              meta: { url: `/dashboard/tasks/${t.id}` },
+              onSelect: () =>
+                router.push(
+                  `/${activeOrgSlug}/cases/${t.customFields?.caseId}/tasks/${t.id}`
+                ),
+              meta: {
+                url: `/${activeOrgSlug}/cases/${t.customFields?.caseId}/tasks/${t.id}`,
+              },
             }));
 
             const userResults: CommandItem[] = users.map((u) => ({
@@ -201,8 +234,12 @@ export const CommandPalette: React.FC = () => {
               icon: User,
               category: 'Users',
               onSelect: () =>
-                router.push(`/dashboard/settings/members?userId=${u.id}`),
-              meta: { url: `/dashboard/settings/members?userId=${u.id}` },
+                router.push(
+                  `/${activeOrgSlug}/settings/members?userId=${u.id}`
+                ),
+              meta: {
+                url: `/${activeOrgSlug}/settings/members?userId=${u.id}`,
+              },
             }));
 
             setSearchResults([...taskResults, ...userResults]);
@@ -213,7 +250,7 @@ export const CommandPalette: React.FC = () => {
           setIsLoading(false);
         }
       }, 300),
-    [router]
+    [router, activeOrgSlug]
   );
 
   useEffect(() => {
