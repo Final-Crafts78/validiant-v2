@@ -7,12 +7,9 @@
 
 import { Hono } from 'hono';
 import { eq, and, sql, gte, lte } from 'drizzle-orm';
-import { authenticate } from '../middleware/auth';
 import { db, schema } from '../db';
 
 const invoiceRoutes = new Hono();
-
-invoiceRoutes.use('*', authenticate);
 
 /**
  * GET /api/v1/invoices/project/:projectId

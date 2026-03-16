@@ -6,13 +6,10 @@
  */
 
 import { Hono } from 'hono';
-import { authenticate } from '../middleware/auth';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../db';
 
 const aiRoutes = new Hono();
-
-aiRoutes.use('*', authenticate);
 
 /**
  * POST /api/v1/ai/summarize/:taskId

@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { authenticate } from '../middleware/auth';
 import { env } from 'hono/adapter';
 import { inArray } from 'drizzle-orm';
 import { db, schema } from '../db';
@@ -18,8 +17,6 @@ interface OptimizeEnv extends Record<string, unknown> {
 }
 
 const optimizeRoutes = new Hono();
-
-optimizeRoutes.use('*', authenticate);
 
 /**
  * POST /api/v1/tasks/optimize

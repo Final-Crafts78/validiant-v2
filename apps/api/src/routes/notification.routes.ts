@@ -1,15 +1,14 @@
-import { Hono } from 'hono';
 import * as notificationController from '../controllers/notification.controller';
-import { authenticate } from '../middleware/auth';
-import { tenantIsolation } from '../middleware/tenant';
+import { Hono } from 'hono';
 
 const router = new Hono();
 
-// Apply auth and tenant isolation to all notification routes
-router.use('*', authenticate, tenantIsolation);
+// ============================================================================
+// NOTIFICATION ENDPOINTS
+// ============================================================================
 
 /**
- * GET /api/v1/notifications
+ * GET /
  * Fetch user notifications for active org
  */
 router.get('/', notificationController.getNotifications);

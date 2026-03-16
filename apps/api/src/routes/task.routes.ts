@@ -22,12 +22,8 @@ import {
 } from '@validiant/shared';
 import * as taskController from '../controllers/task.controller';
 import * as caseDataController from '../controllers/case-data.controller';
-import { authenticate } from '../middleware/auth';
 
 const app = new Hono();
-
-// Authentication required for all task routes
-app.use('*', authenticate);
 
 // CRUD operations
 app.post('/', zValidator('json', createTaskSchema), taskController.createTask);

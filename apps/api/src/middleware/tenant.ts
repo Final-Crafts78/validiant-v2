@@ -28,19 +28,7 @@ export const tenantIsolation = async (
   c: Context,
   next: Next
 ): Promise<Response | void> => {
-  if (
-    c.req.path.includes('/auth/') ||
-    c.req.path.includes('/oauth/') ||
-    c.req.path.includes('/inbound/') ||
-    c.req.path.includes('/webhook') ||
-    c.req.path === '/api/v1/contact' ||
-    c.req.path === '/api/v1/organizations/my' ||
-    (c.req.path === '/api/v1/organizations' && c.req.method === 'POST')
-  ) {
-    await next();
-    return;
-  }
-
+  // Path exclusions are now handled globally in app.ts for consistency
   const user = c.get('user') as UserContext | undefined;
 
   if (!user || !user.userId) {

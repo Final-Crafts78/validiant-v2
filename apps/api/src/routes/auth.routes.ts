@@ -24,7 +24,6 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { userLoginSchema, userRegistrationSchema } from '@validiant/shared';
 import * as authController from '../controllers/auth.controller';
-import { authenticate } from '../middleware/auth';
 
 /**
  * Auth router instance.
@@ -78,7 +77,7 @@ authRoutes.post('/refresh', authController.refresh);
  * Requires: authenticate middleware
  * Response: 200 OK with user object
  */
-authRoutes.get('/me', authenticate, authController.getMe);
+authRoutes.get('/me', authController.getMe);
 
 /**
  * POST /logout
@@ -87,7 +86,7 @@ authRoutes.get('/me', authenticate, authController.getMe);
  * Requires: authenticate middleware
  * Response: 200 OK with success message
  */
-authRoutes.post('/logout', authenticate, authController.logout);
+authRoutes.post('/logout', authController.logout);
 
 /**
  * POST /switch-org
@@ -98,7 +97,6 @@ authRoutes.post('/logout', authenticate, authController.logout);
  */
 authRoutes.post(
   '/switch-org',
-  authenticate,
   zValidator(
     'json',
     z.object({

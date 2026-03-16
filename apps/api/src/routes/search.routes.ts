@@ -11,12 +11,9 @@
 
 import { Hono } from 'hono';
 import { sql, eq, and } from 'drizzle-orm';
-import { authenticate } from '../middleware/auth';
 import { db, schema } from '../db';
 
 const searchRoutes = new Hono();
-
-searchRoutes.use('*', authenticate);
 
 /**
  * GET /api/v1/search

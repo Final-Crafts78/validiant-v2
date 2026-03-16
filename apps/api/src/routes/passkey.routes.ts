@@ -32,7 +32,6 @@ import {
   updatePasskeyDeviceName,
 } from '../services/passkey.service';
 import { generateTokens } from '../services/auth.service';
-import { authenticate } from '../middleware/auth';
 import { logger } from '../utils/logger';
 import { env } from '../config/env.config';
 import { challengeCookieOptions } from '../config/webauthn.config';
@@ -98,7 +97,6 @@ const refreshTokenCookieOptions = {
  */
 app.post(
   '/register/options',
-  authenticate,
   zValidator('json', registrationOptionsSchema),
   async (c) => {
     try {
@@ -158,7 +156,6 @@ app.post(
  */
 app.post(
   '/register/verify',
-  authenticate,
   zValidator('json', registrationVerifySchema),
   async (c) => {
     try {
@@ -382,7 +379,7 @@ app.post(
  * @desc    Get user's passkeys
  * @access  Protected
  */
-app.get('/list', authenticate, async (c) => {
+app.get('/list', async (c) => {
   try {
     const userId = c.get('userId' as never) as string;
 
@@ -422,7 +419,7 @@ app.get('/list', authenticate, async (c) => {
  * @desc    Delete a passkey
  * @access  Protected
  */
-app.delete('/:credentialID', authenticate, async (c) => {
+app.delete('/:credentialID', async (c) => {
   try {
     const userId = c.get('userId' as never) as string;
     const credentialID = c.req.param('credentialID');
@@ -467,7 +464,6 @@ app.delete('/:credentialID', authenticate, async (c) => {
  */
 app.patch(
   '/:credentialID/name',
-  authenticate,
   zValidator('json', updateDeviceNameSchema),
   async (c) => {
     try {

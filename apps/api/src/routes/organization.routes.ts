@@ -40,19 +40,12 @@ import {
 } from '@validiant/shared';
 import * as organizationController from '../controllers/organization.controller';
 import * as projectController from '../controllers/project.controller';
-import { authenticate } from '../middleware/auth';
 
 /**
  * Create organization routes Hono instance
  * All routes require authentication
  */
 const app = new Hono();
-
-/**
- * Apply authentication middleware to all organization routes
- * CRITICAL: Must be authenticated to access any organization endpoint
- */
-app.use('*', authenticate);
 
 // ============================================================================
 // ORGANIZATION CRUD ENDPOINTS

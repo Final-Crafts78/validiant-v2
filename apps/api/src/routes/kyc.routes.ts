@@ -8,7 +8,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { authenticate } from '../middleware/auth';
 import { env } from 'hono/adapter';
 import { createDiditSession } from '../services/didit.service';
 import { sendEmail } from '../services/email.service';
@@ -27,8 +26,6 @@ interface KycEnv extends Record<string, unknown> {
 }
 
 const kycRoutes = new Hono();
-
-kycRoutes.use('*', authenticate);
 
 /**
  * POST /api/v1/kyc/request

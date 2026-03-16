@@ -39,19 +39,12 @@ import {
   userSearchQuerySchema,
 } from '@validiant/shared';
 import * as userController from '../controllers/user.controller';
-import { authenticate } from '../middleware/auth';
 
 /**
  * Create user routes Hono instance
  * All routes require authentication
  */
 const app = new Hono();
-
-/**
- * Apply authentication middleware to all user routes
- * CRITICAL: Must be authenticated to access any user endpoint
- */
-app.use('*', authenticate);
 
 // ============================================================================
 // CURRENT USER ENDPOINTS (/me)

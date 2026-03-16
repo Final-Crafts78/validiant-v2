@@ -5,13 +5,10 @@
  */
 
 import { Hono } from 'hono';
-import { authenticate } from '../middleware/auth';
 import { requireOrgRole } from '../middleware/rbac';
 import * as csvImportController from '../controllers/csv-import.controller';
 
 const app = new Hono();
-
-app.use('*', authenticate);
 
 /**
  * GET /api/v1/import/csv/templates

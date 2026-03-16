@@ -6,12 +6,9 @@
  */
 
 import { Hono } from 'hono';
-import { authenticate } from '../middleware/auth';
 import * as automationController from '../controllers/automation.controller';
 
 const automationRoutes = new Hono();
-
-automationRoutes.use('*', authenticate);
 
 // GET /api/v1/automations — List automations for an org
 automationRoutes.get('/', automationController.listAutomations);

@@ -11,13 +11,8 @@ import {
   updateBgvPartnerSchema,
 } from '@validiant/shared';
 import * as partnerController from '../controllers/bgv-partner.controller';
-import { authenticate } from '../middleware/auth';
 
 const app = new Hono();
-
-// All routes require authentication
-app.use('*', authenticate);
-
 /**
  * GET /:orgId
  * List all partners for an organization

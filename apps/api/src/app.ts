@@ -58,6 +58,7 @@ import csvImportRoutes from './routes/csv-import.routes';
 import realtimeRoutes from './routes/realtime.routes';
 import { rateLimit } from './middleware/rateLimit';
 import { tenantIsolation } from './middleware/tenant';
+import { authenticate } from './middleware/auth';
 import { initEnv } from './config/env.config';
 
 // ---------------------------------------------------------------------------
@@ -199,22 +200,46 @@ export const createHonoApp = () => {
   // General API: 200 requests per 60 seconds
   app.use('/api/v1/*', rateLimit(200, 60, 'rl:api'));
 
-  // Tenant Isolation: Automatically scope every request
-  // Skip isolation for public auth and oauth routes
+  // Unified Path Management
+  const publicPaths = [
+    '/api/v1/oauth/google',
+    '/api/v1/oauth/github',
+    '/api/v1/auth/login',
+    '/api/v1/auth/register',
+    '/api/v1/auth/refresh',
+    '/api/v1/auth/forgot-password',
+    '/api/v1/auth/reset-password',
+    '/api/v1/webhook',
+    '/api/v1/inbound',
+    '/api/v1/contact',
+  ];
+
+  const isPublicPath = (path: string) =>
+    publicPaths.some((p) => path.startsWith(p));
+
+  // 1. Authentication: Populate user context first
   app.use('/api/v1/*', async (c, next) => {
-    const path = c.req.path;
-    const publicPaths = [
-      '/api/v1/oauth',
-      '/api/v1/auth/login',
-      '/api/v1/auth/register',
-      '/api/v1/auth/refresh',
-      '/api/v1/auth/forgot-password',
-      '/api/v1/auth/reset-password',
-      '/api/v1/webhook',
-      '/api/v1/inbound',
+    if (isPublicPath(c.req.path)) {
+      return next();
+    }
+    return authenticate(c, next);
+  });
+
+  // 2. Tenant Isolation: Automatically scope every request
+  app.use('/api/v1/*', async (c, next) => {
+    if (isPublicPath(c.req.path)) {
+      return next();
+    }
+    // Also skip isolation for organization management routes that don't have an org context yet
+    const orgManagementPaths = [
+      '/api/v1/organizations/my',
+      '/api/v1/organizations', // POST / is allowed, but GET /:id should hit the isolation
     ];
 
-    if (publicPaths.some((p) => path.startsWith(p))) {
+    if (
+      orgManagementPaths.some((p) => c.req.path === p) ||
+      (c.req.path === '/api/v1/organizations' && c.req.method === 'POST')
+    ) {
       return next();
     }
 

@@ -9,14 +9,11 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
-import { authenticate } from '../middleware/auth';
 import { geocodeAddress, applyGeoPolicy } from '../services/geocode.service';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../db';
 
 const geocodeRoutes = new Hono();
-
-geocodeRoutes.use('*', authenticate);
 
 // ----------------------------------------------------------------
 // Schema definitions

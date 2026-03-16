@@ -21,12 +21,8 @@ import {
 } from '@validiant/shared';
 import * as projectController from '../controllers/project.controller';
 import * as taskController from '../controllers/task.controller';
-import { authenticate } from '../middleware/auth';
 
 const app = new Hono();
-
-// Authentication required for all project routes
-app.use('*', authenticate);
 
 // CRUD operations
 app.post(

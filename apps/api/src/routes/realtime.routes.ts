@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { authenticate, UserContext } from '../middleware/auth';
+import { UserContext } from '../middleware/auth';
 import { BadRequestError } from '../utils/errors';
 import { Env } from '../app';
 
@@ -10,7 +10,7 @@ const router = new Hono<{ Bindings: Env; Variables: { user: UserContext } }>();
  *
  * Establishes a persistent SSE connection for the authenticated user's organization.
  */
-router.get('/stream', authenticate, async (c) => {
+router.get('/stream', async (c) => {
   const user = c.get('user') as UserContext;
   const orgId = user?.organizationId;
 

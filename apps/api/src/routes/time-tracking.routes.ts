@@ -6,12 +6,9 @@
  */
 
 import { Hono } from 'hono';
-import { authenticate } from '../middleware/auth';
 import * as timeTrackingController from '../controllers/time-tracking.controller';
 
 const timeTrackingRoutes = new Hono();
-
-timeTrackingRoutes.use('*', authenticate);
 
 // POST /api/v1/time-tracking/start — Start a timer on a task
 timeTrackingRoutes.post('/start', timeTrackingController.startTimer);

@@ -35,7 +35,6 @@ import {
   unlinkOAuthProvider,
 } from '../services/oauth.service';
 import { generateTokens } from '../services/auth.service';
-import { authenticate } from '../middleware/auth';
 import { logger } from '../utils/logger';
 import { env } from '../config/env.config';
 
@@ -329,7 +328,6 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
  */
 app.post(
   '/unlink/:provider',
-  authenticate,
   zValidator('param', unlinkProviderSchema),
   async (c) => {
     try {
