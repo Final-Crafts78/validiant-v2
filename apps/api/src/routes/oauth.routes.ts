@@ -23,8 +23,7 @@
  * Edge-compatible using Hono and Arctic
  */
 
-import { Hono, Context } from 'hono';
-import { env as getPlatformEnv } from 'hono/adapter';
+import { Hono } from 'hono';
 import { setCookie, getCookie, deleteCookie } from 'hono/cookie';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
@@ -55,22 +54,33 @@ const unlinkProviderSchema = z.object({
 });
 
 /**
- * Helper: Resolve dynamic cookie options based on active environment.
+ * Static Cookie Options for Production Stability (Edge-compatible)
  */
-const getOAuthCookieOptions = (
-  c: Context,
-  maxAge: number,
-  isHostOnly = false
-) => {
-  const { COOKIE_DOMAIN } = getPlatformEnv<{ COOKIE_DOMAIN?: string }>(c);
-  return {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None' as const,
-    maxAge,
-    path: '/',
-    domain: !isHostOnly ? COOKIE_DOMAIN : undefined,
-  };
+const accessTokenCookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None' as const,
+  maxAge: 3600,
+  path: '/',
+  domain: '.validiant.in',
+};
+
+const refreshTokenCookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None' as const,
+  maxAge: 604800,
+  path: '/',
+  domain: '.validiant.in',
+};
+
+const stateCookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None' as const,
+  maxAge: 600,
+  path: '/',
+  // No domain intentionally — host-only for CSRF security
 };
 
 // ============================================================================
@@ -89,7 +99,7 @@ app.get('/google', async (c) => {
     const { authUrl, state } = await initiateGoogleOAuth();
 
     // Store state in HttpOnly cookie (CSRF protection)
-    setCookie(c, 'oauth_state', state, getOAuthCookieOptions(c, 600, true));
+    setCookie(c, 'oauth_state', state, stateCookieOptions);
 
     logger.info('Google OAuth initiated', { state });
 
@@ -147,22 +157,17 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     );
 
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(
-      c,
-      'accessToken',
-      tokens.accessToken,
-      getOAuthCookieOptions(c, 3600)
-    );
+    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      getOAuthCookieOptions(c, 604800)
+      refreshTokenCookieOptions
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      ...getOAuthCookieOptions(c, 3600),
+      ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
@@ -211,7 +216,7 @@ app.get('/github', async (c) => {
     const { authUrl, state } = await initiateGitHubOAuth();
 
     // Store state in HttpOnly cookie (CSRF protection)
-    setCookie(c, 'oauth_state', state, getOAuthCookieOptions(c, 600, true));
+    setCookie(c, 'oauth_state', state, stateCookieOptions);
 
     logger.info('GitHub OAuth initiated', { state });
 
@@ -269,22 +274,17 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
     );
 
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(
-      c,
-      'accessToken',
-      tokens.accessToken,
-      getOAuthCookieOptions(c, 3600)
-    );
+    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      getOAuthCookieOptions(c, 604800)
+      refreshTokenCookieOptions
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      ...getOAuthCookieOptions(c, 3600),
+      ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
