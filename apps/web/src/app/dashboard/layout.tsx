@@ -21,7 +21,6 @@ import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitialize
 import { CommandPalette } from '@/components/CommandPalette';
 import { API_CONFIG, ROUTES } from '@/lib/config';
 import type { AuthUser } from '@/types/auth.types';
-import { logger } from '@/lib/logger';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -35,7 +34,7 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
     const accessToken = cookieStore.get('accessToken');
 
     if (!accessToken) {
-      logger.log('[Dashboard Layout] No access token found');
+      console.log('[Dashboard Layout] No access token found');
       return null;
     }
 
@@ -44,6 +43,8 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
     ).replace(/\/+$/, '');
     const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
     const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
+
+    console.log(`[Dashboard Layout] Fetching user from: ${apiUrl}`);
 
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -54,13 +55,12 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
       cache: 'no-store',
     });
 
-    if (response.status === 401 || response.status === 403) {
-      redirect(
-        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
-      );
-    }
-
     if (!response.ok) {
+      // 🚨 DEBUG: Log the exact error body from the backend before redirecting
+      const errorText = await response.text();
+      console.error(
+        `[Dashboard Layout] BACKEND REJECTED AUTH! Status: ${response.status}, Response: ${errorText}`
+      );
       redirect(
         `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
       );
@@ -68,6 +68,11 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
 
     const data = await response.json();
     if (!data.success || !data.data || !data.data.user) {
+      console.error(
+        `[Dashboard Layout] BACKEND SENT BAD DATA! Response: ${JSON.stringify(
+          data
+        )}`
+      );
       redirect(
         `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
       );
@@ -77,16 +82,13 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
   } catch (error) {
     if (error instanceof Error && error.message.includes('NEXT_REDIRECT'))
       throw error;
-    logger.error('[Dashboard Layout] Error fetching user:', error);
+    console.error('[Dashboard Layout] CRASH fetching user:', error);
     redirect(
       `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
     );
   }
 }
 
-/**
- * Fetch user's organizations server-side
- */
 async function getUserOrganizations(accessToken: string): Promise<any[]> {
   try {
     const raw = (
@@ -104,12 +106,19 @@ async function getUserOrganizations(accessToken: string): Promise<any[]> {
       cache: 'no-store',
     });
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      // 🚨 DEBUG: Log org fetch failures
+      const errorText = await response.text();
+      console.error(
+        `[Dashboard Layout] ORG FETCH FAILED! Status: ${response.status}, Response: ${errorText}`
+      );
+      return [];
+    }
 
     const data = await response.json();
     return data?.data?.organizations ?? [];
   } catch (error) {
-    logger.error('[Dashboard Layout] Error fetching orgs:', error);
+    console.error('[Dashboard Layout] CRASH fetching orgs:', error);
     return [];
   }
 }
