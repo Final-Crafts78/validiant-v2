@@ -33,7 +33,9 @@ export const tenantIsolation = async (
     c.req.path.includes('/oauth/') ||
     c.req.path.includes('/inbound/') ||
     c.req.path.includes('/webhook') ||
-    c.req.path === '/api/v1/contact'
+    c.req.path === '/api/v1/contact' ||
+    c.req.path === '/api/v1/organizations/my' ||
+    (c.req.path === '/api/v1/organizations' && c.req.method === 'POST')
   ) {
     await next();
     return;
