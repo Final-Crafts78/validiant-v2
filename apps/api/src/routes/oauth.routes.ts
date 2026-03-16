@@ -176,12 +176,33 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       isNewUser: result.isNewUser,
     });
 
-    // Redirect to dashboard (tokens in cookies)
-    const dashboardUrl = result.isNewUser
-      ? `${env.WEB_APP_URL}/onboarding`
+    // Redirect to dashboard via HTML bounce page (Pause redirect chain for Chrome)
+    const destination = result.isNewUser
+      ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
 
-    return c.redirect(dashboardUrl);
+    return c.html(`
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Authenticating...</title>
+      <script>
+        // Set the cookies securely on the client side using the shared domain
+        document.cookie = "accessToken=${tokens.accessToken}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
+        document.cookie = "refreshToken=${tokens.refreshToken}; domain=.validiant.in; path=/; max-age=604800; secure; samesite=None";
+        document.cookie = "user_id=${result.user.id}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
+        
+        // Complete the redirect chain
+        window.location.href = "${destination}";
+      </script>
+    </head>
+    <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #000; color: #fff;">
+      <div style="text-align: center;">
+        <p>Completing login, please wait...</p>
+      </div>
+    </body>
+  </html>
+`);
   } catch (error) {
     logger.error('Google OAuth callback failed:', error as Error);
 
@@ -293,12 +314,33 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       isNewUser: result.isNewUser,
     });
 
-    // Redirect to dashboard (tokens in cookies)
-    const dashboardUrl = result.isNewUser
-      ? `${env.WEB_APP_URL}/onboarding`
+    // Redirect to dashboard via HTML bounce page (Pause redirect chain for Chrome)
+    const destination = result.isNewUser
+      ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
 
-    return c.redirect(dashboardUrl);
+    return c.html(`
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>Authenticating...</title>
+      <script>
+        // Set the cookies securely on the client side using the shared domain
+        document.cookie = "accessToken=${tokens.accessToken}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
+        document.cookie = "refreshToken=${tokens.refreshToken}; domain=.validiant.in; path=/; max-age=604800; secure; samesite=None";
+        document.cookie = "user_id=${result.user.id}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
+        
+        // Complete the redirect chain
+        window.location.href = "${destination}";
+      </script>
+    </head>
+    <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #000; color: #fff;">
+      <div style="text-align: center;">
+        <p>Completing login, please wait...</p>
+      </div>
+    </body>
+  </html>
+`);
   } catch (error) {
     logger.error('GitHub OAuth callback failed:', error as Error);
 
