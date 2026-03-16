@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 # 1. Locks in your Custom Domain
 routes = [
-  { pattern = "api.validiant.in", custom_domain = true }
+  { pattern = "api.validiant.in/*", zone_name = "validiant.in" }
 ]
 
 # 2. Locks in your Public Environment Variables
@@ -14,6 +14,7 @@ NODE_ENV = "production"
 FRONTEND_URL = "https://www.validiant.in"
 CORS_ORIGIN = "https://www.validiant.in"
 WEB_APP_URL = "https://www.validiant.in"
+COOKIE_DOMAIN = ".validiant.in"
 GOOGLE_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/google/callback"
 GITHUB_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/github/callback"
 
