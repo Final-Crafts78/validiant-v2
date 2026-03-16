@@ -59,7 +59,7 @@ const unlinkProviderSchema = z.object({
 const accessTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: 'None' as const,
+  sameSite: 'Lax' as const,
   maxAge: 3600,
   path: '/',
   domain: '.validiant.in',
@@ -68,7 +68,7 @@ const accessTokenCookieOptions = {
 const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: 'None' as const,
+  sameSite: 'Lax' as const,
   maxAge: 604800,
   path: '/',
   domain: '.validiant.in',
@@ -77,7 +77,7 @@ const refreshTokenCookieOptions = {
 const stateCookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: 'None' as const,
+  sameSite: 'Lax' as const,
   maxAge: 600,
   path: '/',
   // No domain intentionally — host-only for CSRF security
@@ -176,33 +176,12 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       isNewUser: result.isNewUser,
     });
 
-    // Redirect to dashboard via HTML bounce page (Pause redirect chain for Chrome)
+    // Redirect to dashboard
     const destination = result.isNewUser
       ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
 
-    return c.html(`
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Authenticating...</title>
-      <script>
-        // Set the cookies securely on the client side using the shared domain
-        document.cookie = "accessToken=${tokens.accessToken}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
-        document.cookie = "refreshToken=${tokens.refreshToken}; domain=.validiant.in; path=/; max-age=604800; secure; samesite=None";
-        document.cookie = "user_id=${result.user.id}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
-        
-        // Complete the redirect chain
-        window.location.href = "${destination}";
-      </script>
-    </head>
-    <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #000; color: #fff;">
-      <div style="text-align: center;">
-        <p>Completing login, please wait...</p>
-      </div>
-    </body>
-  </html>
-`);
+    return c.redirect(destination);
   } catch (error) {
     logger.error('Google OAuth callback failed:', error as Error);
 
@@ -314,33 +293,12 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       isNewUser: result.isNewUser,
     });
 
-    // Redirect to dashboard via HTML bounce page (Pause redirect chain for Chrome)
+    // Redirect to dashboard
     const destination = result.isNewUser
       ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
 
-    return c.html(`
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <title>Authenticating...</title>
-      <script>
-        // Set the cookies securely on the client side using the shared domain
-        document.cookie = "accessToken=${tokens.accessToken}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
-        document.cookie = "refreshToken=${tokens.refreshToken}; domain=.validiant.in; path=/; max-age=604800; secure; samesite=None";
-        document.cookie = "user_id=${result.user.id}; domain=.validiant.in; path=/; max-age=3600; secure; samesite=None";
-        
-        // Complete the redirect chain
-        window.location.href = "${destination}";
-      </script>
-    </head>
-    <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #000; color: #fff;">
-      <div style="text-align: center;">
-        <p>Completing login, please wait...</p>
-      </div>
-    </body>
-  </html>
-`);
+    return c.redirect(destination);
   } catch (error) {
     logger.error('GitHub OAuth callback failed:', error as Error);
 
