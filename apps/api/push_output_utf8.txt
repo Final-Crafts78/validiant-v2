@@ -1,0 +1,130 @@
+﻿
+> @validiant/api@1.0.0 db:push C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api
+> drizzle-kit push:pg
+
+drizzle-kit: v0.20.18
+drizzle-orm: v0.29.5
+
+No config path provided, using default path
+Reading config file 'C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api\drizzle.config.ts'
+node.exe : C:\Users\man
+so\OneDrive\Documents\V
+alidiant-v2\validiant-v
+2\node_modules\.pnpm\dr
+izzle-kit@0.20.18\node_
+modules\drizzle-kit\bin
+.cjs:42540
+At C:\Users\manso\AppDa
+ta\Roaming\npm\pnpm.ps1
+:24 char:5
++     & "node$exe"  "$b
+asedir/node_modules/pnp
+m/bin/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\mans   
+ o\...t\bin.cjs:425    
+40:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+        const message 
+= name === "notice" ? 
+new messages_1.NoticeMe
+ssage(length, 
+messageValue) : new mes
+sages_1.DatabaseError(m
+essageValue, length, 
+name);
+                       
+                       
+                       
+                       
+     ^
+
+error: password 
+authentication failed 
+for user 'neondb_owner'
+    at Parser.parseErro
+rMessage (C:\Users\mans
+o\OneDrive\Documents\Va
+lidiant-v2\validiant-v2
+\node_modules\.pnpm\dri
+zzle-kit@0.20.18\node_m
+odules\drizzle-kit\bin.
+cjs:42540:98)
+    at 
+Parser.handlePacket (C:
+\Users\manso\OneDrive\D
+ocuments\Validiant-v2\v
+alidiant-v2\node_module
+s\.pnpm\drizzle-kit@0.2
+0.18\node_modules\drizz
+le-kit\bin.cjs:42381:25
+)
+    at Parser.parse (C:
+\Users\manso\OneDrive\D
+ocuments\Validiant-v2\v
+alidiant-v2\node_module
+s\.pnpm\drizzle-kit@0.2
+0.18\node_modules\drizz
+le-kit\bin.cjs:42305:34
+)
+    at 
+TLSSocket.<anonymous> (
+C:\Users\manso\OneDrive
+\Documents\Validiant-v2
+\validiant-v2\node_modu
+les\.pnpm\drizzle-kit@0
+.20.18\node_modules\dri
+zzle-kit\bin.cjs:42581:
+44)
+    at TLSSocket.emit 
+(node:events:519:28)
+    at addChunk (node:i
+nternal/streams/readabl
+e:561:12)
+    at readableAddChunk
+PushByteMode (node:inte
+rnal/streams/readable:5
+12:3)
+    at Readable.push (n
+ode:internal/streams/re
+adable:392:5)
+    at 
+TLSWrap.onStreamRead (n
+ode:internal/stream_bas
+e_commons:189:23)
+    at TLSWrap.callback
+Trampoline (node:intern
+al/async_hooks:130:17) 
+{
+  length: 75,
+  severity: 'ERROR',
+  code: '28P01',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: 
+undefined,
+  internalQuery: 
+undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: 
+undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined
+}
+
+Node.js v22.22.0
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

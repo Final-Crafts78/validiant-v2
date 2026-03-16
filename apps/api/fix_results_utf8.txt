@@ -1,0 +1,56 @@
+﻿Connecting to database...
+Adding industry_type column to organizations table...
+node.exe : Γ¥î Failed to add 
+column: NeonDbError: 
+password authentication 
+failed for user 
+'neondb_owner'
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:\Us
+ers\manso\AppData\Roaming\ 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Γ¥î Fai  
+  led to a... 'neondb_owne   
+ r':String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+    at execute (C:\Users\mans
+o\OneDrive\Documents\Validian
+t-v2\validiant-v2\node_module
+s\.pnpm\@neondatabase+serverl
+ess@0.9.5\node_modules\@neond
+atabase\serverless\index.js:1
+555:56)
+    at process.processTicksAn
+dRejections (node:internal/pr
+ocess/task_queues:105:5)
+    at async main (C:\Users\m
+anso\OneDrive\Documents\Valid
+iant-v2\validiant-v2\apps\api
+\add-industry-type.ts:17:5) {
+  severity: '',
+  code: '',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: 
+undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  sourceError: undefined
+}
