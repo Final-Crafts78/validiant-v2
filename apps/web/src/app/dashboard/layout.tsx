@@ -146,8 +146,9 @@ export default async function DashboardLayout({
   }
 
   const cookieStore = cookies();
-  const accessToken = cookieStore.get('accessToken');
-  const orgs = accessToken ? await getUserOrganizations(accessToken.value) : [];
+  const accessTokenCookie = cookieStore.get('accessToken');
+  const tokenValue = accessTokenCookie?.value;
+  const orgs = tokenValue ? await getUserOrganizations(tokenValue) : [];
 
   if (orgs.length === 0 && !currentPath.includes('/dashboard/onboarding')) {
     redirect(ROUTES.ONBOARDING);
@@ -155,7 +156,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <AuthStoreInitializer user={user} accessToken={accessToken?.value} />
+      <AuthStoreInitializer user={user} accessToken={tokenValue} />
       <WorkspaceInitializer orgs={orgs} />
 
       <DashboardHeader user={user} orgs={orgs} />
