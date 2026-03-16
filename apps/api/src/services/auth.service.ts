@@ -16,7 +16,11 @@ import { generateToken } from '../utils/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../db';
-import { users, passwordResetTokens } from '../db/schema';
+import {
+  users,
+  passwordResetTokens,
+  emailVerificationTokens,
+} from '../db/schema';
 import { cache, session } from '../config/redis.config';
 import { env } from '../config/env.config';
 import {
@@ -421,18 +425,33 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
  * Reset password with token
  */
 export const resetPassword = async (
+  email: string,
   token: string,
   newPassword: string
 ): Promise<void> => {
-  // Get valid reset token
+  // Get user by email first (strict lookup for safety)
+  const [user] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(
+      and(sql`LOWER(${users.email}) = LOWER(${email})`, isNull(users.deletedAt))
+    )
+    .limit(1);
+
+  if (!user) {
+    throw new BadRequestError('Invalid or expired reset token');
+  }
+
+  // Get valid reset token specifically for THIS user
   const [resetTokenRecord] = await db
     .select({
-      userId: passwordResetTokens.userId,
+      id: passwordResetTokens.id,
       tokenHash: passwordResetTokens.tokenHash,
     })
     .from(passwordResetTokens)
     .where(
       and(
+        eq(passwordResetTokens.userId, user.id),
         sql`${passwordResetTokens.expiresAt} > NOW()`,
         isNull(passwordResetTokens.usedAt)
       )
@@ -458,18 +477,16 @@ export const resetPassword = async (
   await db
     .update(users)
     .set({ passwordHash, updatedAt: new Date() })
-    .where(eq(users.id, resetTokenRecord.userId));
+    .where(eq(users.id, user.id));
 
-  // Mark token as used
+  // Mark specifically this token as used
   await db
     .update(passwordResetTokens)
     .set({ usedAt: new Date() })
-    .where(eq(passwordResetTokens.userId, resetTokenRecord.userId));
+    .where(eq(passwordResetTokens.id, resetTokenRecord.id));
 
   // Invalidate all user sessions
-  const sessions = await cache.get<string[]>(
-    `user_sessions:${resetTokenRecord.userId}`
-  );
+  const sessions = await cache.get<string[]>(`user_sessions:${user.id}`);
   if (sessions) {
     for (const sessionId of sessions) {
       await session.del(sessionId);
@@ -477,13 +494,13 @@ export const resetPassword = async (
   }
 
   // Clear user cache
-  await cache.del(`user:${resetTokenRecord.userId}`);
+  await cache.del(`user:${user.id}`);
 
   // Log event
-  logAuthEvent('password_reset', resetTokenRecord.userId);
+  logAuthEvent('password_reset', user.id);
 
   logger.info('Password reset successfully', {
-    userId: resetTokenRecord.userId,
+    userId: user.id,
   });
 };
 
@@ -541,13 +558,39 @@ export const changePassword = async (
 /**
  * Verify email with token
  */
-export const verifyEmail = async (_token: string): Promise<void> => {
-  // TODO: Implement email verification logic
-  // This would typically involve:
-  // 1. Verify token from email
-  // 2. Update user's email_verified to true
-  // 3. Log the event
-  throw new Error('Not implemented');
+export const verifyEmail = async (token: string): Promise<void> => {
+  const [tokenRecord] = await db
+    .select()
+    .from(emailVerificationTokens)
+    .where(
+      and(
+        eq(emailVerificationTokens.tokenHash, token),
+        sql`${emailVerificationTokens.expiresAt} > NOW()`,
+        isNull(emailVerificationTokens.usedAt)
+      )
+    )
+    .limit(1);
+
+  if (!tokenRecord) {
+    throw new BadRequestError(
+      'Invalid, expired, or already used verification token'
+    );
+  }
+
+  await db
+    .update(users)
+    .set({ emailVerified: true, updatedAt: new Date() })
+    .where(eq(users.id, tokenRecord.userId));
+
+  await db
+    .update(emailVerificationTokens)
+    .set({ usedAt: new Date() })
+    .where(eq(emailVerificationTokens.id, tokenRecord.id));
+
+  logAuthEvent('email_verified', tokenRecord.userId);
+  logger.info('Email verified successfully via UUID token', {
+    userId: tokenRecord.userId,
+  });
 };
 
 /**

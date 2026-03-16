@@ -2,36 +2,31 @@ import { Context } from 'hono';
 import { env } from 'hono/adapter';
 import { setCookie } from 'hono/cookie';
 
-/**
- * Dynamic cookie options factory.
- */
 export const getCookieOptions = (c: Context, maxAge: number) => {
-  const { FRONTEND_URL } = env<{ FRONTEND_URL?: string }>(c);
-  const isProd = FRONTEND_URL && FRONTEND_URL.includes('validiant.in');
+  const { COOKIE_DOMAIN } = env<{ COOKIE_DOMAIN?: string }>(c);
 
   return {
     httpOnly: true,
     secure: true,
     sameSite: 'none' as const,
-    domain: isProd ? '.validiant.in' : undefined,
+    domain: COOKIE_DOMAIN || undefined,
     path: '/',
     maxAge,
   };
 };
 
-/**
- * Public cookie for theme flash prevention (Mini-Phase 6)
- */
-export const setUserPrefsCookie = (c: Context, prefs: Record<string, unknown>) => {
-  const { FRONTEND_URL } = env<{ FRONTEND_URL?: string }>(c);
-  const isProd = FRONTEND_URL && FRONTEND_URL.includes('validiant.in');
+export const setUserPrefsCookie = (
+  c: Context,
+  prefs: Record<string, unknown>
+) => {
+  const { COOKIE_DOMAIN } = env<{ COOKIE_DOMAIN?: string }>(c);
 
   setCookie(c, 'userPrefs', JSON.stringify(prefs), {
-    httpOnly: false, // Must be readable by client-side script
+    httpOnly: false,
     secure: true,
     sameSite: 'none' as const,
-    domain: isProd ? '.validiant.in' : undefined,
+    domain: COOKIE_DOMAIN || undefined,
     path: '/',
-    maxAge: 31536000, // 1 year
+    maxAge: 31536000,
   });
 };

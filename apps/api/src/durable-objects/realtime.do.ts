@@ -6,7 +6,7 @@ import { DurableObject } from 'cloudflare:workers';
  * Maintains organization-specific SSE connections and handles broadcasting.
  * One instance per organization ID.
  */
-export class RealtimeRoom extends DurableObject {
+export class RealtimeRoom extends DurableObject<import('../app').Env> {
   private sessions = new Set<ReadableStreamDefaultController>();
 
   constructor(state: DurableObjectState, env: import('../app').Env) {

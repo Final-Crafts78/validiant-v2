@@ -21,7 +21,7 @@ const PROTECTED_ROUTES = [
 
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
-const SEMI_PUBLIC_ROUTES = ['/auth/verify-email', '/dashboard/onboarding'];
+const SEMI_PUBLIC_ROUTES = ['/auth/verify-email'];
 
 /**
  * Check if path matches any route pattern

@@ -93,6 +93,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   taskAssignments: many(taskAssignees),
   createdTasks: many(tasks, { relationName: 'TaskCreator' }),
   passwordResetTokens: many(passwordResetTokens),
+  emailVerificationTokens: many(emailVerificationTokens),
   passkeyCredentials: many(passkeyCredentials),
   notifications: many(notifications),
 }));
@@ -191,6 +192,48 @@ export const passwordResetTokensRelations = relations(
   ({ one }) => ({
     user: one(users, {
       fields: [passwordResetTokens.userId],
+      references: [users.id],
+    }),
+  })
+);
+
+// ============================================================================
+// EMAIL VERIFICATION TOKEN TABLE
+// ============================================================================
+
+export const emailVerificationTokens = pgTable(
+  'email_verification_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: text('token_hash').notNull().unique(),
+    expiresAt: timestamp('expires_at', {
+      mode: 'date',
+      withTimezone: true,
+    }).notNull(),
+    usedAt: timestamp('used_at', { mode: 'date', withTimezone: true }),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index('email_verification_tokens_user_id_idx').on(table.userId),
+    tokenHashIdx: index('email_verification_tokens_token_hash_idx').on(
+      table.tokenHash
+    ),
+    expiresAtIdx: index('email_verification_tokens_expires_at_idx').on(
+      table.expiresAt
+    ),
+  })
+);
+
+export const emailVerificationTokensRelations = relations(
+  emailVerificationTokens,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [emailVerificationTokens.userId],
       references: [users.id],
     }),
   })
@@ -909,6 +952,9 @@ export type NewPasskeyCredential = typeof passkeyCredentials.$inferInsert;
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type NewPasswordResetToken = typeof passwordResetTokens.$inferInsert;
+
+export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+export type NewEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
 
 export type Organization = typeof organizations.$inferSelect;
 export type NewOrganization = typeof organizations.$inferInsert;
