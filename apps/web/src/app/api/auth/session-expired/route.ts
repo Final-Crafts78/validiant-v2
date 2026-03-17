@@ -20,9 +20,16 @@ import { ROUTES } from '@/lib/config';
  * Clears authentication cookies and redirects to login
  */
 export async function GET(request: Request) {
-  // ADD: extract redirect param
+  const referer = request.headers.get('referer') ?? 'NO_REFERER';
   const { searchParams } = new URL(request.url);
   const redirectTo = searchParams.get('redirect');
+
+  console.warn('[Session Expired] TRIGGERED', {
+    redirectTo,
+    referer,
+    timestamp: new Date().toISOString(),
+    url: request.url,
+  });
 
   const cookieStore = cookies();
 

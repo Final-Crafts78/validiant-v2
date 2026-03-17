@@ -37,6 +37,7 @@ import {
 import { generateTokens } from '../services/auth.service';
 import { logger } from '../utils/logger';
 import { env } from '../config/env.config';
+import { getCookieOptions } from '../utils/cookie';
 
 const app = new Hono();
 
@@ -52,26 +53,8 @@ const unlinkProviderSchema = z.object({
   provider: z.enum(['google', 'github']),
 });
 
-/**
- * Static Cookie Options for Production Stability (Edge-compatible)
- */
-const accessTokenCookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'Lax' as const,
-  maxAge: 3600,
-  path: '/',
-  domain: '.validiant.in',
-};
-
-const refreshTokenCookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'Lax' as const,
-  maxAge: 604800,
-  path: '/',
-  domain: '.validiant.in',
-};
+const ACCESS_TOKEN_MAX_AGE = 3600;
+const REFRESH_TOKEN_MAX_AGE = 604800;
 
 const stateCookieOptions = {
   httpOnly: true,
@@ -155,18 +138,34 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       result.user.role
     );
 
+    // DEBUG
+    logger.debug('[OAuth Callback] Tokens generated', {
+      provider: 'google',
+      userId: result.user.id,
+      isNewUser: result.isNewUser,
+      accessTokenPrefix: tokens.accessToken.substring(0, 20) + '...',
+      accessTokenLength: tokens.accessToken.length,
+      cookieOptions: getCookieOptions(c, ACCESS_TOKEN_MAX_AGE),
+      destination: result.isNewUser ? 'onboarding' : 'dashboard',
+    });
+
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(
+      c,
+      'accessToken',
+      tokens.accessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      refreshTokenCookieOptions
+      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      ...accessTokenCookieOptions,
+      ...getCookieOptions(c, ACCESS_TOKEN_MAX_AGE),
       httpOnly: false,
     });
 
@@ -272,18 +271,34 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
       result.user.role
     );
 
+    // DEBUG
+    logger.debug('[OAuth Callback] Tokens generated', {
+      provider: 'github',
+      userId: result.user.id,
+      isNewUser: result.isNewUser,
+      accessTokenPrefix: tokens.accessToken.substring(0, 20) + '...',
+      accessTokenLength: tokens.accessToken.length,
+      cookieOptions: getCookieOptions(c, ACCESS_TOKEN_MAX_AGE),
+      destination: result.isNewUser ? 'onboarding' : 'dashboard',
+    });
+
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(c, 'accessToken', tokens.accessToken, accessTokenCookieOptions);
+    setCookie(
+      c,
+      'accessToken',
+      tokens.accessToken,
+      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+    );
     setCookie(
       c,
       'refreshToken',
       tokens.refreshToken,
-      refreshTokenCookieOptions
+      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      ...accessTokenCookieOptions,
+      ...getCookieOptions(c, ACCESS_TOKEN_MAX_AGE),
       httpOnly: false,
     });
 

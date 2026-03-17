@@ -395,54 +395,32 @@ export const getMe = async (c: Context) => {
   try {
     const user = c.get('user');
 
+    console.log('[getMe] Called', {
+      hasUser: !!user,
+      userId: user?.userId ?? null,
+      email: user?.email ?? null,
+    });
+
     if (!user || !user.userId) {
-      return c.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-          message: 'Authentication required',
-        },
-        401
-      );
+      return c.json({ success: false, error: 'Unauthorized', message: 'Authentication required' }, 401);
     }
 
-    const [dbUser] = await db
-      .select()
-      .from(schema.users)
-      .where(eq(schema.users.id, user.userId))
-      .limit(1);
+    const [dbUser] = await db.select().from(schema.users).where(eq(schema.users.id, user.userId)).limit(1);
+
+    console.log('[getMe] DB lookup', {
+      userId: user.userId,
+      found: !!dbUser,
+      email: dbUser?.email ?? 'NOT FOUND IN DB',
+    });
 
     if (!dbUser) {
-      return c.json(
-        {
-          success: false,
-          error: 'User not found',
-          message: 'User account no longer exists',
-        },
-        404
-      );
+      return c.json({ success: false, error: 'User not found', message: 'User account no longer exists' }, 404);
     }
 
-    return c.json({
-      success: true,
-      data: {
-        user: {
-          ...formatUserResponse(dbUser),
-          activeOrganizationId: user.organizationId,
-          permissions: user.permissions || [],
-        },
-      },
-    });
+    return c.json({ success: true, data: { user: { ...formatUserResponse(dbUser), activeOrganizationId: user.organizationId, permissions: user.permissions || [] } } });
   } catch (error) {
     console.error('Get me error:', error);
-    return c.json(
-      {
-        success: false,
-        error: 'Failed to get user',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      500
-    );
+    return c.json({ success: false, error: 'Failed to get user', message: error instanceof Error ? error.message : 'Unknown error' }, 500);
   }
 };
 

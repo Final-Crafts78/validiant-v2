@@ -19,7 +19,7 @@ export enum LogLevel {
  * Log metadata interface
  */
 export interface LogMetadata {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -100,6 +100,7 @@ const createLogger = (defaultMeta: LogMetadata = {}): Logger => {
         meta,
         defaultMeta
       );
+      // eslint-disable-next-line no-console
       console.log(formatted);
     },
 
@@ -110,6 +111,7 @@ const createLogger = (defaultMeta: LogMetadata = {}): Logger => {
         meta,
         defaultMeta
       );
+      // eslint-disable-next-line no-console
       console.debug(formatted);
     },
 
@@ -293,7 +295,7 @@ export const logExternalApiCall = (
 /**
  * Sanitize sensitive data from logs
  */
-export const sanitizeLogData = (data: any): any => {
+export const sanitizeLogData = (data: unknown): unknown => {
   if (!data || typeof data !== 'object') return data;
 
   const sensitiveKeys = [
@@ -308,7 +310,10 @@ export const sanitizeLogData = (data: any): any => {
     'authorization',
   ];
 
-  const sanitized = Array.isArray(data) ? [...data] : { ...data };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const obj = data as any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sanitized: any = Array.isArray(obj) ? [...obj] : { ...obj };
 
   for (const key in sanitized) {
     if (

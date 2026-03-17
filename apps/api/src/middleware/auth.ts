@@ -11,7 +11,12 @@
 
 import type { Context, Next } from 'hono';
 import { getCookie } from 'hono/cookie';
-import { verifyToken, extractBearerToken } from '../utils/jwt';
+import {
+  verifyToken,
+  extractBearerToken,
+  type TokenPayload,
+} from '../utils/jwt';
+import { logger } from '../utils/logger';
 
 import { UserRole, PermissionKey } from '@validiant/shared';
 
@@ -39,24 +44,26 @@ export const authenticate = async (
   next: Next
 ): Promise<Response | void> => {
   try {
-    console.log('[auth] Raw Cookie header:', c.req.header('cookie'));
-    console.log('[auth] Parsed accessToken:', getCookie(c, 'accessToken'));
-
     const authHeader = c.req.header('Authorization');
     let token = extractBearerToken(authHeader);
+    const cookieToken = getCookie(c, 'accessToken') || null;
 
-    // Fallback: If no Bearer token is found, look for the HttpOnly cookie.
-    // Cookie name is 'accessToken' — matches auth.controller.ts setCookie call.
-    if (!token) {
-      token = getCookie(c, 'accessToken') || null;
-    }
+    logger.info('[Auth Middleware] Incoming', {
+      path: c.req.path,
+      hasBearerToken: !!token,
+      bearerPrefix: token ? token.substring(0, 20) + '...' : null,
+      hasCookieToken: !!cookieToken,
+      cookiePrefix: cookieToken ? cookieToken.substring(0, 20) + '...' : null,
+      rawCookieHeader: c.req.header('cookie') ?? 'NONE',
+    });
 
-    // Fallback: Check for token in search params (for EventSource/SSE which doesn't support headers)
-    if (!token) {
-      token = c.req.query('token') || null;
-    }
+    if (!token) token = cookieToken;
+    if (!token) token = c.req.query('token') || null;
 
     if (!token) {
+      logger.warn('[Auth Middleware] No token at all — 401', {
+        path: c.req.path,
+      });
       return c.json(
         {
           success: false,
@@ -70,20 +77,53 @@ export const authenticate = async (
       );
     }
 
-    const payload = await verifyToken(token);
+    let payload: TokenPayload;
+    try {
+      payload = await verifyToken(token);
+      logger.info('[Auth Middleware] Token OK', {
+        userId: payload.userId,
+        email: payload.email,
+        exp: payload.exp,
+        expiresInSeconds: payload.exp
+          ? payload.exp - Math.floor(Date.now() / 1000)
+          : 'no-exp',
+      });
+    } catch (verifyError) {
+      logger.error('[Auth Middleware] verifyToken FAILED', {
+        tokenPrefix: token.substring(0, 30) + '...',
+        tokenLength: token.length,
+        error: verifyError instanceof Error ? verifyError.message : verifyError,
+      });
+      return c.json(
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message:
+              verifyError instanceof Error
+                ? verifyError.message
+                : 'Authentication failed',
+          },
+          timestamp: new Date().toISOString(),
+        },
+        401
+      );
+    }
 
-    // Attach user to context
     c.set('user', {
       userId: payload.userId,
       email: payload.email,
       role: payload.role as UserRole,
       organizationId: payload.organizationId,
-      permissions: (payload as any).permissions,
+      permissions: payload.permissions as PermissionKey[],
     } as UserContext);
 
     await next();
     return;
   } catch (error) {
+    logger.error('[Auth Middleware] Unexpected crash', {
+      error: error instanceof Error ? error.message : error,
+    });
     return c.json(
       {
         success: false,
@@ -109,13 +149,13 @@ export const optionalAuth = async (c: Context, next: Next): Promise<void> => {
     const token = extractBearerToken(authHeader);
 
     if (token) {
-      const payload = await verifyToken(token);
+      const payload: TokenPayload = await verifyToken(token);
       c.set('user', {
         userId: payload.userId,
         email: payload.email,
         role: payload.role as UserRole,
         organizationId: payload.organizationId,
-        permissions: (payload as any).permissions,
+        permissions: payload.permissions as PermissionKey[],
       } as UserContext);
     }
   } catch {

@@ -44,7 +44,12 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
     const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
     const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.AUTH.ME}`;
 
-    console.log(`[Dashboard Layout] Fetching user from: ${apiUrl}`);
+    console.log('[Dashboard Layout] Fetching user', {
+      apiUrl,
+      tokenPrefix: accessToken.value.substring(0, 20) + '...',
+      tokenLength: accessToken.value.length,
+      currentPath,
+    });
 
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -56,14 +61,17 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
     });
 
     if (!response.ok) {
-      // 🚨 DEBUG: Log the exact error body from the backend before redirecting
       const errorText = await response.text();
-      console.error(
-        `[Dashboard Layout] BACKEND REJECTED AUTH! Status: ${response.status}, Response: ${errorText}`
-      );
-      redirect(
-        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
-      );
+      console.error('[Dashboard Layout] AUTH FAILED', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+        tokenPrefix: accessToken.value.substring(0, 20) + '...',
+        tokenLength: accessToken.value.length,
+        apiUrl,
+        currentPath,
+      });
+      redirect(`/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`);
     }
 
     const data = await response.json();

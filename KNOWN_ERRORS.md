@@ -31,3 +31,7 @@ This document tracks known issues, architectural quirks, and deployment "gotchas
 **Symptom**: `JSON Syntax Error` on `manifest.json`.
 **Cause**: Conflict between a static `public/manifest.json` and the dynamic `app/manifest.ts` generator in Next.js.
 **Fix**: Remove the static `public/manifest.json` and rely solely on `apps/web/src/app/manifest.ts`.
+## 6. Unexpected Console Statement (Linting)
+**Symptom**: Build or linting fails with "Unexpected console statement" error (ESLint `no-console`).
+**Cause**: Directly using `console.log`, `console.warn`, or `console.error` is forbidden by the linting rules to prevent unformatted debug logs from leaking into production logs.
+**Fix**: Use the structured logger utility located at `apps/api/src/utils/logger.ts`. Import `logger` and use `logger.info()`, `logger.warn()`, or `logger.error()` instead. This ensures logs are formatted with timestamps and metadata for cloud logging providers like Cloudflare Axiom.
