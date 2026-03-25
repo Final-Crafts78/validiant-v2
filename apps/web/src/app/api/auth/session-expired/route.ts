@@ -34,12 +34,23 @@ export async function GET(request: Request) {
   const cookieStore = cookies();
 
   // Cookie configuration mirroring auth.actions.ts
+  const getCookieDomain = () => {
+    // Check if we're on the production domain
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const isProduction =
+      appUrl.includes('validiant.in') ||
+      process.env.NEXT_PUBLIC_ENV === 'production' ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
+    return isProduction ? '.validiant.in' : undefined;
+  };
+
   const COOKIE_OPTIONS = {
     httpOnly: true,
     secure: true, // MUST be true for SameSite=None
     sameSite: 'none' as const, // Match Hono backend exactly
     path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
+    domain: getCookieDomain(),
   };
 
   console.warn('[Session Cleanup] Clearing authentication cookies');

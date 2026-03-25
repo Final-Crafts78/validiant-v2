@@ -71,7 +71,9 @@ async function getCurrentUser(currentPath: string): Promise<AuthUser | null> {
         apiUrl,
         currentPath,
       });
-      redirect(`/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`);
+      redirect(
+        `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+      );
     }
 
     const data = await response.json();

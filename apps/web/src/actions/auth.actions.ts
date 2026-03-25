@@ -54,13 +54,26 @@ const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
  *   so both subdomains can read/write the same HttpOnly tokens.
  * domain: undefined in development — host-only cookie, no domain
  *   attribute emitted, works correctly on localhost.
+ *
+ * Using NEXT_PUBLIC_APP_URL to determine if we're in production
  */
+const getCookieDomain = () => {
+  // Check if we're on the production domain
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const isProduction =
+    appUrl.includes('validiant.in') ||
+    process.env.NEXT_PUBLIC_ENV === 'production' ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
+  return isProduction ? '.validiant.in' : undefined;
+};
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true, // MUST be true for SameSite=None
   sameSite: 'none' as const, // Match Hono backend exactly
   path: '/',
-  domain: process.env.NODE_ENV === 'production' ? '.validiant.in' : undefined,
+  domain: getCookieDomain(),
 };
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds

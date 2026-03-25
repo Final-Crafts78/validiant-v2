@@ -40,6 +40,25 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken');
   const isAuthenticated = !!accessToken;
 
+  // Debug logging for authentication issues
+  if (pathname.includes('/dashboard') || pathname.includes('/onboarding')) {
+    console.log('[Middleware Debug]', {
+      pathname,
+      hasAccessToken: !!accessToken,
+      accessTokenValue: accessToken
+        ? `${accessToken.value.substring(0, 20)}...`
+        : 'none',
+      allCookies: Array.from(request.cookies.getAll()).map((c) => ({
+        name: c.name,
+        hasValue: !!c.value,
+        valueLength: c.value?.length || 0,
+      })),
+      isAuthenticated,
+      timestamp: new Date().toISOString(),
+      url: request.url,
+    });
+  }
+
   // Check if route is protected
   const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
@@ -61,6 +80,18 @@ export function middleware(request: NextRequest) {
 
   // Unauthenticated → login (Gate all protected or org-scoped routes)
   if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
+    console.warn(
+      '[Middleware Redirect] Unauthenticated access to protected route',
+      {
+        pathname,
+        isProtectedRoute,
+        isOrgScoped,
+        isSemiPublic,
+        isAuthenticated,
+        redirectTo: '/auth/login',
+      }
+    );
+
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);
