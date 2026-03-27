@@ -168,7 +168,7 @@ apiClient.interceptors.response.use(
       if (typeof window !== 'undefined') {
         const cookieNames = document.cookie
           .split(';')
-          .map((c) => c.split('=')[0].trim());
+          .map((c) => c.split('=')[0]?.trim());
         logger.debug('[Axios:401] COOKIE CHECK', {
           cookieNames,
           withCredentials: error.config?.withCredentials,

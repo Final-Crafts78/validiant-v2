@@ -42,7 +42,7 @@ export function ProjectSwitcher() {
         url: `/organizations/${activeOrgId}/projects`,
         cookieNames:
           typeof document !== 'undefined'
-            ? document.cookie.split(';').map((c) => c.split('=')[0].trim())
+            ? document.cookie.split(';').map((c) => c.split('=')[0]?.trim())
             : 'N/A',
       });
       const { data } = await apiClient.get(
