@@ -40,6 +40,12 @@ export default function OnboardingPage() {
   const setActiveOrg = useWorkspaceStore((s) => s.setActiveOrg);
   const user = useAuthStore((s) => s.user);
   const [isPending, startTransition] = useTransition();
+
+  console.debug('[Onboarding:Page] Render state', {
+    hasUser: !!user,
+    email: user?.email,
+    id: user?.id,
+  });
   const [error, setError] = useState('');
 
   const [name, setName] = useState('');

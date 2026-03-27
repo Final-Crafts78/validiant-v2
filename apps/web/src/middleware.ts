@@ -38,8 +38,31 @@ export function middleware(request: NextRequest) {
 
   // Get authentication cookie
   const accessToken = request.cookies.get('accessToken');
+  const refreshToken = request.cookies.get('refreshToken');
+  const userId = request.cookies.get('user_id');
+
+  console.debug('[MW:Edge] Cookie Detection', {
+    hasAccessToken: !!accessToken,
+    accessTokenPrefix: accessToken?.value.substring(0, 30),
+    hasRefreshToken: !!refreshToken,
+    hasUserId: !!userId,
+    allCookies: request.cookies.getAll().map((c) => c.name),
+  });
   // CRITICAL: Basic validation to prevent using empty/cleared cookies
   const isAuthenticated = !!accessToken && accessToken.value.length > 100;
+
+  // Check if route is protected
+  const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
+  const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
+  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
+
+  console.debug('[MW:Edge] Auth State', {
+    isAuthenticated,
+    path: pathname,
+    isProtectedRoute,
+    isOrgScoped: undefined, // Will be defined later
+    isAuthRoute,
+  });
 
   // Debug logging for authentication issues
   if (pathname.includes('/dashboard') || pathname.includes('/onboarding')) {
@@ -59,11 +82,6 @@ export function middleware(request: NextRequest) {
       url: request.url,
     });
   }
-
-  // Check if route is protected
-  const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
-  const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
-  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
   // ✅ Org-scoped detection: If first segment isn't a known global path, it's an org slug
   const publicKeywords = [
@@ -96,20 +114,22 @@ export function middleware(request: NextRequest) {
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);
+    console.debug('[MW:Edge] Redirecting to login', {
+      from: pathname,
+      target: loginUrl.toString(),
+    });
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users from auth pages to dashboard
   if (isAuthRoute && isAuthenticated) {
-    // Check if there's a redirect parameter to redirect back
-    const destParam =
-      request.nextUrl.searchParams.get('from') ||
-      request.nextUrl.searchParams.get('redirect');
-    const dest = new URL(
-      destParam && destParam.startsWith('/') ? destParam : '/dashboard',
-      request.url
-    );
-    return NextResponse.redirect(dest);
+    const destParam = request.nextUrl.searchParams.get('redirect');
+    const dest = destParam ? decodeURIComponent(destParam) : '/dashboard'; // Assuming ROUTES.DASHBOARD_ROOT is '/dashboard'
+
+    console.debug('[MW:Edge] Already authed, redirecting to destination', {
+      dest,
+    });
+    return NextResponse.redirect(new URL(dest, request.url));
   }
 
   // Allow request to proceed (default allow pattern)

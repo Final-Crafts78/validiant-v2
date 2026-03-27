@@ -85,8 +85,18 @@ export default function LoginPage() {
     });
   };
 
+  // Handle Google Login
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`;
+    const target = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`;
+    console.debug('[Login:Page] Initiating Google OAuth redirect...', { target });
+    window.location.href = target;
+  };
+
+  // Handle GitHub Login
+  const handleGitHubLogin = () => {
+    const target = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/github`;
+    console.debug('[Login:Page] Initiating GitHub OAuth redirect...', { target });
+    window.location.href = target;
   };
 
   // ---------------------------------------------------------------------------

@@ -60,6 +60,13 @@ export const authenticate = async (
     if (!token) token = cookieToken;
     if (!token) token = c.req.query('token') || null;
 
+    logger.debug('[Auth:MW] Token source resolution', {
+      hasHeader: !!authHeader,
+      hasCookie: !!cookieToken,
+      hasQuery: !!c.req.query('token'),
+      finalTokenFound: !!token,
+    });
+
     if (!token) {
       logger.warn('[Auth Middleware] No token at all — 401', {
         path: c.req.path,
@@ -83,6 +90,7 @@ export const authenticate = async (
       logger.info('[Auth Middleware] Token OK', {
         userId: payload.userId,
         email: payload.email,
+        orgId: payload.organizationId,
         exp: payload.exp,
         expiresInSeconds: payload.exp
           ? payload.exp - Math.floor(Date.now() / 1000)

@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { UserContext } from '../middleware/auth';
 import { BadRequestError } from '../utils/errors';
 import { Env } from '../app';
+import { getCookie } from 'hono/cookie';
+import { logger } from '../utils/logger';
 
 const router = new Hono<{ Bindings: Env; Variables: { user: UserContext } }>();
 
@@ -12,9 +14,21 @@ const router = new Hono<{ Bindings: Env; Variables: { user: UserContext } }>();
  */
 router.get('/stream', async (c) => {
   const user = c.get('user') as UserContext;
+
+  logger.debug('[Realtime] GET /stream Entry', {
+    userId: user?.userId || 'MISSING',
+    orgId: user?.organizationId || 'MISSING',
+    tokenParam: !!c.req.query('token'),
+  });
+
   const orgId = user?.organizationId;
 
   if (!orgId) {
+    logger.warn('[Realtime] GET /stream - Missing organizationId for user', {
+      userId: user?.userId,
+      orgId: user?.organizationId,
+      hasCookie: !!getCookie(c, 'accessToken'),
+    });
     throw new BadRequestError(
       'Active organization context required for real-time stream. Ensure X-Org-Id header is present.'
     );

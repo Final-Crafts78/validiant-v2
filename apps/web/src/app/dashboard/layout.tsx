@@ -40,21 +40,36 @@ export default async function DashboardLayout({
     headersList.get('x-next-url') ||
     '/dashboard';
 
+  console.debug('[Dashboard:Layout] Fetching current user...', {
+    currentPath,
+  });
+
   const result = await getCurrentUserAction();
 
+  console.debug('[Dashboard:Layout] Current user result', {
+    success: result.success,
+    hasUser: !!result.user,
+    email: result.user?.email,
+    hasToken: !!result.accessToken,
+    error: result.error,
+  });
+
   if (!result.success || !result.user) {
+    console.warn('[Dashboard:Layout] Redirecting to LOGIN - No valid user session');
     redirect(ROUTES.LOGIN);
   }
 
   const { user, accessToken } = result;
 
   if (!user.emailVerified && !currentPath.includes('/dashboard/onboarding')) {
+    console.warn('[Dashboard:Layout] Redirecting to VERIFY-EMAIL');
     redirect('/auth/verify-email');
   }
 
   const orgs = accessToken ? await getUserOrganizationsAction(accessToken) : [];
 
   if (orgs.length === 0 && !currentPath.includes('/dashboard/onboarding')) {
+    console.warn('[Dashboard:Layout] Redirecting to ONBOARDING - No organizations found');
     redirect(ROUTES.ONBOARDING);
   }
 

@@ -27,6 +27,11 @@ export function AuthStoreInitializer({
   const initialized = useRef(false);
 
   if (!initialized.current) {
+    console.debug('[AuthStore:Initializer] Seeding store with server-fetched data', {
+      userId: user?.id,
+      email: user?.email,
+      hasToken: !!accessToken,
+    });
     // Seed the store immediately on render so child client components don't return null
     useAuthStore.getState().setAuth({ user, accessToken });
     initialized.current = true;

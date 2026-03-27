@@ -106,6 +106,11 @@ const storePKCEData = async (
 const getPKCEData = async (state: string): Promise<PKCEData | null> => {
   const pkceData = await cache.get<PKCEData>(`oauth:pkce:${state}`);
 
+  logger.debug('[OAuth:Service] PKCE Data Lookup', {
+    state,
+    found: !!pkceData,
+  });
+
   if (pkceData) {
     // Delete after retrieval (one-time use)
     await cache.del(`oauth:pkce:${state}`);
@@ -307,9 +312,18 @@ export const handleGoogleCallback = async (
 
   // Exchange code for tokens
   const tokens = await validateGoogleCallback(code, pkceData.codeVerifier);
+  logger.debug('[OAuth:Service] Google tokens received', {
+    hasAccessToken: !!tokens.accessToken,
+    hasRefreshToken: !!tokens.refreshToken,
+  });
 
   // Fetch user profile
   const profile = await getGoogleProfile(tokens.accessToken);
+  logger.debug('[OAuth:Service] Google profile fetched', {
+    email: profile.email,
+    id: profile.id,
+    emailVerified: profile.emailVerified,
+  });
 
   // Find or create user
   const result = await findOrCreateOAuthUser(profile, 'google');

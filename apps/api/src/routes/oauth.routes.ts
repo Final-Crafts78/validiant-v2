@@ -80,9 +80,19 @@ app.get('/google', async (c) => {
     // Generate OAuth authorization URL with state
     const { authUrl, state } = await initiateGoogleOAuth();
 
-    // Store state in HttpOnly cookie (CSRF protection)
-    setCookie(c, 'oauth_state', state, stateCookieOptions);
+    logger.debug(`[OAuth:Init] Generated Auth URL: ${authUrl}`);
+    logger.debug(`[OAuth:Init] Generated State: ${state}`);
 
+    // Store state in HttpOnly cookie (CSRF protection)
+    setCookie(c, 'oauth_state', state, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Lax',
+      path: '/',
+      maxAge: 600, // 10 minutes
+    });
+
+    logger.debug('[OAuth:Init] oauth_state cookie set in context');
     logger.info('Google OAuth initiated', { state });
 
     // Redirect user to Google
@@ -117,6 +127,13 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     // Retrieve state from cookie (CSRF protection)
     const cookieState = getCookie(c, 'oauth_state');
 
+    logger.debug('[OAuth:Callback] Processing Google callback', {
+      hasCode: !!code,
+      urlState,
+      cookieState: cookieState || 'MISSING',
+      rawCookieHeader: c.req.header('cookie'),
+    });
+
     if (!cookieState) {
       throw new Error('Missing OAuth state cookie');
     }
@@ -130,6 +147,12 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
 
     // Handle OAuth callback
     const result = await handleGoogleCallback(code, urlState);
+
+    logger.debug('[OAuth:Callback] handleGoogleCallback success', {
+      userId: result.user.id,
+      email: result.user.email,
+      isNewUser: result.isNewUser,
+    });
 
     // Generate JWT tokens
     const tokens = await generateTokens(
@@ -149,24 +172,27 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
       destination: result.isNewUser ? 'onboarding' : 'dashboard',
     });
 
+    const { accessToken, refreshToken } = tokens;
+    const cookieOptions = getCookieOptions(c, ACCESS_TOKEN_MAX_AGE);
+    logger.debug('[OAuth:Callback] Setting accessToken cookie', {
+      domain: cookieOptions.domain,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
+      sameSite: cookieOptions.sameSite,
+    });
+
     // Set tokens as HttpOnly cookies (SECURE)
-    setCookie(
-      c,
-      'accessToken',
-      tokens.accessToken,
-      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
-    );
+    setCookie(c, 'accessToken', accessToken, cookieOptions);
     setCookie(
       c,
       'refreshToken',
-      tokens.refreshToken,
+      refreshToken,
       getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
     );
 
     // Set user metadata cookie (NOT HttpOnly - accessible by frontend)
     setCookie(c, 'user_id', result.user.id, {
-      ...getCookieOptions(c, ACCESS_TOKEN_MAX_AGE),
-      httpOnly: false,
+      ...getCookieOptions(c, REFRESH_TOKEN_MAX_AGE),
+      httpOnly: false, // Accessible by client JS
     });
 
     logger.info('Google OAuth successful', {
@@ -178,6 +204,11 @@ app.get('/google/callback', zValidator('query', callbackSchema), async (c) => {
     const destination = result.isNewUser
       ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
+
+    logger.debug('[OAuth:Callback] FINAL REDIRECT', {
+      destination,
+      setCookieHeaders: c.res.headers.getSetCookie(),
+    });
 
     return c.redirect(destination);
   } catch (error) {
@@ -213,9 +244,13 @@ app.get('/github', async (c) => {
     // Generate OAuth authorization URL with state
     const { authUrl, state } = await initiateGitHubOAuth();
 
+    logger.debug(`[OAuth:Init] GitHub Auth URL: ${authUrl}`);
+    logger.debug(`[OAuth:Init] GitHub State: ${state}`);
+
     // Store state in HttpOnly cookie (CSRF protection)
     setCookie(c, 'oauth_state', state, stateCookieOptions);
 
+    logger.debug('[OAuth:Init] GitHub oauth_state cookie set');
     logger.info('GitHub OAuth initiated', { state });
 
     // Redirect user to GitHub
@@ -249,6 +284,13 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
 
     // Retrieve state from cookie (CSRF protection)
     const cookieState = getCookie(c, 'oauth_state');
+
+    logger.debug('[OAuth:Callback] Processing GitHub callback', {
+      hasCode: !!code,
+      urlState,
+      cookieState: cookieState || 'MISSING',
+      rawCookieHeader: c.req.header('cookie'),
+    });
 
     if (!cookieState) {
       throw new Error('Missing OAuth state cookie');
@@ -311,6 +353,11 @@ app.get('/github/callback', zValidator('query', callbackSchema), async (c) => {
     const destination = result.isNewUser
       ? `${env.WEB_APP_URL}/dashboard/onboarding`
       : `${env.WEB_APP_URL}/dashboard`;
+
+    logger.debug('[OAuth:Callback] FINAL REDIRECT (GitHub)', {
+      destination,
+      setCookieHeaders: c.res.headers.getSetCookie(),
+    });
 
     return c.redirect(destination);
   } catch (error) {

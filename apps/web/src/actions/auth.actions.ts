@@ -80,7 +80,11 @@ function clearAuthCookies() {
   const cookieStore = cookies();
 
   console.warn(
-    '[clearAuthCookies] Force clearing cookies with overwrite method'
+    '[BFF:ClearCookies] Force clearing cookies using explicit overwrite method...',
+    {
+      options: COOKIE_OPTIONS,
+      currentCookies: cookieStore.getAll().map((c) => c.name),
+    }
   );
 
   // 1. Force overwrite with empty value and immediate expiration
@@ -109,6 +113,8 @@ function clearAuthCookies() {
     name: 'refreshToken',
     ...COOKIE_OPTIONS,
   });
+
+  console.debug('[BFF:ClearCookies] Overwrite sequence completed');
 }
 
 /**
@@ -129,6 +135,11 @@ export async function loginAction(
       },
       body: JSON.stringify({ email, password }),
       credentials: 'include', // Include cookies if Cloudflare sets any
+    });
+
+    console.debug('[BFF:Login] API Response received', {
+      status: response.status,
+      headers: Array.from(response.headers.entries()),
     });
 
     const data = await response.json();
@@ -155,6 +166,12 @@ export async function loginAction(
 
     // Set HttpOnly cookies on Next.js domain (same origin as frontend)
     const cookieStore = cookies();
+
+    console.debug('[BFF:Login] Setting HttpOnly cookies', {
+      options: COOKIE_OPTIONS,
+      accessTokenLength: accessToken.length,
+      refreshTokenLength: refreshToken.length,
+    });
 
     cookieStore.set('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
@@ -388,8 +405,14 @@ export const getCurrentUserAction = cache(
       // Get access token from cookies
       const accessToken = cookieStore.get('accessToken')?.value;
 
+      console.debug('[BFF:GetUser] Access token check', {
+        found: !!accessToken,
+        length: accessToken?.length,
+        prefix: accessToken ? accessToken.substring(0, 30) : 'N/A',
+      });
+
       if (!accessToken) {
-        console.warn('[getCurrentUserAction] No access token found');
+        console.warn('[BFF:GetUser] No access token found');
         return {
           success: false,
           error: 'Unauthenticated',
@@ -397,10 +420,9 @@ export const getCurrentUserAction = cache(
         };
       }
 
-      console.warn(
-        '[getCurrentUserAction] Fetching user from API:',
-        `${API_BASE_URL}/auth/me`
-      );
+      console.debug('[BFF:GetUser] Fetching user from API...', {
+        url: `${API_BASE_URL}/auth/me`,
+      });
 
       // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -413,15 +435,15 @@ export const getCurrentUserAction = cache(
         cache: 'no-store', // Always fetch fresh data
       });
 
-      console.warn(
-        '[getCurrentUserAction] API response status:',
-        response.status
-      );
+      console.debug('[BFF:GetUser] API response metadata', {
+        status: response.status,
+        headers: Array.from(response.headers.entries()),
+      });
 
       // CRITICAL: If unauthorized or forbidden, clear cookies
       if (response.status === 401 || response.status === 403) {
         console.warn(
-          '[getCurrentUserAction] Token invalid (401/403), clearing cookies'
+          '[BFF:GetUser] Auth failure trigger (401/403) - CLEARING COOKIES'
         );
         clearAuthCookies();
         return {

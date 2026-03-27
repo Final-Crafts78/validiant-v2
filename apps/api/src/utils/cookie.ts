@@ -1,18 +1,23 @@
 import { Context } from 'hono';
 import { env } from 'hono/adapter';
 import { setCookie } from 'hono/cookie';
+import { logger } from './logger';
 
 export const getCookieOptions = (c: Context, maxAge: number) => {
   const { COOKIE_DOMAIN } = env<{ COOKIE_DOMAIN?: string }>(c);
 
-  return {
+  const options = {
     httpOnly: true,
     secure: true,
-    sameSite: 'none' as const,
+    sameSite: 'Lax' as const,
     domain: COOKIE_DOMAIN || undefined,
     path: '/',
     maxAge,
   };
+
+  logger.debug('[Cookie:Options] Generated options', options);
+
+  return options;
 };
 
 export const setUserPrefsCookie = (

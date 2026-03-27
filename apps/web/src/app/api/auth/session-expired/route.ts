@@ -42,7 +42,10 @@ export async function GET(request: Request) {
     maxAge: 0, // CRITICAL: Force immediate expiration
   };
 
-  console.warn('[Session Cleanup] Clearing authentication cookies');
+  console.warn('[SessionExpired] Clearing authentication cookies', {
+    options: COOKIE_OPTIONS,
+    existingCookies: cookieStore.getAll().map((c) => c.name),
+  });
 
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
   // CRITICAL: Uses explicit overwrite method + delete() fallback to force browser compliance.
@@ -69,6 +72,10 @@ export async function GET(request: Request) {
   cookieStore.delete({
     name: 'refreshToken',
     ...COOKIE_OPTIONS,
+  });
+
+  console.debug('[SessionExpired] Cookie deletion sequence completed', {
+    remainingCookies: cookieStore.getAll().map((c) => c.name),
   });
 
   // Redirect back to login, preserving the intended destination if provided

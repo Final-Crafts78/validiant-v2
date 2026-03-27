@@ -24,6 +24,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { logger as appLogger } from './utils/logger';
 import { prettyJSON } from 'hono/pretty-json';
 import { UserContext } from './middleware/auth';
 
@@ -172,10 +173,16 @@ export const createHonoApp = () => {
   app.use('*', async (c, next) => {
     const corsMiddleware = cors({
       origin: (origin) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          return origin || '*';
-        }
-        return null; // Reject unknown origins
+        const isAllowed = !origin || allowedOrigins.includes(origin);
+        const result = isAllowed ? (origin || '*') : null;
+
+        appLogger.debug('[CORS] Origin Check', {
+          incomingOrigin: origin || 'NONE',
+          isAllowed,
+          resultHeader: result,
+        });
+
+        return result;
       },
       credentials: true, // Required for HttpOnly cookie pass-through
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

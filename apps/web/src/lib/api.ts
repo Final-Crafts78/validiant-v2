@@ -147,13 +147,22 @@ apiClient.interceptors.response.use(
 
     // Handle authentication errors (401)
     if (statusCode === 401) {
+      logger.log('[API:Interceptor] 401 Unauthorized received', {
+        url: error.config?.url,
+        method: error.config?.method,
+        pathname: typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
+      });
+
       // Check if we're not already on an auth page or session-expired to avoid redirect loop
       // Widening guard to '/auth/' covers login, register, forgot-password, etc.
       if (
         typeof window !== 'undefined' &&
         !window.location.pathname.includes('/auth/')
       ) {
-        logger.warn('[API] Authentication required, redirecting to session-expired handler...');
+        logger.warn('[API:Interceptor] Redirecting to session-expired handler...', {
+          from: window.location.pathname,
+          target: `${window.location.origin}/api/auth/session-expired`,
+        });
 
         // CRITICAL FIX: Clear Zustand auth state before redirecting.
         // Without this, the login page's auth guard sees isAuthenticated=true

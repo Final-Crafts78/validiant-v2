@@ -45,7 +45,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Initialize store (called on app mount)
   initialize: () => {
     try {
-      console.log('[Auth] Store initialized');
+      console.debug('[AuthStore] Initializing store', {
+        hasWindow: typeof window !== 'undefined',
+      });
       // Since we use server-side auth, we don't need to fetch anything here
       // The dashboard layout handles user fetching server-side
       set({
@@ -63,7 +65,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set full auth data (login/register)
   setAuth: ({ user, accessToken }) => {
-    console.log('[Auth] Setting auth data', {
+    console.debug('[AuthStore] setAuth called', {
       userId: user.id,
       email: user.email,
       hasToken: !!accessToken,
@@ -78,7 +80,11 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set user data only
   setUser: (user, accessToken) => {
-    console.log('[Auth] Setting user', { userId: user.id, email: user.email });
+    console.debug('[AuthStore] setUser called', { 
+      userId: user.id, 
+      email: user.email,
+      hasToken: !!accessToken
+    });
     set({
       user,
       accessToken: accessToken || get().accessToken,
@@ -90,8 +96,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Update user data partially
   updateUser: (updates) => {
     const currentUser = get().user;
+    console.debug('[AuthStore] updateUser called', { updates });
     if (currentUser) {
-      console.log('[Auth] Updating user', { updates });
       set({
         user: { ...currentUser, ...updates },
       });
@@ -100,7 +106,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Clear auth state (logout)
   clearAuth: () => {
-    console.log('[Auth] Clearing auth state');
+    console.warn('[AuthStore] clearAuth called - WIPING CLIENT STATE');
     set({
       user: null,
       accessToken: null,
@@ -111,7 +117,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set loading state
   setLoading: (isLoading) => {
-    console.log('[Auth] Setting loading state', { isLoading });
+    console.debug('[AuthStore] setLoading', { isLoading });
     set({ isLoading });
   },
 }));

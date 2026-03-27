@@ -43,10 +43,25 @@ export function getCookieDomain(requestHostname?: string) {
  * - sameSite: 'none' (Enables cross-subdomain authentication)
  * - path: '/' (Available across the entire app)
  */
-export const getBaseCookieOptions = (hostname?: string) => ({
-  httpOnly: true,
-  secure: true,
-  sameSite: 'none' as const,
-  path: '/',
-  domain: getCookieDomain(hostname),
-});
+export const getBaseCookieOptions = (hostname?: string) => {
+  const isProduction = hostname
+    ? !hostname.includes('localhost') && !hostname.includes('127.0.0.1')
+    : process.env.NODE_ENV === 'production';
+
+  const options = {
+    httpOnly: true,
+    secure: isProduction,
+    // sameSite: 'none' as const, // Might be needed for cross-subdomain in some cases
+    sameSite: 'lax' as const,
+    path: '/',
+    // domain: isProduction ? '.validiant.in' : undefined,
+  };
+
+  console.debug('[Cookie:Utils] Base options generated', {
+    hostname: hostname || 'UNKNOWN',
+    isProduction,
+    options,
+  });
+
+  return options;
+};
