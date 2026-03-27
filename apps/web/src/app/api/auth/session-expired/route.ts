@@ -13,6 +13,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { ROUTES } from '@/lib/config';
+import { getBaseCookieOptions } from '@/lib/auth-utils';
 
 /**
  * GET /api/auth/session-expired
@@ -32,25 +33,13 @@ export async function GET(request: Request) {
   });
 
   const cookieStore = cookies();
+  const requestUrl = new URL(request.url);
+  const requestHostname = requestUrl.hostname;
 
-  // Cookie configuration mirroring auth.actions.ts
-  const getCookieDomain = () => {
-    // Check if we're on the production domain
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const isProduction =
-      appUrl.includes('validiant.in') ||
-      process.env.NEXT_PUBLIC_ENV === 'production' ||
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-
-    return isProduction ? '.validiant.in' : undefined;
-  };
-
+  // Cookie configuration using shared utility
   const COOKIE_OPTIONS = {
-    httpOnly: true,
-    secure: true, // MUST be true for SameSite=None
-    sameSite: 'none' as const, // Match Hono backend exactly
-    path: '/',
-    domain: getCookieDomain(),
+    ...getBaseCookieOptions(requestHostname),
+    maxAge: 0, // CRITICAL: Force immediate expiration
   };
 
   console.warn('[Session Cleanup] Clearing authentication cookies');

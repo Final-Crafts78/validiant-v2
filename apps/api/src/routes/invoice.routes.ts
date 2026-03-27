@@ -160,9 +160,10 @@ invoiceRoutes.get('/project/:projectId/summary', async (c) => {
           sql<number>`COUNT(CASE WHEN ${schema.tasks.statusKey} IN ('COMPLETED', 'VERIFIED') THEN 1 END)`.mapWith(
             Number
           ),
-        totalTimeSeconds: sql<number>`COALESCE(SUM(${schema.timeEntries.duration}), 0)`.mapWith(
-          Number
-        ),
+        totalTimeSeconds:
+          sql<number>`COALESCE(SUM(${schema.timeEntries.duration}), 0)`.mapWith(
+            Number
+          ),
       })
       .from(schema.tasks)
       .leftJoin(

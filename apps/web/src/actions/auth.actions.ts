@@ -28,6 +28,8 @@
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { cache } from 'react';
+import { getBaseCookieOptions } from '@/lib/auth-utils';
 import type {
   AuthUser,
   LoginActionResult,
@@ -35,6 +37,7 @@ import type {
   LogoutActionResult,
   GetCurrentUserActionResult,
   UpdateProfileActionResult,
+  Organization,
 } from '@/types/auth.types';
 
 /**
@@ -57,24 +60,7 @@ const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
  *
  * Using NEXT_PUBLIC_APP_URL to determine if we're in production
  */
-const getCookieDomain = () => {
-  // Check if we're on the production domain
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const isProduction =
-    appUrl.includes('validiant.in') ||
-    process.env.NEXT_PUBLIC_ENV === 'production' ||
-    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-
-  return isProduction ? '.validiant.in' : undefined;
-};
-
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: true, // MUST be true for SameSite=None
-  sameSite: 'none' as const, // Match Hono backend exactly
-  path: '/',
-  domain: getCookieDomain(),
-};
+const COOKIE_OPTIONS = getBaseCookieOptions();
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
@@ -103,6 +89,7 @@ function clearAuthCookies() {
     value: '',
     expires: new Date(0), // Expire instantly in the past
     ...COOKIE_OPTIONS,
+    maxAge: 0, // CRITICAL: Force immediate expiration
   });
 
   cookieStore.set({
@@ -110,6 +97,7 @@ function clearAuthCookies() {
     value: '',
     expires: new Date(0),
     ...COOKIE_OPTIONS,
+    maxAge: 0, // CRITICAL: Force immediate expiration
   });
 
   // 2. Also call delete as a fallback for Next.js internal state
@@ -384,125 +372,168 @@ export async function logoutAction(): Promise<LogoutActionResult> {
 /**
  * Get Current User Action
  *
- * Server-side user fetch using cookie authentication
+ * Server-side user fetch using cookie authentication.
+ * Memoized via React cache() to prevent multiple parallel API calls
+ * during a single request/render lifecycle (Race Condition Protection).
  *
  * CRITICAL COOKIE-CLEAR SAFETY NET:
  * If the API returns 401/403 or any error, cookies are cleared to prevent
  * infinite redirect loop between middleware (sees cookie) and layout (gets error).
  */
-export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
-  const cookieStore = cookies();
+export const getCurrentUserAction = cache(
+  async (): Promise<GetCurrentUserActionResult> => {
+    const cookieStore = cookies();
 
-  try {
-    // Get access token from cookies
-    const accessToken = cookieStore.get('accessToken')?.value;
-
-    if (!accessToken) {
-      console.warn('[getCurrentUserAction] No access token found');
-      return {
-        success: false,
-        error: 'Unauthenticated',
-        message: 'No access token found',
-      };
-    }
-
-    console.warn(
-      '[getCurrentUserAction] Fetching user from API:',
-      `${API_BASE_URL}/auth/me`
-    );
-
-    // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      cache: 'no-store', // Always fetch fresh data
-    });
-
-    console.warn(
-      '[getCurrentUserAction] API response status:',
-      response.status
-    );
-
-    // CRITICAL: If unauthorized or forbidden, clear cookies
-    if (response.status === 401 || response.status === 403) {
-      console.warn(
-        '[getCurrentUserAction] Token invalid (401/403), clearing cookies'
-      );
-      clearAuthCookies();
-      return {
-        success: false,
-        error: 'TokenInvalid',
-        message: 'Authentication token is invalid or expired',
-      };
-    }
-
-    // Try to parse JSON response
-    let data;
     try {
-      data = await response.json();
-    } catch (jsonError) {
-      console.error(
-        '[getCurrentUserAction] Failed to parse JSON response:',
-        jsonError
+      // Get access token from cookies
+      const accessToken = cookieStore.get('accessToken')?.value;
+
+      if (!accessToken) {
+        console.warn('[getCurrentUserAction] No access token found');
+        return {
+          success: false,
+          error: 'Unauthenticated',
+          message: 'No access token found',
+        };
+      }
+
+      console.warn(
+        '[getCurrentUserAction] Fetching user from API:',
+        `${API_BASE_URL}/auth/me`
       );
-      // Clear cookies if response is malformed
-      clearAuthCookies();
-      return {
-        success: false,
-        error: 'InvalidResponse',
-        message: 'Server returned invalid response',
-      };
-    }
 
-    // Check if response indicates failure
-    if (!response.ok || !data.success) {
-      console.warn('[getCurrentUserAction] API returned error:', data);
-      // Clear cookies on any API failure
-      clearAuthCookies();
-      return {
-        success: false,
-        error: data.error || 'Failed to fetch user',
-        message: data.message || 'Unable to load user data',
-      };
-    }
+      // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        cache: 'no-store', // Always fetch fresh data
+      });
 
-    // Verify user data exists in response
-    if (!data.data || !data.data.user) {
-      console.error(
-        '[getCurrentUserAction] User data missing from response:',
-        data
+      console.warn(
+        '[getCurrentUserAction] API response status:',
+        response.status
       );
-      // Clear cookies if user data is missing
+
+      // CRITICAL: If unauthorized or forbidden, clear cookies
+      if (response.status === 401 || response.status === 403) {
+        console.warn(
+          '[getCurrentUserAction] Token invalid (401/403), clearing cookies'
+        );
+        clearAuthCookies();
+        return {
+          success: false,
+          error: 'TokenInvalid',
+          message: 'Authentication token is invalid or expired',
+        };
+      }
+
+      // Try to parse JSON response
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error(
+          '[getCurrentUserAction] Failed to parse JSON response:',
+          jsonError
+        );
+        // Clear cookies if response is malformed
+        clearAuthCookies();
+        return {
+          success: false,
+          error: 'InvalidResponse',
+          message: 'Server returned invalid response',
+        };
+      }
+
+      // Check if response indicates failure
+      if (!response.ok || !data.success) {
+        console.warn('[getCurrentUserAction] API returned error:', data);
+        // Clear cookies on any API failure
+        clearAuthCookies();
+        return {
+          success: false,
+          error: data.error || 'Failed to fetch user',
+          message: data.message || 'Unable to load user data',
+        };
+      }
+
+      // Verify user data exists in response
+      if (!data.data || !data.data.user) {
+        console.error(
+          '[getCurrentUserAction] User data missing from response:',
+          data
+        );
+        // Clear cookies if user data is missing
+        clearAuthCookies();
+        return {
+          success: false,
+          error: 'InvalidResponse',
+          message: 'User data not found in response',
+        };
+      }
+
+      console.warn(
+        '[getCurrentUserAction] Successfully fetched user:',
+        data.data.user.email
+      );
+
+      return {
+        success: true,
+        user: data.data.user as AuthUser,
+        accessToken,
+      };
+    } catch (error) {
+      console.error(
+        '[getCurrentUserAction] Network or unexpected error:',
+        error
+      );
+      // Clear cookies on any exception to prevent infinite redirect
       clearAuthCookies();
       return {
         success: false,
-        error: 'InvalidResponse',
-        message: 'User data not found in response',
+        error: 'NetworkError',
+        message: 'Unable to connect to authentication server',
       };
     }
-
-    console.warn(
-      '[getCurrentUserAction] Successfully fetched user:',
-      data.data.user.email
-    );
-
-    return {
-      success: true,
-      user: data.data.user as AuthUser,
-      accessToken,
-    };
-  } catch (error) {
-    console.error('[getCurrentUserAction] Network or unexpected error:', error);
-    // Clear cookies on any exception to prevent infinite redirect
-    clearAuthCookies();
-    return {
-      success: false,
-      error: 'NetworkError',
-      message: 'Unable to connect to authentication server',
-    };
   }
-}
+);
+
+
+/**
+ * Get User Organizations Action
+ *
+ * Server-side fetch for user's organizations.
+ * Memoized via React cache() for request-level deduplication.
+ */
+export const getUserOrganizationsAction = cache(
+  async (accessToken: string): Promise<Organization[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/organizations/my`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `[getUserOrganizationsAction] FETCH FAILED! Status: ${response.status}, Response: ${errorText}`
+        );
+        return [];
+      }
+
+      const data = await response.json();
+      return data?.data?.organizations ?? [];
+    } catch (error) {
+      console.error('[getUserOrganizationsAction] CRASH fetching orgs:', error);
+      return [];
+    }
+  }
+);

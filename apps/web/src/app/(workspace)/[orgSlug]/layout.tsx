@@ -7,65 +7,40 @@
  * 3. Render the Obsidian Command Shell
  */
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
-import { API_CONFIG, ROUTES } from '@/lib/config';
+import { ROUTES } from '@/lib/config';
 import { logger } from '@/lib/logger';
-import type { AuthUser } from '@/types/auth.types';
+import {
+  getCurrentUserAction,
+  getUserOrganizationsAction,
+} from '@/actions/auth.actions';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
 
 async function getData(): Promise<{
-  user: AuthUser;
+  user: any;
   orgs: any[];
-  activeOrg: any;
+  accessToken: string;
 }> {
-  try {
-    const cookieStore = cookies();
-    const accessToken = cookieStore.get('accessToken');
+  const result = await getCurrentUserAction();
 
-    if (!accessToken) {
-      redirect(ROUTES.LOGIN);
-    }
-
-    const rawApi = (
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
-    ).replace(/\/+$/, '');
-    const baseUrl = rawApi.endsWith('/api/v1') ? rawApi : `${rawApi}/api/v1`;
-
-    // Parallel fetch User and Orgs
-    const [userRes, orgsRes] = await Promise.all([
-      fetch(`${baseUrl}${API_CONFIG.ENDPOINTS.AUTH.ME}`, {
-        headers: { Authorization: `Bearer ${accessToken.value}` },
-        cache: 'no-store',
-      }),
-      fetch(`${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`, {
-        headers: { Authorization: `Bearer ${accessToken.value}` },
-        cache: 'no-store',
-      }),
-    ]);
-
-    if (!userRes.ok || !orgsRes.ok) {
-      redirect('/api/auth/session-expired');
-    }
-
-    const userData = await userRes.json();
-    const orgsData = await orgsRes.json();
-
-    return {
-      user: userData.data.user,
-      orgs: orgsData.data.organizations,
-      activeOrg: null, // Logic to find by slug if needed, but for now we trust the slug
-    };
-  } catch (error) {
-    logger.error('[Org Layout] Data fetch failed:', error);
+  if (!result.success || !result.user || !result.accessToken) {
     redirect(ROUTES.LOGIN);
   }
+
+  const orgs = await getUserOrganizationsAction(result.accessToken);
+
+  return {
+    user: result.user,
+    orgs,
+    accessToken: result.accessToken,
+  };
 }
+
 
 export default async function OrgLayout({
   children,
@@ -74,7 +49,7 @@ export default async function OrgLayout({
   children: React.ReactNode;
   params: { orgSlug: string };
 }) {
-  const { user, orgs } = await getData();
+  const { user, orgs, accessToken } = await getData();
 
   // Validate the slug exists in user's orgs
   const activeOrg = orgs.find((o) => o.slug === params.orgSlug);
@@ -88,12 +63,9 @@ export default async function OrgLayout({
     redirect(ROUTES.ONBOARDING);
   }
 
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('accessToken');
-
   return (
     <>
-      <AuthStoreInitializer user={user} accessToken={accessToken?.value} />
+      <AuthStoreInitializer user={user} accessToken={accessToken} />
       <WorkspaceInitializer orgs={orgs} />
 
       <WorkspaceLayoutContent orgSlug={params.orgSlug}>

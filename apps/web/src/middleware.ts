@@ -38,7 +38,8 @@ export function middleware(request: NextRequest) {
 
   // Get authentication cookie
   const accessToken = request.cookies.get('accessToken');
-  const isAuthenticated = !!accessToken;
+  // CRITICAL: Basic validation to prevent using empty/cleared cookies
+  const isAuthenticated = !!accessToken && accessToken.value.length > 100;
 
   // Debug logging for authentication issues
   if (pathname.includes('/dashboard') || pathname.includes('/onboarding')) {

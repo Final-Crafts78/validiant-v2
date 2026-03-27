@@ -86,3 +86,16 @@ export interface UpdateProfileActionResult {
   error?: string;
   message?: string;
 }
+
+/**
+ * Organization Response
+ */
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  role?: string;
+  createdAt: string;
+  updatedAt: string;
+}
