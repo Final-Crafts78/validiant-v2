@@ -147,33 +147,72 @@ apiClient.interceptors.response.use(
 
     // Handle authentication errors (401)
     if (statusCode === 401) {
-      logger.log('[API:Interceptor] 401 Unauthorized received', {
+      const isAlreadyOnAuthPage =
+        typeof window !== 'undefined' &&
+        (window.location.pathname.includes('/auth/') ||
+          window.location.pathname.includes('/api/auth/session-expired'));
+
+      logger.log('[Axios:401] FULL CONTEXT', {
         url: error.config?.url,
+        baseURL: error.config?.baseURL,
         method: error.config?.method,
-        pathname: typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
+        status: response?.status,
+        pathname:
+          typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
+        isAlreadyOnAuthPage,
+        requestHeaders: error.config?.headers,
+        responseHeaders: response?.headers,
       });
 
-      // Check if we're not already on an auth page or session-expired to avoid redirect loop
-      // Widening guard to '/auth/' covers login, register, forgot-password, etc.
-      if (
-        typeof window !== 'undefined' &&
-        !window.location.pathname.includes('/auth/')
-      ) {
-        logger.warn('[API:Interceptor] Redirecting to session-expired handler...', {
-          from: window.location.pathname,
-          target: `${window.location.origin}/api/auth/session-expired`,
+      // COOKIE CHECK (names only for security)
+      if (typeof window !== 'undefined') {
+        const cookieNames = document.cookie
+          .split(';')
+          .map((c) => c.split('=')[0].trim());
+        logger.debug('[Axios:401] COOKIE CHECK', {
+          cookieNames,
+          withCredentials: error.config?.withCredentials,
         });
+      }
+
+      // Check if we're not already on an auth page or session-expired to avoid redirect loop
+      if (typeof window !== 'undefined' && !isAlreadyOnAuthPage) {
+        logger.warn(
+          '[Axios:401] REDIRECT DECISION: Redirecting to session-expired...',
+          {
+            from: window.location.pathname,
+            target: `${window.location.origin}/api/auth/session-expired`,
+          }
+        );
+
+        const authStateBefore = useAuthStore.getState().isAuthenticated;
 
         // CRITICAL FIX: Clear Zustand auth state before redirecting.
-        // Without this, the login page's auth guard sees isAuthenticated=true
-        // and immediately redirects back to the dashboard, causing an
-        // infinite redirect loop.
         useAuthStore.getState().clearAuth();
 
-        // Redirect to session-expired handler to clear HttpOnly cookies
-        window.location.href =
+        const authStateAfter = useAuthStore.getState().isAuthenticated;
+
+        logger.debug('[Axios:401] ZUSTAND STATE CLEARED', {
+          before: authStateBefore,
+          after: authStateAfter,
+        });
+
+        const targetUrl =
           '/api/auth/session-expired?redirect=' +
           encodeURIComponent(window.location.pathname);
+
+        logger.info('[Axios:401] NAVIGATING to session-expired', {
+          href: targetUrl,
+          timestamp: new Date().toISOString(),
+        });
+
+        // Redirect to session-expired handler to clear HttpOnly cookies
+        window.location.href = targetUrl;
+      } else if (typeof window !== 'undefined') {
+        logger.debug('[Axios:401] REDIRECT SKIPPED', {
+          reason: 'Already on auth page or session-expired',
+          pathname: window.location.pathname,
+        });
       }
     }
 

@@ -50,11 +50,12 @@ export const authenticate = async (
 
     logger.info('[Auth Middleware] Incoming', {
       path: c.req.path,
+      method: c.req.method,
+      origin: c.req.header('origin') || 'NONE',
+      referer: c.req.header('referer') || 'NONE',
       hasBearerToken: !!token,
-      bearerPrefix: token ? token.substring(0, 20) + '...' : null,
       hasCookieToken: !!cookieToken,
-      cookiePrefix: cookieToken ? cookieToken.substring(0, 20) + '...' : null,
-      rawCookieHeader: c.req.header('cookie') ?? 'NONE',
+      rawCookieHeader: c.req.header('cookie') ? 'PRESENT (Names masked)' : 'NONE',
     });
 
     if (!token) token = cookieToken;

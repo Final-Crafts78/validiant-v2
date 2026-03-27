@@ -44,9 +44,14 @@ export function middleware(request: NextRequest) {
   console.debug('[MW:Edge] Cookie Detection', {
     hasAccessToken: !!accessToken,
     accessTokenPrefix: accessToken?.value.substring(0, 30),
+    accessTokenLength: accessToken?.value.length,
     hasRefreshToken: !!refreshToken,
     hasUserId: !!userId,
-    allCookies: request.cookies.getAll().map((c) => c.name),
+    allCookies: request.cookies.getAll().map((c) => ({
+      name: c.name,
+      valueLength: c.value?.length || 0,
+      valuePrefix: c.value?.substring(0, 10),
+    })),
   });
   // CRITICAL: Basic validation to prevent using empty/cleared cookies
   const isAuthenticated = !!accessToken && accessToken.value.length > 100;
@@ -107,6 +112,8 @@ export function middleware(request: NextRequest) {
         isOrgScoped,
         isSemiPublic,
         isAuthenticated,
+        accessTokenPresent: !!accessToken,
+        accessTokenLength: accessToken?.value.length || 0,
         redirectTo: '/auth/login',
       }
     );
@@ -117,6 +124,7 @@ export function middleware(request: NextRequest) {
     console.debug('[MW:Edge] Redirecting to login', {
       from: pathname,
       target: loginUrl.toString(),
+      timestamp: new Date().toISOString(),
     });
     return NextResponse.redirect(loginUrl);
   }
@@ -128,6 +136,10 @@ export function middleware(request: NextRequest) {
 
     console.debug('[MW:Edge] Already authed, redirecting to destination', {
       dest,
+      isAuthenticated,
+      accessTokenLength: accessToken?.value.length,
+      accessTokenPrefix: accessToken?.value.substring(0, 20),
+      timestamp: new Date().toISOString(),
     });
     return NextResponse.redirect(new URL(dest, request.url));
   }

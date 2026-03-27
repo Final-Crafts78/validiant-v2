@@ -106,7 +106,11 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Clear auth state (logout)
   clearAuth: () => {
-    console.warn('[AuthStore] clearAuth called - WIPING CLIENT STATE');
+    const stack = new Error().stack?.split('\n').slice(0, 5).join('\n');
+    console.warn('[AuthStore] clearAuth called - WIPING CLIENT STATE', {
+      caller: stack,
+      timestamp: new Date().toISOString(),
+    });
     set({
       user: null,
       accessToken: null,

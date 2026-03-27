@@ -1,0 +1,1015 @@
+Mar 27 22:39:20.30
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:39:20.22
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:20.00
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:19.76
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:19.76
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:09:19.780Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:39:19.76
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:19.76
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:19.76
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:19.68
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:18.96
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:08.24
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:08.12
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:39:07.73
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:07.73
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:07.41
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:07.39
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:07.39
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:07.39
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:39:07.39
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:09:07.415Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:39:07.16
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:06.37
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:06.27
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:06.26
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:05.97
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:05.97
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:05.97
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:05.97
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:05.91
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:09:05.936Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:39:05.69
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:04.63
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:04.51
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:39:04.27
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:04.25
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:03.87
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:03.85
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:03.85
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:03.85
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:03.83
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+4
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:39:03.61
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:02.50
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:02.39
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:39:02.24
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:02.12
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:01.97
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:01.97
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:01.91
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:01.91
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:01.91
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:09:01.932Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:39:01.67
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:00.78
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:39:00.64
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:39:00.48
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:00.34
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:39:00.12
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:00.12
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:00.12
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:09:00.142Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:39:00.12
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:39:00.12
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:38:59.87
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:58.82
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:58.68
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:58.33
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:58.06
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:57.70
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:57.66
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:57.64
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:57.662Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:57.64
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:57.64
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:57.39
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:56.51
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:56.39
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:55.55
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:55.21
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:54.85
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:54.85
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:54.85
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:38:54.85
+GET
+200
+www.validiant.in
+/validiant-2/settings
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:38:54.79
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:54.819Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:54.71
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:54.02
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:53.88
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:53.77
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:53.61
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:53.35
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:53.34
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:53.34
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:53.34
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:53.28
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:53.337Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:53.12
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:51.67
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+13
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:51.52
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:51.16
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:51.14
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:50.84
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:50.84
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:50.84
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:50.84
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:50.860Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:50.84
+GET
+200
+www.validiant.in
+/validiant-2/settings
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:38:50.59
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:49.57
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:49.35
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:49.10
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:49.08
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:48.77
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:48.77
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:48.77
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:48.77
+GET
+200
+www.validiant.in
+/validiant-2/projects
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/projects', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:48.75
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:48.769Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:48.56
+GET
+304
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:47.38
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:47.24
+GET
+307
+www.validiant.in
+/auth/login
+3
+[MW:Edge] Already authed, redirecting to destination { dest: '/dashboard/onboarding' }
+Mar 27 22:38:46.84
+GET
+200
+www.validiant.in
+/validiant-2/profile
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/profile', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:46.48
+GET
+307
+www.validiant.in
+/api/auth/session-expired
+4
+[SessionExpired] Clearing authentication cookies { options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 0 }, existingCookies: [ 'userPrefs', 'accessToken', 'refreshToken', 'user_id' ] }
+Mar 27 22:38:46.14
+GET
+200
+www.validiant.in
+/validiant-2/tasks
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/tasks', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:46.14
+GET
+200
+www.validiant.in
+/validiant-2/projects
+3
+[Cookie:Utils] Base options generated { hostname: 'UNKNOWN', isProduction: true, options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' } }
+Mar 27 22:38:46.14
+GET
+200
+www.validiant.in
+/validiant-2/organizations
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/organizations', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:46.14
+GET
+200
+www.validiant.in
+/validiant-2/settings
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/validiant-2/settings', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:46.12
+GET
+200
+www.validiant.in
+/validiant-2/dashboard
+3
+[Middleware Debug] { pathname: '/validiant-2/dashboard', hasAccessToken: true, accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...', allCookies: [ { name: 'userPrefs', hasValue: true, valueLength: 2 }, { name: 'accessToken', hasValue: true, valueLength: 375 }, { name: 'refreshToken', hasValue: true, valueLength: 327 }, { name: 'user_id', hasValue: true, valueLength: 36 } ], isAuthenticated: true, timestamp: '2026-03-27T17:08:46.160Z', url: 'https://www.validiant.in/validiant-2/dashboard' }
+Mar 27 22:38:45.32
+GET
+200
+www.validiant.in
+/manifest.webmanifest
+2
+[MW:Edge] Auth State { isAuthenticated: true, path: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:44.42
+GET
+200
+www.validiant.in
+/dashboard/onboarding
+12
+[getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
+Mar 27 22:38:43.16
+GET
+307
+www.validiant.in
+/dashboard
+11
+[Dashboard:Layout] Redirecting to ONBOARDING - No organizations found
+Mar 27 22:38:28.94
+GET
+304
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:28.80
+GET
+304
+www.validiant.in
+/auth/register
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/register', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:28.80
+GET
+304
+www.validiant.in
+/auth/forgot-password
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/forgot-password', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:28.80
+GET
+307
+www.validiant.in
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:26.38
+GET
+304
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:26.32
+GET
+200
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:26.32
+GET
+307
+www.validiant.in
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:26.05
+GET
+304
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:25.98
+GET
+307
+www.validiant.in
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:25.00
+GET
+200
+www.validiant.in
+/auth/error
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/error', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:22.36
+GET
+304
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:22.24
+GET
+200
+www.validiant.in
+/auth/register
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/register', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:22.24
+GET
+307
+www.validiant.in
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:22.24
+GET
+200
+www.validiant.in
+/auth/forgot-password
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/forgot-password', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:21.77
+GET
+200
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:21.63
+GET
+307
+www.validiant.in
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:20.73
+GET
+200
+www.validiant.in
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:03.72
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:03.67
+GET
+307
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/manifest.webmanifest
+4
+[Middleware Redirect] Unauthenticated access to protected route { pathname: '/manifest.webmanifest', isProtectedRoute: false, isOrgScoped: true, isSemiPublic: false, isAuthenticated: false, redirectTo: '/auth/login' }
+Mar 27 22:38:03.18
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: false }
+Mar 27 22:38:01.23
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/auth/register
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/register', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:01.23
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:00.86
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/auth/register
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/register', isProtectedRoute: false, isOrgScoped: undefined, isAuthRoute: true }
+Mar 27 22:38:00.86
+GET
+200
+validiant-portal-1u9gccehm-mansoors-projects-b0833ee8.vercel.app
+/auth/login
+2
+[MW:Edge] Auth State { isAuthenticated: false, path: '/auth/login', 

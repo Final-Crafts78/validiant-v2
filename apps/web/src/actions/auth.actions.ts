@@ -79,13 +79,15 @@ const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 function clearAuthCookies() {
   const cookieStore = cookies();
 
-  console.warn(
-    '[BFF:ClearCookies] Force clearing cookies using explicit overwrite method...',
-    {
-      options: COOKIE_OPTIONS,
-      currentCookies: cookieStore.getAll().map((c) => c.name),
-    }
-  );
+  const beforeCount = cookieStore.getAll().length;
+  const beforeNames = cookieStore.getAll().map((c) => c.name);
+
+  console.warn('[BFF:ClearCookies] DOMAIN CHECK', {
+    domain: (COOKIE_OPTIONS as any).domain || 'UNDEFINED (Host-only)',
+    path: COOKIE_OPTIONS.path,
+    beforeNames,
+    beforeCount,
+  });
 
   // 1. Force overwrite with empty value and immediate expiration
   cookieStore.set({
@@ -114,7 +116,14 @@ function clearAuthCookies() {
     ...COOKIE_OPTIONS,
   });
 
-  console.debug('[BFF:ClearCookies] Overwrite sequence completed');
+  const afterCount = cookieStore.getAll().length;
+  const afterNames = cookieStore.getAll().map((c) => c.name);
+
+  console.debug('[BFF:ClearCookies] STATE AFTER DELETE', {
+    afterNames,
+    afterCount,
+    timestamp: new Date().toISOString(),
+  });
 }
 
 /**
@@ -424,6 +433,11 @@ export const getCurrentUserAction = cache(
         url: `${API_BASE_URL}/auth/me`,
       });
 
+      console.debug('[BFF:GetUser] API CALL START', {
+        url: `${API_BASE_URL}/auth/me`,
+        tokenPrefix: accessToken.substring(0, 20),
+      });
+
       // Fetch user from Cloudflare API (API_BASE_URL already includes /api/v1)
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         method: 'GET',
@@ -443,7 +457,11 @@ export const getCurrentUserAction = cache(
       // CRITICAL: If unauthorized or forbidden, clear cookies
       if (response.status === 401 || response.status === 403) {
         console.warn(
-          '[BFF:GetUser] Auth failure trigger (401/403) - CLEARING COOKIES'
+          '[BFF:GetUser] Auth failure trigger (401/403) - CLEARING COOKIES',
+          {
+            status: response.status,
+            reason: '401_403_REASON',
+          }
         );
         clearAuthCookies();
         return {
@@ -459,8 +477,11 @@ export const getCurrentUserAction = cache(
         data = await response.json();
       } catch (jsonError) {
         console.error(
-          '[getCurrentUserAction] Failed to parse JSON response:',
-          jsonError
+          '[getCurrentUserAction] Failed to parse JSON response - Clearing cookies',
+          {
+            jsonError,
+            reason: 'JSON_PARSE_REASON',
+          }
         );
         // Clear cookies if response is malformed
         clearAuthCookies();
@@ -473,7 +494,10 @@ export const getCurrentUserAction = cache(
 
       // Check if response indicates failure
       if (!response.ok || !data.success) {
-        console.warn('[getCurrentUserAction] API returned error:', data);
+        console.warn('[getCurrentUserAction] API returned error:', {
+          data,
+          reason: 'API_ERROR_REASON',
+        });
         // Clear cookies on any API failure
         clearAuthCookies();
         return {
@@ -486,8 +510,11 @@ export const getCurrentUserAction = cache(
       // Verify user data exists in response
       if (!data.data || !data.data.user) {
         console.error(
-          '[getCurrentUserAction] User data missing from response:',
-          data
+          '[getCurrentUserAction] User data missing from response - Clearing cookies',
+          {
+            data,
+            reason: 'MISSING_USER_REASON',
+          }
         );
         // Clear cookies if user data is missing
         clearAuthCookies();

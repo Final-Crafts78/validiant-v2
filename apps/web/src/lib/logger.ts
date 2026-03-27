@@ -14,11 +14,17 @@ export const logger = {
   log: (...args: unknown[]): void => {
     if (isDev) console.log(...args);
   },
+  info: (...args: unknown[]): void => {
+    if (isDev) console.info(...args);
+  },
   warn: (...args: unknown[]): void => {
     if (isDev) console.warn(...args);
   },
   error: (...args: unknown[]): void => {
     if (isDev) console.error(...args);
+  },
+  debug: (...args: unknown[]): void => {
+    if (isDev) console.debug(...args);
   },
 };
 /* eslint-enable no-console */

@@ -37,6 +37,14 @@ export function ProjectSwitcher() {
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ['projects', 'org', activeOrgId],
     queryFn: async () => {
+      console.debug('[ProjectSwitcher] Query firing', {
+        activeOrgId,
+        url: `/organizations/${activeOrgId}/projects`,
+        cookieNames:
+          typeof document !== 'undefined'
+            ? document.cookie.split(';').map((c) => c.split('=')[0].trim())
+            : 'N/A',
+      });
       const { data } = await apiClient.get(
         `/organizations/${activeOrgId}/projects`
       );
@@ -44,6 +52,15 @@ export function ProjectSwitcher() {
     },
     enabled: !!activeOrgId,
     staleTime: 5 * 60 * 1000,
+    meta: {
+      onError: (err: any) => {
+        console.error('[ProjectSwitcher] Query failed', {
+          status: err.response?.status,
+          message: err.message,
+          url: err.config?.url,
+        });
+      },
+    },
   });
 
   const activeProject = projects.find((p) => p.id === activeProjectId);

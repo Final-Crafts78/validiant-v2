@@ -42,6 +42,14 @@ export async function GET(request: Request) {
     maxAge: 0, // CRITICAL: Force immediate expiration
   };
 
+  console.debug('[SessionExpired] Resolved Cookie Options', {
+    domain: (COOKIE_OPTIONS as any).domain || 'UNDEFINED (Host-only)',
+    path: COOKIE_OPTIONS.path,
+    secure: COOKIE_OPTIONS.secure,
+    sameSite: COOKIE_OPTIONS.sameSite,
+    isProduction: process.env.NODE_ENV === 'production',
+  });
+
   console.warn('[SessionExpired] Clearing authentication cookies', {
     options: COOKIE_OPTIONS,
     existingCookies: cookieStore.getAll().map((c) => c.name),
@@ -79,10 +87,19 @@ export async function GET(request: Request) {
   });
 
   // Redirect back to login, preserving the intended destination if provided
+  // Redirect back to login, preserving the intended destination if provided
   const loginUrl = new URL(ROUTES.LOGIN, request.url);
   if (redirectTo && redirectTo.startsWith('/')) {
     loginUrl.searchParams.set('redirect', redirectTo);
   }
 
-  return NextResponse.redirect(loginUrl);
+  const response = NextResponse.redirect(loginUrl);
+
+  console.info('[SessionExpired] Finalizing redirect', {
+    target: loginUrl.toString(),
+    setCookieHeaders: response.headers.getSetCookie(),
+    timestamp: new Date().toISOString(),
+  });
+
+  return response;
 }

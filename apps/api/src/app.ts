@@ -180,6 +180,7 @@ export const createHonoApp = () => {
           incomingOrigin: origin || 'NONE',
           isAllowed,
           resultHeader: result,
+          credentials: true, // Hardcoded as per line 187
         });
 
         return result;

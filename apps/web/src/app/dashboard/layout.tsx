@@ -55,7 +55,13 @@ export default async function DashboardLayout({
   });
 
   if (!result.success || !result.user) {
-    console.warn('[Dashboard:Layout] Redirecting to LOGIN - No valid user session');
+    console.warn(
+      '[Dashboard:Layout] Redirecting to LOGIN - No valid user session',
+      {
+        reason: result.error || 'MISSING_USER_DATA',
+        success: result.success,
+      }
+    );
     redirect(ROUTES.LOGIN);
   }
 
@@ -66,10 +72,23 @@ export default async function DashboardLayout({
     redirect('/auth/verify-email');
   }
 
+  console.debug('[Dashboard:Layout] Fetching organizations...', {
+    hasToken: !!accessToken,
+    tokenPrefix: accessToken?.substring(0, 20),
+  });
+
   const orgs = accessToken ? await getUserOrganizationsAction(accessToken) : [];
 
+  console.debug('[Dashboard:Layout] Organizations result', {
+    count: orgs.length,
+    orgIds: orgs.map((o) => o.id),
+    currentPath,
+  });
+
   if (orgs.length === 0 && !currentPath.includes('/dashboard/onboarding')) {
-    console.warn('[Dashboard:Layout] Redirecting to ONBOARDING - No organizations found');
+    console.warn(
+      '[Dashboard:Layout] Redirecting to ONBOARDING - No organizations found'
+    );
     redirect(ROUTES.ONBOARDING);
   }
 

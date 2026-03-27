@@ -45,6 +45,19 @@ export default function OnboardingPage() {
     hasUser: !!user,
     email: user?.email,
     id: user?.id,
+    timestamp: new Date().toISOString(),
+  });
+
+  useState(() => {
+    // One-time mount log
+    console.debug('[Onboarding:Mount] Initializing page component', {
+      isAuthenticated: !!user,
+      cookieNames:
+        typeof document !== 'undefined'
+          ? document.cookie.split(';').map((c) => c.split('=')[0].trim())
+          : 'N/A',
+      timestamp: new Date().toISOString(),
+    });
   });
   const [error, setError] = useState('');
 

@@ -57,9 +57,11 @@ export const getBaseCookieOptions = (hostname?: string) => {
     // domain: isProduction ? '.validiant.in' : undefined,
   };
 
-  console.debug('[Cookie:Utils] Base options generated', {
+  console.debug('[Cookie:Utils] DOMAIN DECISION', {
     hostname: hostname || 'UNKNOWN',
     isProduction,
+    hasDomainAttribute: (options as any).domain !== undefined,
+    domainValue: (options as any).domain,
     options,
   });
 
