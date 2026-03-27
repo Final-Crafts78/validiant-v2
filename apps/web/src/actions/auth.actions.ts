@@ -463,7 +463,6 @@ export const getCurrentUserAction = cache(
             reason: '401_403_REASON',
           }
         );
-        clearAuthCookies();
         return {
           success: false,
           error: 'TokenInvalid',
@@ -483,8 +482,7 @@ export const getCurrentUserAction = cache(
             reason: 'JSON_PARSE_REASON',
           }
         );
-        // Clear cookies if response is malformed
-        clearAuthCookies();
+        // Return error and let caller handle cleanup/redirect
         return {
           success: false,
           error: 'InvalidResponse',
@@ -498,8 +496,6 @@ export const getCurrentUserAction = cache(
           data,
           reason: 'API_ERROR_REASON',
         });
-        // Clear cookies on any API failure
-        clearAuthCookies();
         return {
           success: false,
           error: data.error || 'Failed to fetch user',
@@ -516,8 +512,6 @@ export const getCurrentUserAction = cache(
             reason: 'MISSING_USER_REASON',
           }
         );
-        // Clear cookies if user data is missing
-        clearAuthCookies();
         return {
           success: false,
           error: 'InvalidResponse',
@@ -540,8 +534,6 @@ export const getCurrentUserAction = cache(
         '[getCurrentUserAction] Network or unexpected error:',
         error
       );
-      // Clear cookies on any exception to prevent infinite redirect
-      clearAuthCookies();
       return {
         success: false,
         error: 'NetworkError',

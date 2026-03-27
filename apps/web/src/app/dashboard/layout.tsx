@@ -56,13 +56,16 @@ export default async function DashboardLayout({
 
   if (!result.success || !result.user) {
     console.warn(
-      '[Dashboard:Layout] Redirecting to LOGIN - No valid user session',
+      '[Dashboard:Layout] Redirecting to SESSION-EXPIRED - No valid user session',
       {
         reason: result.error || 'MISSING_USER_DATA',
         success: result.success,
+        path: currentPath,
       }
     );
-    redirect(ROUTES.LOGIN);
+    redirect(
+      `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+    );
   }
 
   const { user, accessToken } = result;
