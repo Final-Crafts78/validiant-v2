@@ -19,15 +19,18 @@ router.get('/stream', async (c) => {
     userId: user?.userId || 'MISSING',
     orgId: user?.organizationId || 'MISSING',
     tokenParam: !!c.req.query('token'),
+    allHeaders: JSON.stringify(Object.fromEntries(c.req.raw.headers.entries())),
+    query: c.req.queries(),
   });
 
-  const orgId = user?.organizationId;
+  const orgId = user?.organizationId || c.req.header('X-Org-Id');
 
   if (!orgId) {
     logger.warn('[Realtime] GET /stream - Missing organizationId for user', {
       userId: user?.userId,
       orgId: user?.organizationId,
       hasCookie: !!getCookie(c, 'accessToken'),
+      xOrgIdHeader: c.req.header('X-Org-Id') || 'MISSING',
     });
     throw new BadRequestError(
       'Active organization context required for real-time stream. Ensure X-Org-Id header is present.'

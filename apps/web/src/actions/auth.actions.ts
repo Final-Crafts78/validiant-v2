@@ -49,6 +49,13 @@ const raw = (
 ).replace(/\/+$/, '');
 const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 
+console.debug('[BFF:Init] API Configuration', {
+  raw: process.env.NEXT_PUBLIC_API_URL || 'MISSING',
+  normalized: API_BASE_URL,
+  isProduction: API_BASE_URL.includes('validiant.in'),
+  timestamp: new Date().toISOString()
+});
+
 /**
  * Cookie configuration for secure token storage
  *

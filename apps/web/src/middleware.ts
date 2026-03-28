@@ -41,6 +41,13 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken');
   const userId = request.cookies.get('user_id');
 
+  console.debug('[MW:Edge] Request Headers', {
+    host: request.headers.get('host'),
+    xForwardedHost: request.headers.get('x-forwarded-host'),
+    nextUrlHostname: request.nextUrl.hostname,
+    pathname,
+  });
+
   console.debug('[MW:Edge] Cookie Detection', {
     hasAccessToken: !!accessToken,
     accessTokenPrefix: accessToken?.value.substring(0, 30),

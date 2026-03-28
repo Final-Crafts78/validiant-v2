@@ -104,9 +104,19 @@ const apiClient: AxiosInstance = axios.create({
  */
 apiClient.interceptors.request.use(
   (config) => {
-    // Log requests in development
-    if (process.env.NODE_ENV === 'development') {
-      logger.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+    // Log requests in development OR if it has critical headers we're tracking
+    const orgIdHeader = config.headers?.['X-Org-Id'];
+    
+    if (process.env.NODE_ENV === 'development' || orgIdHeader) {
+      logger.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
+        hasOrgId: !!orgIdHeader,
+        orgId: orgIdHeader,
+        baseURL: config.baseURL,
+        headers: {
+          ...config.headers,
+          Authorization: config.headers?.Authorization ? 'PRESENT (Masked)' : 'MISSING',
+        }
+      });
     }
     return config;
   },
