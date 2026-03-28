@@ -148,6 +148,17 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-pathname', pathname);
 
+  const referer = request.headers.get('referer') || 'NO_REFERER';
+
+  console.debug('[MW:Edge] Final check before next()', {
+    pathname,
+    isAuthenticated,
+    accessTokenPresent: !!accessToken,
+    accessTokenLength: accessToken?.value.length || 0,
+    referer,
+    timestamp: new Date().toISOString(),
+  });
+
   return NextResponse.next({
     request: {
       headers: requestHeaders,

@@ -152,8 +152,11 @@ apiClient.interceptors.response.use(
         (window.location.pathname.includes('/auth/') ||
           window.location.pathname.includes('/api/auth/session-expired'));
 
+      const fullUrl = error.config?.url ? (error.config.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config.url) : 'UNKNOWN';
+
       logger.log('[Axios:401] FULL CONTEXT', {
         url: error.config?.url,
+        fullUrl,
         baseURL: error.config?.baseURL,
         method: error.config?.method,
         status: response?.status,
@@ -162,6 +165,7 @@ apiClient.interceptors.response.use(
         isAlreadyOnAuthPage,
         requestHeaders: error.config?.headers,
         responseHeaders: response?.headers,
+        timestamp: new Date().toISOString(),
       });
 
       // COOKIE CHECK (names only for security)
@@ -172,6 +176,8 @@ apiClient.interceptors.response.use(
         logger.debug('[Axios:401] COOKIE CHECK', {
           cookieNames,
           withCredentials: error.config?.withCredentials,
+          cookieRawCount: cookieNames.length,
+          userAgent: window.navigator.userAgent,
         });
       }
 
@@ -182,6 +188,7 @@ apiClient.interceptors.response.use(
           {
             from: window.location.pathname,
             target: `${window.location.origin}/api/auth/session-expired`,
+            triggeringUrl: fullUrl,
           }
         );
 
@@ -212,6 +219,7 @@ apiClient.interceptors.response.use(
         logger.debug('[Axios:401] REDIRECT SKIPPED', {
           reason: 'Already on auth page or session-expired',
           pathname: window.location.pathname,
+          triggeringUrl: fullUrl,
         });
       }
     }

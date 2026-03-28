@@ -22,9 +22,22 @@ export function getCookieDomain(requestHostname?: string) {
     process.env.NEXT_PUBLIC_ENV === 'production' ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
-  if (!isProduction) return undefined;
+  if (!isProduction) {
+    console.debug('[Cookie:Utils] Skipped domain (Not Production)', {
+      appUrl,
+      env: process.env.NEXT_PUBLIC_ENV,
+      vercelEnv: process.env.NEXT_PUBLIC_VERCEL_ENV,
+    });
+    return undefined;
+  }
 
-  const hostname = requestHostname || new URL(appUrl).hostname;
+  const hostname = requestHostname || (typeof window !== 'undefined' ? window.location.hostname : new URL(appUrl).hostname);
+
+  console.debug('[Cookie:Utils] Evaluating domain for hostname:', {
+    hostname,
+    requestHostname,
+    appUrl,
+  });
 
   // Use wildcard domain for the main app to share cookies with API subdomains
   if (hostname.startsWith('www.') || hostname === 'validiant.in') {
@@ -48,21 +61,24 @@ export const getBaseCookieOptions = (hostname?: string) => {
     ? !hostname.includes('localhost') && !hostname.includes('127.0.0.1')
     : process.env.NODE_ENV === 'production';
 
+  const domain = getCookieDomain(hostname);
+
   const options = {
     httpOnly: true,
     secure: isProduction,
     // sameSite: 'none' as const, // Might be needed for cross-subdomain in some cases
     sameSite: 'lax' as const,
     path: '/',
-    // domain: isProduction ? '.validiant.in' : undefined,
+    domain,
   };
 
   console.debug('[Cookie:Utils] DOMAIN DECISION', {
     hostname: hostname || 'UNKNOWN',
     isProduction,
-    hasDomainAttribute: (options as any).domain !== undefined,
-    domainValue: (options as any).domain,
+    hasDomainAttribute: options.domain !== undefined,
+    domainValue: options.domain,
     options,
+    timestamp: new Date().toISOString(),
   });
 
   return options;

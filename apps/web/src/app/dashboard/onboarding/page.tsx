@@ -7,7 +7,7 @@
  * Collects Company Name + Industry Type → creates their first org.
  */
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api';
@@ -48,6 +48,25 @@ export default function OnboardingPage() {
     timestamp: new Date().toISOString(),
   });
 
+  const [error, setError] = useState('');
+
+  // Track state transitions to catch the exact moment auth is lost
+  useEffect(() => {
+    console.debug('[Onboarding:Watch] Auth state monitored', {
+      hasUser: !!user,
+      email: user?.email,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (!user) {
+      console.warn('[Onboarding:Watch] AUTH LOST! Current context:', {
+        pathname: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
+        cookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0].trim()) : [],
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [user]);
+
   useState(() => {
     // One-time mount log
     console.debug('[Onboarding:Mount] Initializing page component', {
@@ -59,7 +78,6 @@ export default function OnboardingPage() {
       timestamp: new Date().toISOString(),
     });
   });
-  const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [industry, setIndustry] = useState('');
