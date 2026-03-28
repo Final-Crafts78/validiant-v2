@@ -3,460 +3,59 @@ Copied 50 logs from Vercel Dashboard
 - Project: validiant-portal (prj_i4EYOu0LqsB9aMh9hmePe08KkvWl)
 - Team: mansoors-projects-b0833ee8 (team_4FEwBJgnnzF8v2As2ucPatmO)
 - Search query: (no search query applied)
-- Search timestamps: 2026-03-28T14:04:00.000Z to 2026-03-28T14:34:00.000Z
-- Dashboard URL: https://vercel.com/mansoors-projects-b0833ee8/validiant-portal/logs?panelState=opened
+- Search timestamps: 2026-03-28T14:51:00.000Z to 2026-03-28T15:21:00.000Z
+- Dashboard URL: https://vercel.com/mansoors-projects-b0833ee8/validiant-portal/logs?refreshedAt=1774711258777
 - Format: JSONL
 - Documentation: https://vercel.com/docs/logs/runtime
 -------------------------------------------
 
-{"requestId":"rfm56-1774708376107-e8c752a73b96","timestamp":1774708376107,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"h27mb-1774708375625-e2a507a5368f","timestamp":1774708375625,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"bq4lz-1774708375603-9dc04990234b","timestamp":1774708375603,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard/onboarding',\n  referer: 'https://www.validiant.in/dashboard/onboarding',\n  timestamp: '2026-03-28T14:32:55.850Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"pqvkw-1774708375246-776a55f1add8","timestamp":1774708375246,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"p8nqf-1774708375246-522620e12d11","timestamp":1774708375246,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"rfm56-1774708375167-6b763f3d26d1","timestamp":1774708375167,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"h27mb-1774708375167-d439eb615b70","timestamp":1774708375167,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Cookie:Utils] DOMAIN DECISION {\n  hostname: 'UNKNOWN',\n  isProduction: true,\n  hasDomainAttribute: false,\n  domainValue: undefined,\n  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"gqfv4-1774708375167-4b4a858e9ba2","timestamp":1774708375167,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"gqfv4-1774708375007-64e9ec230331","timestamp":1774708375007,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"97ldb-1774708374092-b6c975b83805","timestamp":1774708374092,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Dashboard:Layout] Fetching current user... { currentPath: '/dashboard/onboarding' }","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/onboarding","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"kzt66-1774708363037-554e795d8f19","timestamp":1774708363037,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"vwl2k-1774708362942-ea4164b667dc","timestamp":1774708362942,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"bq4lz-1774708362707-dabeffba1d41","timestamp":1774708362707,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard/onboarding',\n  referer: 'https://www.validiant.in/dashboard/onboarding',\n  timestamp: '2026-03-28T14:32:42.836Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"vwl2k-1774708362546-f4350987254a","timestamp":1774708362546,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"pmlcz-1774708362546-949ebba47abf","timestamp":1774708362546,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"llv8d-1774708362546-3aaa17f982e8","timestamp":1774708362546,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"cbq6s-1774708362546-236b30dea37f","timestamp":1774708362546,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"ncf25-1774708362467-eb6067afb3da","timestamp":1774708362467,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"ggxg4-1774708362247-b333cc01cd0d","timestamp":1774708362247,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"cbq6s-1774708360702-fe0ce62adafc","timestamp":1774708360702,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Cookie:Utils] DOMAIN DECISION {\n  hostname: 'UNKNOWN',\n  isProduction: true,\n  hasDomainAttribute: false,\n  domainValue: undefined,\n  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/onboarding","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"dfthr-1774708360537-afce04aaa63e","timestamp":1774708360537,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"xj9mg-1774708360232-11ecc273d026","timestamp":1774708360232,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard/onboarding',\n  referer: 'https://www.validiant.in/dashboard/onboarding',\n  timestamp: '2026-03-28T14:32:40.355Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"dfthr-1774708360232-c37578779a51","timestamp":1774708360232,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xj9mg-1774708359826-c20ea637476d","timestamp":1774708359826,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"mfm85-1774708359826-adf81c76d7d7","timestamp":1774708359826,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"cbq6s-1774708359826-ed656236de5b","timestamp":1774708359826,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Cookie:Utils] DOMAIN DECISION {\n  hostname: 'UNKNOWN',\n  isProduction: true,\n  hasDomainAttribute: false,\n  domainValue: undefined,\n  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"4f6kv-1774708359826-271811ac3d6b","timestamp":1774708359826,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"zzvhg-1774708359747-5d21c41e1574","timestamp":1774708359747,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"786p9-1774708359472-25f6eea6d9aa","timestamp":1774708359472,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"786p9-1774708358707-9de14e52f813","timestamp":1774708358707,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Dashboard:Layout] Fetching current user... { currentPath: '/dashboard/onboarding' }","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/onboarding","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"ggxg4-1774708358472-66fc30664195","timestamp":1774708358472,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"zzvhg-1774708358047-6d1737d68cb1","timestamp":1774708358047,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"ggxg4-1774708357702-82745ef003e2","timestamp":1774708357702,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard/onboarding',\n  referer: 'https://www.validiant.in/dashboard/onboarding',\n  timestamp: '2026-03-28T14:32:38.243Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xj9mg-1774708357383-a1cee9f8c92b","timestamp":1774708357383,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"mfm85-1774708357383-ad0662b5d54c","timestamp":1774708357383,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"cbq6s-1774708357383-383f08c93d45","timestamp":1774708357383,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"pmlcz-1774708357347-26822a762f15","timestamp":1774708357347,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"dfthr-1774708357347-6e2ffea70732","timestamp":1774708357347,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"6lpdx-1774708356560-1d231cb40dcb","timestamp":1774708356560,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
-{"requestId":"6lpdx-1774708355707-c07634c79055","timestamp":1774708355707,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/onboarding","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"dfthr-1774708354352-bad761ebbbab","timestamp":1774708354352,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"q6l5d-1774708330343-8b48b14021a4","timestamp":1774708330343,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"hwsz9-1774708330174-593ee9a3ff73","timestamp":1774708330174,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/forgot-password","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
-{"requestId":"htpl4-1774708330164-1be650e35579","timestamp":1774708330164,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"mjv4h-1774708328806-5331ba04e5dd","timestamp":1774708328806,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"sxttg-1774708328572-a573d9cd915b","timestamp":1774708328572,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"zblqx-1774708299930-c6e04a577312","timestamp":1774708299930,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"464mp-1774708299930-b0888e8f06d8","timestamp":1774708299930,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"tgxbr-1774708299766-513a4eb22272","timestamp":1774708299766,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/terms","responseStatusCode":307,"environment":"production","branch":"main"}
-{"requestId":"mfm85-1774708299766-3563dacac948","timestamp":1774708299766,"deploymentId":"dpl_4ihtiAvNjbCbPAbr6XTeJrFAp9mS","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/changelog","responseStatusCode":307,"environment":"production","branch":"main"}
-
-
-
-additional info
-
-[Session Expired] TRIGGERED {
-  redirectTo: '/dashboard/onboarding',
-  referer: 'https://www.validiant.in/dashboard/onboarding',
-  timestamp: '2026-03-28T14:32:55.850Z',
-  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'
-}
-[Cookie:Utils] DOMAIN DECISION {
-  hostname: 'www.validiant.in',
-  isProduction: true,
-  hasDomainAttribute: false,
-  domainValue: undefined,
-  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }
-}
-
-2026-03-28 14:32:54.287 [info] [Dashboard:Layout] Fetching current user... { currentPath: '/dashboard/onboarding' }
-2026-03-28 14:32:54.296 [info] [BFF:GetUser] Access token check { found: true, length: 375, prefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS' }
-2026-03-28 14:32:54.296 [info] [BFF:GetUser] Fetching user from API... { url: 'https://api.validiant.in/api/v1/auth/me' }
-2026-03-28 14:32:54.296 [info] [BFF:GetUser] API CALL START {
-  url: 'https://api.validiant.in/api/v1/auth/me',
-  tokenPrefix: 'eyJhbGciOiJIUzI1NiJ9'
-}
-2026-03-28 14:32:54.479 [info] [BFF:GetUser] API response metadata {
-  status: 200,
-  headers: [
-    [ 'access-control-allow-credentials', 'true' ],
-    [ 'access-control-allow-origin', '*' ],
-    [ 'access-control-expose-headers', 'Set-Cookie' ],
-    [ 'alt-svc', 'h3=":443"; ma=86400' ],
-    [ 'cf-ray', '9e3758cc2adaca5f-IAD' ],
-    [ 'connection', 'keep-alive' ],
-    [ 'content-encoding', 'br' ],
-    [ 'content-type', 'application/json' ],
-    [ 'date', 'Sat, 28 Mar 2026 14:32:54 GMT' ],
-    [
-      'nel',
-      '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
-    ],
-    [
-      'report-to',
-      '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2FqsjOArkuOSyHW5RtbwKt0h5GWu6cFzhfArlJOVOjezk%2BFP%2BkiaEyn1NW%2FQszAHCo0DYbUbfbaWQeMOOxOXd6siK60dQyqUcjOBsXs8jiMNxGtV9bea6CLLJ1kaPpHwBSooK"}]}'
-    ],
-    [ 'server', 'cloudflare' ],
-    [ 'transfer-encoding', 'chunked' ],
-    [ 'vary', 'Origin' ],
-    [ 'x-ratelimit-limit', '200' ],
-    [ 'x-ratelimit-remaining', '199' ],
-    [ 'x-ratelimit-reset', '1774708434' ]
-  ]
-}
-2026-03-28 14:32:54.483 [warning] [getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
-2026-03-28 14:32:54.483 [info] [Dashboard:Layout] Current user result {
-  success: true,
-  hasUser: true,
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true,
-  error: undefined
-}
-2026-03-28 14:32:54.483 [info] [Dashboard:Layout] Fetching organizations... { hasToken: true, tokenPrefix: 'eyJhbGciOiJIUzI1NiJ9' }
-2026-03-28 14:32:54.544 [info] [Dashboard:Layout] Organizations result { count: 0, orgIds: [], currentPath: '/dashboard/onboarding' }
-2026-03-28 14:32:54.557 [info] [AuthStore:Initializer] Seeding store with server-fetched data {
-  userId: '049577df-4b28-409b-81e7-1f9a51c4a2ca',
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true
-}
-2026-03-28 14:32:54.557 [info] [AuthStore] setAuth called {
-  userId: '049577df-4b28-409b-81e7-1f9a51c4a2ca',
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true
-}
-2026-03-28 14:32:54.598 [info] [Onboarding:Page] Render state {
-  hasUser: false,
-  email: undefined,
-  id: undefined,
-  timestamp: '2026-03-28T14:32:54.597Z'
-}
-2026-03-28 14:32:54.599 [info] [Onboarding:Mount] Initializing page component {
-  isAuthenticated: false,
-  cookieNames: 'N/A',
-  timestamp: '2026-03-28T14:32:54.598Z'
-}
-2026-03-28 14:32:54.123 [info] [MW:Edge] Cookie Detection {
-  hasAccessToken: true,
-  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',
-  accessTokenLength: 375,
-  hasRefreshToken: true,
-  hasUserId: true,
-  allCookies: [
-    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },
-    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },
-    {
-      name: 'accessToken',
-      valueLength: 375,
-      valuePrefix: 'eyJhbGciOi'
-    },
-    {
-      name: 'refreshToken',
-      valueLength: 327,
-      valuePrefix: 'eyJhbGciOi'
-    }
-  ]
-}
-2026-03-28 14:32:54.123 [info] [MW:Edge] Auth State {
-  isAuthenticated: true,
-  path: '/dashboard/onboarding',
-  isProtectedRoute: true,
-  isOrgScoped: undefined,
-  isAuthRoute: false
-}
-2026-03-28 14:32:54.123 [info] [Middleware Debug] {
-  pathname: '/dashboard/onboarding',
-  hasAccessToken: true,
-  accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...',
-  allCookies: [
-    { name: 'userPrefs', hasValue: true, valueLength: 2 },
-    { name: 'user_id', hasValue: true, valueLength: 36 },
-    { name: 'accessToken', hasValue: true, valueLength: 375 },
-    { name: 'refreshToken', hasValue: true, valueLength: 327 }
-  ],
-  isAuthenticated: true,
-  timestamp: '2026-03-28T14:32:54.123Z',
-  url: 'https://www.validiant.in/dashboard/onboarding'
-}
-
-
-2026-03-28 14:32:42.836 [warning] [Session Expired] TRIGGERED {
-  redirectTo: '/dashboard/onboarding',
-  referer: 'https://www.validiant.in/dashboard/onboarding',
-  timestamp: '2026-03-28T14:32:42.836Z',
-  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'
-}
-2026-03-28 14:32:42.837 [info] [Cookie:Utils] DOMAIN DECISION {
-  hostname: 'www.validiant.in',
-  isProduction: true,
-  hasDomainAttribute: false,
-  domainValue: undefined,
-  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }
-}
-2026-03-28 14:32:42.837 [info] [SessionExpired] Resolved Cookie Options {
-  domain: 'UNDEFINED (Host-only)',
-  path: '/',
-  secure: true,
-  sameSite: 'lax',
-  isProduction: true
-}
-2026-03-28 14:32:42.837 [warning] [SessionExpired] Clearing authentication cookies {
-  options: {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 0
-  },
-  existingCookies: [ 'userPrefs', 'user_id', 'accessToken', 'refreshToken' ]
-}
-2026-03-28 14:32:42.837 [info] [SessionExpired] Cookie deletion sequence completed {
-  remainingCookies: [ 'userPrefs', 'user_id', 'accessToken', 'refreshToken' ]
-}
-2026-03-28 14:32:42.839 [info] [SessionExpired] Finalizing redirect {
-  target: 'https://www.validiant.in/auth/login?redirect=%2Fdashboard%2Fonboarding',
-  setCookieHeaders: [],
-  timestamp: '2026-03-28T14:32:42.837Z'
-}
-
-
-2026-03-28 14:32:41.346 [info] [Cookie:Utils] DOMAIN DECISION {
-  hostname: 'UNKNOWN',
-  isProduction: true,
-  hasDomainAttribute: false,
-  domainValue: undefined,
-  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }
-}
-2026-03-28 14:32:41.361 [info] [Dashboard:Layout] Fetching current user... { currentPath: '/dashboard/onboarding' }
-2026-03-28 14:32:41.361 [info] [BFF:GetUser] Access token check { found: true, length: 375, prefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS' }
-2026-03-28 14:32:41.362 [info] [BFF:GetUser] Fetching user from API... { url: 'https://api.validiant.in/api/v1/auth/me' }
-2026-03-28 14:32:41.362 [info] [BFF:GetUser] API CALL START {
-  url: 'https://api.validiant.in/api/v1/auth/me',
-  tokenPrefix: 'eyJhbGciOiJIUzI1NiJ9'
-}
-2026-03-28 14:32:40.725 [info] [MW:Edge] Cookie Detection {
-  hasAccessToken: true,
-  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',
-  accessTokenLength: 375,
-  hasRefreshToken: true,
-  hasUserId: true,
-  allCookies: [
-    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },
-    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },
-    {
-      name: 'accessToken',
-      valueLength: 375,
-      valuePrefix: 'eyJhbGciOi'
-    },
-    {
-      name: 'refreshToken',
-      valueLength: 327,
-      valuePrefix: 'eyJhbGciOi'
-    }
-  ]
-}
-2026-03-28 14:32:40.725 [info] [MW:Edge] Auth State {
-  isAuthenticated: true,
-  path: '/dashboard/onboarding',
-  isProtectedRoute: true,
-  isOrgScoped: undefined,
-  isAuthRoute: false
-}
-2026-03-28 14:32:40.725 [info] [Middleware Debug] {
-  pathname: '/dashboard/onboarding',
-  hasAccessToken: true,
-  accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...',
-  allCookies: [
-    { name: 'userPrefs', hasValue: true, valueLength: 2 },
-    { name: 'user_id', hasValue: true, valueLength: 36 },
-    { name: 'accessToken', hasValue: true, valueLength: 375 },
-    { name: 'refreshToken', hasValue: true, valueLength: 327 }
-  ],
-  isAuthenticated: true,
-  timestamp: '2026-03-28T14:32:40.723Z',
-  url: 'https://www.validiant.in/dashboard/onboarding'
-}
-2026-03-28 14:32:41.711 [info] [BFF:GetUser] API response metadata {
-  status: 200,
-  headers: [
-    [ 'access-control-allow-credentials', 'true' ],
-    [ 'access-control-allow-origin', '*' ],
-    [ 'access-control-expose-headers', 'Set-Cookie' ],
-    [ 'alt-svc', 'h3=":443"; ma=86400' ],
-    [ 'cf-ray', '9e37587b0c10c96a-IAD' ],
-    [ 'connection', 'keep-alive' ],
-    [ 'content-encoding', 'br' ],
-    [ 'content-type', 'application/json' ],
-    [ 'date', 'Sat, 28 Mar 2026 14:32:41 GMT' ],
-    [
-      'nel',
-      '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
-    ],
-    [
-      'report-to',
-      '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=rcgcgGncOAG55bpHI4EnflA12g2%2FXupKKMCb9bbHdTKY%2FRsZUgh6aUUJKPGQPVjG5pziU2VG%2FVUNylK8Wmi9oUKM2Efd713VQzVq%2F%2B1ad6Yq7CKxVd6L9OM%2BfXkOgYUfcLfY"}]}'
-    ],
-    [ 'server', 'cloudflare' ],
-    [ 'transfer-encoding', 'chunked' ],
-    [ 'vary', 'Origin' ],
-    [ 'x-ratelimit-limit', '200' ],
-    [ 'x-ratelimit-remaining', '199' ],
-    [ 'x-ratelimit-reset', '1774708421' ]
-  ]
-}
-2026-03-28 14:32:41.713 [warning] [getCurrentUserAction] Successfully fetched user: mansoorahamedsaaho@gmail.com
-2026-03-28 14:32:41.713 [info] [Dashboard:Layout] Current user result {
-  success: true,
-  hasUser: true,
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true,
-  error: undefined
-}
-2026-03-28 14:32:41.714 [info] [Dashboard:Layout] Fetching organizations... { hasToken: true, tokenPrefix: 'eyJhbGciOiJIUzI1NiJ9' }
-2026-03-28 14:32:41.754 [info] [Dashboard:Layout] Organizations result { count: 0, orgIds: [], currentPath: '/dashboard/onboarding' }
-2026-03-28 14:32:41.761 [info] [AuthStore:Initializer] Seeding store with server-fetched data {
-  userId: '049577df-4b28-409b-81e7-1f9a51c4a2ca',
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true
-}
-2026-03-28 14:32:41.761 [info] [AuthStore] setAuth called {
-  userId: '049577df-4b28-409b-81e7-1f9a51c4a2ca',
-  email: 'mansoorahamedsaaho@gmail.com',
-  hasToken: true
-}
-2026-03-28 14:32:41.796 [info] [Onboarding:Page] Render state {
-  hasUser: false,
-  email: undefined,
-  id: undefined,
-  timestamp: '2026-03-28T14:32:41.795Z'
-}
-2026-03-28 14:32:41.796 [info] [Onboarding:Mount] Initializing page component {
-  isAuthenticated: false,
-  cookieNames: 'N/A',
-  timestamp: '2026-03-28T14:32:41.796Z'
-}
-
-
-2026-03-28 14:32:42.491 [info] [MW:Edge] Cookie Detection {
-  hasAccessToken: true,
-  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',
-  accessTokenLength: 375,
-  hasRefreshToken: true,
-  hasUserId: true,
-  allCookies: [
-    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },
-    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },
-    {
-      name: 'accessToken',
-      valueLength: 375,
-      valuePrefix: 'eyJhbGciOi'
-    },
-    {
-      name: 'refreshToken',
-      valueLength: 327,
-      valuePrefix: 'eyJhbGciOi'
-    }
-  ]
-}
-2026-03-28 14:32:42.491 [info] [MW:Edge] Auth State {
-  isAuthenticated: true,
-  path: '/validiant-2/dashboard',
-  isProtectedRoute: false,
-  isOrgScoped: undefined,
-  isAuthRoute: false
-}
-2026-03-28 14:32:42.491 [info] [Middleware Debug] {
-  pathname: '/validiant-2/dashboard',
-  hasAccessToken: true,
-  accessTokenValue: 'eyJhbGciOiJIUzI1NiJ9...',
-  allCookies: [
-    { name: 'userPrefs', hasValue: true, valueLength: 2 },
-    { name: 'user_id', hasValue: true, valueLength: 36 },
-    { name: 'accessToken', hasValue: true, valueLength: 375 },
-    { name: 'refreshToken', hasValue: true, valueLength: 327 }
-  ],
-  isAuthenticated: true,
-  timestamp: '2026-03-28T14:32:42.490Z',
-  url: 'https://www.validiant.in/validiant-2/dashboard'
-}
-2026-03-28 14:32:42.739 [info] [Cookie:Utils] DOMAIN DECISION {
-  hostname: 'UNKNOWN',
-  isProduction: true,
-  hasDomainAttribute: false,
-  domainValue: undefined,
-  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }
-}
-
-2026-03-28 14:32:42.269 [info] [MW:Edge] Cookie Detection {
-  hasAccessToken: true,
-  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',
-  accessTokenLength: 375,
-  hasRefreshToken: true,
-  hasUserId: true,
-  allCookies: [
-    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },
-    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },
-    {
-      name: 'accessToken',
-      valueLength: 375,
-      valuePrefix: 'eyJhbGciOi'
-    },
-    {
-      name: 'refreshToken',
-      valueLength: 327,
-      valuePrefix: 'eyJhbGciOi'
-    }
-  ]
-}
-2026-03-28 14:32:42.269 [info] [MW:Edge] Auth State {
-  isAuthenticated: true,
-  path: '/manifest.webmanifest',
-  isProtectedRoute: false,
-  isOrgScoped: undefined,
-  isAuthRoute: false
-}
-
-2026-03-28 14:32:39.846 [info] [MW:Edge] Cookie Detection {
-  hasAccessToken: true,
-  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',
-  accessTokenLength: 375,
-  hasRefreshToken: true,
-  hasUserId: true,
-  allCookies: [
-    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },
-    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },
-    {
-      name: 'accessToken',
-      valueLength: 375,
-      valuePrefix: 'eyJhbGciOi'
-    },
-    {
-      name: 'refreshToken',
-      valueLength: 327,
-      valuePrefix: 'eyJhbGciOi'
-    }
-  ]
-}
-2026-03-28 14:32:39.846 [info] [MW:Edge] Auth State {
-  isAuthenticated: true,
-  path: '/validiant-2/organizations',
-  isProtectedRoute: false,
-  isOrgScoped: undefined,
-  isAuthRoute: false
-}
-2026-03-28 14:32:40.088 [info] [Cookie:Utils] DOMAIN DECISION {
-  hostname: 'UNKNOWN',
-  isProduction: true,
-  hasDomainAttribute: false,
-  domainValue: undefined,
-  options: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' }
-}
-
+{"requestId":"bbj4b-1774711215241-0ebf1a342be4","timestamp":1774711215241,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"k9h4m-1774711215111-2968391e2b7c","timestamp":1774711215111,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard/onboarding',\n  referer: 'https://www.validiant.in/dashboard/onboarding',\n  timestamp: '2026-03-28T15:20:15.520Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard%2Fonboarding'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"k9h4m-1774711214791-ecb58c9b7bc3","timestamp":1774711214791,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"cbq6s-1774711214791-f721f4dea90d","timestamp":1774711214791,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"bbj4b-1774711214791-0fcb9c4a8898","timestamp":1774711214791,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"6lpjz-1774711214791-049eabe56215","timestamp":1774711214791,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"5xdcw-1774711214791-9da423b4b3ec","timestamp":1774711214791,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant-2/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"rgntv-1774711214187-a7b55fca79b4","timestamp":1774711214187,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"rgntv-1774711213341-1d3adcfd7831","timestamp":1774711213341,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/onboarding","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"cbq6s-1774711212182-acd29ba09085","timestamp":1774711212182,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"zzvhg-1774711195815-7b276e3f95a2","timestamp":1774711195815,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"zzvhg-1774711195719-3ba425956932","timestamp":1774711195719,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/forgot-password","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"llv8d-1774711195719-8e420d8fd207","timestamp":1774711195719,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/register","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"llv8d-1774711195617-e795944ea5c1","timestamp":1774711195617,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"rn9cv-1774711195336-1c957ce9e63d","timestamp":1774711195336,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"hks78-1774711191002-81690b284eac","timestamp":1774711191002,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"hks78-1774711190893-06912847d58a","timestamp":1774711190893,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/forgot-password","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"llv8d-1774711190827-6e802495385d","timestamp":1774711190827,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"skb87-1774711144193-33d788dcd714","timestamp":1774711144193,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/register","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"bffcg-1774711144106-a1feccd3d47e","timestamp":1774711144106,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"rfm56-1774711143829-7f930545fc90","timestamp":1774711143829,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"bffcg-1774711143633-efa0415e5a76","timestamp":1774711143633,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"5kv5b-1774711143276-e4555db47709","timestamp":1774711143276,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"kcm9f-1774711141888-29af71f23a4c","timestamp":1774711141888,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"464mp-1774711141808-c4b4a1a3ca88","timestamp":1774711141808,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"wrvqm-1774711141807-8801c7ad6e6c","timestamp":1774711141807,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"wrvqm-1774711141742-38ba1d83ea35","timestamp":1774711141742,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"m84dm-1774711140857-0c0531ee94bc","timestamp":1774711140857,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"skb87-1774711138486-4eb47a431f38","timestamp":1774711138486,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/forgot-password","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"m84dm-1774711138459-6168b3f503a6","timestamp":1774711138459,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"bffcg-1774711138381-1872998aaea8","timestamp":1774711138381,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/register","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"skb87-1774711138338-b197169d495b","timestamp":1774711138338,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"464mp-1774711138027-b403cf86d014","timestamp":1774711138027,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"skb87-1774711130701-c95bc9517f0b","timestamp":1774711130701,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"l6c2g-1774711130606-1c0bcd31ee1a","timestamp":1774711130606,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/forgot-password","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"x98mc-1774711130556-16f3b7c9d251","timestamp":1774711130556,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":307,"environment":"production","branch":"main"}
+{"requestId":"x98mc-1774711129332-35de80407365","timestamp":1774711129332,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: false,\n  accessTokenPrefix: undefined,\n  accessTokenLength: undefined,\n  hasRefreshToken: false,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"vsd9r-1774711128694-37e414c28d1b","timestamp":1774711128694,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":200,"environment":"production","branch":"main","cache":"PRERENDER"}
+{"requestId":"vkdmd-1774711128657-8400cc5833ab","timestamp":1774711128657,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"warning","message":"[Session Expired] TRIGGERED {\n  redirectTo: '/dashboard',\n  referer: 'https://www.validiant.in/dashboard',\n  timestamp: '2026-03-28T15:18:49.124Z',\n  url: 'https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard&_rsc=1s57b'\n}","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/api/auth/session-expired","responseStatusCode":307,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"bswfq-1774711127461-8047d57b5a39","timestamp":1774711127461,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"skb87-1774711125819-e3346b7e09d4","timestamp":1774711125819,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/terms","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"646t9-1774711125737-dddf47440d78","timestamp":1774711125737,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"z4g5n-1774711125619-4d3f7f69bf54","timestamp":1774711125619,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/privacy","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"9cm2x-1774711125618-02939f5844c7","timestamp":1774711125618,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/status","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"4f6kv-1774711125618-26e4c9f49052","timestamp":1774711125618,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/changelog","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"7dh5l-1774711125271-c8891082f820","timestamp":1774711125271,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/security","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"skb87-1774711125240-b9aa255aa529","timestamp":1774711125240,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/docs","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"cbq6s-1774711125233-03fcd908fad0","timestamp":1774711125233,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/about","responseStatusCode":404,"environment":"production","branch":"main","cache":"HIT"}
+{"requestId":"464mp-1774711124687-23fdb6daafbb","timestamp":1774711124687,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+{"requestId":"zzvhg-1774711124588-2f4936ae863d","timestamp":1774711124588,"deploymentId":"dpl_9PR1zrx1t55zHynnr8ecs9Cr7nHd","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] Cookie Detection {\n  hasAccessToken: true,\n  accessTokenPrefix: 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS',\n  accessTokenLength: 375,\n  hasRefreshToken: true,\n  hasUserId: true,\n  allCookies: [\n    { name: 'userPrefs', valueLength: 2, valuePrefix: '{}' },\n    { name: 'user_id', valueLength: 36, valuePrefix: '049577df-4' },\n    {\n      name: 'accessToken',\n      valueLength: 375,\n      valuePrefix: 'eyJhbGciOi'\n    },\n    {\n      name: 'refreshToken',\n      valueLength: 327,\n      valuePrefix: 'eyJhbGciOi'\n    }\n  ]\n}","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/auth/login","responseStatusCode":307,"environment":"production","branch":"main"}

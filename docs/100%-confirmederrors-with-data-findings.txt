@@ -1,0 +1,26 @@
+### 100% Confirmed Errors & Data Findings (from Debug Logs)
+
+#### 1. [Frontend] Hostname Resolution Failure
+- **Data Evidence**: Vercel logs explicitly show `hostname: 'UNKNOWN'` during `getCookieDomain` evaluation.
+- **Root Cause**: Next.js Middleware/Server Components failing to resolve the host header correctly in some edge cases.
+- **Impact**: Cookies are set as "Host-only" instead of `.validiant.in`, preventing cross-subdomain authentication and causing subsequent requests to fail or trigger 401s.
+
+#### 2. [Backend] 401 Unauthorized Anomaly (Notifications)
+- **Data Evidence**: `cloudflarelogs.txt` shows `[Auth Middleware] Token OK` (valid for 897s) immediately followed by `--> GET /api/v1/notifications 401`.
+- **Root Cause**: The notification controller explicitly returns a 401 if `organizationId` is missing from the user context. This happens during the onboarding flow before an organization is created/selected.
+- **Impact**: Triggers a global logout in the frontend for a non-expired session.
+
+#### 3. [Frontend] Aggressive 401 Interceptor Loop
+- **Data Evidence**: `[Axios:401] REDIRECT DECISION` in frontend logs for background requests like `/notifications`.
+- **Root Cause**: The Axios interceptor treats all 401s as session expiry, regardless of whether the request was for a critical path (like user data) or a secondary one (like notifications).
+- **Impact**: Users are logged out in an infinite loop while they are still in a valid (but partially initialized) session.
+
+#### 4. [Frontend] Incomplete Cookie Cleanup ("Ghost Cookies")
+- **Data Evidence**: `[MW:Edge] Cookie Detection` continues to show `accessToken` presence even after a request to `/api/auth/session-expired`.
+- **Root Cause**: The deletion command in the Route Handler was likely missing the correct `Domain` attribute (`.validiant.in`), causing the browser to ignore the clear command.
+- **Impact**: The middleware sees "old" cookies and allows navigation, but the API returns 401, causing a redirect back to login, repeating the cycle.
+
+#### 5. [Backend] Real-time Stream Organization Context Error
+- **Data Evidence**: `cloudflarelogs.txt` shows `Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present.` (Status 500).
+- **Root Cause**: `apps/api/src/routes/realtime.routes.ts` or the stream handler requires `X-Org-Id` which is missing during early session stages.
+- **Impact**: 500 server error on stream initialization.

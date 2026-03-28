@@ -56,35 +56,32 @@ export async function GET(request: Request) {
   });
 
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
-  // CRITICAL: Uses explicit overwrite method + delete() fallback to force browser compliance.
-  // Mirrors clearAuthCookies() in auth.actions.ts
-  cookieStore.set({
-    name: 'accessToken',
-    value: '',
-    expires: new Date(0), // Expire instantly in the past
-    ...COOKIE_OPTIONS,
+  // CRITICAL: Uses explicit overwrite method for multiple potential domain scopes
+  // (.validiant.in and host-only) to ensure browser compliance.
+  
+  const domainsToClear = [COOKIE_OPTIONS.domain, undefined];
+  const cookieNames = ['accessToken', 'refreshToken', 'user_id', 'oauth_state'];
+
+  console.warn('[SessionExpired] Starting multi-domain cookie clear', {
+    domains: domainsToClear,
+    names: cookieNames,
   });
 
-  cookieStore.set({
-    name: 'refreshToken',
-    value: '',
-    expires: new Date(0),
-    ...COOKIE_OPTIONS,
-  });
+  for (const domain of domainsToClear) {
+    for (const name of cookieNames) {
+      cookieStore.set({
+        name,
+        value: '',
+        expires: new Date(0),
+        path: '/',
+        secure: COOKIE_OPTIONS.secure,
+        sameSite: 'lax',
+        domain,
+      });
+    }
+  }
 
-  cookieStore.delete({
-    name: 'accessToken',
-    ...COOKIE_OPTIONS,
-  });
-
-  cookieStore.delete({
-    name: 'refreshToken',
-    ...COOKIE_OPTIONS,
-  });
-
-  console.debug('[SessionExpired] Cookie deletion sequence completed', {
-    remainingCookies: cookieStore.getAll().map((c) => c.name),
-  });
+  console.debug('[SessionExpired] Cookie deletion sequence completed');
 
   // Redirect back to login, preserving the intended destination if provided
   // Redirect back to login, preserving the intended destination if provided

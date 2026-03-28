@@ -23,24 +23,24 @@ export function getCookieDomain(requestHostname?: string) {
     process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   if (!isProduction) {
-    console.debug('[Cookie:Utils] Skipped domain (Not Production)', {
-      appUrl,
-      env: process.env.NEXT_PUBLIC_ENV,
-      vercelEnv: process.env.NEXT_PUBLIC_VERCEL_ENV,
-    });
-    return undefined;
+    return undefined; // Host-only cookies for localhost
   }
 
-  const hostname = requestHostname || (typeof window !== 'undefined' ? window.location.hostname : new URL(appUrl).hostname);
+  // Fallback chain for hostname
+  const hostname = 
+    requestHostname || 
+    (typeof window !== 'undefined' ? window.location.hostname : null) ||
+    new URL(appUrl).hostname;
 
-  console.debug('[Cookie:Utils] Evaluating domain for hostname:', {
-    hostname,
-    requestHostname,
-    appUrl,
+  console.debug('[Cookie:Utils] Evaluating domain', {
+    resolvedHostname: hostname,
+    inputHostname: requestHostname,
+    isProduction
   });
 
-  // Use wildcard domain for the main app to share cookies with API subdomains
-  if (hostname.startsWith('www.') || hostname === 'validiant.in') {
+  // If we are on any validiant.in subdomain, use the wildcard domain
+  if (hostname && (hostname.endsWith('validiant.in') || hostname.includes('validiant-v2-web'))) {
+    console.debug('[Cookie:Utils] MATCHED .validiant.in domain', { hostname });
     return '.validiant.in';
   }
 

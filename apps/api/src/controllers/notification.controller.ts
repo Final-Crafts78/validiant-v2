@@ -13,6 +13,14 @@ export const getNotifications = async (c: Context) => {
     const orgId = user?.organizationId;
 
     if (!user || !user.userId || !orgId) {
+      logger.warn('[NotificationController] 401 Unauthorized triggered', {
+        hasUser: !!user,
+        hasUserId: !!user?.userId,
+        hasOrgId: !!orgId,
+        userId: user?.userId,
+        orgId: orgId,
+        path: c.req.path
+      });
       return c.json({ error: 'Unauthorized' }, 401);
     }
 

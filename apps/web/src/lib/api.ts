@@ -179,48 +179,76 @@ apiClient.interceptors.response.use(
           cookieRawCount: cookieNames.length,
           userAgent: window.navigator.userAgent,
         });
-      }
 
-      // Check if we're not already on an auth page or session-expired to avoid redirect loop
-      if (typeof window !== 'undefined' && !isAlreadyOnAuthPage) {
-        logger.warn(
-          '[Axios:401] REDIRECT DECISION: Redirecting to session-expired...',
-          {
-            from: window.location.pathname,
-            target: `${window.location.origin}/api/auth/session-expired`,
-            triggeringUrl: fullUrl,
+        // Check if we're not already on an auth page or session-expired to avoid redirect loop
+        if (!isAlreadyOnAuthPage) {
+          // CRITICAL: Determine if this 401 should trigger a full session expiry
+          // We only logout if a core identity or organization check fails.
+          // Secondary endpoints (like notifications) might fail 401 if orgId is missing
+          // during onboarding, but that shouldn't kill the whole session.
+          const criticalPaths = [
+            '/auth/me',
+            '/organizations/my',
+            '/users/me',
+            '/projects/my',
+            '/tasks/my',
+          ];
+
+          const isCriticalRequest = criticalPaths.some((path) =>
+            fullUrl.includes(path)
+          );
+
+          if (!isCriticalRequest) {
+            logger.warn(
+              '[Axios:401] Non-critical 401 detected. Skipping session expiry.',
+              {
+                url: fullUrl,
+                suggestion:
+                  'This might be a background task failing due to missing organization context during onboarding.',
+              }
+            );
+            return Promise.reject(error);
           }
-        );
 
-        const authStateBefore = useAuthStore.getState().isAuthenticated;
+          logger.warn(
+            '[Axios:401] REDIRECT DECISION: Redirecting to session-expired...',
+            {
+              from: window.location.pathname,
+              target: `${window.location.origin}/api/auth/session-expired`,
+              triggeringUrl: fullUrl,
+            }
+          );
 
-        // CRITICAL FIX: Clear Zustand auth state before redirecting.
-        useAuthStore.getState().clearAuth();
+          const authStateBefore = useAuthStore.getState().isAuthenticated;
 
-        const authStateAfter = useAuthStore.getState().isAuthenticated;
+          // CRITICAL FIX: Clear Zustand auth state before redirecting.
+          useAuthStore.getState().clearAuth();
 
-        logger.debug('[Axios:401] ZUSTAND STATE CLEARED', {
-          before: authStateBefore,
-          after: authStateAfter,
-        });
+          const authStateAfter = useAuthStore.getState().isAuthenticated;
 
-        const targetUrl =
-          '/api/auth/session-expired?redirect=' +
-          encodeURIComponent(window.location.pathname);
+          logger.debug('[Axios:401] ZUSTAND STATE CLEARED', {
+            before: authStateBefore,
+            after: authStateAfter,
+          });
 
-        logger.info('[Axios:401] NAVIGATING to session-expired', {
-          href: targetUrl,
-          timestamp: new Date().toISOString(),
-        });
+          const targetUrl =
+            '/api/auth/session-expired?redirect=' +
+            encodeURIComponent(window.location.pathname);
 
-        // Redirect to session-expired handler to clear HttpOnly cookies
-        window.location.href = targetUrl;
-      } else if (typeof window !== 'undefined') {
-        logger.debug('[Axios:401] REDIRECT SKIPPED', {
-          reason: 'Already on auth page or session-expired',
-          pathname: window.location.pathname,
-          triggeringUrl: fullUrl,
-        });
+          logger.info('[Axios:401] NAVIGATING to session-expired', {
+            href: targetUrl,
+            timestamp: new Date().toISOString(),
+          });
+
+          // Redirect to session-expired handler to clear HttpOnly cookies
+          window.location.href = targetUrl;
+        } else {
+          logger.debug('[Axios:401] REDIRECT SKIPPED', {
+            reason: 'Already on auth page or session-expired',
+            pathname: window.location.pathname,
+            triggeringUrl: fullUrl,
+          });
+        }
       }
     }
 
