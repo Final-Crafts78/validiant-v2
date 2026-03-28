@@ -9,8 +9,9 @@ import { OrgAnalyticsSnapshot } from '../db/schema';
 
 export const getLatestMetrics = async (c: Context) => {
   try {
-    const orgId = c.get('organizationId');
+    const orgId = c.get('orgId') || c.get('organizationId');
     if (!orgId) {
+      logger.warn('[Analytics Controller] getLatestMetrics - Missing orgId context');
       return c.json({ error: 'Organization ID required' }, 400);
     }
 
@@ -35,10 +36,11 @@ export const getLatestMetrics = async (c: Context) => {
 
 export const getHistory = async (c: Context) => {
   try {
-    const orgId = c.get('organizationId');
+    const orgId = c.get('orgId') || c.get('organizationId');
     const days = Number(c.req.query('days')) || 7;
 
     if (!orgId) {
+      logger.warn('[Analytics Controller] getHistory - Missing orgId context');
       return c.json({ error: 'Organization ID required' }, 400);
     }
 

@@ -136,6 +136,7 @@ export const register = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
+    console.debug('[Auth:Controller] Register Token Generated', { userId: user.id, orgId: activeOrg?.id });
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
@@ -259,6 +260,7 @@ export const login = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
+    console.debug('[Auth:Controller] Login Token Generated', { userId: user.id, orgId: activeOrg?.id });
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
@@ -492,15 +494,22 @@ export const switchOrganization = async (c: Context) => {
 
     const permissions = Array.from(new Set([...platformPerms, ...orgPerms]));
 
-    // 3. Generate new tokens with new organizationId and permissions
-    const accessToken = await generateToken({
+    const tokenPayload = {
       sub: user.userId,
       userId: user.userId,
       email: user.email,
       role: dbUser.role,
       organizationId: organizationId,
       permissions,
+    };
+
+    console.debug('[Auth:Controller] switchOrg - Token Payload', {
+      ...tokenPayload,
+      timestamp: new Date().toISOString(),
     });
+
+    // 3. Generate new tokens with new organizationId and permissions
+    const accessToken = await generateToken(tokenPayload);
 
     const refreshToken = await generateRefreshToken({
       sub: user.userId,

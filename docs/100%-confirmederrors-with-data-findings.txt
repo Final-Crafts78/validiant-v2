@@ -19,3 +19,13 @@
 - **Data Evidence**: `[MW:Edge] Cookie Detection` continues to show `accessToken` presence even after a `session-expired` redirect.
 - **Root Cause**: Compounded by Finding #1, the deletion command uses the wrong domain scope, so the browser ignores the `set-cookie: Max-Age=0` instruction.
 - **Impact**: The application remains in a corrupted partial-auth state.
+
+#### 5. [Backend] Controller Variable Mismatch
+- **Data Evidence**: `analytics.controller.ts` uses `c.get('organizationId')`, but `tenant.ts` middleware only sets `c.set('orgId', orgId)`.
+- **Root Cause**: Inconsistent variable naming between the isolation middleware (`orgId`) and the controllers (`organizationId`).
+- **Impact**: All analytics requests return 400 "Organization ID required" even if the ID was provided in the header/param.
+
+#### 6. [Frontend] Missing X-Org-Id Header Injection
+- **Data Evidence**: Cloudflare logs show `xOrgIdHeader: "MISSING"` for multiple requests. `api.ts` request interceptor only logs the header but does not inject it.
+- **Root Cause**: The Axios client lacks an automatic mechanism to pull the active `organizationId` from the state/URL and inject it into headers.
+- **Impact**: Backend isolation middleware fails to identify the tenant, leading to 400/500 errors across various protected routes.

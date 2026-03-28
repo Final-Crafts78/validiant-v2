@@ -104,19 +104,38 @@ const apiClient: AxiosInstance = axios.create({
  */
 apiClient.interceptors.request.use(
   (config) => {
-    // Log requests in development OR if it has critical headers we're tracking
-    const orgIdHeader = config.headers?.['X-Org-Id'];
-    
-    if (process.env.NODE_ENV === 'development' || orgIdHeader) {
-      logger.log(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
-        hasOrgId: !!orgIdHeader,
-        orgId: orgIdHeader,
-        baseURL: config.baseURL,
-        headers: {
-          ...config.headers,
-          Authorization: config.headers?.Authorization ? 'PRESENT (Masked)' : 'MISSING',
+    // 1. INJECT ORGANIZATION CONTEXT (X-Org-Id)
+    // We attempt to get the active organization ID from the Zustand store.
+    // This is the primary source of truth for the client session.
+    const activeOrgId = useAuthStore.getState().user?.activeOrganizationId;
+
+    // Also check if it's already explicitly set in the request (don't override)
+    const existingOrgId = config.headers?.['X-Org-Id'];
+
+    if (activeOrgId && !existingOrgId) {
+      if (!config.headers) config.headers = {} as any;
+      config.headers['X-Org-Id'] = activeOrgId;
+    }
+
+    // 2. LOGGING (Development or if Org context is present)
+    const finalOrgId = config.headers?.['X-Org-Id'];
+
+    if (process.env.NODE_ENV === 'development' || finalOrgId) {
+      logger.debug(
+        `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
+        {
+          hasOrgId: !!finalOrgId,
+          orgId: finalOrgId,
+          source: existingOrgId ? 'explicit' : activeOrgId ? 'store' : 'none',
+          baseURL: config.baseURL,
+          headers: {
+            ...config.headers,
+            Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
+            Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
+          },
+          timestamp: new Date().toISOString(),
         }
-      });
+      );
     }
     return config;
   },
@@ -164,12 +183,14 @@ apiClient.interceptors.response.use(
 
       const fullUrl = error.config?.url ? (error.config.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config.url) : 'UNKNOWN';
 
-      logger.log('[Axios:401] FULL CONTEXT', {
+      logger.warn('[Axios:401] FULL CONTEXT', {
         url: error.config?.url,
         fullUrl,
         baseURL: error.config?.baseURL,
         method: error.config?.method,
         status: response?.status,
+        statusText: response?.statusText,
+        errorBody: response?.data, // CRITICAL: Log the actual error from backend
         pathname:
           typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
         isAlreadyOnAuthPage,

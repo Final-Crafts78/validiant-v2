@@ -20,11 +20,12 @@ export function getCookieDomain(requestHostname?: string) {
   const isProduction =
     appUrl.includes('validiant.in') ||
     process.env.NEXT_PUBLIC_ENV === 'production' ||
+    process.env.NODE_ENV === 'production' ||
     process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   // Fallback chain for hostname
-  const hostname = 
-    requestHostname || 
+  const hostname =
+    requestHostname ||
     (typeof window !== 'undefined' ? window.location.hostname : null) ||
     new URL(appUrl).hostname;
 
@@ -32,13 +33,14 @@ export function getCookieDomain(requestHostname?: string) {
     resolvedHostname: hostname,
     inputHostname: requestHostname || 'UNDEFINED',
     isProduction,
+    appUrl,
     envVars: {
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
       NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV || 'MISSING',
       NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV || 'MISSING',
       NODE_ENV: process.env.NODE_ENV || 'MISSING',
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   if (!isProduction) {
@@ -46,8 +48,19 @@ export function getCookieDomain(requestHostname?: string) {
   }
 
   // If we are on any validiant.in subdomain, use the wildcard domain
-  if (hostname && (hostname.endsWith('validiant.in') || hostname.includes('validiant-v2-web'))) {
-    console.debug('[Cookie:Utils] MATCHED .validiant.in domain', { hostname });
+  // CRITICAL: If we are in production but the hostname is missing or localhost (server-side context issues),
+  // we force the production domain to ensure cookies are set/cleared correctly.
+  if (
+    isProduction &&
+    (!hostname ||
+      hostname === 'localhost' ||
+      hostname.endsWith('validiant.in') ||
+      hostname.includes('validiant-v2-web'))
+  ) {
+    console.debug('[Cookie:Utils] MATCHED .validiant.in domain', {
+      hostname,
+      isProduction,
+    });
     return '.validiant.in';
   }
 

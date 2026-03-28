@@ -88,14 +88,16 @@ export const authenticate = async (
     let payload: TokenPayload;
     try {
       payload = await verifyToken(token);
-      logger.info('[Auth Middleware] Token OK', {
+      logger.info('[Auth:MW] Success', {
         userId: payload.userId,
         email: payload.email,
         orgId: payload.organizationId,
+        permissions: payload.permissions?.length || 0,
         exp: payload.exp,
-        expiresInSeconds: payload.exp
+        expiresInSec: payload.exp
           ? payload.exp - Math.floor(Date.now() / 1000)
           : 'no-exp',
+        path: c.req.path
       });
     } catch (verifyError) {
       logger.error('[Auth Middleware] verifyToken FAILED', {
@@ -159,6 +161,10 @@ export const optionalAuth = async (c: Context, next: Next): Promise<void> => {
 
     if (token) {
       const payload: TokenPayload = await verifyToken(token);
+      logger.debug('[Auth:MW] Optional Success', {
+        userId: payload.userId,
+        orgId: payload.organizationId
+      });
       c.set('user', {
         userId: payload.userId,
         email: payload.email,

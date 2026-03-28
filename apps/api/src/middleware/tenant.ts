@@ -51,12 +51,16 @@ export const tenantIsolation = async (
     return;
   }
 
-  // Security Guard: Check if user is actually a member of this organization
-  // This is technically redundent with requireOrgRole but safe as a base layer.
-  // Note: We'll skip the DB check here to keep it Edge-native (JWT-based).
   // Phase 4 says "scope every query automatically" - we attach the ID.
+  console.debug('[Tenant:MW] Resolved OrgId', {
+    orgId,
+    source: c.req.header('X-Org-Id') ? 'header' : (c.req.param('orgId') ? 'param' : (c.req.query('organizationId') ? 'query' : 'unknown')),
+    path: c.req.path,
+    userId: user.userId
+  });
 
   c.set('orgId', orgId);
+  c.set('organizationId', orgId); // Legacy support for some controllers
 
   await next();
 };
