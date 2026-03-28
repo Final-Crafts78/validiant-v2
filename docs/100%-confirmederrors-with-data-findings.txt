@@ -29,3 +29,19 @@
 - **Data Evidence**: Cloudflare logs show `xOrgIdHeader: "MISSING"` for multiple requests. `api.ts` request interceptor only logs the header but does not inject it.
 - **Root Cause**: The Axios client lacks an automatic mechanism to pull the active `organizationId` from the state/URL and inject it into headers.
 - **Impact**: Backend isolation middleware fails to identify the tenant, leading to 400/500 errors across various protected routes.
+
+#### 7. [Frontend] Double /api/v1 Prefix (API URL Mismatch)
+- **Data Evidence**: `cloudflarelogs.txt` shows multiple 404 errors for `GET /api/v1/api/v1/auth/me`.
+- **Root Cause**: `getBaseUrl` in `api.ts` appends `/api/v1` to the base URL. If `NEXT_PUBLIC_API_URL` already contains it, or if manual URL constructions (like `activityApi.getExportUrl`) add it again, the prefix is doubled.
+- **Impact**: Affected requests return 404, breaking critical auth and export features.
+
+#### 8. [Frontend] Inconsistent Real-time Auth (SSE Header Limitation)
+- **Data Evidence**: `cloudflarelogs.txt` shows `Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present.`
+- **Root Cause**: `useRealtime.ts` uses the browser's native `EventSource`, which does not support custom headers (`X-Org-Id`). The backend isolation middleware strictly requires this header, causing it to fail.
+- **Impact**: Real-time notification and data stream fails immediately upon connection.
+
+#### 9. [Frontend/Edge] Edge Middleware Auth Loop (Corrupted State)
+- **Data Evidence**: `vercellogs.txt` shows repeated `[Session Expired]` triggers. `middleware.ts` logs show cookies present but failing length check `> 100`.
+- **Root Cause**: Combined with Finding #4 (Ghost Cookies), the app is stuck in a loop where it detects an invalid/corrupted cookie, redirects to clear it (which fails due to domain mismatch), and then tries again.
+- **Impact**: Users are permanently locked out until they manually clear their browser cookies for the entire domain.
+

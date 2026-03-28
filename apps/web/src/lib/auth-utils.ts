@@ -17,11 +17,20 @@
  */
 export function getCookieDomain(requestHostname?: string) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  
+  // LOG ALL ENVIRONMENT INPUTS FOR DETERMINING PRODUCTION
+  const envProductionChecks = {
+    appUrlIncludesValidiant: appUrl.includes('validiant.in'),
+    NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
+  };
+
   const isProduction =
-    appUrl.includes('validiant.in') ||
-    process.env.NEXT_PUBLIC_ENV === 'production' ||
-    process.env.NODE_ENV === 'production' ||
-    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+    envProductionChecks.appUrlIncludesValidiant ||
+    envProductionChecks.NEXT_PUBLIC_ENV === 'production' ||
+    envProductionChecks.NODE_ENV === 'production' ||
+    envProductionChecks.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   // Fallback chain for hostname
   const hostname =
@@ -34,35 +43,38 @@ export function getCookieDomain(requestHostname?: string) {
     inputHostname: requestHostname || 'UNDEFINED',
     isProduction,
     appUrl,
-    envVars: {
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
-      NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV || 'MISSING',
-      NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV || 'MISSING',
-      NODE_ENV: process.env.NODE_ENV || 'MISSING',
-    },
+    envProductionChecks,
     timestamp: new Date().toISOString(),
   });
 
   if (!isProduction) {
+    console.debug('[Cookie:Utils] NOT PRODUCTION - returning undefined (host-only)');
     return undefined; // Host-only cookies for localhost
   }
 
   // If we are on any validiant.in subdomain, use the wildcard domain
   // CRITICAL: If we are in production but the hostname is missing or localhost (server-side context issues),
   // we force the production domain to ensure cookies are set/cleared correctly.
-  if (
-    isProduction &&
-    (!hostname ||
-      hostname === 'localhost' ||
-      hostname.endsWith('validiant.in') ||
-      hostname.includes('validiant-v2-web'))
-  ) {
+  const isForceDomainMatch = 
+    !hostname ||
+    hostname === 'localhost' ||
+    hostname.endsWith('validiant.in') ||
+    hostname.includes('validiant-v2-web');
+
+  if (isProduction && isForceDomainMatch) {
     console.debug('[Cookie:Utils] MATCHED .validiant.in domain', {
       hostname,
       isProduction,
+      reason: !hostname ? 'HOSTNAME_MISSING' : hostname === 'localhost' ? 'LOCALHOST_FALLBACK' : 'DOMAIN_MATCH'
     });
     return '.validiant.in';
   }
+
+  console.warn('[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH', {
+    hostname,
+    isProduction,
+    isForceDomainMatch
+  });
 
   return undefined;
 }

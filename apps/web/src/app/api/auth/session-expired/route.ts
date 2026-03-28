@@ -92,9 +92,14 @@ export async function GET(request: Request) {
 
   const response = NextResponse.redirect(loginUrl);
 
+  // DEBUG: Inspect the headers that will be sent to the browser
+  const setCookieHeaders = response.headers.getSetCookie();
+  
   console.info('[SessionExpired] Finalizing redirect', {
     target: loginUrl.toString(),
-    setCookieHeaders: response.headers.getSetCookie(),
+    setCookieCount: setCookieHeaders.length,
+    setCookieHeaders: setCookieHeaders.map(h => h.split(';')[0] + '; ...'), // Partial for security
+    allHeaderNames: Array.from(response.headers.keys()),
     timestamp: new Date().toISOString(),
   });
 

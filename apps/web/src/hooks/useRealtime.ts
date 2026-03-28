@@ -76,14 +76,18 @@ export function useRealtime() {
       eventSourceRef.current.close();
     }
 
-    console.log('[Realtime] Connecting to SSE stream for Org:', activeOrgId);
-
     // Create new EventSource connection
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const es = new EventSource(
-      `${apiBase}/api/v1/realtime/stream?token=${accessToken}`,
-      { withCredentials: true }
-    );
+    const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}`;
+    
+    console.log('[Realtime] Attempting SSE connection', {
+      url: sseUrl.split('token=')[0] + 'token=REDACTED',
+      apiBase,
+      activeOrgId,
+      timestamp: new Date().toISOString(),
+    });
+
+    const es = new EventSource(sseUrl, { withCredentials: true });
 
     eventSourceRef.current = es;
 
@@ -91,6 +95,10 @@ export function useRealtime() {
     es.onmessage = (event) => {
       try {
         const data: RealtimeMessage = JSON.parse(event.data);
+        console.debug('[Realtime] Message received', {
+          eventType: data.eventType,
+          timestamp: new Date().toISOString(),
+        });
         handleMessage(data, queryClient, userId);
       } catch (error) {
         console.error('[Realtime] Failed to parse SSE message:', error);
@@ -98,7 +106,12 @@ export function useRealtime() {
     };
 
     es.onerror = (error) => {
-      console.error('[Realtime] SSE transition error/closed:', error);
+      console.error('[Realtime] SSE Error or Connection Closed', {
+        error,
+        readyState: es.readyState,
+        url: es.url.split('token=')[0] + 'token=REDACTED',
+        timestamp: new Date().toISOString(),
+      });
       // EventSource automatically handles reconnection for standard errors
     };
 

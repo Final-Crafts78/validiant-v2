@@ -23,17 +23,34 @@ router.get('/stream', async (c) => {
     query: c.req.queries(),
   });
 
-  const orgId = user?.organizationId || c.req.header('X-Org-Id');
+  const headerOrgId = c.req.header('X-Org-Id');
+  const userOrgId = user?.organizationId;
+  const cookieOrgId = getCookie(c, 'orgId'); // Checking if it's in cookies
+
+  const orgId = userOrgId || headerOrgId || cookieOrgId;
+
+  console.debug('[Realtime:MW] Stream Isolation Trace', {
+    path: c.req.path,
+    resolvedOrgId: orgId || 'NONE',
+    sources: {
+      userContext: userOrgId || 'MISSING',
+      header: headerOrgId || 'MISSING',
+      cookie: cookieOrgId || 'MISSING',
+    },
+    userId: user?.userId,
+    timestamp: new Date().toISOString(),
+  });
 
   if (!orgId) {
-    logger.warn('[Realtime] GET /stream - Missing organizationId for user', {
+    logger.warn('[Realtime] GET /stream - Missing organization context', {
       userId: user?.userId,
-      orgId: user?.organizationId,
-      hasCookie: !!getCookie(c, 'accessToken'),
-      xOrgIdHeader: c.req.header('X-Org-Id') || 'MISSING',
+      userContextOrgId: userOrgId || 'MISSING',
+      headerOrgId: headerOrgId || 'MISSING',
+      cookieOrgId: cookieOrgId || 'MISSING',
+      hasAccessToken: !!getCookie(c, 'accessToken'),
     });
     throw new BadRequestError(
-      'Active organization context required for real-time stream. Ensure X-Org-Id header is present.'
+      'Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.'
     );
   }
 

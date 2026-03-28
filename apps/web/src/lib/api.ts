@@ -117,26 +117,27 @@ apiClient.interceptors.request.use(
       config.headers['X-Org-Id'] = activeOrgId;
     }
 
-    // 2. LOGGING (Development or if Org context is present)
+    // 2. LOGGING (ALWAYS log in production for now for maximum visibility)
     const finalOrgId = config.headers?.['X-Org-Id'];
+    const fullRequestUrl = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
 
-    if (process.env.NODE_ENV === 'development' || finalOrgId) {
-      logger.debug(
-        `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
-        {
-          hasOrgId: !!finalOrgId,
-          orgId: finalOrgId,
-          source: existingOrgId ? 'explicit' : activeOrgId ? 'store' : 'none',
-          baseURL: config.baseURL,
-          headers: {
-            ...config.headers,
-            Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
-            Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
-          },
-          timestamp: new Date().toISOString(),
-        }
-      );
-    }
+    logger.debug(
+      `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
+      {
+        fullUrl: fullRequestUrl,
+        baseURL: config.baseURL,
+        urlPath: config.url,
+        hasOrgId: !!finalOrgId,
+        orgId: finalOrgId || 'MISSING',
+        orgIdSource: existingOrgId ? 'explicit' : activeOrgId ? 'store' : 'none',
+        timestamp: new Date().toISOString(),
+        headers: {
+          ...config.headers,
+          Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
+          Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
+        },
+      }
+    );
     return config;
   },
   (error) => {
@@ -285,12 +286,23 @@ apiClient.interceptors.response.use(
 
     // Handle permission errors (403)
     if (statusCode === 403) {
-      logger.error('[API] Permission denied:', response.data?.message);
+      logger.error('[API:403] Permission denied', {
+        url: error.config?.url,
+        message: response.data?.message,
+        errorBody: response.data,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     // Handle server errors (500+)
     if (statusCode >= 500) {
-      logger.error('[API] Server error:', response.data?.message);
+      logger.error('[API:500] Server error', {
+        url: error.config?.url,
+        status: statusCode,
+        message: response.data?.message,
+        errorBody: response.data,
+        timestamp: new Date().toISOString(),
+      });
     }
 
     // Return structured error

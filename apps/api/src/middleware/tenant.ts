@@ -36,28 +36,38 @@ export const tenantIsolation = async (
   }
 
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)
-  let orgId = c.req.header('X-Org-Id');
+  const headerOrgId = c.req.header('X-Org-Id');
+  
+  // 2. Fallback: Parse from route params or query
+  const paramOrgId = c.req.param('orgId');
+  const queryOrgId = c.req.query('organizationId');
 
-  // 2. Fallback: Parse from route params (Standard for Web URL structures)
-  if (!orgId) {
-    orgId = c.req.param('orgId') || c.req.query('organizationId');
-  }
+  const orgId = headerOrgId || paramOrgId || queryOrgId;
+
+  console.debug('[Tenant:MW] Isolation Trace', {
+    path: c.req.path,
+    method: c.req.method,
+    resolvedOrgId: orgId || 'NONE',
+    sources: {
+      header: headerOrgId || 'MISSING',
+      param: paramOrgId || 'MISSING',
+      query: queryOrgId || 'MISSING',
+    },
+    userId: user.userId,
+    timestamp: new Date().toISOString(),
+  });
 
   if (!orgId) {
+    console.warn('[Tenant:MW] No organization context found for scoped route', {
+      path: c.req.path,
+      userId: user.userId
+    });
     // Some routes might not be org-scoped (like /auth/me), but for scoped routes, this is fatal.
     // We allow it to pass if downstream logic handles global scope,
     // but the spec suggests scoping "every single database query".
     await next();
     return;
   }
-
-  // Phase 4 says "scope every query automatically" - we attach the ID.
-  console.debug('[Tenant:MW] Resolved OrgId', {
-    orgId,
-    source: c.req.header('X-Org-Id') ? 'header' : (c.req.param('orgId') ? 'param' : (c.req.query('organizationId') ? 'query' : 'unknown')),
-    path: c.req.path,
-    userId: user.userId
-  });
 
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
