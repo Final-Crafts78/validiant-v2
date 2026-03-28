@@ -61,7 +61,7 @@ export default function OnboardingPage() {
     if (!user) {
       console.warn('[Onboarding:Watch] AUTH LOST! Current context:', {
         pathname: typeof window !== 'undefined' ? window.location.pathname : 'N/A',
-        cookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0].trim()) : [],
+        cookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
         timestamp: new Date().toISOString(),
       });
     }
@@ -73,7 +73,7 @@ export default function OnboardingPage() {
       isAuthenticated: !!user,
       cookieNames:
         typeof document !== 'undefined'
-          ? document.cookie.split(';').map((c) => c.split('=')[0]?.trim())
+          ? document.cookie.split(';').map((c) => c.split('=')[0]?.trim() || 'UNKNOWN')
           : 'N/A',
       timestamp: new Date().toISOString(),
     });
