@@ -125,7 +125,7 @@ export const getBaseCookieOptions = (hostname?: string) => {
       sameSite: options.sameSite,
     },
     clientAvailableCookies: typeof document !== 'undefined' ? document.cookie.split(';').length : 'N/A',
-    clientCookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0].trim()) : [],
+    clientCookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
     context: typeof window !== 'undefined' ? 'BROWSER' : 'SERVER',
     envNode: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),

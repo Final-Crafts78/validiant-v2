@@ -51,7 +51,7 @@ router.get('/stream', async (c) => {
     cookies: {
       hasAccessToken: !!getCookie(c, 'accessToken'),
       hasOrgId: !!getCookie(c, 'orgId'),
-      rawCookieNames: c.req.header('cookie') ? c.req.header('cookie')?.split(';').map(c => c.split('=')[0].trim()) : [],
+      rawCookieNames: c.req.header('cookie') ? c.req.header('cookie')?.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
     },
     userId: user?.userId,
     timestamp: new Date().toISOString(),
