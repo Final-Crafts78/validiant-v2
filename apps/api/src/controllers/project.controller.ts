@@ -72,6 +72,16 @@ export const createProject = async (c: Context) => {
       typeof createProjectSchema
     >;
 
+    console.info(`[ProjectController] Creating project with data:`, {
+      organizationId: validatedData.organizationId,
+      name: validatedData.name,
+      description: validatedData.description,
+      visibility: validatedData.visibility,
+      priority: validatedData.priority,
+      startDate: validatedData.startDate,
+      endDate: validatedData.endDate,
+    });
+
     // Check organization access
     const hasAccess = await checkOrganizationAccess(
       validatedData.organizationId,

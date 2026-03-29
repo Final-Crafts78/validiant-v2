@@ -100,6 +100,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Update user data partially
   updateUser: (updates) => {
     const currentUser = get().user;
+    const newActiveOrgId = updates.activeOrganizationId;
+    
+    if (newActiveOrgId && newActiveOrgId !== currentUser?.activeOrganizationId) {
+      console.info(`[AuthStore:Org] CHANGING ACTIVE ORG: ${currentUser?.activeOrganizationId ?? 'NONE'} -> ${newActiveOrgId}`, {
+        userId: currentUser?.id,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     console.debug('[AuthStore] updateUser called', { 
       updates,
       prevActiveOrgId: currentUser?.activeOrganizationId,

@@ -10,19 +10,31 @@ import { UserContext } from '../middleware/auth';
 export const getNotifications = async (c: Context) => {
   try {
     const user = c.get('user') as UserContext;
-    const orgId = user?.organizationId;
+    const contextOrgId = c.get('orgId');
+    const orgId = contextOrgId || user?.organizationId;
 
     if (!user || !user.userId || !orgId) {
       logger.warn('[NotificationController] 401 Unauthorized triggered', {
         hasUser: !!user,
         hasUserId: !!user?.userId,
         hasOrgId: !!orgId,
+        contextOrgId: contextOrgId || 'MISSING',
+        jwtOrgId: user?.organizationId || 'MISSING',
         userId: user?.userId,
-        orgId: orgId,
-        path: c.req.path
+        path: c.req.path,
       });
-      return c.json({ error: 'Unauthorized' }, 401);
+      return c.json(
+        {
+          error: 'Unauthorized',
+          message: 'Active organization context required',
+        },
+        401
+      );
     }
+
+    console.info(
+      `[NotificationController] Fetching for { userId: '${user.userId}', orgId: '${orgId}' }`
+    );
 
     const notifications = await notificationService.getNotifications(
       user.userId,

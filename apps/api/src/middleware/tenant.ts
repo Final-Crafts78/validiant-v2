@@ -44,7 +44,6 @@ export const tenantIsolation = async (
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
-  
   console.debug('[Tenant:MW] Isolation Trace', {
     path: c.req.path,
     method: c.req.method,
@@ -86,6 +85,7 @@ export const tenantIsolation = async (
     return;
   }
 
+  console.log(`[Tenant:MW] Setting context keys { orgId: '${orgId}', organizationId: '${orgId}' }`);
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
 

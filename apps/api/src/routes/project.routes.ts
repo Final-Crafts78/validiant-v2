@@ -29,8 +29,9 @@ app.post(
   '/',
   zValidator('json', createProjectSchema, (result, c) => {
     if (!result.success) {
+      const flattenedErrors = result.error.flatten();
       console.error('[Project:Routes] Validation FAILED (POST /)', {
-        error: result.error.format(),
+        errors: flattenedErrors.fieldErrors,
         path: c.req.path,
         timestamp: new Date().toISOString(),
       });
@@ -44,8 +45,9 @@ app.put(
   '/:id',
   zValidator('json', updateProjectSchema, (result, c) => {
     if (!result.success) {
+      const flattenedErrors = result.error.flatten();
       console.error('[Project:Routes] Validation FAILED (PUT /:id)', {
-        error: result.error.format(),
+        errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
       });
@@ -57,8 +59,9 @@ app.patch(
   '/:id/settings',
   zValidator('json', updateProjectSettingsSchema, (result, c) => {
     if (!result.success) {
+      const flattenedErrors = result.error.flatten();
       console.error('[Project:Routes] Validation FAILED (PATCH /:id/settings)', {
-        error: result.error.format(),
+        errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
       });
@@ -81,8 +84,9 @@ app.post(
   '/:id/members',
   zValidator('json', addProjectMemberSchema, (result, c) => {
     if (!result.success) {
+      const flattenedErrors = result.error.flatten();
       console.error('[Project:Routes] Validation FAILED (POST /:id/members)', {
-        error: result.error.format(),
+        errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
       });
@@ -98,8 +102,9 @@ app.post(
   '/:projectId/tasks',
   zValidator('json', createTaskSchema, (result, c) => {
     if (!result.success) {
+      const flattenedErrors = result.error.flatten();
       console.error('[Project:Routes] Validation FAILED (POST /:projectId/tasks)', {
-        error: result.error.format(),
+        errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('projectId'),
         timestamp: new Date().toISOString(),
       });
