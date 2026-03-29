@@ -44,6 +44,8 @@ export const tenantIsolation = async (
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
+  const rawCookies = c.req.header('cookie');
+  
   console.debug('[Tenant:MW] Isolation Trace', {
     path: c.req.path,
     method: c.req.method,
@@ -51,18 +53,19 @@ export const tenantIsolation = async (
     headers: Object.fromEntries(
       Object.entries(c.req.header()).map(([k, v]) => [
         k, 
-        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('cookie') 
+        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('auth') 
           ? 'PRESENT (Masked)' 
           : v
       ])
     ),
+    rawCookieNames: rawCookies ? rawCookies.split(';').map(c => c.split('=')[0].trim()) : [],
     sources: {
       header: headerOrgId || 'MISSING',
       param: paramOrgId || 'MISSING',
       query: queryOrgId || 'MISSING',
+      jwtContext: user.organizationId || 'MISSING'
     },
     userId: user.userId,
-    userContext: user,
     timestamp: new Date().toISOString(),
   });
 

@@ -68,7 +68,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     console.debug('[AuthStore] setAuth called', {
       userId: user.id,
       email: user.email,
+      activeOrganizationId: user.activeOrganizationId || 'MISSING',
       hasToken: !!accessToken,
+      timestamp: new Date().toISOString(),
     });
     set({
       user,
@@ -83,7 +85,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     console.debug('[AuthStore] setUser called', { 
       userId: user.id, 
       email: user.email,
-      hasToken: !!accessToken
+      activeOrganizationId: user.activeOrganizationId || 'MISSING',
+      hasToken: !!accessToken,
+      timestamp: new Date().toISOString(),
     });
     set({
       user,
@@ -96,7 +100,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Update user data partially
   updateUser: (updates) => {
     const currentUser = get().user;
-    console.debug('[AuthStore] updateUser called', { updates });
+    console.debug('[AuthStore] updateUser called', { 
+      updates,
+      prevActiveOrgId: currentUser?.activeOrganizationId,
+      newActiveOrgId: updates.activeOrganizationId || currentUser?.activeOrganizationId,
+      timestamp: new Date().toISOString(),
+    });
     if (currentUser) {
       set({
         user: { ...currentUser, ...updates },

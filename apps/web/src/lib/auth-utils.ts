@@ -49,8 +49,9 @@ export function getCookieDomain(requestHostname?: string) {
       NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV || 'MISSING',
       NODE_ENV: process.env.NODE_ENV || 'MISSING',
       VERCEL_ENV: process.env.VERCEL_ENV || 'MISSING',
+      NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV || 'MISSING',
     },
-    stack: new Error().stack?.split('\n').slice(1, 4), // Log caller for context
+    stack: new Error().stack?.split('\n').slice(1, 5),
     timestamp: new Date().toISOString(),
   });
 
@@ -116,7 +117,11 @@ export const getBaseCookieOptions = (hostname?: string) => {
     isProduction,
     hasDomainAttribute: options.domain !== undefined,
     domainValue: options.domain,
-    options,
+    allOptions: {
+      ...options,
+      sameSite: options.sameSite,
+    },
+    clientAvailableCookies: typeof document !== 'undefined' ? document.cookie.split(';').length : 'N/A',
     timestamp: new Date().toISOString(),
   });
 

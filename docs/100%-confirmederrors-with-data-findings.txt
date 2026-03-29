@@ -6,9 +6,9 @@
 - **Impact**: Cookies are set/cleared for the wrong scope (`localhost` instead of `.validiant.in`), making authentication tokens "invisible" to the API subdomains or resulting in "ghost cookies" that cannot be cleared.
 
 #### 2. [Backend] Missing Organization Context (Real-time 500)
-- **Data Evidence**: `cloudflarelogs.txt` shows `Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present.` (Status 500).
-- **Code Audit**: `useRealtime.ts` uses native `EventSource`. Native `EventSource` does NOT support custom headers. The backend isolation middleware strictly requires `X-Org-Id` or a cookie. If the caller doesn't have the `orgId` cookie set yet, the request fails.
-- **Impact**: The real-time notification stream crashes immediately upon login/onboarding completion.
+- **Data Evidence**: `cloudflarelogs.txt` shows `Unhandled error: Error: Active organization context required for real-time stream.` (Status 500).
+- **Root Cause**: `useRealtime.ts` uses native `EventSource`. Native `EventSource` does NOT support custom headers (`X-Org-Id`). The backend `tenant.ts` middleware expects the ID in headers, params, or query. While auth passes (via token query param), the organization context is missing.
+- **Impact**: The real-time notification stream crashes immediately upon login or when switching organizations.
 
 #### 3. [Frontend] Aggressive 401 Interceptor Loop
 - **Data Evidence**: `[Axios:401] REDIRECT DECISION` in frontend logs for background requests like `/notifications`.
@@ -25,14 +25,14 @@
 - **Root Cause**: Inconsistent variable naming between the isolation middleware (`orgId`) and the controllers (`organizationId`).
 - **Impact**: All analytics requests return 400 "Organization ID required" even if the ID was provided in the header/param.
 
-#### 6. [Frontend] Missing X-Org-Id Header Injection
-- **Data Evidence**: Cloudflare logs show `xOrgIdHeader: "MISSING"` for multiple requests. `api.ts` request interceptor only logs the header but does not inject it.
-- **Root Cause**: The Axios client lacks an automatic mechanism to pull the active `organizationId` from the state/URL and inject it into headers.
+#### 6. [Frontend] Store-based X-Org-Id Header Injection Failure
+- **Data Evidence**: Cloudflare logs show `xOrgIdHeader: "MISSING"`. `api.ts` request interceptor attempts to pull from `useAuthStore.getState().user?.activeOrganizationId`.
+- **Root Cause**: The store is either not being updated correctly after login/onboarding, or the `activeOrganizationId` field is named incorrectly in the store compared to what the API returns.
 - **Impact**: Backend isolation middleware fails to identify the tenant, leading to 400/500 errors across various protected routes.
 
-#### 7. [Frontend] Double /api/v1 Prefix (API URL Mismatch)
-- **Data Evidence**: `cloudflarelogs.txt` shows multiple 404 errors for `GET /api/v1/api/v1/auth/me`.
-- **Code Audit**: `activityApi.getExportUrl` in `api.ts` manualy appends `/api/v1/activity/export` to the base URL. Since `getBaseUrl()` or the env var already includes `/api/v1`, it creates a double prefix.
+#### 7. [Frontend] Double /api/v1 Prefix in Export URL
+- **Data Evidence**: `cloudflarelogs.txt` shows `GET /api/v1/api/v1/auth/me` 404.
+- **Root Cause**: `activityApi.getExportUrl` in `api.ts` manually appends `/api/v1/activity/export` to a `baseUrl` that *already* includes `/api/v1` from `getBaseUrl()`.
 - **Impact**: Affected requests return 404, breaking critical auth and export features.
 
 #### 8. [Frontend] Inconsistent Real-time Auth (SSE Header Limitation)
@@ -42,7 +42,12 @@
 
 #### 9. [Frontend/Edge] Edge Middleware Auth Loop (Corrupted State)
 - **Data Evidence**: `vercellogs.txt` shows repeated `[Session Expired]` triggers. `middleware.ts` logs show cookies present but failing length check `> 100`.
-- **Root Cause**: Combined with Finding #4 (Ghost Cookies), the app is stuck in a loop where it detects an invalid/corrupted cookie, redirects to clear it (which fails due to domain mismatch), and then tries again.
-- **Impact**: Users are permanently locked out until they manually clear their browser cookies for the entire domain.
+- **Root Cause**: Combined with Finding #4 (Ghost Cookies), the app is stuck in a loop. Middleware detects a token that is too short (Line 64 of `middleware.ts`), redirects to login, login page thinks it's authed, redirects back.
+- **Impact**: Users are permanently locked out until they manually clear their browser cookies.
+
+#### 10. [Frontend] Real-time (SSE) Missing Org ID in URL
+- **Data Evidence**: SSE connection fails with 500 error on backend.
+- **Root Cause**: `useRealtime.ts` (Line 81) appends the token to the URL but does NOT append the `orgId`. Since `EventSource` cannot send headers, the backend has no way to identify the organization context if the `orgId` cookie is missing or scoped incorrectly.
+- **Impact**: Real-time stream is non-functional in many environments.
 
 

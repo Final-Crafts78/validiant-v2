@@ -40,6 +40,7 @@ import type {
   OrganizationMemberWithUser,
 } from '@validiant/shared';
 import { useAuthStore } from '../store/auth';
+import { useWorkspaceStore } from '../store/workspace';
 import { logger } from './logger';
 
 /**
@@ -105,9 +106,13 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // 1. INJECT ORGANIZATION CONTEXT (X-Org-Id)
-    // We attempt to get the active organization ID from the Zustand store.
-    // This is the primary source of truth for the client session.
-    const activeOrgId = useAuthStore.getState().user?.activeOrganizationId;
+    // We check both the AuthStore and the WorkspaceStore.
+    // useWorkspaceStore is the primary 'Context' for the active UI view.
+    // useAuthStore.user.activeOrganizationId is the default from the user profile.
+    const fromAuthStore = useAuthStore.getState().user?.activeOrganizationId;
+    const fromWorkspaceStore = useWorkspaceStore.getState().activeOrgId;
+
+    const activeOrgId = fromWorkspaceStore || fromAuthStore;
 
     // Also check if it's already explicitly set in the request (don't override)
     const existingOrgId = config.headers?.['X-Org-Id'];
@@ -141,6 +146,11 @@ apiClient.interceptors.request.use(
           ...config.headers,
           Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
           Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
+          'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
+        },
+        storeSources: {
+          fromAuthStore: fromAuthStore || 'MISSING',
+          fromWorkspaceStore: fromWorkspaceStore || 'MISSING',
         },
       }
     );
@@ -664,9 +674,8 @@ export const activityApi = {
 
   /** Get the download URL for CSV export */
   getExportUrl: (): string => {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
-    const finalUrl = `${baseUrl.replace(/\/+$/, '')}/api/v1/activity/export`;
+    const baseUrl = getBaseUrl();
+    const finalUrl = `${baseUrl.replace(/\/+$/, '')}/activity/export`;
     
     console.debug('[API:getExportUrl] Generated URL', {
       baseUrl,

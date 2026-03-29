@@ -78,7 +78,7 @@ export function useRealtime() {
 
     // Create new EventSource connection
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}`;
+    const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
     
     console.debug('[Realtime] CONNECTION PRE-FLIGHT', {
       apiBase,
