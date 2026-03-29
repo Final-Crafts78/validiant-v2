@@ -44,7 +44,9 @@ export function middleware(request: NextRequest) {
   console.debug('[MW:Edge] Request Headers', {
     host: request.headers.get('host'),
     xForwardedHost: request.headers.get('x-forwarded-host'),
+    xForwardedProto: request.headers.get('x-forwarded-proto'),
     nextUrlHostname: request.nextUrl.hostname,
+    nextUrlProtocol: request.nextUrl.protocol,
     pathname,
   });
 

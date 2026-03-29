@@ -44,7 +44,7 @@ export const tenantIsolation = async (
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
-  console.debug('[Tenant:MW] Isolation Trace', {
+  console.info('[Tenant:MW] Isolation Trace', {
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -61,9 +61,11 @@ export const tenantIsolation = async (
       queryOrgId: c.req.query('orgId') || 'MISSING',
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
       jwtContext: user.organizationId || 'MISSING',
+      rawXOrgIdHeader: c.req.header('X-Org-Id') || 'NULL',
     },
     userId: user.userId,
     userAgent: c.req.header('User-Agent') || 'UNKNOWN',
+    referer: c.req.header('Referer') || 'NONE',
     timestamp: new Date().toISOString(),
   });
 

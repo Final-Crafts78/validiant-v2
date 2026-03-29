@@ -27,19 +27,25 @@ export const requireOrgRole = (allowedRoles: string[]) => {
 
     const contextOrgId = c.get('orgId');
     const paramOrgId = c.req.param('orgId');
-    const queryOrgId = c.req.query('organizationId');
+    const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
+    const headerOrgId = c.req.header('X-Org-Id');
     
-    const orgId = contextOrgId || paramOrgId || queryOrgId;
+    // Priority: Context (already resolved) > Header > Param > Query
+    const orgId = contextOrgId || headerOrgId || paramOrgId || queryOrgId;
 
-    console.info(`[RBAC:Org] Role Check started`, {
+    console.info('[RBAC:Org] Role Check started', {
       path: c.req.path,
       method: c.req.method,
       requiredRoles: allowedRoles,
       resolvedOrgId: orgId || 'MISSING',
-      contextOrgId: contextOrgId || 'MISSING',
-      paramOrgId: paramOrgId || 'MISSING',
-      queryOrgId: queryOrgId || 'MISSING',
+      sources: {
+        context: contextOrgId || 'MISSING',
+        header: headerOrgId || 'MISSING',
+        param: paramOrgId || 'MISSING',
+        query: queryOrgId || 'MISSING',
+      },
       userId: user.userId,
+      timestamp: new Date().toISOString(),
     });
 
     if (!orgId) {

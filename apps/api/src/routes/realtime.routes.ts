@@ -24,7 +24,7 @@ router.get('/stream', async (c) => {
     queryOrganizationId: c.req.query('organizationId') || 'MISSING',
     tokenParam: !!c.req.query('token'),
     allHeaders: JSON.stringify(c.req.header()),
-    query: c.req.queries(),
+    rawQuery: c.req.queries(), // Log the raw queries object
   });
 
   const queryOrgId = c.req.query('orgId') || c.req.query('organizationId');

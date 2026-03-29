@@ -152,13 +152,15 @@ apiClient.interceptors.request.use(
           hasUser: !!authStoreState.user,
           userActiveOrgId: authStoreState.user?.activeOrganizationId || 'MISSING',
         },
+        workspaceStore: {
+          activeOrgId: fromWorkspaceStore || 'MISSING',
+        },
         timestamp: new Date().toISOString(),
         headers: {
           ...config.headers,
-          Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
-          Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
           'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
           'User-Agent': typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
+          Referer: typeof window !== 'undefined' ? window.location.href : 'NONE',
         },
       }
     );

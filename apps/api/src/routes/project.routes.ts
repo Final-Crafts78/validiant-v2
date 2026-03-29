@@ -27,11 +27,14 @@ const app = new Hono();
 // CRUD operations
 app.post(
   '/',
-  zValidator('json', createProjectSchema, (result, c) => {
+  zValidator('json', createProjectSchema, async (result, c) => {
     if (!result.success) {
       const flattenedErrors = result.error.flatten();
+      const rawBody = await c.req.json().catch(() => ({ error: 'Could not parse body' }));
+      
       console.error('[Project:Routes] Validation FAILED (POST /)', {
         errors: flattenedErrors.fieldErrors,
+        rawBody, // CRITICAL: See what the frontend actually sent
         path: c.req.path,
         timestamp: new Date().toISOString(),
       });

@@ -84,6 +84,8 @@ export function useRealtime() {
       // Create new EventSource connection
       const rawApiBase =
         process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      // Normalize: Remove trailing slash -> Remove /api/v1 -> Re-add /api/v1
+      // This prevents double /api/v1 if the env var has a trailing slash.
       const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
       const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
 
