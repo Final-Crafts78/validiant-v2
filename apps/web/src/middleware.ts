@@ -61,19 +61,29 @@ export function middleware(request: NextRequest) {
     })),
   });
   // CRITICAL: Basic validation to prevent using empty/cleared cookies
-  const isAuthenticated = !!accessToken && accessToken.value.length > 100;
+  const accessTokenValue = accessToken?.value || '';
+  const isLengthValid = accessTokenValue.length > 100;
+  const isNotEmpty = accessTokenValue !== 'deleted' && accessTokenValue !== 'null' && accessTokenValue !== '';
+  
+  const isAuthenticated = isLengthValid && isNotEmpty;
 
   // Check if route is protected
   const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
   const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
-  console.debug('[MW:Edge] Auth State', {
+  console.debug('[MW:Edge] Auth State Breakdown', {
     isAuthenticated,
+    isLengthValid,
+    isNotEmpty,
+    tokenLength: accessTokenValue.length,
+    tokenPrefix: accessTokenValue.substring(0, 10),
     path: pathname,
     isProtectedRoute,
     isOrgScoped: undefined, // Will be defined later
     isAuthRoute,
+    referer: request.headers.get('referer'),
+    timestamp: new Date().toISOString(),
   });
 
   // Debug logging for authentication issues

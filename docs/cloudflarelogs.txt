@@ -1,985 +1,993 @@
-2026-03-29 13:00:30.912
+2026-03-29 13:27:48.564
 GMT+5:30
 log
-2026-03-29T07:30:30.912Z [INFO] [Audit Retention] Purge cycle completed.
-2026-03-29 13:00:30.891
+--> GET /api/v1/analytics/history?days=30 [32m200[0m 965ms
+2026-03-29 13:27:47.862
 GMT+5:30
 log
-2026-03-29T07:30:30.891Z [INFO] [Audit Retention] Starting purge cycle...
-2026-03-29 13:00:30.891
-GMT+5:30
-log
-2026-03-29T07:30:30.891Z [INFO] [Analytics Rollup] Completed for 1 organizations.
-2026-03-29 13:00:30.831
-GMT+5:30
-log
-2026-03-29T07:30:30.831Z [INFO] [Analytics Rollup] Starting aggregation...
-2026-03-29 13:00:30.831
-GMT+5:30
-log
-2026-03-29T07:30:30.831Z [INFO] [SLA Monitor] Completed. Notified 0 at-risk and 0 breached tasks.
-2026-03-29 13:00:30.780
-GMT+5:30
-log
-2026-03-29T07:30:30.780Z [INFO] [SLA Monitor] Starting SLA check...
-2026-03-29 13:00:30.780
-GMT+5:30
-log
-[cron] Running background jobs at 2026-03-29T07:30:30.000Z
-2026-03-29 13:00:30.779
-GMT+5:30
-invocation log
-*/5 * * * *
-2026-03-29 12:59:42.790
-GMT+5:30
-log
---> GET /api/v1/analytics/history?days=30 [33m400[0m 244ms
-2026-03-29 12:59:42.790
-GMT+5:30
-log
-2026-03-29T07:29:42.790Z [WARN] [Analytics Controller] getHistory - Missing orgId context
-2026-03-29 12:59:42.790
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:42.790
+--> GET /api/v1/analytics/latest [32m200[0m 487ms
+2026-03-29 13:27:47.835
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:42.790
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:42.790
+2026-03-29 13:27:47.835
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:42.790
+2026-03-29 13:27:47.835
 GMT+5:30
 log
-2026-03-29T07:29:42.790Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":821,"path":"/api/v1/analytics/history"}
-2026-03-29 12:59:42.790
+2026-03-29T07:57:47.835Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":865,"path":"/api/v1/analytics/history"}
+2026-03-29 13:27:47.835
 GMT+5:30
 log
-2026-03-29T07:29:42.790Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:42.790
+2026-03-29T07:57:47.835Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:47.835
 GMT+5:30
 log
-2026-03-29T07:29:42.790Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:42.753
-GMT+5:30
-log
---> GET /api/v1/analytics/latest [33m400[0m 239ms
-2026-03-29 12:59:42.753
-GMT+5:30
-log
-2026-03-29T07:29:42.753Z [WARN] [Analytics Controller] getLatestMetrics - Missing orgId context
-2026-03-29 12:59:42.753
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:42.753
+2026-03-29T07:57:47.835Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:47.615
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:42.753
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:42.753
+2026-03-29 13:27:47.615
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:42.753
+2026-03-29 13:27:47.615
 GMT+5:30
 log
-2026-03-29T07:29:42.753Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":821,"path":"/api/v1/analytics/latest"}
-2026-03-29 12:59:42.753
+2026-03-29T07:57:47.615Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":865,"path":"/api/v1/analytics/latest"}
+2026-03-29 13:27:47.615
 GMT+5:30
 log
-2026-03-29T07:29:42.753Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:42.753
+2026-03-29T07:57:47.615Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:47.615
 GMT+5:30
 log
-2026-03-29T07:29:42.753Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:42.546
+2026-03-29T07:57:47.615Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:47.599
 GMT+5:30
 log
-2026-03-29T07:29:42.546Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:42.546
+2026-03-29T07:57:47.599Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:47.599
 GMT+5:30
 log
 <-- GET /api/v1/analytics/history?days=30
-2026-03-29 12:59:42.546
+2026-03-29 13:27:47.599
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/analytics/history?days=30
-2026-03-29 12:59:42.514
+2026-03-29 13:27:47.375
 GMT+5:30
 log
-2026-03-29T07:29:42.514Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:42.514
-GMT+5:30
-log
-<-- GET /api/v1/analytics/latest
-2026-03-29 12:59:42.514
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/analytics/latest
-2026-03-29 12:59:41.445
-GMT+5:30
-log
---> GET /api/v1/analytics/history?days=30 [33m400[0m 249ms
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-2026-03-29T07:29:41.445Z [WARN] [Analytics Controller] getHistory - Missing orgId context
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-2026-03-29T07:29:41.445Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":822,"path":"/api/v1/analytics/history"}
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-2026-03-29T07:29:41.445Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:41.445
-GMT+5:30
-log
-2026-03-29T07:29:41.445Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:41.441
-GMT+5:30
-log
---> GET /api/v1/analytics/latest [33m400[0m 247ms
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-2026-03-29T07:29:41.441Z [WARN] [Analytics Controller] getLatestMetrics - Missing orgId context
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-2026-03-29T07:29:41.441Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":822,"path":"/api/v1/analytics/latest"}
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-2026-03-29T07:29:41.441Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:41.441
-GMT+5:30
-log
-2026-03-29T07:29:41.441Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:41.196
-GMT+5:30
-log
-2026-03-29T07:29:41.196Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:41.196
-GMT+5:30
-log
-<-- GET /api/v1/analytics/history?days=30
-2026-03-29 12:59:41.196
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/analytics/history?days=30
-2026-03-29 12:59:41.194
-GMT+5:30
-log
-2026-03-29T07:29:41.194Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:41.194
+2026-03-29T07:57:47.375Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:47.375
 GMT+5:30
 log
 <-- GET /api/v1/analytics/latest
-2026-03-29 12:59:41.194
+2026-03-29 13:27:47.375
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/analytics/latest
-2026-03-29 12:59:36.584
+2026-03-29 13:27:47.359
 GMT+5:30
 log
---> GET /api/v1/api/v1/auth/me [33m404[0m 430ms
-2026-03-29 12:59:36.584
+--> OPTIONS /api/v1/analytics/history?days=30 [32m204[0m 0ms
+2026-03-29 13:27:47.359
 GMT+5:30
 log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:36.584
+2026-03-29T07:57:47.359Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:47.359
+GMT+5:30
+log
+<-- OPTIONS /api/v1/analytics/history?days=30
+2026-03-29 13:27:47.359
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/analytics/history?days=30
+2026-03-29 13:27:41.993
+GMT+5:30
+log
+--> GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects [32m200[0m 984ms
+2026-03-29 13:27:41.249
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:36.584
+2026-03-29 13:27:41.249
 GMT+5:30
 log
-2026-03-29T07:29:36.584Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":827,"path":"/api/v1/api/v1/auth/me"}
-2026-03-29 12:59:36.584
+2026-03-29T07:57:41.249Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":871,"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects"}
+2026-03-29 13:27:41.249
 GMT+5:30
 log
-2026-03-29T07:29:36.584Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:36.584
+2026-03-29T07:57:41.249Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:41.249
 GMT+5:30
 log
-2026-03-29T07:29:36.584Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:36.154
+2026-03-29T07:57:41.249Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:41.009
 GMT+5:30
 log
-2026-03-29T07:29:36.154Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:36.154
+2026-03-29T07:57:41.009Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:41.009
+GMT+5:30
+log
+<-- GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects
+2026-03-29 13:27:41.009
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/organizations/REDACTED/projects
+2026-03-29 13:27:40.774
+GMT+5:30
+log
+--> OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects [32m204[0m 0ms
+2026-03-29 13:27:40.774
+GMT+5:30
+log
+2026-03-29T07:57:40.774Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:40.774
+GMT+5:30
+log
+<-- OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/projects
+2026-03-29 13:27:40.774
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/organizations/REDACTED/projects
+2026-03-29 13:27:36.122
+GMT+5:30
+log
+--> GET /api/v1/api/v1/auth/me [33m404[0m 238ms
+2026-03-29 13:27:36.122
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:36.122
+GMT+5:30
+log
+2026-03-29T07:57:36.122Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":876,"path":"/api/v1/api/v1/auth/me"}
+2026-03-29 13:27:36.122
+GMT+5:30
+log
+2026-03-29T07:57:36.122Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:36.122
+GMT+5:30
+log
+2026-03-29T07:57:36.122Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:35.884
+GMT+5:30
+log
+2026-03-29T07:57:35.884Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:35.884
 GMT+5:30
 log
 <-- GET /api/v1/api/v1/auth/me
-2026-03-29 12:59:36.154
+2026-03-29 13:27:35.884
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/api/v1/auth/me
-2026-03-29 12:59:35.168
+2026-03-29 13:27:34.825
 GMT+5:30
 log
---> GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b [32m200[0m 2s
-2026-03-29 12:59:34.988
-GMT+5:30
-log
---> GET /api/v1/api/v1/auth/me [33m404[0m 1s
-2026-03-29 12:59:34.988
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:34.988
+--> GET /api/v1/api/v1/auth/me [33m404[0m 239ms
+2026-03-29 13:27:34.825
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:34.988
+2026-03-29 13:27:34.825
 GMT+5:30
 log
-2026-03-29T07:29:34.988Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":829,"path":"/api/v1/api/v1/auth/me"}
-2026-03-29 12:59:34.988
+2026-03-29T07:57:34.825Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":878,"path":"/api/v1/api/v1/auth/me"}
+2026-03-29 13:27:34.825
 GMT+5:30
 log
-2026-03-29T07:29:34.988Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:34.988
+2026-03-29T07:57:34.825Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:34.825
 GMT+5:30
 log
-2026-03-29T07:29:34.988Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:34.564
+2026-03-29T07:57:34.825Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:34.586
 GMT+5:30
 log
---> GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members [32m200[0m 955ms
-2026-03-29 12:59:34.070
+2026-03-29T07:57:34.586Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:34.586
 GMT+5:30
 log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:34.070
+<-- GET /api/v1/api/v1/auth/me
+2026-03-29 13:27:34.586
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/api/v1/auth/me
+2026-03-29 13:27:29.884
 GMT+5:30
 log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:59:34.070
-GMT+5:30
-log
-2026-03-29T07:29:34.070Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":829,"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members"}
-2026-03-29 12:59:34.070
-GMT+5:30
-log
-2026-03-29T07:29:34.070Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:34.070
-GMT+5:30
-log
-2026-03-29T07:29:34.070Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:34.063
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:59:34.063
+--> GET /api/v1/api/v1/auth/me [33m404[0m 236ms
+2026-03-29 13:27:29.884
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:59:34.063
+2026-03-29 13:27:29.884
 GMT+5:30
 log
-2026-03-29T07:29:34.063Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":829,"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b"}
-2026-03-29 12:59:34.063
+2026-03-29T07:57:29.884Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":883,"path":"/api/v1/api/v1/auth/me"}
+2026-03-29 13:27:29.884
 GMT+5:30
 log
-2026-03-29T07:29:34.063Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:59:34.063
+2026-03-29T07:57:29.884Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:29.884
 GMT+5:30
 log
-2026-03-29T07:29:34.063Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:59:33.609
+2026-03-29T07:57:29.884Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:29.648
 GMT+5:30
 log
-2026-03-29T07:29:33.609Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:33.609
+2026-03-29T07:57:29.648Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:29.648
+GMT+5:30
+log
+<-- GET /api/v1/api/v1/auth/me
+2026-03-29 13:27:29.648
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/api/v1/auth/me
+2026-03-29 13:27:29.421
+GMT+5:30
+log
+--> GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b [32m200[0m 1s
+2026-03-29 13:27:28.972
+GMT+5:30
+log
+--> GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members [32m200[0m 729ms
+2026-03-29 13:27:28.484
+GMT+5:30
+log
+--> GET /api/v1/api/v1/auth/me [33m404[0m 239ms
+2026-03-29 13:27:28.484
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:28.484
+GMT+5:30
+log
+2026-03-29T07:57:28.484Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":884,"path":"/api/v1/api/v1/auth/me"}
+2026-03-29 13:27:28.484
+GMT+5:30
+log
+2026-03-29T07:57:28.484Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:28.484
+GMT+5:30
+log
+2026-03-29T07:57:28.484Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/api/v1/auth/me","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:28.478
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:28.478
+GMT+5:30
+log
+2026-03-29T07:57:28.478Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":884,"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members"}
+2026-03-29 13:27:28.478
+GMT+5:30
+log
+2026-03-29T07:57:28.478Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:28.478
+GMT+5:30
+log
+2026-03-29T07:57:28.478Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:28.447
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:28.447
+GMT+5:30
+log
+2026-03-29T07:57:28.447Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":884,"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b"}
+2026-03-29 13:27:28.447
+GMT+5:30
+log
+2026-03-29T07:57:28.447Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:28.447
+GMT+5:30
+log
+2026-03-29T07:57:28.447Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:28.245
+GMT+5:30
+log
+2026-03-29T07:57:28.245Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.245
+GMT+5:30
+log
+<-- GET /api/v1/api/v1/auth/me
+2026-03-29 13:27:28.244
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/api/v1/auth/me
+2026-03-29 13:27:28.243
+GMT+5:30
+log
+2026-03-29T07:57:28.243Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.243
 GMT+5:30
 log
 <-- GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members
-2026-03-29 12:59:33.608
-GMT+5:30
-log
-2026-03-29T07:29:33.608Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:33.608
-GMT+5:30
-log
-<-- GET /api/v1/api/v1/auth/me
-2026-03-29 12:59:33.604
-GMT+5:30
-log
-2026-03-29T07:29:33.604Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:59:33.604
-GMT+5:30
-log
-<-- GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b
-2026-03-29 12:59:33.604
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/organizations/REDACTED
-2026-03-29 12:59:33.604
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/api/v1/auth/me
-2026-03-29 12:59:33.604
+2026-03-29 13:27:28.243
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/organizations/REDACTED/members
-2026-03-29 12:58:30.099
+2026-03-29 13:27:28.208
 GMT+5:30
 log
---> GET /api/v1/analytics/latest [33m400[0m 258ms
-2026-03-29 12:58:30.099
+2026-03-29T07:57:28.208Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.208
 GMT+5:30
 log
-2026-03-29T07:28:30.099Z [WARN] [Analytics Controller] getLatestMetrics - Missing orgId context
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-2026-03-29T07:28:30.099Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":893,"path":"/api/v1/analytics/latest"}
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-2026-03-29T07:28:30.099Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:30.099
-GMT+5:30
-log
-2026-03-29T07:28:30.099Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:30.079
-GMT+5:30
-log
---> GET /api/v1/analytics/history?days=7 [33m400[0m 240ms
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-2026-03-29T07:28:30.079Z [WARN] [Analytics Controller] getHistory - Missing orgId context
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-2026-03-29T07:28:30.079Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":893,"path":"/api/v1/analytics/history"}
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-2026-03-29T07:28:30.079Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:30.079
-GMT+5:30
-log
-2026-03-29T07:28:30.079Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:29.841
-GMT+5:30
-log
-2026-03-29T07:28:29.841Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:29.841
-GMT+5:30
-log
-<-- GET /api/v1/analytics/latest
-2026-03-29 12:58:29.841
+<-- GET /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b
+2026-03-29 13:27:28.208
 GMT+5:30
 invocation log
-GET https://api.validiant.in/api/v1/analytics/latest
-2026-03-29 12:58:29.839
+GET https://api.validiant.in/api/v1/organizations/REDACTED
+2026-03-29 13:27:28.008
 GMT+5:30
 log
-2026-03-29T07:28:29.839Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:29.839
+--> OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members [32m204[0m 0ms
+2026-03-29 13:27:28.006
+GMT+5:30
+log
+--> OPTIONS /api/v1/api/v1/auth/me [32m204[0m 0ms
+2026-03-29 13:27:28.006
+GMT+5:30
+log
+--> OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b [32m204[0m 0ms
+2026-03-29 13:27:28.005
+GMT+5:30
+log
+2026-03-29T07:57:28.005Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.005
+GMT+5:30
+log
+<-- OPTIONS /api/v1/api/v1/auth/me
+2026-03-29 13:27:28.005
+GMT+5:30
+log
+2026-03-29T07:57:28.005Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.005
+GMT+5:30
+log
+<-- OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b/members
+2026-03-29 13:27:28.000
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/api/v1/auth/me
+2026-03-29 13:27:28.000
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/organizations/REDACTED/members
+2026-03-29 13:27:28.000
+GMT+5:30
+log
+2026-03-29T07:57:28.000Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:28.000
+GMT+5:30
+log
+<-- OPTIONS /api/v1/organizations/d1c1319e-bf90-4703-9a6e-161f792ada2b
+2026-03-29 13:27:28.000
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/organizations/REDACTED
+2026-03-29 13:27:20.603
+GMT+5:30
+log
+--> GET /api/v1/projects/my [32m200[0m 970ms
+2026-03-29 13:27:20.600
+GMT+5:30
+log
+--> GET /api/v1/analytics/history?days=7 [32m200[0m 970ms
+2026-03-29 13:27:20.107
+GMT+5:30
+log
+--> GET /api/v1/analytics/latest [32m200[0m 482ms
+2026-03-29 13:27:20.035
+GMT+5:30
+log
+--> GET /api/v1/tasks/my [32m200[0m 492ms
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+2026-03-29T07:57:19.867Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/projects/my"}
+2026-03-29 13:27:20.600
+GMT+5:30
+log
+--> GET /api/v1/analytics/history?days=7 [32m200[0m 970ms
+2026-03-29 13:27:20.107
+GMT+5:30
+log
+--> GET /api/v1/analytics/latest [32m200[0m 482ms
+2026-03-29 13:27:20.035
+GMT+5:30
+log
+--> GET /api/v1/tasks/my [32m200[0m 492ms
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+2026-03-29T07:57:19.867Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/projects/my"}
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+2026-03-29T07:57:19.867Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:19.867
+GMT+5:30
+log
+2026-03-29T07:57:19.867Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/projects/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:19.863
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.863
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.863
+GMT+5:30
+log
+2026-03-29T07:57:19.863Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/analytics/history"}
+2026-03-29 13:27:19.863
+GMT+5:30
+log
+2026-03-29T07:57:19.863Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:19.863
+GMT+5:30
+log
+2026-03-29T07:57:19.863Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:19.860
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.860
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.860
+GMT+5:30
+log
+2026-03-29T07:57:19.860Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/analytics/latest"}
+2026-03-29 13:27:19.860
+GMT+5:30
+log
+2026-03-29T07:57:19.860Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:19.860
+GMT+5:30
+log
+2026-03-29T07:57:19.860Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:19.788
+GMT+5:30
+log
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:19.788
+GMT+5:30
+log
+2026-03-29T07:57:19.788Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/tasks/my"}
+2026-03-29 13:27:19.788
+GMT+5:30
+log
+2026-03-29T07:57:19.788Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:19.788
+GMT+5:30
+log
+2026-03-29T07:57:19.788Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/tasks/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:19.628
+GMT+5:30
+log
+2026-03-29T07:57:19.628Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.628
 GMT+5:30
 log
 <-- GET /api/v1/analytics/history?days=7
-2026-03-29 12:58:29.839
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/analytics/history?days=7
-2026-03-29 12:58:29.185
+2026-03-29 13:27:19.627
 GMT+5:30
 log
---> GET /api/v1/projects/my [32m200[0m 972ms
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-[DB] Lazy-loaded Neon connection initialized
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-2026-03-29T07:28:28.817Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":895,"path":"/api/v1/projects/my"}
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-2026-03-29T07:28:28.817Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:28.817
-GMT+5:30
-log
-2026-03-29T07:28:28.817Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/projects/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:28.636
-GMT+5:30
-log
---> GET /api/v1/analytics/history?days=7 [33m400[0m 405ms
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-2026-03-29T07:28:28.635Z [WARN] [Analytics Controller] getHistory - Missing orgId context
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-2026-03-29T07:28:28.635Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":895,"path":"/api/v1/analytics/history"}
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-2026-03-29T07:28:28.635Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:28.635
-GMT+5:30
-log
-2026-03-29T07:28:28.635Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/history","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:28.628
-GMT+5:30
-log
---> GET /api/v1/analytics/latest [33m400[0m 394ms
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-2026-03-29T07:28:28.623Z [WARN] [Analytics Controller] getLatestMetrics - Missing orgId context
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-2026-03-29T07:28:28.623Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":895,"path":"/api/v1/analytics/latest"}
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-2026-03-29T07:28:28.623Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:28.623
-GMT+5:30
-log
-2026-03-29T07:28:28.623Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/analytics/latest","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:28.508
-GMT+5:30
-log
---> GET /api/v1/tasks/my [32m200[0m 502ms
-2026-03-29 12:58:28.260
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:28.260
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:28.260
-GMT+5:30
-log
-2026-03-29T07:28:28.260Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":895,"path":"/api/v1/tasks/my"}
-2026-03-29 12:58:28.260
-GMT+5:30
-log
-2026-03-29T07:28:28.260Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:28.260
-GMT+5:30
-log
-2026-03-29T07:28:28.260Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/tasks/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:28.230
-GMT+5:30
-log
-2026-03-29T07:28:28.230Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:28.230
-GMT+5:30
-log
-<-- GET /api/v1/analytics/history?days=7
-2026-03-29 12:58:28.229
-GMT+5:30
-log
-2026-03-29T07:28:28.229Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:28.229
-GMT+5:30
-log
-<-- GET /api/v1/analytics/latest
-2026-03-29 12:58:28.213
-GMT+5:30
-log
-2026-03-29T07:28:28.213Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:28.213
+2026-03-29T07:57:19.627Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.627
 GMT+5:30
 log
 <-- GET /api/v1/projects/my
-2026-03-29 12:58:28.012
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/analytics/history?days=7
-2026-03-29 12:58:28.006
-GMT+5:30
-log
-2026-03-29T07:28:28.006Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:28.006
-GMT+5:30
-log
-<-- GET /api/v1/tasks/my
-2026-03-29 12:58:28.006
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/tasks/my
-2026-03-29 12:58:28.004
+2026-03-29 13:27:19.626
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/projects/my
-2026-03-29 12:58:28.004
+2026-03-29 13:27:19.626
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/analytics/history?days=7
+2026-03-29 13:27:19.625
+GMT+5:30
+log
+2026-03-29T07:57:19.625Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.625
+GMT+5:30
+log
+<-- GET /api/v1/analytics/latest
+2026-03-29 13:27:19.625
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/analytics/latest
-2026-03-29 12:58:27.883
+2026-03-29 13:27:19.543
 GMT+5:30
 log
---> GET /api/v1/organizations/my [32m200[0m 494ms
-2026-03-29 12:58:27.639
+2026-03-29T07:57:19.543Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.543
 GMT+5:30
 log
---> GET /api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImViZmZjNmVkLTgxYjAtNDNiNy1iNzJmLWMwNjZkNDJhNGQzZCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc0NzcwMjAzfQ.5zxdC50gUCx0fKUFvomKsV8OcNS_S3s69_baEapMLk0 [31m500[0m 243ms
-2026-03-29 12:58:27.639
+<-- GET /api/v1/tasks/my
+2026-03-29 13:27:19.543
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/tasks/my
+2026-03-29 13:27:19.451
+GMT+5:30
+log
+--> OPTIONS /api/v1/projects/my [32m204[0m 0ms
+2026-03-29 13:27:19.451
+GMT+5:30
+log
+--> OPTIONS /api/v1/analytics/history?days=7 [32m204[0m 0ms
+2026-03-29 13:27:19.451
+GMT+5:30
+log
+--> OPTIONS /api/v1/analytics/latest [32m204[0m 0ms
+2026-03-29 13:27:19.450
+GMT+5:30
+log
+--> OPTIONS /api/v1/tasks/my [32m204[0m 0ms
+2026-03-29 13:27:19.449
+GMT+5:30
+log
+2026-03-29T07:57:19.449Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.449
+GMT+5:30
+log
+<-- OPTIONS /api/v1/analytics/history?days=7
+2026-03-29 13:27:19.448
+GMT+5:30
+log
+2026-03-29T07:57:19.448Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.448
+GMT+5:30
+log
+<-- OPTIONS /api/v1/projects/my
+2026-03-29 13:27:19.447
+GMT+5:30
+log
+2026-03-29T07:57:19.447Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.447
+GMT+5:30
+log
+<-- OPTIONS /api/v1/analytics/latest
+2026-03-29 13:27:19.445
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/analytics/history?days=7
+2026-03-29 13:27:19.444
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/projects/my
+2026-03-29 13:27:19.444
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/analytics/latest
+2026-03-29 13:27:19.443
+GMT+5:30
+log
+2026-03-29T07:57:19.443Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:19.443
+GMT+5:30
+log
+<-- OPTIONS /api/v1/tasks/my
+2026-03-29 13:27:19.443
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/tasks/my
+2026-03-29 13:27:19.341
+GMT+5:30
+log
+--> GET /api/v1/organizations/my [32m200[0m 495ms
+2026-03-29 13:27:19.084
+GMT+5:30
+log
+2026-03-29T07:57:19.084Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":893,"path":"/api/v1/organizations/my"}
+2026-03-29 13:27:19.084
+GMT+5:30
+log
+2026-03-29T07:57:19.084Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:19.084
+GMT+5:30
+log
+2026-03-29T07:57:19.084Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:18.846
+GMT+5:30
+log
+2026-03-29T07:57:18.846Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:18.846
+GMT+5:30
+log
+<-- GET /api/v1/organizations/my
+2026-03-29 13:27:18.846
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/organizations/my
+2026-03-29 13:27:18.650
+GMT+5:30
+log
+--> OPTIONS /api/v1/organizations/my [32m204[0m 0ms
+2026-03-29 13:27:18.650
+GMT+5:30
+log
+2026-03-29T07:57:18.650Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:18.650
+GMT+5:30
+log
+<-- OPTIONS /api/v1/organizations/my
+2026-03-29 13:27:18.650
+GMT+5:30
+invocation log
+OPTIONS https://api.validiant.in/api/v1/organizations/my
+2026-03-29 13:27:18.621
+GMT+5:30
+log
+--> GET /api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFkMGUzOGFkLTI3MGYtNDFmOS04OWRlLTM3OWQzMjJmYWYyNyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc0NzcxOTMyfQ.pk0EC85ZA1TrhuGXeXYmA7kF_MCBGsSwShjoXJefWxE&orgId=d1c1319e-bf90-4703-9a6e-161f792ada2b [31m500[0m 237ms
+2026-03-29 13:27:18.621
 GMT+5:30
 log
 Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.
-2026-03-29 12:58:27.639
+2026-03-29 13:27:18.621
 GMT+5:30
 log
-2026-03-29T07:28:27.639Z [WARN] [Realtime] GET /stream - Missing organization context {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","userContextOrgId":"MISSING","headerOrgId":"MISSING","cookieOrgId":"MISSING","hasAccessToken":true}
-2026-03-29 12:58:27.639
+2026-03-29T07:57:18.621Z [WARN] [Realtime] GET /stream - Missing organization context {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","userContextOrgId":"MISSING","headerOrgId":"MISSING","cookieOrgId":"MISSING","hasAccessToken":true}
+2026-03-29 13:27:18.621
 GMT+5:30
 log
 [Realtime:MW] Stream Isolation Trace
-2026-03-29 12:58:27.639
+2026-03-29 13:27:18.621
 GMT+5:30
 log
-2026-03-29T07:28:27.639Z [DEBUG] [Realtime] GET /stream Entry {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","orgId":"MISSING","tokenParam":true,"allHeaders":"{\"accept\":\"text/event-stream\",\"accept-encoding\":\"gzip, br\",\"accept-language\":\"en-US,en;q=0.9\",\"cache-control\":\"no-cache\",\"cf-connecting-ip\":\"2a09:bac1:36e0:29c0::1c6:7\",\"cf-ipcountry\":\"IN\",\"cf-ray\":\"9e3d286b2d4c9368\",\"cf-visitor\":\"{\\\"scheme\\\":\\\"https\\\"}\",\"connection\":\"Keep-Alive\",\"cookie\":\"user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImViZmZjNmVkLTgxYjAtNDNiNy1iNzJmLWMwNjZkNDJhNGQzZCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc0NzcwMjAzfQ.5zxdC50gUCx0fKUFvomKsV8OcNS_S3s69_baEapMLk0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJlYmZmYzZlZC04MWIwLTQzYjctYjcyZi1jMDY2ZDQyYTRkM2QiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc1Mzc0MTAzfQ.7GAyia6OHY9zt5zlMa41MNLJCtD6jjtZcQrJsovDOSQ\",\"host\":\"api.validiant.in\",\"origin\":\"https://www.validiant.in\",\"priority\":\"u=1, i\",\"referer\":\"https://www.validiant.in/\",\"sec-ch-ua\":\"\\\"Chromium\\\";v=\\\"146\\\", \\\"Not-A.Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"146\\\"\",\"sec-ch-ua-mobile\":\"?0\",\"sec-ch-ua-platform\":\"\\\"Windows\\\"\",\"sec-fetch-dest\":\"empty\",\"sec-fetch-mode\":\"cors\",\"sec-fetch-site\":\"same-site\",\"user-agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"x-forwarded-proto\":\"https\",\"x-real-ip\":\"2a09:bac1:36e0:29c0::1c6:7\"}","query":{"token":["eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImViZmZjNmVkLTgxYjAtNDNiNy1iNzJmLWMwNjZkNDJhNGQzZCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc0NzcwMjAzfQ.5zxdC50gUCx0fKUFvomKsV8OcNS_S3s69_baEapMLk0"]}}
-2026-03-29 12:58:27.639
+2026-03-29T07:57:18.621Z [DEBUG] [Realtime] GET /stream Entry {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","orgId":"MISSING","tokenParam":true,"allHeaders":"{\"accept\":\"text/event-stream\",\"accept-encoding\":\"gzip, br\",\"accept-language\":\"en-US,en;q=0.9\",\"cache-control\":\"no-cache\",\"cf-connecting-ip\":\"2a09:bac6:d7a7:11cd::1c6:7\",\"cf-ipcountry\":\"IN\",\"cf-ray\":\"9e3d52adddf39368\",\"cf-visitor\":\"{\\\"scheme\\\":\\\"https\\\"}\",\"connection\":\"Keep-Alive\",\"cookie\":\"accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFkMGUzOGFkLTI3MGYtNDFmOS04OWRlLTM3OWQzMjJmYWYyNyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc0NzcxOTMyfQ.pk0EC85ZA1TrhuGXeXYmA7kF_MCBGsSwShjoXJefWxE; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiIxZDBlMzhhZC0yNzBmLTQxZjktODlkZS0zNzlkMzIyZmFmMjciLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc1Mzc1ODMyfQ.YuprIsQzQK2dHphCIoAdkTfiWsVSwEh5Qli1Rfo58ow; user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca\",\"host\":\"api.validiant.in\",\"origin\":\"https://www.validiant.in\",\"priority\":\"u=1, i\",\"referer\":\"https://www.validiant.in/\",\"sec-ch-ua\":\"\\\"Chromium\\\";v=\\\"146\\\", \\\"Not-A.Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"146\\\"\",\"sec-ch-ua-mobile\":\"?0\",\"sec-ch-ua-platform\":\"\\\"Windows\\\"\",\"sec-fetch-dest\":\"empty\",\"sec-fetch-mode\":\"cors\",\"sec-fetch-site\":\"same-site\",\"user-agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"x-forwarded-proto\":\"https\",\"x-real-ip\":\"2a09:bac6:d7a7:11cd::1c6:7\"}","query":{"token":["eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFkMGUzOGFkLTI3MGYtNDFmOS04OWRlLTM3OWQzMjJmYWYyNyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc0NzcxOTMyfQ.pk0EC85ZA1TrhuGXeXYmA7kF_MCBGsSwShjoXJefWxE"],"orgId":["d1c1319e-bf90-4703-9a6e-161f792ada2b"]}}
+2026-03-29 13:27:18.621
 GMT+5:30
 log
 [Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:27.639
+2026-03-29 13:27:18.621
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:58:27.639
+2026-03-29 13:27:18.621
 GMT+5:30
 log
-2026-03-29T07:28:27.639Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":896,"path":"/api/v1/realtime/stream"}
-2026-03-29 12:58:27.639
+2026-03-29T07:57:18.621Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":894,"path":"/api/v1/realtime/stream"}
+2026-03-29 13:27:18.621
 GMT+5:30
 log
-2026-03-29T07:28:27.639Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":true,"finalTokenFound":true}
-2026-03-29 12:58:27.639
+2026-03-29T07:57:18.621Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":true,"finalTokenFound":true}
+2026-03-29 13:27:18.621
 GMT+5:30
 log
-2026-03-29T07:28:27.639Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/realtime/stream","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:27.632
+2026-03-29T07:57:18.621Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/realtime/stream","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
+2026-03-29 13:27:18.384
 GMT+5:30
 log
-2026-03-29T07:28:27.632Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":896,"path":"/api/v1/organizations/my"}
-2026-03-29 12:58:27.632
+2026-03-29T07:57:18.384Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
+2026-03-29 13:27:18.384
 GMT+5:30
 log
-2026-03-29T07:28:27.632Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":false,"hasCookie":true,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:27.632
-GMT+5:30
-log
-2026-03-29T07:28:27.632Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"https://www.validiant.in","referer":"https://www.validiant.in/","hasBearerToken":false,"hasCookieToken":true,"rawCookieHeader":"PRESENT (Names masked)"}
-2026-03-29 12:58:27.396
-GMT+5:30
-log
-2026-03-29T07:28:27.396Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:27.396
-GMT+5:30
-log
-<-- GET /api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImViZmZjNmVkLTgxYjAtNDNiNy1iNzJmLWMwNjZkNDJhNGQzZCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc0NzcwMjAzfQ.5zxdC50gUCx0fKUFvomKsV8OcNS_S3s69_baEapMLk0
-2026-03-29 12:58:27.396
+<-- GET /api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFkMGUzOGFkLTI3MGYtNDFmOS04OWRlLTM3OWQzMjJmYWYyNyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc0NzcxOTMyfQ.pk0EC85ZA1TrhuGXeXYmA7kF_MCBGsSwShjoXJefWxE&orgId=d1c1319e-bf90-4703-9a6e-161f792ada2b
+2026-03-29 13:27:18.384
 GMT+5:30
 invocation log
-GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED
-2026-03-29 12:58:27.389
+GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED
+2026-03-29 13:27:14.563
 GMT+5:30
 log
-2026-03-29T07:28:27.389Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"https://www.validiant.in","isAllowed":true,"resultHeader":"https://www.validiant.in","credentials":true}
-2026-03-29 12:58:27.389
+--> GET /api/v1/organizations/my [32m200[0m 27ms
+2026-03-29 13:27:14.552
+GMT+5:30
+log
+2026-03-29T07:57:14.552Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":898,"path":"/api/v1/organizations/my"}
+2026-03-29 13:27:14.552
+GMT+5:30
+log
+2026-03-29T07:57:14.552Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:14.552
+GMT+5:30
+log
+2026-03-29T07:57:14.552Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+2026-03-29 13:27:14.536
+GMT+5:30
+log
+2026-03-29T07:57:14.536Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:27:14.536
 GMT+5:30
 log
 <-- GET /api/v1/organizations/my
-2026-03-29 12:58:27.389
+2026-03-29 13:27:14.536
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/organizations/my
-2026-03-29 12:58:26.272
+2026-03-29 13:27:14.501
 GMT+5:30
 log
---> GET /api/v1/organizations/my [32m200[0m 22ms
-2026-03-29 12:58:26.263
-GMT+5:30
-log
-2026-03-29T07:28:26.263Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":897,"path":"/api/v1/organizations/my"}
-2026-03-29 12:58:26.263
-GMT+5:30
-log
-2026-03-29T07:28:26.263Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:26.263
-GMT+5:30
-log
-2026-03-29T07:28:26.263Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-2026-03-29 12:58:26.250
-GMT+5:30
-log
-2026-03-29T07:28:26.250Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:26.250
-GMT+5:30
-log
-<-- GET /api/v1/organizations/my
-2026-03-29 12:58:26.250
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/organizations/my
-2026-03-29 12:58:26.195
-GMT+5:30
-log
---> GET /api/v1/auth/me [32m200[0m 20ms
-2026-03-29 12:58:26.195
+--> GET /api/v1/auth/me [32m200[0m 42ms
+2026-03-29 13:27:14.501
 GMT+5:30
 log
 [getMe] DB lookup
-2026-03-29 12:58:26.185
+2026-03-29 13:27:14.474
 GMT+5:30
 log
 [getMe] Called
-2026-03-29 12:58:26.185
+2026-03-29 13:27:14.474
 GMT+5:30
 log
 [Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:26.185
+2026-03-29 13:27:14.474
 GMT+5:30
 log
 [Tenant:MW] Isolation Trace
-2026-03-29 12:58:26.185
+2026-03-29 13:27:14.474
 GMT+5:30
 log
-2026-03-29T07:28:26.185Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":897,"path":"/api/v1/auth/me"}
-2026-03-29 12:58:26.185
+2026-03-29T07:57:14.474Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":898,"path":"/api/v1/auth/me"}
+2026-03-29 13:27:14.474
 GMT+5:30
 log
-2026-03-29T07:28:26.185Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:26.185
+2026-03-29T07:57:14.474Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:14.474
 GMT+5:30
 log
-2026-03-29T07:28:26.185Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-2026-03-29 12:58:26.175
+2026-03-29T07:57:14.474Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+2026-03-29 13:27:14.459
 GMT+5:30
 log
-2026-03-29T07:28:26.175Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:26.175
+2026-03-29T07:57:14.459Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:27:14.459
 GMT+5:30
 log
 <-- GET /api/v1/auth/me
-2026-03-29 12:58:26.175
+2026-03-29 13:27:14.459
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/auth/me
-2026-03-29 12:58:24.985
+2026-03-29 13:27:13.562
 GMT+5:30
 log
---> GET /api/v1/auth/me [32m200[0m 102ms
-2026-03-29 12:58:24.985
+--> GET /api/v1/organizations/my [32m200[0m 108ms
+2026-03-29 13:27:13.514
+GMT+5:30
+log
+[DB] Lazy-loaded Neon connection initialized
+2026-03-29 13:27:13.514
+GMT+5:30
+log
+2026-03-29T07:57:13.514Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":899,"path":"/api/v1/organizations/my"}
+2026-03-29 13:27:13.514
+GMT+5:30
+log
+2026-03-29T07:57:13.514Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:13.514
+GMT+5:30
+log
+2026-03-29T07:57:13.514Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+2026-03-29 13:27:13.490
+GMT+5:30
+log
+--> GET /api/v1/auth/me [32m200[0m 114ms
+2026-03-29 13:27:13.490
 GMT+5:30
 log
 [getMe] DB lookup
-2026-03-29 12:58:24.955
+2026-03-29 13:27:13.454
 GMT+5:30
 log
-[DB] Lazy-loaded Neon connection initialized
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-[getMe] Called
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-[Tenant:MW] No organization context found for scoped route
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-[Tenant:MW] Isolation Trace
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-2026-03-29T07:28:24.955Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":899,"path":"/api/v1/auth/me"}
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-2026-03-29T07:28:24.955Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:24.955
-GMT+5:30
-log
-2026-03-29T07:28:24.955Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-2026-03-29 12:58:24.955
-GMT+5:30
-log
---> GET /api/v1/organizations/my [32m200[0m 110ms
-2026-03-29 12:58:24.903
-GMT+5:30
-log
-[DB] Lazy-loaded Neon connection initialized
-2026-03-29 12:58:24.903
-GMT+5:30
-log
-2026-03-29T07:28:24.903Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774770203,"expiresInSec":899,"path":"/api/v1/organizations/my"}
-2026-03-29 12:58:24.903
-GMT+5:30
-log
-2026-03-29T07:28:24.903Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-2026-03-29 12:58:24.903
-GMT+5:30
-log
-2026-03-29T07:28:24.903Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-2026-03-29 12:58:24.883
-GMT+5:30
-log
-2026-03-29T07:28:24.883Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:24.883
-GMT+5:30
-log
-<-- GET /api/v1/auth/me
-2026-03-29 12:58:24.845
-GMT+5:30
-log
-2026-03-29T07:28:24.845Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:24.845
+2026-03-29T07:57:13.454Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:27:13.454
 GMT+5:30
 log
 <-- GET /api/v1/organizations/my
-2026-03-29 12:58:24.711
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/auth/me
-2026-03-29 12:58:24.705
-GMT+5:30
-invocation log
-GET https://api.validiant.in/api/v1/organizations/my
-2026-03-29 12:58:23.523
-GMT+5:30
-log
---> GET /api/v1/oauth/google/callback?state=baf99587-f843-4846-a187-e08fb77be898&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_cRp-ZPp9RVFqy7mSi11GIeoZiGGVEuVnmrnYyGgsyu9mZ36zkiYCF0wHyEkldiQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=2&prompt=none [36m302[0m 3s
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [OAuth:Callback] FINAL REDIRECT {"destination":"https://www.validiant.in/dashboard","setCookieHeaders":["oauth_state=; Max-Age=0; Path=/","accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImViZmZjNmVkLTgxYjAtNDNiNy1iNzJmLWMwNjZkNDJhNGQzZCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc0NzcwMjAzfQ.5zxdC50gUCx0fKUFvomKsV8OcNS_S3s69_baEapMLk0; Max-Age=3600; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJlYmZmYzZlZC04MWIwLTQzYjctYjcyZi1jMDY2ZDQyYTRkM2QiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc2OTMwMywiZXhwIjoxNzc1Mzc0MTAzfQ.7GAyia6OHY9zt5zlMa41MNLJCtD6jjtZcQrJsovDOSQ; Max-Age=604800; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; Max-Age=604800; Domain=.validiant.in; Path=/; Secure; SameSite=Lax"]}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [INFO] Google OAuth successful {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [OAuth:Callback] Setting accessToken cookie {"domain":".validiant.in","maxAge":3600,"sameSite":"Lax"}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [OAuth Callback] Tokens generated {"provider":"google","userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false,"accessTokenPrefix":"eyJhbGciOiJIUzI1NiJ9...","accessTokenLength":375,"cookieOptions":{"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600},"destination":"dashboard"}
-2026-03-29 12:58:23.523
-GMT+5:30
-log
-2026-03-29T07:28:23.523Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
-2026-03-29 12:58:23.135
-GMT+5:30
-log
-2026-03-29T07:28:23.135Z [DEBUG] [OAuth:Callback] handleGoogleCallback success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","isNewUser":false}
-2026-03-29 12:58:23.135
-GMT+5:30
-log
-2026-03-29T07:28:23.135Z [INFO] User logged in via OAuth {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","provider":"google","email":"mansoorahamedsaaho@gmail.com"}
-2026-03-29 12:58:21.884
+2026-03-29 13:27:13.437
 GMT+5:30
 log
 [DB] Lazy-loaded Neon connection initialized
-2026-03-29 12:58:21.884
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-2026-03-29T07:28:21.884Z [DEBUG] [OAuth:Service] Google profile fetched {"email":"mansoorahamedsaaho@gmail.com","id":"111030606188255457804","emailVerified":true}
-2026-03-29 12:58:21.773
+[getMe] Called
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-2026-03-29T07:28:21.773Z [DEBUG] [OAuth:Service] Google tokens received {"hasAccessToken":true,"hasRefreshToken":false}
-2026-03-29 12:58:21.328
+[Tenant:MW] No organization context found for scoped route
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-2026-03-29T07:28:21.328Z [DEBUG] [OAuth:Service] PKCE Data Lookup {"state":"baf99587-f843-4846-a187-e08fb77be898","found":true}
-2026-03-29 12:58:21.073
+[Tenant:MW] Isolation Trace
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-2026-03-29T07:28:21.073Z [DEBUG] [OAuth:Callback] Processing Google callback {"hasCode":true,"urlState":"baf99587-f843-4846-a187-e08fb77be898","cookieState":"baf99587-f843-4846-a187-e08fb77be898","rawCookieHeader":"refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJlODkwYzkzNS0zYTdiLTRhMWItOTgzMi0wNWYwODNiMGQ4MTUiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDcxOTU3MSwiZXhwIjoxNzc1MzI0MzcxfQ.3oHp5cS8CDB3PMXRrPqWC2mHa3g2Uvx_itmNn7zjMxg; user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; oauth_state=baf99587-f843-4846-a187-e08fb77be898"}
-2026-03-29 12:58:20.485
+2026-03-29T07:57:13.437Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774771932,"expiresInSec":899,"path":"/api/v1/auth/me"}
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-2026-03-29T07:28:20.485Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:20.485
+2026-03-29T07:57:13.437Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+2026-03-29 13:27:13.437
 GMT+5:30
 log
-<-- GET /api/v1/oauth/google/callback?state=baf99587-f843-4846-a187-e08fb77be898&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_cRp-ZPp9RVFqy7mSi11GIeoZiGGVEuVnmrnYyGgsyu9mZ36zkiYCF0wHyEkldiQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=2&prompt=none
-2026-03-29 12:58:20.485
+2026-03-29T07:57:13.437Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+2026-03-29 13:27:13.376
+GMT+5:30
+log
+2026-03-29T07:57:13.376Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:27:13.376
+GMT+5:30
+log
+<-- GET /api/v1/auth/me
+2026-03-29 13:27:13.278
 GMT+5:30
 invocation log
-GET https://api.validiant.in/api/v1/oauth/google/callback?state=REDACTED&iss=https%3A%2F%2Faccounts.google.com&code=4%REDACTED&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=2&prompt=none
-2026-03-29 12:58:15.025
+GET https://api.validiant.in/api/v1/organizations/my
+2026-03-29 13:27:13.274
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/auth/me
+2026-03-29 13:27:12.284
 GMT+5:30
 log
---> GET /api/v1/oauth/google [36m302[0m 969ms
-2026-03-29 12:58:15.025
+--> GET /api/v1/oauth/google/callback?state=238d60b1-edca-40c4-b634-f748aab1fc77&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_Qfjk9wCU88HoW4SzXKCDecTOXi2CuJqiNqkraQVBNqyV95RShC1h7crls-_bAPg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none [36m302[0m 3s
+2026-03-29 13:27:12.284
 GMT+5:30
 log
-2026-03-29T07:28:15.025Z [INFO] Google OAuth initiated {"state":"baf99587-f843-4846-a187-e08fb77be898"}
-2026-03-29 12:58:15.025
+2026-03-29T07:57:12.284Z [DEBUG] [OAuth:Callback] FINAL REDIRECT {"destination":"https://www.validiant.in/dashboard","setCookieHeaders":["oauth_state=; Max-Age=0; Path=/","accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFkMGUzOGFkLTI3MGYtNDFmOS04OWRlLTM3OWQzMjJmYWYyNyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc0NzcxOTMyfQ.pk0EC85ZA1TrhuGXeXYmA7kF_MCBGsSwShjoXJefWxE; Max-Age=3600; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiIxZDBlMzhhZC0yNzBmLTQxZjktODlkZS0zNzlkMzIyZmFmMjciLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDc3MTAzMiwiZXhwIjoxNzc1Mzc1ODMyfQ.YuprIsQzQK2dHphCIoAdkTfiWsVSwEh5Qli1Rfo58ow; Max-Age=604800; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; Max-Age=604800; Domain=.validiant.in; Path=/; Secure; SameSite=Lax"]}
+2026-03-29 13:27:12.284
 GMT+5:30
 log
-2026-03-29T07:28:15.025Z [DEBUG] [OAuth:Init] oauth_state cookie set in context
-2026-03-29 12:58:15.025
+2026-03-29T07:57:12.284Z [INFO] Google OAuth successful {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false}
+2026-03-29 13:27:12.284
 GMT+5:30
 log
-2026-03-29T07:28:15.025Z [DEBUG] [OAuth:Init] Generated State: baf99587-f843-4846-a187-e08fb77be898
-2026-03-29 12:58:15.025
+2026-03-29T07:57:12.284Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
+2026-03-29 13:27:12.284
 GMT+5:30
 log
-2026-03-29T07:28:15.025Z [DEBUG] [OAuth:Init] Generated Auth URL: https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=452153707666-jm3bq2t7mrdsdmam0ecmn1grn34j4uga.apps.googleusercontent.com&state=baf99587-f843-4846-a187-e08fb77be898&scope=openid+profile+email&redirect_uri=https%3A%2F%2Fapi.validiant.in%2Fapi%2Fv1%2Foauth%2Fgoogle%2Fcallback&code_challenge=OiBiAQRB1ANpTin6UzUrE2q65ErVJRo9nV3niYz3vT4&code_challenge_method=S256
-2026-03-29 12:58:14.056
+2026-03-29T07:57:12.284Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
+2026-03-29 13:27:12.284
 GMT+5:30
 log
-2026-03-29T07:28:14.056Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-2026-03-29 12:58:14.056
+2026-03-29T07:57:12.284Z [DEBUG] [OAuth:Callback] Setting accessToken cookie {"domain":".validiant.in","maxAge":3600,"sameSite":"Lax"}
+2026-03-29 13:27:12.284
+GMT+5:30
+log
+2026-03-29T07:57:12.284Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
+2026-03-29 13:27:12.284
+GMT+5:30
+log
+2026-03-29T07:57:12.284Z [DEBUG] [OAuth Callback] Tokens generated {"provider":"google","userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false,"accessTokenPrefix":"eyJhbGciOiJIUzI1NiJ9...","accessTokenLength":375,"cookieOptions":{"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600},"destination":"dashboard"}
+2026-03-29 13:27:12.284
+GMT+5:30
+log
+2026-03-29T07:57:12.284Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
+2026-03-29 13:27:12.043
+GMT+5:30
+log
+2026-03-29T07:57:12.043Z [DEBUG] [OAuth:Callback] handleGoogleCallback success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","isNewUser":false}
+2026-03-29 13:27:12.043
+GMT+5:30
+log
+2026-03-29T07:57:12.043Z [INFO] User logged in via OAuth {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","provider":"google","email":"mansoorahamedsaaho@gmail.com"}
+2026-03-29 13:27:10.869
+GMT+5:30
+log
+[DB] Lazy-loaded Neon connection initialized
+2026-03-29 13:27:10.869
+GMT+5:30
+log
+2026-03-29T07:57:10.869Z [DEBUG] [OAuth:Service] Google profile fetched {"email":"mansoorahamedsaaho@gmail.com","id":"111030606188255457804","emailVerified":true}
+2026-03-29 13:27:10.756
+GMT+5:30
+log
+2026-03-29T07:57:10.756Z [DEBUG] [OAuth:Service] Google tokens received {"hasAccessToken":true,"hasRefreshToken":false}
+2026-03-29 13:27:10.126
+GMT+5:30
+log
+2026-03-29T07:57:10.126Z [DEBUG] [OAuth:Service] PKCE Data Lookup {"state":"238d60b1-edca-40c4-b634-f748aab1fc77","found":true}
+2026-03-29 13:27:09.887
+GMT+5:30
+log
+2026-03-29T07:57:09.887Z [DEBUG] [OAuth:Callback] Processing Google callback {"hasCode":true,"urlState":"238d60b1-edca-40c4-b634-f748aab1fc77","cookieState":"238d60b1-edca-40c4-b634-f748aab1fc77","rawCookieHeader":"oauth_state=238d60b1-edca-40c4-b634-f748aab1fc77"}
+2026-03-29 13:27:09.513
+GMT+5:30
+log
+2026-03-29T07:57:09.513Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:27:09.513
+GMT+5:30
+log
+<-- GET /api/v1/oauth/google/callback?state=238d60b1-edca-40c4-b634-f748aab1fc77&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_Qfjk9wCU88HoW4SzXKCDecTOXi2CuJqiNqkraQVBNqyV95RShC1h7crls-_bAPg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none
+2026-03-29 13:27:09.513
+GMT+5:30
+invocation log
+GET https://api.validiant.in/api/v1/oauth/google/callback?state=REDACTED&iss=https%3A%2F%2Faccounts.google.com&code=4%REDACTED&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none
+2026-03-29 13:26:53.014
+GMT+5:30
+log
+--> GET /api/v1/oauth/google [36m302[0m 961ms
+2026-03-29 13:26:53.014
+GMT+5:30
+log
+2026-03-29T07:56:53.014Z [INFO] Google OAuth initiated {"state":"238d60b1-edca-40c4-b634-f748aab1fc77"}
+2026-03-29 13:26:53.014
+GMT+5:30
+log
+2026-03-29T07:56:53.014Z [DEBUG] [OAuth:Init] oauth_state cookie set in context
+2026-03-29 13:26:53.014
+GMT+5:30
+log
+2026-03-29T07:56:53.014Z [DEBUG] [OAuth:Init] Generated State: 238d60b1-edca-40c4-b634-f748aab1fc77
+2026-03-29 13:26:53.014
+GMT+5:30
+log
+2026-03-29T07:56:53.014Z [DEBUG] [OAuth:Init] Generated Auth URL: https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=452153707666-jm3bq2t7mrdsdmam0ecmn1grn34j4uga.apps.googleusercontent.com&state=238d60b1-edca-40c4-b634-f748aab1fc77&scope=openid+profile+email&redirect_uri=https%3A%2F%2Fapi.validiant.in%2Fapi%2Fv1%2Foauth%2Fgoogle%2Fcallback&code_challenge=u-Ey8J-2Laf11eGbVzBr8ZuZEU6ABjlPQeRzvXl7uRs&code_challenge_method=S256
+2026-03-29 13:26:52.053
+GMT+5:30
+log
+2026-03-29T07:56:52.053Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+2026-03-29 13:26:52.053
 GMT+5:30
 log
 <-- GET /api/v1/oauth/google
-2026-03-29 12:58:14.056
+2026-03-29 13:26:52.032
 GMT+5:30
 invocation log
 GET https://api.validiant.in/api/v1/oauth/google
+2026-03-29 13:25:31.060
+GMT+5:30
+log
+2026-03-29T07:55:31.060Z [INFO] [Audit Retention] Purge cycle completed.
+2026-03-29 13:25:31.039
+GMT+5:30
+log
+2026-03-29T07:55:31.039Z [INFO] [Audit Retention] Starting purge cycle...
+2026-03-29 13:25:31.039
+GMT+5:30
+log
+2026-03-29T07:55:31.039Z [INFO] [Analytics Rollup] Completed for 1 organizations.
+2026-03-29 13:25:30.982
+GMT+5:30
+log
+2026-03-29T07:55:30.982Z [INFO] [Analytics Rollup] Starting aggregation...
+2026-03-29 13:25:30.982
+GMT+5:30
+log
+2026-03-29T07:55:30.982Z [INFO] [SLA Monitor] Completed. Notified 0 at-risk and 0 breached tasks.
+2026-03-29 13:25:30.944
+GMT+5:30
+log
+[DB] Lazy-loaded Neon connection initialized
+2026-03-29 13:25:30.944
+GMT+5:30
+log
+2026-03-29T07:55:30.944Z [INFO] [SLA Monitor] Starting SLA check...
+2026-03-29 13:25:30.944
+GMT+5:30
+log
+[cron] Running background jobs at 2026-03-29T07:55:30.000Z
+2026-03-29 13:25:30.779
+GMT+5:30
+invocation log
+*/5 * * * *
 
 
+Additional might help info - { "message": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", "level": "error", "$workers": { "event": { "request": { "cf": { "requestHeaderNames": {}, "isEUCountry": false, "tlsClientAuth": { "certRFC9440TooLarge": false, "certChainRFC9440TooLarge": false, "certPresented": "0", "certVerified": "NONE", "certRevoked": "0", "certIssuerDN": "", "certSubjectDN": "", "certIssuerDNRFC2253": "", "certSubjectDNRFC2253": "", "certIssuerDNLegacy": "", "certSubjectDNLegacy": "", "certSerial": "", "certIssuerSerial": "", "certSKI": "", "certIssuerSKI": "", "certFingerprintSHA1": "", "certFingerprintSHA256": "", "certNotBefore": "", "certNotAfter": "", "certRFC9440": "", "certChainRFC9440": "" }, "httpProtocol": "HTTP/2", "clientAcceptEncoding": "gzip, deflate, br", "requestPriority": "weight=220;exclusive=1", "colo": "MAA", "asOrganization": "Cloudflare London, LLC", "country": "IN", "city": "Neelankarai", "continent": "AS", "region": "Tamil Nadu", "regionCode": "TN", "timezone": "Asia/Kolkata", "longitude": "80.2592", "latitude": "12.9495", "postalCode": "600041", "tlsVersion": "TLSv1.3", "tlsCipher": "AEAD-AES128-GCM-SHA256", "tlsClientRandom": "iXFVZ/p//8doyWsfJvkMF16r1WrIsSRqvlEaxVusp3k=", "tlsClientCiphersSha1": "sQ7eseNxgre8sddpKo+nF01osZc=", "tlsClientExtensionsSha1": "DjRH2xeaM84Qs+1/jnPbDA65Tpw=", "tlsClientExtensionsSha1Le": "4PgT+pNkKP4UydBl7qJH6QQBVRQ=", "tlsExportedAuthenticator": { "clientHandshake": "38f7ffb2952c0bf58950c33bb2ef5eccb04ad3dc78e13abe3604c2dfd16f4ea2", "serverHandshake": "2794d0c8fbc377fd3ab9d6e1e91e9b7dad5b494cbc766bbbeefb079bbed3cf6c", "clientFinished": "3af7996bd1c944cd3e018e7fb197f20828321662b13852e78217856b509a77e3", "serverFinished": "a3077e9ab6cb33857cde94ef9d4eaa8570476005566309edbc2ec57c206c3c8f" }, "tlsClientHelloLength": "1988", "verifiedBotCategory": "", "edgeRequestKeepAliveStatus": 1, "clientTcpRtt": 0, "clientQuicRtt": 0, "asn": 13335, "edgeL4": { "deliveryRate": 0, } }, "url": "https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", "method": "GET", "headers": { "accept": "text/event-stream", "accept-encoding": "gzip, br", "accept-language": "en-US,en;q=0.9", "cache-control": "no-cache", "cf-connecting-ip": "2a09:bac6:d7a7:11cd::1c6:7", "cf-ipcountry": "IN", "cf-ray": "9e3d52adddf39368", "cf-visitor": "{"scheme":"https"}", "connection": "Keep-Alive", "cookie": "REDACTED", "host": "api.validiant.in", "origin": "https://www.validiant.in", "priority": "u=1, i", "referer": "https://www.validiant.in/", "sec-ch-ua": ""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"", "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": ""Windows"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-site", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "x-forwarded-proto": "https", "x-real-ip": "2a09:bac6:d7a7:11cd::1c6:7" }, "path": "/api/v1/realtime/stream", "search": { "token": "eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "orgId": "REDACTED" } }, "rayId": "9e3d52adddf39368", "response": { "status": 500, } }, "truncated": false, "scriptName": "validiant-api", "outcome": "ok", "eventType": "fetch", "executionModel": "stateless", "scriptVersion": { "id": "8d52adf4-f999-43d7-bcbc-49cc25ee9cb3" }, "requestId": "9e3d52adddf39368", "cpuTimeMs": 7, "wallTimeMs": 247, }, "$metadata": { "id": "01KMW9HT5G15CQ163WW3SH4YSR", "requestId": "9e3d52adddf39368", "trigger": "GET /api/v1/realtime/stream", "service": "validiant-api", "level": "error", "error": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", "message": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", "account": "bb6777d2e1dadc2e49dbd52205e7a28b", "type": "cf-worker-event", "fingerprint": "842111e1240f5b80426515c37ad1da1a", "origin": "fetch", "messageTemplate": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", } }
 
-
-Additional might be useful info - "message": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "level": "error", "$workers": { "truncated": false, "event": { "request": { "url": "https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "method": "GET", "path": "/api/v1/realtime/stream", "search": { "token": "eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED" } } }, "outcome": "ok", "scriptName": "validiant-api", "eventType": "fetch", "executionModel": "stateless", "scriptVersion": { "id": "54a770eb-7354-48ff-b1fe-34d325a5df0c" }, "requestId": "9e3d286b2d4c9368" }, "$metadata": { "id": "01KMW7WZZQSCSV82JR9T7BWK0S", "requestId": "9e3d286b2d4c9368", "trigger": "GET /api/v1/realtime/stream", "service": "validiant-api", "level": "error", "error": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "message": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "account": "bb6777d2e1dadc2e49dbd52205e7a28b", "type": "cf-worker", "fingerprint": "382f8f840a8112a672e2400bc27d96c8", "origin": "fetch", "errorTemplate": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", } }
-
-
-{ "message": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "level": "error", "$workers": { "event": { "request": { "cf": { "requestHeaderNames": {}, "isEUCountry": false, "tlsClientAuth": { "certRFC9440TooLarge": false, "certChainRFC9440TooLarge": false, "certPresented": "0", "certVerified": "NONE", "certRevoked": "0", "certIssuerDN": "", "certSubjectDN": "", "certIssuerDNRFC2253": "", "certSubjectDNRFC2253": "", "certIssuerDNLegacy": "", "certSubjectDNLegacy": "", "certSerial": "", "certIssuerSerial": "", "certSKI": "", "certIssuerSKI": "", "certFingerprintSHA1": "", "certFingerprintSHA256": "", "certNotBefore": "", "certNotAfter": "", "certRFC9440": "", "certChainRFC9440": "" }, "httpProtocol": "HTTP/2", "clientAcceptEncoding": "gzip, deflate, br", "requestPriority": "weight=220;exclusive=1", "colo": "MAA", "asOrganization": "Cloudflare London, LLC", "country": "IN", "city": "Neelankarai", "continent": "AS", "region": "Tamil Nadu", "regionCode": "TN", "timezone": "Asia/Kolkata", "longitude": "80.2592", "latitude": "12.9495", "postalCode": "600041", "tlsVersion": "TLSv1.3", "tlsCipher": "AEAD-AES128-GCM-SHA256", "tlsClientRandom": "GeTbCZ7spP9q7NM6xoIu4ghbMJuKBq2M2hKBHHmJUvI=", "tlsClientCiphersSha1": "cG3ksVXz5z5aMztJKpmN9By5SR8=", "tlsClientExtensionsSha1": "6uSUMn6Sp6T2x0YGvckkQo4DMcM=", "tlsClientExtensionsSha1Le": "+FDpxcdcAmOg5o4UjPL2Mc5ynzs=", "tlsExportedAuthenticator": { "clientHandshake": "c5a7890794c858c71a62a526e5236f6459b85c47144b2e20560b99bbd6af0502", "serverHandshake": "7e9293da6201c228dd61b1821d6bddcd4d7fff6bfc0a98ca55b907d1af590e10", "clientFinished": "255966e8d60e76b016daab057f7e7faa47a1c0bcdc3a9ddb3d31c07587cd889a", "serverFinished": "fa5cdfc4bbb1681706d61c60bdcc706e9bade4ffe2ecb301bf7227e2265bf4eb" }, "tlsClientHelloLength": "1749", "verifiedBotCategory": "", "edgeRequestKeepAliveStatus": 1, "clientTcpRtt": 0, "clientQuicRtt": 0, "asn": 13335, "edgeL4": { "deliveryRate": 0, } }, "url": "https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "method": "GET", "headers": { "accept": "text/event-stream", "accept-encoding": "gzip, br", "accept-language": "en-US,en;q=0.9", "cache-control": "no-cache", "cf-connecting-ip": "2a09:bac1:36e0:29c0::1c6:7", "cf-ipcountry": "IN", "cf-ray": "9e3d286b2d4c9368", "cf-visitor": "{"scheme":"https"}", "connection": "Keep-Alive", "cookie": "REDACTED", "host": "api.validiant.in", "origin": "https://www.validiant.in", "priority": "u=1, i", "referer": "https://www.validiant.in/", "sec-ch-ua": ""Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"", "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": ""Windows"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-site", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "x-forwarded-proto": "https", "x-real-ip": "2a09:bac1:36e0:29c0::1c6:7" }, "path": "/api/v1/realtime/stream", "search": { "token": "eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED" } }, "rayId": "9e3d286b2d4c9368", "response": { "status": 500, } }, "truncated": false, "scriptName": "validiant-api", "outcome": "ok", "eventType": "fetch", "executionModel": "stateless", "scriptVersion": { "id": "54a770eb-7354-48ff-b1fe-34d325a5df0c" }, "requestId": "9e3d286b2d4c9368", "cpuTimeMs": 4, "wallTimeMs": 245, }, "$metadata": { "id": "01KMW7WZR44KNDR9W8MT4ZFSQF", "requestId": "9e3d286b2d4c9368", "trigger": "GET /api/v1/realtime/stream", "service": "validiant-api", "level": "error", "error": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "message": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "account": "bb6777d2e1dadc2e49dbd52205e7a28b", "type": "cf-worker-event", "fingerprint": "7012688d670431c28006ec005884c74f", "origin": "fetch", "errorTemplate": "GET https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", } }
-
+{ "message": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "level": "error", "$workers": { "truncated": false, "event": { "request": { "url": "https://api.validiant.in/api/v1/realtime/stream?token=eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED&orgId=REDACTED", "method": "GET", "path": "/api/v1/realtime/stream", "search": { "token": "eyJhbGciOiJIUzI1NiJ9.REDACTED.REDACTED", "orgId": "REDACTED" } } }, "outcome": "ok", "scriptName": "validiant-api", "eventType": "fetch", "executionModel": "stateless", "scriptVersion": { "id": "8d52adf4-f999-43d7-bcbc-49cc25ee9cb3" }, "requestId": "9e3d52adddf39368" }, "$metadata": { "id": "01KMW9HTCXK04D96TPXRYMRJ8H", "requestId": "9e3d52adddf39368", "trigger": "GET /api/v1/realtime/stream", "service": "validiant-api", "level": "error", "error": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "message": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", "account": "bb6777d2e1dadc2e49dbd52205e7a28b", "type": "cf-worker", "fingerprint": "382f8f840a8112a672e2400bc27d96c8", "origin": "fetch", "messageTemplate": "Unhandled error: Error: Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.", } }

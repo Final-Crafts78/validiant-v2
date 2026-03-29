@@ -40,7 +40,7 @@ export const tenantIsolation = async (
   
   // 2. Fallback: Parse from route params or query
   const paramOrgId = c.req.param('orgId');
-  const queryOrgId = c.req.query('organizationId');
+  const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 

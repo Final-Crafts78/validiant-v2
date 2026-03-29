@@ -674,8 +674,9 @@ export const activityApi = {
 
   /** Get the download URL for CSV export */
   getExportUrl: (): string => {
-    const baseUrl = getBaseUrl();
-    const finalUrl = `${baseUrl.replace(/\/+$/, '')}/activity/export`;
+    // getBaseUrl() returns '.../api/v1'
+    const baseUrl = getBaseUrl().replace(/\/+$/, '');
+    const finalUrl = `${baseUrl}/activity/export`;
     
     console.debug('[API:getExportUrl] Generated URL', {
       baseUrl,

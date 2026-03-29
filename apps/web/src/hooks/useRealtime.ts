@@ -77,10 +77,12 @@ export function useRealtime() {
     }
 
     // Create new EventSource connection
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const rawApiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
     const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
     
     console.debug('[Realtime] CONNECTION PRE-FLIGHT', {
+      rawApiBase,
       apiBase,
       activeOrgId,
       userId,
@@ -92,6 +94,11 @@ export function useRealtime() {
     const es = new EventSource(sseUrl, { withCredentials: true });
 
     eventSourceRef.current = es;
+
+    console.debug('[Realtime] EventSource initialized', {
+      readyState: es.readyState,
+      url: sseUrl.split('token=')[0] + 'token=PRESENT',
+    });
 
     // Handle incoming messages
     es.onmessage = (event) => {

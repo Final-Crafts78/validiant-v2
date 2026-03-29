@@ -341,7 +341,18 @@ export const createHonoApp = () => {
    * Catches all unhandled errors
    */
   app.onError((err, c) => {
-    console.error('Unhandled error:', err);
+    const user = c.get('user') as UserContext | undefined;
+    
+    console.error('[API:Error] Unhandled Exception', {
+      error: err.name || 'Internal Server Error',
+      message: err.message || 'An unexpected error occurred',
+      path: c.req.path,
+      method: c.req.method,
+      userId: user?.userId || 'ANONYMOUS',
+      requestId: c.req.header('x-request-id') || 'NONE',
+      timestamp: new Date().toISOString(),
+      stack: err.stack,
+    });
 
     const isDevelopment = process.env.NODE_ENV === 'development';
 
