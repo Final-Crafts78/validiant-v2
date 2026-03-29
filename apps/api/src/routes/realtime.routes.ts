@@ -25,14 +25,22 @@ router.get('/stream', async (c) => {
 
   const headerOrgId = c.req.header('X-Org-Id');
   const userOrgId = user?.organizationId;
-  const cookieOrgId = getCookie(c, 'orgId'); // Checking if it's in cookies
+  const cookieOrgId = getCookie(c, 'orgId');
+  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId');
 
-  const orgId = userOrgId || headerOrgId || cookieOrgId;
+  const orgId = headerOrgId || userOrgId || cookieOrgId || queryOrgId;
 
   console.debug('[Realtime:MW] Stream Isolation Trace', {
     path: c.req.path,
+    method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
-    query: c.req.queries(),
+    sources: {
+      userContext: userOrgId || 'MISSING',
+      header: headerOrgId || 'MISSING',
+      cookie: cookieOrgId || 'MISSING',
+      queryOrgId: c.req.query('orgId') || 'MISSING',
+      queryOrganizationId: c.req.query('organizationId') || 'MISSING',
+    },
     headers: Object.fromEntries(
       Object.entries(c.req.header()).map(([k, v]) => [
         k, 
@@ -41,21 +49,14 @@ router.get('/stream', async (c) => {
           : v
       ])
     ),
-    sources: {
-      userContext: userOrgId || 'MISSING',
-      header: headerOrgId || 'MISSING',
-      cookie: cookieOrgId || 'MISSING',
-      queryOrgId: c.req.query('orgId') || 'MISSING',
-      queryOrganizationId: c.req.query('organizationId') || 'MISSING',
-    },
     cookies: {
       hasAccessToken: !!getCookie(c, 'accessToken'),
       hasOrgId: !!getCookie(c, 'orgId'),
       rawCookieNames: c.req.header('cookie') ? c.req.header('cookie')?.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
     },
+    query: c.req.queries(),
     userId: user?.userId,
     timestamp: new Date().toISOString(),
-    userAgent: c.req.header('user-agent') || 'NONE',
   });
 
   if (!orgId) {

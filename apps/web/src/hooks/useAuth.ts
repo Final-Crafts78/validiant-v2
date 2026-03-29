@@ -38,7 +38,7 @@ interface AuthMeResponse {
  */
 const fetchCurrentUser = async (): Promise<User | null> => {
   try {
-    const response = await get<AuthMeResponse>('/api/v1/auth/me');
+    const response = await get<AuthMeResponse>('/auth/me');
     return response.data.data.user;
   } catch (error: any) {
     // 401 means not authenticated (expected)
@@ -54,7 +54,7 @@ const fetchCurrentUser = async (): Promise<User | null> => {
  * Logout function
  */
 const logoutUser = async (): Promise<void> => {
-  await post('/api/v1/auth/logout');
+  await post('/auth/logout');
 };
 
 /**

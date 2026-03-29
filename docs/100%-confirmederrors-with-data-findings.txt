@@ -90,5 +90,25 @@
 - **Root Cause**: Browser "Domain Security Rule" forbids setting cookies for a domain that is not a parent of the current hostname.
 - **Impact**: Cookies are never saved by the browser on preview deployments, leading to "ghosting" and logout failures.
 
+#### 19. [Frontend] Setting Route 404 (`/validiant/settings/config`)
+- **Data Evidence**: `HARlogs.txt` (Line 400) and `vercellogs.txt` (Line 17) show 404 for `/validiant/settings/config`.
+- **Root Cause**: The route either doesn't exist in the pages directory or is misnamed (e.g., `audit` exists but `config` doesn't).
+- **Impact**: Users cannot access the configuration settings.
+
+#### 20. [Backend] Persistent Isolation Failure on Real-time Stream
+- **Data Evidence**: `cloudflarelogs.txt` (Line 280) shows `Missing organization context` even when `orgId` is present in query parameters (Line 272).
+- **Root Cause**: Backend isolation middleware is likely strictly checking headers/cookies and ignoring query parameters, even though the frontend is forced to use query params due to `EventSource` limitations.
+- **Impact**: Total failure of real-time features.
+
+#### 21. [Frontend] Manifest 307 Redirection Loop
+- **Data Evidence**: `vercellogs.txt` shows multiple 307 redirects for `/manifest.webmanifest`.
+- **Root Cause**: Edge middleware might be subjecting the manifest file to authentication checks or path normalization that triggers a redirect.
+- **Impact**: PWA features and browser tab icons may fail to load correctly.
+
+#### 22. [Frontend] Double /api/v1 Prefix confirmed for /auth/me
+- **Data Evidence**: `cloudflarelogs.txt` (Line 612) and `HARlogs.txt` (Line 608) show `GET /api/v1/api/v1/auth/me`.
+- **Root Cause**: `useAuth.ts` adds `/api/v1` prefix manually to a call that uses `apiClient`, which already has the prefix in its base URL.
+- **Impact**: Repeated login failures and session expiry triggers.
+
 
 

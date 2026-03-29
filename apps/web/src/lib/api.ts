@@ -131,6 +131,9 @@ apiClient.interceptors.request.use(
     const combinedURL = `${normalizedBaseURL}/${normalizedRelativeURL}`;
     const rawCombined = `${config.baseURL}${config.url}`;
     
+    // 🚩 DOUBLE PREFIX DETECTION
+    const isDoublePrefixed = rawCombined.includes('/api/v1/api/v1');
+
     const authStoreState = useAuthStore.getState();
 
     logger.debug(
@@ -138,6 +141,7 @@ apiClient.interceptors.request.use(
       {
         fullUrl: combinedURL,
         rawCombinedURL: rawCombined,
+        potentialDoublePrefix: isDoublePrefixed,
         baseURL: config.baseURL,
         urlPath: config.url,
         hasOrgId: !!finalOrgId,
@@ -159,6 +163,7 @@ apiClient.interceptors.request.use(
         storeSources: {
           fromAuthStore: fromAuthStore || 'MISSING',
           fromWorkspaceStore: fromWorkspaceStore || 'MISSING',
+          finalResolved: activeOrgId || 'NONE',
         },
       }
     );
@@ -684,7 +689,11 @@ export const activityApi = {
   getExportUrl: (): string => {
     // getBaseUrl() returns '.../api/v1'
     const baseUrl = getBaseUrl().replace(/\/+$/, '');
-    const finalUrl = `${baseUrl}/activity/export`;
+    
+    // 🔒 CRITICAL: Prevent double /api/v1 prefix
+    // If we're appending a path that is already relative to the API root, 
+    // we should just append it.
+    const finalUrl = `${baseUrl}/activity/export`.replace(/\/api\/v1\/api\/v1/, '/api/v1');
     
     console.debug('[API:getExportUrl] Generated URL', {
       baseUrl,
