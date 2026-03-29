@@ -106,14 +106,14 @@ export function useRealtime() {
         }
       };
 
-      es.onerror = (error) => {
+      es.onerror = (_error) => {
         console.error('[Realtime] SSE Error', {
           readyState: es.readyState,
           timestamp: new Date().toISOString(),
         });
       };
 
-      es.addEventListener('connected', (e: any) => {
+      es.addEventListener('connected', (_e: any) => {
         console.log('[Realtime] SSE Connected');
       });
     }, 500);

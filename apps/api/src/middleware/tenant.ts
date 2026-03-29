@@ -69,18 +69,16 @@ export const tenantIsolation = async (
   });
 
   if (!orgId) {
-    console.warn(
-      '[Tenant:MW] No organization context found for scoped route',
-      {
-        path: c.req.path,
-        method: c.req.method,
-        userId: user.userId,
-        isAuthMe: c.req.path.includes('/auth/me'),
-        isScoped: !c.req.path.includes('/auth/') && !c.req.path.includes('/health'),
-        suggestion:
-          'If this is /auth/me or /health, it is expected. If this is a scoped route, orgId is missing from Header, Param, Query, and JWT.',
-      }
-    );
+    console.warn('[Tenant:MW] No organization context found for scoped route', {
+      path: c.req.path,
+      method: c.req.method,
+      userId: user.userId,
+      isAuthMe: c.req.path.includes('/auth/me'),
+      isScoped:
+        !c.req.path.includes('/auth/') && !c.req.path.includes('/health'),
+      suggestion:
+        'If this is /auth/me or /health, it is expected. If this is a scoped route, orgId is missing from Header, Param, Query, and JWT.',
+    });
     // Some routes might not be org-scoped (like /auth/me), but for scoped routes, this is fatal.
     // We allow it to pass if downstream logic handles global scope,
     // but the spec suggests scoping "every single database query".
