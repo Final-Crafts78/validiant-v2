@@ -17,7 +17,11 @@ router.get('/stream', async (c) => {
 
   logger.debug('[Realtime] GET /stream Entry', {
     userId: user?.userId || 'MISSING',
-    orgId: user?.organizationId || 'MISSING',
+    userContextOrgId: user?.organizationId || 'MISSING',
+    headerOrgId: c.req.header('X-Org-Id') || 'MISSING',
+    cookieOrgId: getCookie(c, 'orgId') || 'MISSING',
+    queryOrgId: c.req.query('orgId') || 'MISSING',
+    queryOrganizationId: c.req.query('organizationId') || 'MISSING',
     tokenParam: !!c.req.query('token'),
     allHeaders: JSON.stringify(c.req.header()),
     query: c.req.queries(),

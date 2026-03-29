@@ -111,4 +111,17 @@
 - **Impact**: Repeated login failures and session expiry triggers.
 
 
+#### 23. [Backend] Real-time (SSE) Query Parameter Mismatch (Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1220) shows `[Realtime] GET /stream Entry {"userId":...,"orgId":"MISSING", ...}`. The same log line shows `query: {"orgId":["d1c1319e..."]}`.
+- **Root Cause**: The backend extraction logic for `orgId` in the real-time route is failing to pick up the value from `c.req.query()`, even when provided by the frontend.
+- **Impact**: SSE stream is broken even when the correct ID is passed in the URL.
 
+#### 24. [Backend] Scoped Route Context Failure
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1304) shows `[Tenant:MW] No organization context found for scoped route` for `/api/v1/auth/me`.
+- **Root Cause**: The isolation middleware (`tenant.ts`) is likely being applied too broadly or its route-matching logic for "scoped vs public" is reporting false positives for the `/auth/me` route.
+- **Impact**: Unnecessary 400/500 errors on system routes, contributing to session expiry loops.
+
+#### 25. [Backend] Organization Update Validation Error (Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1525) shows `Update organization error: Error: No fields to update`.
+- **Root Cause**: The backend update logic throws an error if no fields have changed, but this isn't caught gracefully, leading to a 500 Internal Server Error.
+- **Impact**: UI shows a "Server Error" even if the user just clicked "Save" without making changes.

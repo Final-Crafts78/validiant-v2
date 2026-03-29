@@ -136,11 +136,26 @@ export const register = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
-    console.debug('[Auth:Controller] Register Token Generated', { userId: user.id, orgId: activeOrg?.id });
+    
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
       email: user.email,
+    });
+
+    const accessCookieOptions = getCookieOptions(c, ACCESS_TOKEN_MAX_AGE);
+    const refreshCookieOptions = getCookieOptions(c, REFRESH_TOKEN_MAX_AGE);
+
+    console.debug('[Auth:Register] Tokens & Cookies', {
+      userId: user.id,
+      orgId: activeOrg?.id || 'NONE',
+      accessTokenLength: accessToken.length,
+      refreshTokenLength: refreshToken.length,
+      cookieOptions: {
+        access: accessCookieOptions,
+        refresh: refreshCookieOptions,
+      },
+      timestamp: new Date().toISOString(),
     });
 
     setCookie(
@@ -260,11 +275,26 @@ export const login = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
-    console.debug('[Auth:Controller] Login Token Generated', { userId: user.id, orgId: activeOrg?.id });
+    
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
       email: user.email,
+    });
+
+    const accessCookieOptions = getCookieOptions(c, ACCESS_TOKEN_MAX_AGE);
+    const refreshCookieOptions = getCookieOptions(c, REFRESH_TOKEN_MAX_AGE);
+
+    console.debug('[Auth:Login] Tokens & Cookies', {
+      userId: user.id,
+      orgId: activeOrg?.id || 'NONE',
+      accessTokenLength: accessToken.length,
+      refreshTokenLength: refreshToken.length,
+      cookieOptions: {
+        access: accessCookieOptions,
+        refresh: refreshCookieOptions,
+      },
+      timestamp: new Date().toISOString(),
     });
 
     setCookie(
@@ -511,23 +541,32 @@ export const switchOrganization = async (c: Context) => {
     // 3. Generate new tokens with new organizationId and permissions
     const accessToken = await generateToken(tokenPayload);
 
-    const refreshToken = await generateRefreshToken({
-      sub: user.userId,
+    const accessCookieOptions = getCookieOptions(c, ACCESS_TOKEN_MAX_AGE);
+    const refreshCookieOptions = getCookieOptions(c, REFRESH_TOKEN_MAX_AGE);
+
+    console.debug('[Auth:SwitchOrg] Tokens & Cookies', {
       userId: user.userId,
-      email: user.email,
+      orgId: organizationId,
+      accessTokenLength: accessToken.length,
+      refreshTokenLength: refreshToken.length,
+      cookieOptions: {
+        access: accessCookieOptions,
+        refresh: refreshCookieOptions,
+      },
+      timestamp: new Date().toISOString(),
     });
 
     setCookie(
       c,
       'accessToken',
       accessToken,
-      getCookieOptions(c, ACCESS_TOKEN_MAX_AGE)
+      accessCookieOptions
     );
     setCookie(
       c,
       'refreshToken',
       refreshToken,
-      getCookieOptions(c, REFRESH_TOKEN_MAX_AGE)
+      refreshCookieOptions
     );
 
     // Sync preferences on org switch (Mini-Phase 6)

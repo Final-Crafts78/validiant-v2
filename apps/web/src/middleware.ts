@@ -133,27 +133,25 @@ export function middleware(request: NextRequest) {
   // Unauthenticated → login (Gate all protected or org-scoped routes)
   if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
     console.warn(
-      '[Middleware Redirect] Unauthenticated access to protected route',
+      '[MW:Edge] REDIRECT: Unauthenticated access to protected route',
       {
         pathname,
         isProtectedRoute,
         isOrgScoped,
         isSemiPublic,
         isAuthenticated,
+        authFailureReason,
         accessTokenPresent: !!accessToken,
+        accessTokenValue: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',
         accessTokenLength: accessToken?.value.length || 0,
         redirectTo: '/auth/login',
+        timestamp: new Date().toISOString(),
       }
     );
 
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);
-    console.debug('[MW:Edge] Redirecting to login', {
-      from: pathname,
-      target: loginUrl.toString(),
-      timestamp: new Date().toISOString(),
-    });
     return NextResponse.redirect(loginUrl);
   }
 

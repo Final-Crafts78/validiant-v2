@@ -44,7 +44,6 @@ export const tenantIsolation = async (
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
-  const rawCookies = c.req.header('cookie');
   
   console.debug('[Tenant:MW] Isolation Trace', {
     path: c.req.path,
@@ -58,16 +57,6 @@ export const tenantIsolation = async (
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
       jwtContext: user.organizationId || 'MISSING'
     },
-    headers: Object.fromEntries(
-      Object.entries(c.req.header()).map(([k, v]) => [
-        k, 
-        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('auth') || k.toLowerCase().includes('cookie')
-          ? 'PRESENT (Masked)' 
-          : v
-      ])
-    ),
-    rawCookieNames: rawCookies ? rawCookies.split(';').map(c => c.split('=')[0].trim()) : [],
-    rawQuery: c.req.query(),
     userId: user.userId,
     timestamp: new Date().toISOString(),
   });
@@ -75,7 +64,10 @@ export const tenantIsolation = async (
   if (!orgId) {
     console.warn('[Tenant:MW] No organization context found for scoped route', {
       path: c.req.path,
-      userId: user.userId
+      method: c.req.method,
+      userId: user.userId,
+      isAuthMe: c.req.path.includes('/auth/me'),
+      suggestion: 'If this is /auth/me, it is expected. If this is a scoped route, orgId is missing.'
     });
     // Some routes might not be org-scoped (like /auth/me), but for scoped routes, this is fatal.
     // We allow it to pass if downstream logic handles global scope,

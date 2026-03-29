@@ -76,15 +76,17 @@ export function getCookieDomain(requestHostname?: string) {
     console.debug('[Cookie:Utils] MATCHED .validiant.in domain', {
       hostname,
       isProduction,
-      reason: !hostname ? 'HOSTNAME_MISSING' : hostname === 'localhost' ? 'LOCALHOST_FALLBACK' : 'DOMAIN_MATCH'
+      reason: !hostname ? 'HOSTNAME_MISSING' : hostname === 'localhost' ? 'LOCALHOST_FALLBACK' : 'DOMAIN_MATCH',
+      finalDomain: '.validiant.in'
     });
     return '.validiant.in';
   }
 
-  console.warn('[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH', {
+  console.warn('[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH (Host-only cookie will be used)', {
     hostname,
     isProduction,
-    isForceDomainMatch
+    isForceDomainMatch,
+    suggestion: 'If this is a Vercel preview URL, host-only cookies are intentional. If this is production, check NEXT_PUBLIC_APP_URL.'
   });
 
   return undefined;

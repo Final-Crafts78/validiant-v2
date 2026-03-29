@@ -167,6 +167,16 @@ apiClient.interceptors.request.use(
         },
       }
     );
+
+    // 🚩 DOUBLE PREFIX ALERT
+    if (isDoublePrefixed) {
+      console.error('[API:CRITICAL] Double /api/v1 detected in request!', {
+        url: config.url,
+        rawCombined,
+        baseURL: config.baseURL,
+        stack: new Error().stack?.split('\n').slice(1, 4),
+      });
+    }
     return config;
   },
   (error) => {
@@ -298,6 +308,9 @@ apiClient.interceptors.response.use(
 
           logger.info('[Axios:401] NAVIGATING to session-expired', {
             href: targetUrl,
+            isCritical: isCriticalRequest,
+            authStateBefore,
+            authStateAfter,
             timestamp: new Date().toISOString(),
           });
 
