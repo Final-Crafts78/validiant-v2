@@ -38,14 +38,31 @@ interface AuthMeResponse {
  */
 const fetchCurrentUser = async (): Promise<User | null> => {
   try {
+    console.debug('[useAuth] Fetching current user...', {
+      timestamp: new Date().toISOString(),
+      currentPath: typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
+    });
     const response = await get<AuthMeResponse>('/auth/me');
+    console.debug('[useAuth] Fetch user SUCCESS', {
+      userEmail: response.data.data.user.email,
+      userId: response.data.data.user.id,
+      timestamp: new Date().toISOString(),
+    });
     return response.data.data.user;
   } catch (error: any) {
     // 401 means not authenticated (expected)
     if (error.statusCode === 401) {
+      console.debug('[useAuth] Fetch user 401 (Not Authenticated)', {
+        timestamp: new Date().toISOString(),
+      });
       return null;
     }
-    console.error('[useAuth] Error fetching user:', error);
+    console.error('[useAuth] Error fetching user:', {
+      error,
+      statusCode: error.statusCode,
+      message: error.message,
+      timestamp: new Date().toISOString(),
+    });
     throw error;
   }
 };

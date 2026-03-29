@@ -133,6 +133,8 @@ export function middleware(request: NextRequest) {
 
   // Unauthenticated → login (Gate all protected or org-scoped routes)
   if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
+    const branch = !accessToken ? 'MISSING_COOKIE' : !isLengthValid ? 'SHORT_TOKEN' : 'DELETED_OR_NULL_STRING';
+    
     console.warn(
       '[MW:Edge] REDIRECT: Unauthenticated access to protected route',
       {
@@ -142,6 +144,7 @@ export function middleware(request: NextRequest) {
         isSemiPublic,
         isAuthenticated,
         authFailureReason,
+        branch,
         accessTokenPresent: !!accessToken,
         accessTokenLength: accessToken?.value.length || 0,
         accessTokenPrefix: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',

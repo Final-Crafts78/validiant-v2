@@ -327,6 +327,7 @@ apiClient.interceptors.response.use(
         url: error.config?.url,
         message: response.data?.message,
         errorBody: response.data,
+        headers: response.headers,
         timestamp: new Date().toISOString(),
       });
     }
@@ -338,6 +339,19 @@ apiClient.interceptors.response.use(
         status: statusCode,
         message: response.data?.message,
         errorBody: response.data,
+        headers: response.headers,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    // Handle bad requests (400) - For validation errors
+    if (statusCode === 400) {
+      logger.error('[API:400] Bad Request / Validation Failure', {
+        url: error.config?.url,
+        status: statusCode,
+        message: response.data?.message,
+        errorBody: response.data,
+        headers: response.headers,
         timestamp: new Date().toISOString(),
       });
     }

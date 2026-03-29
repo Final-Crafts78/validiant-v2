@@ -25,8 +25,33 @@ export const requireOrgRole = (allowedRoles: string[]) => {
       return c.json({ success: false, error: 'Authentication required' }, 401);
     }
 
-    const orgId = c.req.param('orgId') || c.req.query('organizationId');
+    const contextOrgId = c.get('orgId');
+    const paramOrgId = c.req.param('orgId');
+    const queryOrgId = c.req.query('organizationId');
+    
+    const orgId = contextOrgId || paramOrgId || queryOrgId;
+
+    console.debug('[RBAC:Org] Role Check', {
+      path: c.req.path,
+      method: c.req.method,
+      requiredRoles: allowedRoles,
+      resolvedOrgId: orgId || 'MISSING',
+      sources: {
+        context: contextOrgId || 'MISSING',
+        param: paramOrgId || 'MISSING',
+        query: queryOrgId || 'MISSING',
+      },
+      userId: user.userId,
+      timestamp: new Date().toISOString(),
+    });
+
     if (!orgId) {
+      console.warn('[RBAC:Org] 400 - Organization ID required', {
+        path: c.req.path,
+        method: c.req.method,
+        userId: user.userId,
+        suggestion: 'Ensure X-Org-Id header is passed OR organizationId query param.',
+      });
       return c.json({ success: false, error: 'Organization ID required' }, 400);
     }
 

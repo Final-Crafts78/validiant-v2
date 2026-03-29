@@ -27,19 +27,43 @@ const app = new Hono();
 // CRUD operations
 app.post(
   '/',
-  zValidator('json', createProjectSchema),
+  zValidator('json', createProjectSchema, (result, c) => {
+    if (!result.success) {
+      console.error('[Project:Routes] Validation FAILED (POST /)', {
+        error: result.error.format(),
+        path: c.req.path,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }),
   projectController.createProject
 );
 app.get('/my', projectController.getMyProjects);
 app.get('/:id', projectController.getProjectById);
 app.put(
   '/:id',
-  zValidator('json', updateProjectSchema),
+  zValidator('json', updateProjectSchema, (result, c) => {
+    if (!result.success) {
+      console.error('[Project:Routes] Validation FAILED (PUT /:id)', {
+        error: result.error.format(),
+        projectId: c.req.param('id'),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }),
   projectController.updateProject
 );
 app.patch(
   '/:id/settings',
-  zValidator('json', updateProjectSettingsSchema),
+  zValidator('json', updateProjectSettingsSchema, (result, c) => {
+    if (!result.success) {
+      console.error('[Project:Routes] Validation FAILED (PATCH /:id/settings)', {
+        error: result.error.format(),
+        projectId: c.req.param('id'),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }),
   projectController.updateProjectSettings
 );
 app.delete('/:id', projectController.deleteProject);
@@ -55,7 +79,15 @@ app.get('/:id/members', projectController.getProjectMembers);
 app.get('/:id/my-membership', projectController.getMyProjectRole);
 app.post(
   '/:id/members',
-  zValidator('json', addProjectMemberSchema),
+  zValidator('json', addProjectMemberSchema, (result, c) => {
+    if (!result.success) {
+      console.error('[Project:Routes] Validation FAILED (POST /:id/members)', {
+        error: result.error.format(),
+        projectId: c.req.param('id'),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }),
   projectController.addProjectMember
 );
 app.delete('/:id/members/:userId', projectController.removeProjectMember);
@@ -64,7 +96,15 @@ app.delete('/:id/members/:userId', projectController.removeProjectMember);
 app.get('/:projectId/tasks', taskController.listProjectTasks);
 app.post(
   '/:projectId/tasks',
-  zValidator('json', createTaskSchema),
+  zValidator('json', createTaskSchema, (result, c) => {
+    if (!result.success) {
+      console.error('[Project:Routes] Validation FAILED (POST /:projectId/tasks)', {
+        error: result.error.format(),
+        projectId: c.req.param('projectId'),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }),
   taskController.createTask
 );
 
