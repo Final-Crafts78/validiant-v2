@@ -22,10 +22,7 @@ export const getProjectById = async (id: string): Promise<Project> =>
 export const createProject = async (
   payload: CreateProjectData
 ): Promise<Project> =>
-  post<APIResponse<{ project: Project }>>(
-    `/organizations/${payload.organizationId}/projects`,
-    payload
-  ).then((res) => {
+  post<APIResponse<{ project: Project }>>('/projects', payload).then((res) => {
     if (!res.data.data?.project) throw new Error('Project creation failed');
     return res.data.data.project;
   });

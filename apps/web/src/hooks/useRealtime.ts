@@ -73,69 +73,60 @@ export function useRealtime() {
 
     // Close existing connection if any
     if (eventSourceRef.current) {
+      console.log('[Realtime] Closing stale connection');
       eventSourceRef.current.close();
+      eventSourceRef.current = null;
     }
 
-    // Create new EventSource connection
-    const rawApiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
-    const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
-    
-    console.debug('[Realtime] CONNECTION PRE-FLIGHT', {
-      rawApiBase,
-      apiBase,
-      activeOrgId,
-      userId,
-      hasToken: !!accessToken,
-      tokenLength: accessToken?.length,
-      sseUrl: sseUrl.split('token=')[0] + 'token=PRESENT',
-      timestamp: new Date().toISOString(),
-      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
-    });
+    // ELITE: Connection Debouncing
+    // Prevents "Canceled" logs when hooks remount rapidly during state transitions
+    const connectionTimeout = setTimeout(() => {
+      // Create new EventSource connection
+      const rawApiBase =
+        process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
+      const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
 
-    const es = new EventSource(sseUrl, { withCredentials: true });
-
-    eventSourceRef.current = es;
-
-    console.debug('[Realtime] EventSource initialized', {
-      readyState: es.readyState,
-      url: sseUrl.split('token=')[0] + 'token=PRESENT',
-    });
-
-    // Handle incoming messages
-    es.onmessage = (event) => {
-      try {
-        const data: RealtimeMessage = JSON.parse(event.data);
-        console.debug('[Realtime] Message received', {
-          eventType: data.eventType,
-          timestamp: new Date().toISOString(),
-        });
-        handleMessage(data, queryClient, userId);
-      } catch (error) {
-        console.error('[Realtime] Failed to parse SSE message:', error);
-      }
-    };
-
-    es.onerror = (error) => {
-      console.error('[Realtime] SSE Error or Connection Closed', {
-        error,
-        readyState: es.readyState,
-        url: es.url.split('token=')[0] + 'token=REDACTED',
+      console.debug('[Realtime] CONNECTION START', {
+        activeOrgId,
+        userId,
         timestamp: new Date().toISOString(),
       });
-      // EventSource automatically handles reconnection for standard errors
-    };
 
-    es.addEventListener('connected', (e: any) => {
-      console.log('[Realtime] SSE Connected:', JSON.parse(e.data));
-    });
+      const es = new EventSource(sseUrl, { withCredentials: true });
+      eventSourceRef.current = es;
+
+      // Handle incoming messages
+      es.onmessage = (event) => {
+        try {
+          const data: RealtimeMessage = JSON.parse(event.data);
+          handleMessage(data, queryClient, userId);
+        } catch (error) {
+          console.error('[Realtime] Failed to parse SSE message:', error);
+        }
+      };
+
+      es.onerror = (error) => {
+        console.error('[Realtime] SSE Error', {
+          readyState: es.readyState,
+          timestamp: new Date().toISOString(),
+        });
+      };
+
+      es.addEventListener('connected', (e: any) => {
+        console.log('[Realtime] SSE Connected');
+      });
+    }, 500);
 
     return () => {
-      console.log('[Realtime] Closing SSE connection');
-      es.close();
-      eventSourceRef.current = null;
+      clearTimeout(connectionTimeout);
+      if (eventSourceRef.current) {
+        console.log('[Realtime] Cleaning up SSE connection');
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
     };
-  }, [activeOrgId, userId, queryClient, useAuthStore((s) => s.accessToken)]);
+  }, [activeOrgId, userId, queryClient]); // Removed token from deps to avoid refresh-loops; it's read inside
 }
 
 /**

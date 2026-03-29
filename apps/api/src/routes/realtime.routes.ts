@@ -27,12 +27,13 @@ router.get('/stream', async (c) => {
     query: c.req.queries(),
   });
 
+  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId');
   const headerOrgId = c.req.header('X-Org-Id');
   const userOrgId = user?.organizationId;
   const cookieOrgId = getCookie(c, 'orgId');
-  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId');
 
-  const orgId = headerOrgId || userOrgId || cookieOrgId || queryOrgId;
+  // ELITE: For SSE, query parameter is the most reliable source as headers are complex for EventSource
+  const orgId = queryOrgId || headerOrgId || userOrgId || cookieOrgId;
 
   console.debug('[Realtime:MW] Stream Isolation Trace', {
     path: c.req.path,

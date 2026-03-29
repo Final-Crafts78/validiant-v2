@@ -52,7 +52,7 @@ export const useMarkAsRead = () => {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
 
   return useMutation({
-    mutationFn: (id: string) => patch(`/api/v1/notifications/${id}/read`, {}),
+    mutationFn: (id: string) => patch(`/notifications/${id}/read`, {}),
     onSuccess: () => {
       if (activeOrgId) {
         queryClient.invalidateQueries({
@@ -71,7 +71,7 @@ export const useMarkAllAsRead = () => {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
 
   return useMutation({
-    mutationFn: () => patch('/api/v1/notifications/read-all', {}),
+    mutationFn: () => patch('/notifications/read-all', {}),
     onSuccess: () => {
       if (activeOrgId) {
         queryClient.invalidateQueries({
@@ -90,7 +90,7 @@ export const useDeleteNotification = () => {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
 
   return useMutation({
-    mutationFn: (id: string) => del(`/api/v1/notifications/${id}`),
+    mutationFn: (id: string) => del(`/notifications/${id}`),
     onSuccess: () => {
       if (activeOrgId) {
         queryClient.invalidateQueries({

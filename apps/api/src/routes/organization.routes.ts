@@ -172,6 +172,12 @@ app.get('/:id/members', organizationController.getOrganizationMembers);
 app.post('/:id/invites', organizationController.createInvite);
 
 /**
+ * GET /:id/invitations
+ * Alias for invitations list (Phase 26 fix)
+ */
+app.get('/:id/invitations', organizationController.getOrganizationMembers);
+
+/**
  * POST /:id/members
  * Add member to organization (owner/admin only)
  *
@@ -250,6 +256,12 @@ app.get('/:id/my-role', organizationController.getMyRole);
  * Response: 200 OK with { isMember: boolean }
  */
 app.get('/:id/is-member', organizationController.checkMembership);
+
+/**
+ * GET /:id/my-membership
+ * Get current user's full membership details (Phase 26 fix)
+ */
+app.get('/:id/my-membership', organizationController.getMyRole);
 
 // ============================================================================
 // CUSTOM ROLE ENDPOINTS (Phase 5)

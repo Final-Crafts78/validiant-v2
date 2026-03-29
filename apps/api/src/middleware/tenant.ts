@@ -49,26 +49,38 @@ export const tenantIsolation = async (
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
-    resolvedFrom: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : queryOrgId ? 'QUERY' : 'NONE',
+    resolvedFrom: headerOrgId
+      ? 'HEADER'
+      : paramOrgId
+        ? 'PARAM'
+        : queryOrgId
+          ? 'QUERY'
+          : 'NONE',
     sources: {
       header: headerOrgId || 'MISSING',
       param: paramOrgId || 'MISSING',
       queryOrgId: c.req.query('orgId') || 'MISSING',
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
-      jwtContext: user.organizationId || 'MISSING'
+      jwtContext: user.organizationId || 'MISSING',
     },
     userId: user.userId,
+    userAgent: c.req.header('User-Agent') || 'UNKNOWN',
     timestamp: new Date().toISOString(),
   });
 
   if (!orgId) {
-    console.warn('[Tenant:MW] No organization context found for scoped route', {
-      path: c.req.path,
-      method: c.req.method,
-      userId: user.userId,
-      isAuthMe: c.req.path.includes('/auth/me'),
-      suggestion: 'If this is /auth/me, it is expected. If this is a scoped route, orgId is missing.'
-    });
+    console.warn(
+      '[Tenant:MW] No organization context found for scoped route',
+      {
+        path: c.req.path,
+        method: c.req.method,
+        userId: user.userId,
+        isAuthMe: c.req.path.includes('/auth/me'),
+        isScoped: !c.req.path.includes('/auth/') && !c.req.path.includes('/health'),
+        suggestion:
+          'If this is /auth/me or /health, it is expected. If this is a scoped route, orgId is missing from Header, Param, Query, and JWT.',
+      }
+    );
     // Some routes might not be org-scoped (like /auth/me), but for scoped routes, this is fatal.
     // We allow it to pass if downstream logic handles global scope,
     // but the spec suggests scoping "every single database query".

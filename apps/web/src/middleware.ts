@@ -125,6 +125,7 @@ export function middleware(request: NextRequest) {
     'organizations',
     'profile',
     'dashboard',
+    'health',
   ];
   const firstSegment = pathname.split('/')[1];
   const isOrgScoped =
@@ -142,8 +143,11 @@ export function middleware(request: NextRequest) {
         isAuthenticated,
         authFailureReason,
         accessTokenPresent: !!accessToken,
-        accessTokenValue: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',
         accessTokenLength: accessToken?.value.length || 0,
+        accessTokenPrefix: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',
+        host: request.headers.get('host'),
+        xForwardedHost: request.headers.get('x-forwarded-host'),
+        nextUrlHostname: request.nextUrl.hostname,
         redirectTo: '/auth/login',
         timestamp: new Date().toISOString(),
       }

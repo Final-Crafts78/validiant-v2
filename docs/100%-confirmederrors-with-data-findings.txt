@@ -125,3 +125,19 @@
 - **Data Evidence**: `cloudflarelogs.txt` (Line 1525) shows `Update organization error: Error: No fields to update`.
 - **Root Cause**: The backend update logic throws an error if no fields have changed, but this isn't caught gracefully, leading to a 500 Internal Server Error.
 - **Impact**: UI shows a "Server Error" even if the user just clicked "Save" without making changes.
+
+#### 26. [Frontend/Backend] Organization Route Mismatch (404s) (100% Confirmed)
+- **Data Evidence**: Cloudflare logs show 404s for:
+    - `POST /api/v1/organizations/:id/projects`
+    - `GET /api/v1/organizations/:id/my-membership`
+    - `GET /api/v1/organizations/:id/invitations`
+- **Root Cause**: Backend `organization.routes.ts` does not define these specific paths.
+    - `invitations` should likely be `invites`.
+    - `projects` POST should likely be handled at `/api/v1/projects` with an `X-Org-Id` header.
+    - `my-membership` is missing entirely (likely intended to be `my-role` or `is-member`).
+- **Impact**: Critical organization features (Project creation, Invitation listing, Membership checks) are broken.
+
+#### 27. [Frontend] Real-time Stream Client-side Cancellation
+- **Data Evidence**: `cloudflarelogs.txt` (Line 566) shows `GET /api/v1/realtime/stream ... - Canceled`.
+- **Root Cause**: The frontend `useRealtime` hook state might be oscillating or the connection is being closed immediately after opening by high-frequency re-renders.
+- **Impact**: Real-time updates are inconsistent or never establish a stable link.

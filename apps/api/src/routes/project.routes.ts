@@ -52,6 +52,7 @@ app.post('/:id/leave', projectController.leaveProject);
 
 // Member management
 app.get('/:id/members', projectController.getProjectMembers);
+app.get('/:id/my-membership', projectController.getMyProjectRole);
 app.post(
   '/:id/members',
   zValidator('json', addProjectMemberSchema),

@@ -1043,3 +1043,68 @@ export const completeProject = async (c: Context) => {
     );
   }
 };
+
+/**
+ * Get current user's role in project
+ * GET /api/v1/projects/:id/my-membership
+ */
+export const getMyProjectRole = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const id = c.req.param('id');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    if (!id) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'Project ID is required',
+        },
+        400
+      );
+    }
+
+    const role = await projectService.getProjectMemberRole(id, user.userId);
+
+    if (!role) {
+      return c.json(
+        {
+          success: false,
+          error: 'Not Found',
+          message: 'You are not a member of this project',
+        },
+        404
+      );
+    }
+
+    return c.json({
+      success: true,
+      data: {
+        id, // For structure compatibility
+        projectId: id,
+        role,
+      },
+    });
+  } catch (error) {
+    console.error('Get my project role error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to get role',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};

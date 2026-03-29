@@ -126,27 +126,27 @@ apiClient.interceptors.request.use(
     const finalOrgId = config.headers?.['X-Org-Id'];
     
     // URL CONSTRUCTION TRACE
-    const normalizedBaseURL = config.baseURL?.replace(/\/+$/, '');
-    const normalizedRelativeURL = config.url?.replace(/^\/+/, '');
-    const combinedURL = `${normalizedBaseURL}/${normalizedRelativeURL}`;
-    const rawCombined = `${config.baseURL}${config.url}`;
+    // getBaseUrl() ends with /api/v1
+    const baseURL = config.baseURL?.replace(/\/+$/, ''); // Ensure no trailing slash
+    const relativePart = config.url?.replace(/^\/+/, ''); // Ensure no leading slash
+    const finalFullURL = `${baseURL}/${relativePart}`;
     
     // 🚩 DOUBLE PREFIX DETECTION
-    const isDoublePrefixed = rawCombined.includes('/api/v1/api/v1');
+    const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
     const authStoreState = useAuthStore.getState();
 
     logger.debug(
       `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
       {
-        fullUrl: combinedURL,
-        rawCombinedURL: rawCombined,
+        finalFullURL,
+        method: config.method?.toUpperCase(),
         potentialDoublePrefix: isDoublePrefixed,
         baseURL: config.baseURL,
         urlPath: config.url,
         hasOrgId: !!finalOrgId,
         orgId: finalOrgId || 'MISSING',
-        orgIdSource: existingOrgId ? 'explicit' : activeOrgId ? 'store' : 'none',
+        orgIdSource: existingOrgId ? 'explicit' : (fromWorkspaceStore ? 'workspace-store' : fromAuthStore ? 'auth-store' : 'none'),
         authStore: {
           isAuthenticated: authStoreState.isAuthenticated,
           hasUser: !!authStoreState.user,
@@ -160,11 +160,6 @@ apiClient.interceptors.request.use(
           'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
           'User-Agent': typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
         },
-        storeSources: {
-          fromAuthStore: fromAuthStore || 'MISSING',
-          fromWorkspaceStore: fromWorkspaceStore || 'MISSING',
-          finalResolved: activeOrgId || 'NONE',
-        },
       }
     );
 
@@ -172,7 +167,7 @@ apiClient.interceptors.request.use(
     if (isDoublePrefixed) {
       console.error('[API:CRITICAL] Double /api/v1 detected in request!', {
         url: config.url,
-        rawCombined,
+        finalFullURL,
         baseURL: config.baseURL,
         stack: new Error().stack?.split('\n').slice(1, 4),
       });
