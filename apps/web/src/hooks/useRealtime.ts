@@ -87,8 +87,10 @@ export function useRealtime() {
       activeOrgId,
       userId,
       hasToken: !!accessToken,
+      tokenLength: accessToken?.length,
       sseUrl: sseUrl.split('token=')[0] + 'token=PRESENT',
       timestamp: new Date().toISOString(),
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
     });
 
     const es = new EventSource(sseUrl, { withCredentials: true });

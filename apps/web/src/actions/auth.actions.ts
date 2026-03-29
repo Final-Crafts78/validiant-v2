@@ -129,6 +129,7 @@ function clearAuthCookies() {
   console.debug('[BFF:ClearCookies] STATE AFTER DELETE', {
     afterNames,
     afterCount,
+    domainUsed: (COOKIE_OPTIONS as any).domain || 'HOST_ONLY',
     timestamp: new Date().toISOString(),
   });
 }
@@ -155,7 +156,11 @@ export async function loginAction(
 
     console.debug('[BFF:Login] API Response received', {
       status: response.status,
+      statusText: response.statusText,
       headers: Array.from(response.headers.entries()),
+      ok: response.ok,
+      url: response.url,
+      timestamp: new Date().toISOString(),
     });
 
     const data = await response.json();
@@ -185,8 +190,10 @@ export async function loginAction(
 
     console.debug('[BFF:Login] Setting HttpOnly cookies', {
       options: COOKIE_OPTIONS,
+      domain: (COOKIE_OPTIONS as any).domain || 'HOST_ONLY',
       accessTokenLength: accessToken.length,
       refreshTokenLength: refreshToken.length,
+      timestamp: new Date().toISOString(),
     });
 
     cookieStore.set('accessToken', accessToken, {
@@ -458,7 +465,11 @@ export const getCurrentUserAction = cache(
 
       console.debug('[BFF:GetUser] API response metadata', {
         status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url,
         headers: Array.from(response.headers.entries()),
+        timestamp: new Date().toISOString(),
       });
 
       // CRITICAL: If unauthorized or forbidden, clear cookies

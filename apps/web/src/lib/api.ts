@@ -124,13 +124,20 @@ apiClient.interceptors.request.use(
 
     // 2. LOGGING (ALWAYS log in production for now for maximum visibility)
     const finalOrgId = config.headers?.['X-Org-Id'];
-    const fullRequestUrl = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
+    
+    // URL CONSTRUCTION TRACE
+    const normalizedBaseURL = config.baseURL?.replace(/\/+$/, '');
+    const normalizedRelativeURL = config.url?.replace(/^\/+/, '');
+    const combinedURL = `${normalizedBaseURL}/${normalizedRelativeURL}`;
+    const rawCombined = `${config.baseURL}${config.url}`;
+    
     const authStoreState = useAuthStore.getState();
 
     logger.debug(
       `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
       {
-        fullUrl: fullRequestUrl,
+        fullUrl: combinedURL,
+        rawCombinedURL: rawCombined,
         baseURL: config.baseURL,
         urlPath: config.url,
         hasOrgId: !!finalOrgId,
@@ -147,6 +154,7 @@ apiClient.interceptors.request.use(
           Authorization: config.headers?.Authorization ? 'PRESENT' : 'MISSING',
           Cookie: config.headers?.Cookie ? 'PRESENT' : 'MISSING',
           'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
+          'User-Agent': typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
         },
         storeSources: {
           fromAuthStore: fromAuthStore || 'MISSING',

@@ -58,7 +58,10 @@ export function middleware(request: NextRequest) {
       name: c.name,
       valueLength: c.value?.length || 0,
       valuePrefix: c.value?.substring(0, 10),
+      isDeleted: c.value === 'deleted',
+      isNull: c.value === 'null',
     })),
+    timestamp: new Date().toISOString(),
   });
   // CRITICAL: Basic validation to prevent using empty/cleared cookies
   const accessTokenValue = accessToken?.value || '';
@@ -67,6 +70,12 @@ export function middleware(request: NextRequest) {
   
   const isAuthenticated = isLengthValid && isNotEmpty;
 
+  const authFailureReason = !isNotEmpty 
+    ? 'EMPTY_OR_DELETED_STRING' 
+    : !isLengthValid 
+      ? `LENGTH_INVALID_${accessTokenValue.length}` 
+      : 'NONE';
+
   // Check if route is protected
   const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
   const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
@@ -74,6 +83,7 @@ export function middleware(request: NextRequest) {
 
   console.debug('[MW:Edge] Auth State Breakdown', {
     isAuthenticated,
+    authFailureReason,
     isLengthValid,
     isNotEmpty,
     tokenLength: accessTokenValue.length,
@@ -83,6 +93,7 @@ export function middleware(request: NextRequest) {
     isOrgScoped: undefined, // Will be defined later
     isAuthRoute,
     referer: request.headers.get('referer'),
+    userAgent: request.headers.get('user-agent'),
     timestamp: new Date().toISOString(),
   });
 

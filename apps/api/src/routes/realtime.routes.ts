@@ -19,7 +19,7 @@ router.get('/stream', async (c) => {
     userId: user?.userId || 'MISSING',
     orgId: user?.organizationId || 'MISSING',
     tokenParam: !!c.req.query('token'),
-    allHeaders: JSON.stringify(Object.fromEntries(c.req.raw.headers.entries())),
+    allHeaders: JSON.stringify(c.req.header()),
     query: c.req.queries(),
   });
 
@@ -32,6 +32,7 @@ router.get('/stream', async (c) => {
   console.debug('[Realtime:MW] Stream Isolation Trace', {
     path: c.req.path,
     resolvedOrgId: orgId || 'NONE',
+    query: c.req.queries(),
     headers: Object.fromEntries(
       Object.entries(c.req.header()).map(([k, v]) => [
         k, 
@@ -44,13 +45,17 @@ router.get('/stream', async (c) => {
       userContext: userOrgId || 'MISSING',
       header: headerOrgId || 'MISSING',
       cookie: cookieOrgId || 'MISSING',
+      queryOrgId: c.req.query('orgId') || 'MISSING',
+      queryOrganizationId: c.req.query('organizationId') || 'MISSING',
     },
     cookies: {
       hasAccessToken: !!getCookie(c, 'accessToken'),
       hasOrgId: !!getCookie(c, 'orgId'),
+      rawCookieNames: c.req.header('cookie') ? c.req.header('cookie')?.split(';').map(c => c.split('=')[0].trim()) : [],
     },
     userId: user?.userId,
     timestamp: new Date().toISOString(),
+    userAgent: c.req.header('user-agent') || 'NONE',
   });
 
   if (!orgId) {

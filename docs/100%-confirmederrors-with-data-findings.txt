@@ -70,4 +70,25 @@
 - **Root Cause**: Generic `app.onError` in `app.ts`.
 - **Impact**: Makes debugging production-only SSE and OAuth failures extremely difficult without high-latency HAR logs.
 
+#### 15. [Frontend] /api/v1/api/v1 Double Prefix Source (100% Confirmed)
+- **Data Evidence**: Cloudflare logs show `GET /api/v1/api/v1/auth/me` 404.
+- **Root Cause**: `apps/web/src/hooks/useAuth.ts` (Line 41) calls `get('/api/v1/auth/me')`. However, `apiClient` in `api.ts` already has a `baseURL` from `getBaseUrl()` that includes `/api/v1`.
+- **Impact**: Client-side authentication checks fail with 404, leading to frequent session-expiry redirects.
+
+#### 16. [Backend] Real-time (SSE) Query Param Ignored (100% Confirmed)
+- **Data Evidence**: Cloudflare logs show `orgId` present in query string but reported as `MISSING` in the controller entry log.
+- **Root Cause**: `apps/api/src/routes/realtime.routes.ts` (Line 30) only checks `userOrgId`, `headerOrgId`, and `cookieOrgId`. It completely ignores `c.req.query('orgId')` which is where the frontend sends it.
+- **Impact**: SSE connection fails with 400/500 "Active organization context required" even when passed.
+
+#### 17. [Frontend] Infinite Auth Redirect Loop Trigger (100% Confirmed)
+- **Data Evidence**: `[MW:Edge] Cookie Detection` shows accessToken presence but `isAuthenticated: false` and `isLengthValid: false`.
+- **Root Cause**: `apps/web/src/middleware.ts` (Line 65) has a hardcoded check for `length > 100`. If a cookie is set to `deleted` or `null` (ghost cookies), its length is < 100, triggering a redirect to `/auth/login`. The login page sees "some" cookie and redirects back, creating the loop.
+- **Impact**: Users are permanently locked out of the dashboard.
+
+#### 18. [Frontend] Cookie Domain Rejection (100% Confirmed)
+- **Data Evidence**: Vercel logs show app running on `*.vercel.app` (preview domains) while `auth-utils.ts` attempts to set cookies for `.validiant.in`.
+- **Root Cause**: Browser "Domain Security Rule" forbids setting cookies for a domain that is not a parent of the current hostname.
+- **Impact**: Cookies are never saved by the browser on preview deployments, leading to "ghosting" and logout failures.
+
+
 
