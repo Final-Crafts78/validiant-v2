@@ -120,6 +120,7 @@ apiClient.interceptors.request.use(
     // 2. LOGGING (ALWAYS log in production for now for maximum visibility)
     const finalOrgId = config.headers?.['X-Org-Id'];
     const fullRequestUrl = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
+    const authStoreState = useAuthStore.getState();
 
     logger.debug(
       `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
@@ -130,6 +131,11 @@ apiClient.interceptors.request.use(
         hasOrgId: !!finalOrgId,
         orgId: finalOrgId || 'MISSING',
         orgIdSource: existingOrgId ? 'explicit' : activeOrgId ? 'store' : 'none',
+        authStore: {
+          isAuthenticated: authStoreState.isAuthenticated,
+          hasUser: !!authStoreState.user,
+          userActiveOrgId: authStoreState.user?.activeOrganizationId || 'MISSING',
+        },
         timestamp: new Date().toISOString(),
         headers: {
           ...config.headers,
@@ -660,6 +666,15 @@ export const activityApi = {
   getExportUrl: (): string => {
     const baseUrl =
       process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
-    return `${baseUrl.replace(/\/+$/, '')}/api/v1/activity/export`;
+    const finalUrl = `${baseUrl.replace(/\/+$/, '')}/api/v1/activity/export`;
+    
+    console.debug('[API:getExportUrl] Generated URL', {
+      baseUrl,
+      finalUrl,
+      isDoublePrefixed: finalUrl.includes('/api/v1/api/v1'),
+      timestamp: new Date().toISOString(),
+    });
+    
+    return finalUrl;
   },
 };

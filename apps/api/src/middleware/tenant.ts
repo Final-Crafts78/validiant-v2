@@ -48,12 +48,21 @@ export const tenantIsolation = async (
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
+    headers: Object.fromEntries(
+      Object.entries(c.req.header()).map(([k, v]) => [
+        k, 
+        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('cookie') 
+          ? 'PRESENT (Masked)' 
+          : v
+      ])
+    ),
     sources: {
       header: headerOrgId || 'MISSING',
       param: paramOrgId || 'MISSING',
       query: queryOrgId || 'MISSING',
     },
     userId: user.userId,
+    userContext: user,
     timestamp: new Date().toISOString(),
   });
 

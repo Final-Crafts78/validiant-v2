@@ -44,6 +44,13 @@ export function getCookieDomain(requestHostname?: string) {
     isProduction,
     appUrl,
     envProductionChecks,
+    processEnv: {
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
+      NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV || 'MISSING',
+      NODE_ENV: process.env.NODE_ENV || 'MISSING',
+      VERCEL_ENV: process.env.VERCEL_ENV || 'MISSING',
+    },
+    stack: new Error().stack?.split('\n').slice(1, 4), // Log caller for context
     timestamp: new Date().toISOString(),
   });
 

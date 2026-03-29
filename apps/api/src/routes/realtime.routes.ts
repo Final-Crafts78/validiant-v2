@@ -32,10 +32,22 @@ router.get('/stream', async (c) => {
   console.debug('[Realtime:MW] Stream Isolation Trace', {
     path: c.req.path,
     resolvedOrgId: orgId || 'NONE',
+    headers: Object.fromEntries(
+      Object.entries(c.req.header()).map(([k, v]) => [
+        k, 
+        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('cookie') 
+          ? 'PRESENT (Masked)' 
+          : v
+      ])
+    ),
     sources: {
       userContext: userOrgId || 'MISSING',
       header: headerOrgId || 'MISSING',
       cookie: cookieOrgId || 'MISSING',
+    },
+    cookies: {
+      hasAccessToken: !!getCookie(c, 'accessToken'),
+      hasOrgId: !!getCookie(c, 'orgId'),
     },
     userId: user?.userId,
     timestamp: new Date().toISOString(),

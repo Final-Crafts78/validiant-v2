@@ -80,10 +80,12 @@ export function useRealtime() {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
     const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}`;
     
-    console.log('[Realtime] Attempting SSE connection', {
-      url: sseUrl.split('token=')[0] + 'token=REDACTED',
+    console.debug('[Realtime] CONNECTION PRE-FLIGHT', {
       apiBase,
       activeOrgId,
+      userId,
+      hasToken: !!accessToken,
+      sseUrl: sseUrl.split('token=')[0] + 'token=PRESENT',
       timestamp: new Date().toISOString(),
     });
 
