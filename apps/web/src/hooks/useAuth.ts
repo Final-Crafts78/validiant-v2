@@ -44,23 +44,29 @@ const fetchCurrentUser = async (): Promise<User | null> => {
     });
     const response = await get<AuthMeResponse>('/auth/me');
     console.debug('[useAuth] Fetch user SUCCESS', {
-      userEmail: response.data.data.user.email,
-      userId: response.data.data.user.id,
+      userEmail: response.data?.data?.user?.email || 'MISSING',
+      userId: response.data?.data?.user?.id || 'MISSING',
+      fullResponse: response.data,
       timestamp: new Date().toISOString(),
     });
-    return response.data.data.user;
+    return response.data?.data?.user || null;
   } catch (error: any) {
+    const statusCode = error.statusCode || error.response?.status;
+    const errorBody = error.response?.data || error.details;
+
     // 401 means not authenticated (expected)
-    if (error.statusCode === 401) {
+    if (statusCode === 401) {
       console.debug('[useAuth] Fetch user 401 (Not Authenticated)', {
+        errorBody,
         timestamp: new Date().toISOString(),
       });
       return null;
     }
-    console.error('[useAuth] Error fetching user:', {
+    console.error('[useAuth] Error fetching user Detail', {
       error,
-      statusCode: error.statusCode,
+      statusCode,
       message: error.message,
+      errorBody,
       timestamp: new Date().toISOString(),
     });
     throw error;

@@ -131,9 +131,6 @@
 - **Impact**: Critical routes like `activity` (audit logs) fail for all web clients that pass the ID via the standard `X-Org-Id` header.
 
 #### 27. [Backend] Project Creation Validation failure (100% Confirmed - NEW)
-- **Data Evidence**: `cloudflarelogs.txt` (Line 311) shows `POST /api/v1/projects` returning `400`.
-- **Root Cause**: Likely a Zod validation error for the project payload. Without explicit validation logging, the exact field causing the failure is unknown.
-- **Impact**: Project creation is broken in production.
 
 #### 28. [Frontend] Activity Route Mismatch (404/200 confusion)
 - **Data Evidence**: Previous reports showed 404s for some org-scoped routes, but new logs show 200s (e.g., `invitations`). However, `activity` is still returning 400 (Finding #26).

@@ -174,6 +174,17 @@ apiClient.interceptors.request.use(
         stack: new Error().stack?.split('\n').slice(1, 4),
       });
     }
+
+    // ELITE: Request Snapshot
+    logger.debug(`[API:Snapshot] ${config.method?.toUpperCase()} Outgoing`, {
+      url: config.url,
+      finalFullURL,
+      headers: { ...config.headers },
+      params: config.params,
+      hasData: !!config.data,
+      timestamp: new Date().toISOString(),
+    });
+
     return config;
   },
   (error) => {
@@ -210,6 +221,20 @@ apiClient.interceptors.response.use(
 
     const { response } = error;
     const statusCode = response.status;
+
+    // ELITE: Response Error Detail
+    logger.error(`[API:Error] ${statusCode} ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
+      status: statusCode,
+      data: response.data,
+      headers: response.headers,
+      config: {
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        method: error.config?.method,
+        headers: error.config?.headers,
+      },
+      timestamp: new Date().toISOString(),
+    });
 
     // Handle authentication errors (401)
     if (statusCode === 401) {

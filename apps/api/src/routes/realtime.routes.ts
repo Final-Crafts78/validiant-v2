@@ -35,7 +35,7 @@ router.get('/stream', async (c) => {
   // ELITE: For SSE, query parameter is the most reliable source as headers are complex for EventSource
   const orgId = queryOrgId || headerOrgId || userOrgId || cookieOrgId;
 
-  console.debug('[Realtime:MW] Stream Isolation Trace', {
+  console.debug('[Realtime:MW] Stream Isolation Trace Detail', {
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -45,6 +45,12 @@ router.get('/stream', async (c) => {
       cookie: cookieOrgId || 'MISSING',
       queryOrgId: c.req.query('orgId') || 'MISSING',
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
+    },
+    // CRITICAL: Type check to see if Hono returns array for single query param
+    paramTypes: {
+      queryOrgIdType: typeof c.req.query('orgId'),
+      queryOrganizationIdType: typeof c.req.query('organizationId'),
+      rawOrgIdQueries: c.req.queries('orgId'),
     },
     headers: Object.fromEntries(
       Object.entries(c.req.header()).map(([k, v]) => [

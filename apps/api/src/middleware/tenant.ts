@@ -44,7 +44,8 @@ export const tenantIsolation = async (
 
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
-  console.info('[Tenant:MW] Isolation Trace', {
+  // ELITE: Deep Trace for isolation debugging
+  console.info('[Tenant:MW] Isolation Trace Detail', {
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -62,6 +63,11 @@ export const tenantIsolation = async (
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
       jwtContext: user.organizationId || 'MISSING',
       rawXOrgIdHeader: c.req.header('X-Org-Id') || 'NULL',
+    },
+    // Raw Hono query check (detects arrays vs strings)
+    rawQueries: {
+      orgId: c.req.queries('orgId'),
+      organizationId: c.req.queries('organizationId'),
     },
     userId: user.userId,
     userAgent: c.req.header('User-Agent') || 'UNKNOWN',

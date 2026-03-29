@@ -150,6 +150,7 @@ export function middleware(request: NextRequest) {
         accessTokenPresent: !!accessToken,
         accessTokenLength: accessToken?.value.length || 0,
         accessTokenPrefix: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',
+        allCookiesNames: request.cookies.getAll().map(c => c.name),
         host: request.headers.get('host'),
         xForwardedHost: request.headers.get('x-forwarded-host'),
         nextUrlHostname: request.nextUrl.hostname,

@@ -92,6 +92,9 @@ export function useRealtime() {
       console.debug('[Realtime] CONNECTION START', {
         activeOrgId,
         userId,
+        sseUrl: sseUrl.replace(/token=[^&]+/, 'token=REDACTED'),
+        apiBase,
+        rawApiBase,
         timestamp: new Date().toISOString(),
       });
 
@@ -108,9 +111,14 @@ export function useRealtime() {
         }
       };
 
-      es.onerror = (_error) => {
-        console.error('[Realtime] SSE Error', {
+      es.onerror = (error) => {
+        console.error('[Realtime] SSE Error Detail', {
           readyState: es.readyState,
+          url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
+          error,
+          // Capture as much from the error event as possible
+          eventPhase: (error as any).eventPhase,
+          type: error.type,
           timestamp: new Date().toISOString(),
         });
       };

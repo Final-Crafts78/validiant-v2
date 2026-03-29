@@ -70,12 +70,14 @@ export const requireOrgRole = (allowedRoles: string[]) => {
         )
         .limit(1);
 
-      console.info(`[RBAC:Org] Membership Lookup Result`, {
+      console.info(`[RBAC:Org] Membership Lookup Result Detail`, {
         userId: user.userId,
         orgId: orgId,
         found: !!membership,
         role: membership?.role || 'NONE',
         allowedRoles,
+        allMembershipData: membership ? { id: membership.id, role: membership.role } : null,
+        timestamp: new Date().toISOString(),
       });
 
       if (!membership || !allowedRoles.includes(membership.role)) {
