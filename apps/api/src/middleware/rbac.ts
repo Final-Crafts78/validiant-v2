@@ -33,11 +33,22 @@ export const requireOrgRole = (allowedRoles: string[]) => {
     // Priority: Context (already resolved) > Header > Param > Query
     const orgId = contextOrgId || headerOrgId || paramOrgId || queryOrgId;
 
+    const source = contextOrgId
+      ? 'CONTEXT'
+      : headerOrgId
+        ? 'HEADER'
+        : paramOrgId
+          ? 'PARAM'
+          : queryOrgId
+            ? 'QUERY'
+            : 'NONE';
+
     console.info('[RBAC:Org] Role Check started', {
       path: c.req.path,
       method: c.req.method,
       requiredRoles: allowedRoles,
       resolvedOrgId: orgId || 'MISSING',
+      resolvedFrom: source,
       sources: {
         context: contextOrgId || 'MISSING',
         header: headerOrgId || 'MISSING',
@@ -81,14 +92,25 @@ export const requireOrgRole = (allowedRoles: string[]) => {
       });
 
       if (!membership || !allowedRoles.includes(membership.role)) {
-        console.warn(`[RBAC:Org] Forbidden - Insufficient permissions`, {
+        console.warn(`[RBAC:Org] 403 Forbidden - Insufficient permissions`, {
           userId: user.userId,
           orgId: orgId,
+          lookupFound: !!membership,
           userRole: membership?.role || 'NONE',
           requiredRoles: allowedRoles,
+          reason: !membership ? 'NO_MEMBERSHIP_RECORD' : 'ROLE_NOT_IN_ALLOWED_LIST',
+          path: c.req.path,
+          timestamp: new Date().toISOString(),
         });
         return c.json(
-          { success: false, error: 'Insufficient organization permissions' },
+          {
+            success: false,
+            error: 'Insufficient organization permissions',
+            details:
+              process.env.NODE_ENV === 'development'
+                ? { required: allowedRoles, actual: membership?.role || 'NONE' }
+                : undefined,
+          },
           403
         );
       }

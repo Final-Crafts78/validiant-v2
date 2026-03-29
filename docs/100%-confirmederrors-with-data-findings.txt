@@ -131,6 +131,14 @@
 - **Impact**: Critical routes like `activity` (audit logs) fail for all web clients that pass the ID via the standard `X-Org-Id` header.
 
 #### 27. [Backend] Project Creation Validation failure (100% Confirmed - NEW)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 345) shows `[Project:Routes] Validation FAILED (POST /) { errors: { key: [ 'Required' ] }, rawBody: { name: 'OnGrid', ... } }`.
+- **Root Cause**: The `createProjectSchema` in `packages/shared/src/schemas/project.schemas.ts` requires a `key` field (project key), but the frontend UI/API call is missing this field.
+- **Impact**: All project creation attempts from the web dashboard fail with a 400 Bad Request.
+
+#### 28. [Frontend] Real-time (SSE) Durable Object "Subdomain" Mismatch
+- **Data Evidence**: HAR logs show requests to `api.validiant.in/api/v1/realtime/stream` but some Vercel logs show the app expecting `www.validiant.in`.
+- **Root Cause**: Hostname inconsistency between the frontend environment and the hardcoded SSE connection logic.
+- **Impact**: WebSocket/SSE handshake failures due to CORS or routing mismatch on the Cloudflare Edge.
 
 #### 28. [Frontend] Activity Route Mismatch (404/200 confusion)
 - **Data Evidence**: Previous reports showed 404s for some org-scoped routes, but new logs show 200s (e.g., `invitations`). However, `activity` is still returning 400 (Finding #26).

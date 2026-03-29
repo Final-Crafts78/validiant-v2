@@ -35,6 +35,14 @@ export const tenantIsolation = async (
     return c.json({ success: false, error: 'Authentication required' }, 401);
   }
 
+  const existingOrgId = c.get('orgId') || c.get('organizationId');
+  if (existingOrgId) {
+    console.debug('[Tenant:MW] REDUNDANCY CHECK: orgId already set in context', {
+      existingOrgId,
+      path: c.req.path,
+    });
+  }
+
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)
   const headerOrgId = c.req.header('X-Org-Id');
   
@@ -45,7 +53,7 @@ export const tenantIsolation = async (
   const orgId = headerOrgId || paramOrgId || queryOrgId;
 
   // ELITE: Deep Trace for isolation debugging
-  console.info('[Tenant:MW] Isolation Trace Detail', {
+  console.info('[Tenant:MW] Isolation Trace Entry', {
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -93,7 +101,7 @@ export const tenantIsolation = async (
     return;
   }
 
-  console.log(`[Tenant:MW] Setting context keys { orgId: '${orgId}', organizationId: '${orgId}' }`);
+  console.log(`[Tenant:MW] Handoff Check { orgId: '${orgId}', organizationId: '${orgId}' }`);
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
 

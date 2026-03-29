@@ -342,8 +342,17 @@ export const createHonoApp = () => {
    */
   app.onError((err, c) => {
     const user = c.get('user') as UserContext | undefined;
-    
-    console.error('[API:Error] Unhandled Exception', {
+    const allHeaders: Record<string, string> = {};
+    Object.entries(c.req.header()).forEach(([key, value]) => {
+      // Sensitive data scrubbing
+      if (['authorization', 'cookie', 'set-cookie'].includes(key.toLowerCase())) {
+        allHeaders[key] = '[SCRUBBED]';
+      } else {
+        allHeaders[key] = value as string;
+      }
+    });
+
+    console.error('[API:Error] Unhandled Exception Detail', {
       error: err.name || 'Internal Server Error',
       message: err.message || 'An unexpected error occurred',
       path: c.req.path,
@@ -355,6 +364,7 @@ export const createHonoApp = () => {
         'user-agent': c.req.header('user-agent'),
         'x-org-id': c.req.header('X-Org-Id') || 'MISSING',
         referer: c.req.header('referer') || 'NONE',
+        ...allHeaders,
       },
       userId: user?.userId || 'ANONYMOUS',
       requestId: c.req.header('x-request-id') || 'NONE',

@@ -96,10 +96,20 @@ export function useRealtime() {
         apiBase,
         rawApiBase,
         timestamp: new Date().toISOString(),
+        windowLocation: typeof window !== 'undefined' ? window.location.href : 'NONE',
+        origin: typeof window !== 'undefined' ? window.location.origin : 'NONE',
       });
 
       const es = new EventSource(sseUrl, { withCredentials: true });
       eventSourceRef.current = es;
+
+      // Handle connection state transitions
+      es.onopen = () => {
+        console.log('[Realtime] SSE Connection OPEN', {
+          url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
+          timestamp: new Date().toISOString(),
+        });
+      };
 
       // Handle incoming messages
       es.onmessage = (event) => {

@@ -146,7 +146,13 @@ apiClient.interceptors.request.use(
         urlPath: config.url,
         hasOrgId: !!finalOrgId,
         orgId: finalOrgId || 'MISSING',
-        orgIdSource: existingOrgId ? 'explicit' : (fromWorkspaceStore ? 'workspace-store' : fromAuthStore ? 'auth-store' : 'none'),
+        orgIdSource: existingOrgId 
+          ? 'explicit-header' 
+          : (fromWorkspaceStore ? 'workspace-store' : fromAuthStore ? 'auth-store' : 'none'),
+        storeValues: {
+          fromWorkspace: fromWorkspaceStore || 'null',
+          fromAuth: fromAuthStore || 'null',
+        },
         authStore: {
           isAuthenticated: authStoreState.isAuthenticated,
           hasUser: !!authStoreState.user,
