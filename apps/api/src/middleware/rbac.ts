@@ -26,39 +26,28 @@ export const requireOrgRole = (allowedRoles: string[]) => {
     }
 
     const contextOrgId = c.get('orgId');
+    const headerOrgId = c.req.header('X-Org-Id');
     const paramOrgId = c.req.param('orgId');
     const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
-    const headerOrgId = c.req.header('X-Org-Id');
     
-    // Priority: Context (already resolved by tenant middleware) > Header > Param > Query
+    // 🔒 CRITICAL: Strict Priority - Context (Tenant MW) > Header > Param > Query
     const orgId = contextOrgId || headerOrgId || paramOrgId || queryOrgId;
 
-    const source = contextOrgId
-      ? 'CONTEXT'
-      : headerOrgId
-        ? 'HEADER'
-        : paramOrgId
-          ? 'PARAM'
-          : queryOrgId
-            ? 'QUERY'
-            : 'NONE';
-
     if (contextOrgId) {
-      console.debug('[RBAC:Org] SUCCESS - Using pre-resolved Context OrgId:', { orgId: contextOrgId });
-    } else {
-      console.warn('[RBAC:Org] FALLBACK - Context OrgId missing. Resolving from other sources.', {
-        source,
-        resolvedOrgId: orgId || 'MISSING',
+      console.info('[RBAC:Org] SUCCESS - Using tenant-resolved Context OrgId:', { orgId: contextOrgId });
+    } else if (orgId) {
+      console.warn('[RBAC:Org] WARNING - Context OrgId missing but resolved from other source.', {
+        source: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
+        resolvedOrgId: orgId,
         path: c.req.path
       });
     }
 
-    console.info('[RBAC:Org] Role Check Metadata', {
+    console.info('[RBAC:Org] Role Check Trace', {
       path: c.req.path,
       method: c.req.method,
       requiredRoles: allowedRoles,
       resolvedOrgId: orgId || 'MISSING',
-      resolvedFrom: source,
       sources: {
         context: contextOrgId || 'MISSING',
         header: headerOrgId || 'MISSING',

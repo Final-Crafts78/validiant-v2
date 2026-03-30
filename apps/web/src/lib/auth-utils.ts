@@ -73,13 +73,15 @@ export function getCookieDomain(requestHostname?: string) {
     hostname.includes('validiant-v2-web');
 
   if (isProduction && isForceDomainMatch) {
-    console.debug('[Cookie:Utils] MATCHED .validiant.in domain', {
+    const finalDomain = '.validiant.in';
+    console.info('[Cookie:Utils] PRODUCTION DOMAIN APPLIED', {
       hostname,
       isProduction,
       reason: !hostname ? 'HOSTNAME_MISSING' : hostname === 'localhost' ? 'LOCALHOST_FALLBACK' : 'DOMAIN_MATCH',
-      finalDomain: '.validiant.in'
+      finalDomain,
+      timestamp: new Date().toISOString(),
     });
-    return '.validiant.in';
+    return finalDomain;
   }
 
   console.warn('[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH (Host-only cookie will be used)', {

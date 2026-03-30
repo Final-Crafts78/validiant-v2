@@ -688,12 +688,20 @@ export const createCustomRole = async (
     permissions: string[];
   }
 ) => {
+  // 🚩 CRITICAL FIX: Role table requires a unique 'key' (identifier)
+  // We generate it from the name (e.g. "Support Lead" -> "support_lead")
+  const key = data.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
   const [role] = await db
     .insert(orgRoles)
     .values({
       id: crypto.randomUUID(),
       organizationId,
       name: data.name,
+      key, // 👈 KEY ADDED
       description: data.description,
       permissions: data.permissions,
       isSystem: false,

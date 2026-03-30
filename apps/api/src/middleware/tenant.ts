@@ -72,7 +72,10 @@ export const tenantIsolation = async (
       jwtContext: user.organizationId || 'MISSING',
       rawXOrgIdHeader: c.req.header('X-Org-Id') || 'NULL',
     },
-    // Raw Hono query check (detects arrays vs strings)
+    contextState: {
+      hasOrgId: !!c.get('orgId'),
+      hasOrganizationId: !!c.get('organizationId'),
+    },
     rawQueries: {
       orgId: c.req.queries('orgId'),
       organizationId: c.req.queries('organizationId'),

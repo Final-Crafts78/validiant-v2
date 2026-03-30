@@ -125,27 +125,36 @@
 - **Root Cause**: The backend update logic throws an error if no fields have changed.
 - **Impact**: UI shows a "Server Error".
 
-#### 26. [Backend] RBAC Middleware Header Incompatibility (100% Confirmed - NEW)
+#### 26. [Backend] RBAC Middleware Header Incompatibility (100% Confirmed - RESOLVED)
 - **Data Evidence**: `cloudflarelogs.txt` (Line 580) shows `GET /api/v1/activity` returning `400 "Organization ID required"`. The Isolation Trace (Line 567) shows `resolvedOrgId` was correctly extracted from the `HEADER`.
 - **Root Cause**: `requireOrgRole` middleware in `rbac.ts` (Line 28) ONLY looks for `orgId` in route params or query strings. It COMPLELY IGNORES the `X-Org-Id` header and the `orgId` already resolved by the `tenantIsolation` middleware.
-- **Impact**: Critical routes like `activity` (audit logs) fail for all web clients that pass the ID via the standard `X-Org-Id` header.
+- **Resolution**: Updated `rbac.ts` to strictly prioritize the `orgId` already resolved by the `tenantIsolation` middleware in the Hono context.
+- **Impact**: Resolved 400 errors for all audit log/activity requests.
 
-#### 27. [Backend] Project Creation Validation failure (100% Confirmed - NEW)
+#### 27. [Backend] Project Creation Validation failure (100% Confirmed - RESOLVED)
 - **Data Evidence**: `cloudflarelogs.txt` (Line 345) shows `[Project:Routes] Validation FAILED (POST /) { errors: { key: [ 'Required' ] }, rawBody: { name: 'OnGrid', ... } }`.
 - **Root Cause**: The `createProjectSchema` in `packages/shared/src/schemas/project.schemas.ts` requires a `key` field (project key), but the frontend UI/API call is missing this field.
-- **Impact**: All project creation attempts from the web dashboard fail with a 400 Bad Request.
+- **Resolution**: Updated `apps/web/src/app/(workspace)/[orgSlug]/projects/page.tsx` to generate and send a project `key` (e.g., PRJ123) in the creation payload.
+- **Impact**: Users can now successfully create projects from the dashboard.
 
 #### 28. [Frontend] Real-time (SSE) Durable Object "Subdomain" Mismatch (Confirmed)
 - **Data Evidence**: HAR logs show requests to `api.validiant.in/api/v1/realtime/stream` but some Vercel logs show the app expecting `www.validiant.in`.
 - **Root Cause**: Hostname inconsistency between the frontend environment and the hardcoded SSE connection logic.
 - **Impact**: WebSocket/SSE handshake failures due to CORS or routing mismatch on the Cloudflare Edge.
 
-#### 29. [Backend] Role Creation Failure - Missing Key Field (Confirmed)
+#### 29. [Backend] Role Creation Failure - Missing Key Field (Confirmed - RESOLVED)
 - **Data Evidence**: Static analysis of `organization.service.ts` + `schema.ts`.
 - **Root Cause**: Database requires an `orgRoles.key` column (part of a unique constraint) but the `INSERT` statement in the service omits it.
-- **Impact**: All role creation attempts fail with a `NOT NULL violation` or silent failure in the DB.
+- **Resolution**: Updated `organization.service.ts` to automatically generate a unique URL-friendly `key` from the role name during creation.
+- **Impact**: Custom role creation is now functional.
 
-#### 30. [Backend] RBAC Middleware Logic Bypass (Confirmed)
+#### 30. [Backend] RBAC Middleware Logic Bypass (Confirmed - RESOLVED)
 - **Data Evidence**: Logs show `rbac.ts` ignoring the `orgId` already resolved by the `tenant` middleware, leading to re-resolution failures on scoped routes.
-- **Impact**: Core permission logic fails, causing 400/401 errors even when headers are present.
+- **Resolution**: Synchronized RBAC and Tenant middleware to share the same `orgId` context value, ensuring consistency across the request lifecycle.
+- **Impact**: Resolved permission bypass/failure issues on scoped API routes.
 
+#### 31. [Backend] Project Creation Validation failure (Missing Key) (100% Confirmed - RESOLVED)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 383) shows `[Project:Routes] Validation FAILED (POST /) { errors: { key: [ 'Required' ] }, rawBody: { name: 'OnGrid', ... } }`.
+- **Root Cause**: The request payload for `POST /api/v1/projects` is missing the required `key` field (project slug/identifier) defined in the backend project schema.
+- **Resolution**: Same as Finding #27.
+- **Impact**: Resolved 400 Bad Request on project storage.

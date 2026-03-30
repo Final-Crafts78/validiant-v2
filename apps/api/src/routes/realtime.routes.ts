@@ -35,51 +35,32 @@ router.get('/stream', async (c) => {
   // ELITE: For SSE, query parameter is the most reliable source as headers are complex for EventSource
   const orgId = queryOrgId || headerOrgId || userOrgId || cookieOrgId;
 
-  console.debug('[Realtime:MW] Stream Isolation Trace Detail', {
+  const resolutionMarker = queryOrgId ? 'FROM_QUERY' : headerOrgId ? 'FROM_HEADER' : userOrgId ? 'FROM_USER_CONTEXT' : cookieOrgId ? 'FROM_COOKIE' : 'NOT_RESOLVED';
+
+  logger.info('[Realtime:MW] Stream Isolation Decision', {
     path: c.req.path,
-    method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
-    sources: {
-      userContext: userOrgId || 'MISSING',
-      header: headerOrgId || 'MISSING',
-      cookie: cookieOrgId || 'MISSING',
+    decision: resolutionMarker,
+    details: {
       queryOrgId: c.req.query('orgId') || 'MISSING',
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
+      headerOrgId: headerOrgId || 'MISSING',
+      userOrgId: userOrgId || 'MISSING',
+      cookieOrgId: cookieOrgId || 'MISSING',
     },
-    // CRITICAL: Type check to see if Hono returns array for single query param
-    paramTypes: {
-      queryOrgIdType: typeof c.req.query('orgId'),
-      queryOrganizationIdType: typeof c.req.query('organizationId'),
-      rawOrgIdQueries: c.req.queries('orgId'),
-    },
-    headers: Object.fromEntries(
-      Object.entries(c.req.header()).map(([k, v]) => [
-        k, 
-        k.toLowerCase().includes('id') || k.toLowerCase().includes('token') || k.toLowerCase().includes('cookie') 
-          ? 'PRESENT (Masked)' 
-          : v
-      ])
-    ),
-    cookies: {
-      hasAccessToken: !!getCookie(c, 'accessToken'),
-      hasOrgId: !!getCookie(c, 'orgId'),
-      rawCookieNames: c.req.header('cookie') ? c.req.header('cookie')?.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
-    },
-    query: c.req.queries(),
     userId: user?.userId,
     timestamp: new Date().toISOString(),
   });
 
   if (!orgId) {
-    logger.warn('[Realtime] GET /stream - Missing organization context', {
+    logger.error('[Realtime] TERMINAL FAILURE - No organization context', {
       userId: user?.userId,
-      userContextOrgId: userOrgId || 'MISSING',
-      headerOrgId: headerOrgId || 'MISSING',
-      cookieOrgId: cookieOrgId || 'MISSING',
-      hasAccessToken: !!getCookie(c, 'accessToken'),
+      path: c.req.path,
+      attemptedDecision: resolutionMarker,
+      suggestion: 'Client must pass orgId in query string for SSE.',
     });
     throw new BadRequestError(
-      'Active organization context required for real-time stream. Ensure X-Org-Id header is present or organization is selected.'
+      'Active organization context required for real-time stream. Ensure orgId query param is present.'
     );
   }
 

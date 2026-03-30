@@ -381,9 +381,11 @@ apiClient.interceptors.response.use(
     if (statusCode === 400) {
       logger.error('[API:400] Bad Request / Validation Failure', {
         url: error.config?.url,
+        fullUrl: error.config?.url ? (error.config.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config.url) : 'UNKNOWN',
         status: statusCode,
         message: response.data?.message,
         errorBody: response.data,
+        validationErrors: response.data?.details || response.data?.error,
         headers: response.headers,
         timestamp: new Date().toISOString(),
       });

@@ -49,8 +49,17 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
     e.preventDefault();
     if (!name.trim()) return;
     try {
+      // 🚩 CRITICAL FIX: Backend requires a 'key' field for project creation
+      // We generate a short uppercase key from the name + random digits (e.g. "PRJ123")
+      const projectKey =
+        name
+          .substring(0, 3)
+          .toUpperCase()
+          .replace(/[^A-Z]/g, 'X') + Math.floor(100 + Math.random() * 900);
+
       const project = await createMutation.mutateAsync({
         name,
+        key: projectKey, // 👈 KEY ADDED
         description,
         priority,
       });

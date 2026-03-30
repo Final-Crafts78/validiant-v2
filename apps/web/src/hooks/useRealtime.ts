@@ -89,11 +89,11 @@ export function useRealtime() {
       const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
       const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
 
-      console.debug('[Realtime] CONNECTION START Trace', {
+      console.info('[Realtime] CONNECTION ATTEMPT', {
         activeOrgId,
         userId,
-        rawApiUrlEnv: process.env.NEXT_PUBLIC_API_URL || 'UNDEFINED',
-        rawApiBase,
+        tokenLength: accessToken.length,
+        tokenCapturedAt: new Date().toISOString(),
         normalizedApiBase: apiBase,
         finalSseUrl: sseUrl.replace(/token=[^&]+/, 'token=REDACTED'),
         timestamp: new Date().toISOString(),
@@ -105,8 +105,9 @@ export function useRealtime() {
 
       // Handle connection state transitions
       es.onopen = () => {
-        console.log('[Realtime] SSE Connection OPEN', {
+        console.log('[Realtime] SSE Connection OPEN (Success)', {
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
+          readyState: es.readyState,
           timestamp: new Date().toISOString(),
         });
       };
@@ -117,19 +118,24 @@ export function useRealtime() {
           const data: RealtimeMessage = JSON.parse(event.data);
           handleMessage(data, queryClient, userId);
         } catch (error) {
-          console.error('[Realtime] Failed to parse SSE message:', error);
+          console.error('[Realtime] Failed to parse SSE message:', error, {
+            rawData: event.data,
+            timestamp: new Date().toISOString(),
+          });
         }
       };
 
       es.onerror = (error) => {
-        console.error('[Realtime] SSE Error Detail', {
+        console.error('[Realtime] SSE CRITICAL ERROR', {
           readyState: es.readyState,
+          readyStateDesc: es.readyState === 0 ? 'CONNECTING' : es.readyState === 2 ? 'CLOSED' : 'UNKNOWN',
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
-          error,
+          errorType: error.type,
+          errorIsTrusted: error.isTrusted,
           // Capture as much from the error event as possible
           eventPhase: (error as any).eventPhase,
-          type: error.type,
           timestamp: new Date().toISOString(),
+          windowOnline: typeof window !== 'undefined' ? window.navigator.onLine : 'N/A',
         });
       };
 
