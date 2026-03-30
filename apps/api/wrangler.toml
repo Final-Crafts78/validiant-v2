@@ -3,12 +3,13 @@ main = "src/index.ts"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-# 1. Locks in your Custom Domain
+# 1. Custom Domain & Route Mapping (Synced with Remote)
 routes = [
-  { pattern = "api.validiant.in/*", zone_name = "validiant.in" }
+  { pattern = "api.validiant.in/*", zone_name = "validiant.in" },
+  { pattern = "api.validiant.in", custom_domain = true, zone_name = "validiant.in" }
 ]
 
-# 2. Locks in your Public Environment Variables
+# 2. Public Environment Variables (Synced with Dashboard)
 [vars]
 NODE_ENV = "production"
 FRONTEND_URL = "https://www.validiant.in"
@@ -20,7 +21,6 @@ GITHUB_REDIRECT_URI = "https://api.validiant.in/api/v1/oauth/github/callback"
 
 [observability]
 enabled = true
-
 
 [durable_objects]
 bindings = [

@@ -428,7 +428,7 @@ export const getCurrentUserAction = cache(
       // Get access token from cookies
       const accessToken = cookieStore.get('accessToken')?.value;
 
-      console.debug('[BFF:GetUser] Access token check', {
+      console.debug(`[BFF:GetUser] [${Date.now()}] EP-1: Access token check`, {
         found: !!accessToken,
         length: accessToken?.length,
         prefix: accessToken ? accessToken.substring(0, 30) : 'N/A',
@@ -447,7 +447,7 @@ export const getCurrentUserAction = cache(
         url: `${API_BASE_URL}/auth/me`,
       });
 
-      console.debug('[BFF:GetUser] API CALL START', {
+      console.debug(`[BFF:GetUser] [${Date.now()}] EP-2: API CALL START`, {
         url: `${API_BASE_URL}/auth/me`,
         tokenPrefix: accessToken.substring(0, 20),
       });
@@ -463,7 +463,7 @@ export const getCurrentUserAction = cache(
         cache: 'no-store', // Always fetch fresh data
       });
 
-      console.debug('[BFF:GetUser] API response metadata', {
+      console.debug(`[BFF:GetUser] [${Date.now()}] EP-3: API response received`, {
         status: response.status,
         statusText: response.statusText,
         ok: response.ok,
@@ -494,7 +494,7 @@ export const getCurrentUserAction = cache(
         data = await response.json();
       } catch (jsonError) {
         console.error(
-          '[getCurrentUserAction] Failed to parse JSON response - Clearing cookies',
+          `[BFF:GetUser] [${Date.now()}] EP-ERROR: JSON parse failed`,
           {
             jsonError,
             reason: 'JSON_PARSE_REASON',
@@ -549,7 +549,7 @@ export const getCurrentUserAction = cache(
       };
     } catch (error) {
       console.error(
-        '[getCurrentUserAction] Network or unexpected error:',
+        `[BFF:GetUser] [${Date.now()}] EP-CRITICAL: Unexpected crash`,
         error
       );
       return {
@@ -571,6 +571,7 @@ export const getCurrentUserAction = cache(
 export const getUserOrganizationsAction = cache(
   async (accessToken: string): Promise<Organization[]> => {
     try {
+      console.debug(`[BFF:GetOrgs] [${Date.now()}] EP-1: Fetching orgs`);
       const response = await fetch(`${API_BASE_URL}/organizations/my`, {
         method: 'GET',
         headers: {
@@ -583,15 +584,17 @@ export const getUserOrganizationsAction = cache(
       if (!response.ok) {
         const errorText = await response.text();
         console.error(
-          `[getUserOrganizationsAction] FETCH FAILED! Status: ${response.status}, Response: ${errorText}`
+          `[BFF:GetOrgs] [${Date.now()}] EP-ERROR: Status ${response.status}, Response: ${errorText}`
         );
         return [];
       }
 
+      console.debug(`[BFF:GetOrgs] [${Date.now()}] EP-2: Parsing results`);
       const data = await response.json();
+      console.debug(`[BFF:GetOrgs] [${Date.now()}] EP-3: Success, count: ${data?.data?.organizations?.length || 0}`);
       return data?.data?.organizations ?? [];
     } catch (error) {
-      console.error('[getUserOrganizationsAction] CRASH fetching orgs:', error);
+      console.error(`[BFF:GetOrgs] [${Date.now()}] EP-CRITICAL: Crash`, error);
       return [];
     }
   }

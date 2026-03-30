@@ -117,19 +117,54 @@ export async function middleware(request: NextRequest) {
       timestamp: new Date().toISOString() 
     });
 
-    // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping)
-    const rawCookieHeader = request.headers.get('cookie');
-    const cookieScan = rawCookieHeader 
-      ? rawCookieHeader.split(';').map(c => c.split('=')[0]?.trim()) 
-      : [];
+    // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping or Oversized Headers)
+    let cookieScan: string[] = [];
+    let rawCookieHeader: string | null = null;
     
-    // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-0.1: Raw Cookie Audit`, {
-      hasHeader: !!rawCookieHeader,
-      headerLength: rawCookieHeader?.length || 0,
-      cookieNames: cookieScan,
-      timestamp: new Date().toISOString()
-    });
+    try {
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-0.1.0: Accessing headers.get('cookie')`);
+      rawCookieHeader = request.headers.get('cookie');
+      
+      const headerLength = rawCookieHeader?.length || 0;
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-0.1.1: Header retrieved`, {
+        hasHeader: !!rawCookieHeader,
+        headerLength
+      });
+
+      if (rawCookieHeader) {
+        // eslint-disable-next-line no-console
+        console.log(`[MW:Edge] [${requestId}] EP-0.1.2: Starting split parsing`);
+        
+        // Use a safe split limit to avoid regex DOS or memory issues in Edge Runtime
+        const parts = rawCookieHeader.split(';').slice(0, 50); 
+        
+        cookieScan = parts.map(c => {
+          try {
+            return c.split('=')[0]?.trim() || 'MALFORMED';
+          } catch (e) {
+            return 'ERROR_PARSING_PART';
+          }
+        });
+        
+        // eslint-disable-next-line no-console
+        console.log(`[MW:Edge] [${requestId}] EP-0.1.3: Split parsing success`, {
+          cookieCount: parts.length,
+          cookieNames: cookieScan
+        });
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(`[MW:Edge] [${requestId}] EP-0.1.2: NO_COOKIE_HEADER`);
+      }
+    } catch (auditErr: any) {
+      // eslint-disable-next-line no-console
+      console.error(`[MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED`, {
+        message: auditErr.message,
+        stack: auditErr.stack
+      });
+    }
+
 
     // 1. SAFE COOKIE ACCESS (Finding 41 Hardening)
     const accessToken = getSafeCookie(request, 'accessToken', requestId);
