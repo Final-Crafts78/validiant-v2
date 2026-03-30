@@ -4,47 +4,39 @@ PS C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api> npx wra
 ─────────────────────────────────────────────
 Successfully created tail, expires at 2026-03-30T23:10:59Z
 Connected to validiant-api, waiting for logs...
-GET https://api.validiant.in/api/v1/oauth/google - Ok @ 30/3/2026, 10:41:16 pm
+GET https://api.validiant.in/api/v1/oauth/google - Ok @ 30/3/2026, 10:54:02 pm
   (log) <-- GET /api/v1/oauth/google
-  (debug) 2026-03-30T17:11:16.377Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-  (debug) 2026-03-30T17:11:17.375Z [DEBUG] [OAuth:Init] Generated Auth URL: https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=452153707666-jm3bq2t7mrdsdmam0ecmn1grn34j4uga.apps.googleusercontent.com&state=104d6fb9-c05d-42c9-bcb5-cb315be477a9&scope=openid+profile+email&redirect_uri=https%3A%2F%2Fapi.validiant.in%2Fapi%2Fv1%2Foauth%2Fgoogle%2Fcallback&code_challenge=b2TzeqvOi-P9a6AxRFtbRWeINzn0EIpYK57u-1hvq9E&code_challenge_method=S256
-  (debug) 2026-03-30T17:11:17.375Z [DEBUG] [OAuth:Init] Generated State: 104d6fb9-c05d-42c9-bcb5-cb315be477a9
-  (debug) 2026-03-30T17:11:17.375Z [DEBUG] [OAuth:Init] oauth_state cookie set in context
-  (log) 2026-03-30T17:11:17.375Z [INFO] Google OAuth initiated {"state":"104d6fb9-c05d-42c9-bcb5-cb315be477a9"}
-  (log) --> GET /api/v1/oauth/google 302 998ms
-GET https://api.validiant.in/api/v1/oauth/google/callback?state=REDACTED&iss=https%3A%2F%2Faccounts.google.com&code=4%REDACTED&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=2&prompt=none - Ok @ 30/3/2026, 10:41:22 pm
-  (log) <-- GET /api/v1/oauth/google/callback?state=104d6fb9-c05d-42c9-bcb5-cb315be477a9&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E-y-Ckl_YUkEj95l2t2m5bm6wSRJxSwUj8dmu2CpP3QeTpPicZMlpv9ZqCkgqEJhA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=2&prompt=none
-  (debug) 2026-03-30T17:11:22.265Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-  (debug) 2026-03-30T17:11:22.528Z [DEBUG] [OAuth:Callback] Processing Google callback {"hasCode":true,"urlState":"104d6fb9-c05d-42c9-bcb5-cb315be477a9","cookieState":"104d6fb9-c05d-42c9-bcb5-cb315be477a9","rawCookieHeader":"oauth_state=104d6fb9-c05d-42c9-bcb5-cb315be477a9"}
-  (debug) 2026-03-30T17:11:22.917Z [DEBUG] [OAuth:Service] PKCE Data Lookup {"state":"104d6fb9-c05d-42c9-bcb5-cb315be477a9","found":true}
-  (debug) 2026-03-30T17:11:23.527Z [DEBUG] [OAuth:Service] Google tokens received {"hasAccessToken":true,"hasRefreshToken":false}
-  (debug) 2026-03-30T17:11:23.621Z [DEBUG] [OAuth:Service] Google profile fetched {"email":"mansoorahamedsaaho@gmail.com","id":"111030606188255457804","emailVerified":true}
+  (debug) 2026-03-30T17:24:02.520Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (debug) 2026-03-30T17:24:03.602Z [DEBUG] [OAuth:Init] Generated Auth URL: https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=452153707666-jm3bq2t7mrdsdmam0ecmn1grn34j4uga.apps.googleusercontent.com&state=d3491433-d2ba-4717-9701-eefcef1967d4&scope=openid+profile+email&redirect_uri=https%3A%2F%2Fapi.validiant.in%2Fapi%2Fv1%2Foauth%2Fgoogle%2Fcallback&code_challenge=f0vaO_atCJBN0apXoY0eSQb3B8cwoBvl72FtBWGmL-w&code_challenge_method=S256
+  (debug) 2026-03-30T17:24:03.602Z [DEBUG] [OAuth:Init] Generated State: d3491433-d2ba-4717-9701-eefcef1967d4
+  (debug) 2026-03-30T17:24:03.602Z [DEBUG] [OAuth:Init] oauth_state cookie set in context
+  (log) 2026-03-30T17:24:03.602Z [INFO] Google OAuth initiated {"state":"d3491433-d2ba-4717-9701-eefcef1967d4"}
+  (log) --> GET /api/v1/oauth/google 302 1s
+GET https://api.validiant.in/api/v1/oauth/google/callback?state=REDACTED&iss=https%3A%2F%2Faccounts.google.com&code=4%REDACTED&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none - Ok @ 30/3/2026, 10:54:08 pm
+  (log) <-- GET /api/v1/oauth/google/callback?state=d3491433-d2ba-4717-9701-eefcef1967d4&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_mNA8SY7K4IB0xiOn59hayG4DmlTY2lHax8StyHCteAQ_Z0WsHEJ8ZQhMLBWyXuA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none
+  (debug) 2026-03-30T17:24:08.329Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (debug) 2026-03-30T17:24:08.592Z [DEBUG] [OAuth:Callback] Processing Google callback {"hasCode":true,"urlState":"d3491433-d2ba-4717-9701-eefcef1967d4","cookieState":"d3491433-d2ba-4717-9701-eefcef1967d4","rawCookieHeader":"oauth_state=d3491433-d2ba-4717-9701-eefcef1967d4"}
+  (debug) 2026-03-30T17:24:08.854Z [DEBUG] [OAuth:Service] PKCE Data Lookup {"state":"d3491433-d2ba-4717-9701-eefcef1967d4","found":true}
+  (debug) 2026-03-30T17:24:09.468Z [DEBUG] [OAuth:Service] Google tokens received {"hasAccessToken":true,"hasRefreshToken":false}
+  (debug) 2026-03-30T17:24:09.567Z [DEBUG] [OAuth:Service] Google profile fetched {"email":"mansoorahamedsaaho@gmail.com","id":"111030606188255457804","emailVerified":true}
   (log) [DB] Lazy-loaded Neon connection initialized
-  (log) 2026-03-30T17:11:24.862Z [INFO] User logged in via OAuth {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","provider":"google","email":"mansoorahamedsaaho@gmail.com"}
-  (debug) 2026-03-30T17:11:24.862Z [DEBUG] [OAuth:Callback] handleGoogleCallback success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","isNewUser":false}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [OAuth Callback] Tokens generated {"provider":"google","userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false,"accessTokenPrefix":"eyJhbGciOiJIUzI1NiJ9...","accessTokenLength":375,"cookieOptions":{"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600},"destination":"dashboard"}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [OAuth:Callback] Setting accessToken cookie {"domain":".validiant.in","maxAge":3600,"sameSite":"Lax"}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
-  (log) 2026-03-30T17:11:25.125Z [INFO] Google OAuth successful {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false}
-  (debug) 2026-03-30T17:11:25.125Z [DEBUG] [OAuth:Callback] FINAL REDIRECT {"destination":"https://www.validiant.in/dashboard","setCookieHeaders":["oauth_state=; Max-Age=0; Path=/","accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjFmZGNhNDRhLTYwYWQtNDY1YS1iZGQyLTgyNGZjY2Y3MzQ4ZSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDg5MDY4NSwiZXhwIjoxNzc0ODkxNTg1fQ.5FIt_aSLF_5rs86Gq4LWTVX551P-BJ7CzhPvsRQ587A; Max-Age=3600; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiIxZmRjYTQ0YS02MGFkLTQ2NWEtYmRkMi04MjRmY2NmNzM0OGUiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDg5MDY4NSwiZXhwIjoxNzc1NDk1NDg1fQ.fhNsq8Sy4m2DknOOOEERTEDDzjlmmy96X1icM8n_gU0; Max-Age=604800; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; Max-Age=604800; Domain=.validiant.in; Path=/; Secure; SameSite=Lax"]}
-  (log) --> GET /api/v1/oauth/google/callback?state=104d6fb9-c05d-42c9-bcb5-cb315be477a9&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E-y-Ckl_YUkEj95l2t2m5bm6wSRJxSwUj8dmu2CpP3QeTpPicZMlpv9ZqCkgqEJhA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=2&prompt=none 302 3s
-GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 10:41:26 pm
-  (log) <-- GET /api/v1/organizations/my
-  (debug) 2026-03-30T17:11:26.910Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-  (log) 2026-03-30T17:11:27.044Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","host":"api.validiant.in","cfRay":"9e48bbc7cb1e43e2","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-  (debug) 2026-03-30T17:11:27.044Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-  (log) 2026-03-30T17:11:27.044Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774891585,"expiresInSec":898,"path":"/api/v1/organizations/my"}
-  (log) [DB] Lazy-loaded Neon connection initialized
-  (log) --> GET /api/v1/organizations/my 200 527ms
-GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 10:41:59 pm
+  (log) 2026-03-30T17:24:10.399Z [INFO] User logged in via OAuth {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","provider":"google","email":"mansoorahamedsaaho@gmail.com"}
+  (debug) 2026-03-30T17:24:10.399Z [DEBUG] [OAuth:Callback] handleGoogleCallback success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","isNewUser":false}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [OAuth Callback] Tokens generated {"provider":"google","userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false,"accessTokenPrefix":"eyJhbGciOiJIUzI1NiJ9...","accessTokenLength":375,"cookieOptions":{"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600},"destination":"dashboard"}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":3600}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [OAuth:Callback] Setting accessToken cookie {"domain":".validiant.in","maxAge":3600,"sameSite":"Lax"}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [Cookie:Options] Generated options {"httpOnly":true,"secure":true,"sameSite":"Lax","domain":".validiant.in","path":"/","maxAge":604800}
+  (log) 2026-03-30T17:24:10.663Z [INFO] Google OAuth successful {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","isNewUser":false}
+  (debug) 2026-03-30T17:24:10.663Z [DEBUG] [OAuth:Callback] FINAL REDIRECT {"destination":"https://www.validiant.in/dashboard","setCookieHeaders":["oauth_state=; Max-Age=0; Path=/","accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImI1ZjU2MTJkLTZiNTMtNGFmOS05M2RjLWNhMjJhODEzOGE4MCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDg5MTQ1MCwiZXhwIjoxNzc0ODkyMzUwfQ.7ABXpbHiylHl190nueUUPOVYccZF9ulgP581f-I-joY; Max-Age=3600; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJiNWY1NjEyZC02YjUzLTRhZjktOTNkYy1jYTIyYTgxMzhhODAiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NDg5MTQ1MCwiZXhwIjoxNzc1NDk2MjUwfQ.YiI9WxvkhknhLqXbY6FGFuY7D4lkQ6c3WGJ-viU2L8Y; Max-Age=604800; Domain=.validiant.in; Path=/; HttpOnly; Secure; SameSite=Lax","user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; Max-Age=604800; Domain=.validiant.in; Path=/; Secure; SameSite=Lax"]}
+  (log) --> GET /api/v1/oauth/google/callback?state=d3491433-d2ba-4717-9701-eefcef1967d4&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0Aci98E_mNA8SY7K4IB0xiOn59hayG4DmlTY2lHax8StyHCteAQ_Z0WsHEJ8ZQhMLBWyXuA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=2&prompt=none 302 2s
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 10:54:11 pm
   (log) <-- GET /api/v1/auth/me
-  (debug) 2026-03-30T17:12:00.147Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
-  (log) 2026-03-30T17:12:00.203Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","host":"api.validiant.in","cfRay":"9e48bbc7b9ac3f02","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
-  (debug) 2026-03-30T17:12:00.203Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
-  (log) 2026-03-30T17:12:00.203Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774891585,"expiresInSec":865,"path":"/api/v1/auth/me"}
+  (debug) 2026-03-30T17:24:11.622Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T17:24:11.723Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","host":"api.validiant.in","cfRay":"9e48ce73ec19ae70","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T17:24:11.723Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (log) 2026-03-30T17:24:11.723Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774892350,"expiresInSec":899,"path":"/api/v1/auth/me"}
   (log) [getMe] Called {
   hasUser: true,
   userId: '049577df-4b28-409b-81e7-1f9a51c4a2ca',
@@ -56,4 +48,12 @@ GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 10:41:59 pm
   found: true,
   email: 'mansoorahamedsaaho@gmail.com'
 }
-  (log) --> GET /api/v1/auth/me 200 478ms
+  (log) --> GET /api/v1/auth/me 200 519ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 10:54:11 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T17:24:11.746Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T17:24:11.823Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","host":"api.validiant.in","cfRay":"9e48ce73dfdae643","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T17:24:11.823Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (log) 2026-03-30T17:24:11.823Z [INFO] [Auth:MW] Success {"userId":"049577df-4b28-409b-81e7-1f9a51c4a2ca","email":"mansoorahamedsaaho@gmail.com","permissions":0,"exp":1774892350,"expiresInSec":899,"path":"/api/v1/organizations/my"}
+  (log) [DB] Lazy-loaded Neon connection initialized
+  (log) --> GET /api/v1/organizations/my 200 141ms

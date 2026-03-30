@@ -206,19 +206,21 @@
 - **Impact**: Greatly improved visibility for future production troubleshooting.
 
 #### 41. [Frontend/Edge] Middleware 500 Internal Server Error (CRITICAL - DATA CONFIRMED)
-- **Data Evidence**: `vercellogs.txt` (Line 13) shows Request ID `7xgtb-...` reaching `EP-1: Middleware started` but **failing before reaching EP-0.1**.
-- **Crash Point**: The code crashes between Line 113 (`console.log(EP-1)`) and Line 127 (`console.log(EP-0.1)`) in `middleware.ts`.
-- **Root Cause**: The Next.js Edge Runtime `request.headers.get('cookie')` or the manual `split(';').map(...)` logic is throwing an unhandled exception or triggering a runtime termination, likely due to header size or malformed characters.
-- **Action Plan**: Wrap the entire section in a dedicated try-catch and log the exact length of the raw cookie header.
+- **Data Evidence**: `vercellogs.txt` (Line 13) shows Request ID `qh7cw-...` reaching `EP-1: Middleware started` but **failing before reaching EP-0.1**.
+- **Crash Point**: The code crashes between Line 113 (`console.log(EP-1)`) and Line 126 (`console.log(EP-0.1.0)`) in `middleware.ts`.
+- **Root Cause**: Next.js Edge Runtime crash. Suspected causes:
+    1. **Serialization Error**: The large `envAudit` object in `EP-1`'s `console.log` could be causing a runtime termination during serialization.
+    2. **Catch-Block Deficiency**: The global `catch` block (Line 356) does not return a `NextResponse`. If an error occurs (e.g., in a background task or during header access), it returns `undefined`, which Next.js translates to a 500.
+    3. **Header Access Termination**: Accessing `request.headers.get('cookie')` or `request.cookies.get()` might be triggering a runtime exception that is not being caught or logged correctly before the function terminates.
+- **Action Plan**:
+    1. Re-wrap the entire middleware logic in a more robust safety net that *always* returns a `NextResponse.next()` on failure to avoid 500s.
+    2. Split the `EP-1` log into smaller, primitive-only logs to avoid serialization crashes.
+    3. Add `EP-1.1`, `EP-1.2` etc. to isolate the exact line between 113 and 126.
 
-#### 42. [Frontend] Missing JWT_SECRET in Vercel (100% CONFIRMED - RESOLVED)
-- **Data Evidence**: `vercellogs.txt` (Line 13) shows `secretFP: 'ecca42cc'` and `JWT_SECRET: 'PRESENT'`.
-- **Resolution**: The `JWT_SECRET` environment variable has been successfully injected into the Vercel production environment.
-- **Impact**: Server-side JWT verification logic is now functional, though blocked by Finding #41.
-
-#### 43. [Frontend] Dashboard Layout SSR 500 Error (DATA CONFIRMED)
-- **Data Evidence**: `vercellogs.txt` (Line 13) shows `[Dashboard:Layout] Organizations result` log with `count: 1` successfully fetched in previous traces, but the request terminates with a `500`.
-- **Status**: Currently masked by Finding #41 (Middleware crash). Needs verification once #41 is bypassed.
-- **Next Step**: Add granular instrumentation to `auth.actions.ts` to isolate the SSR crash point.
+#### 44. [Frontend] Dashboard SSR Redirection Failure (Pending Middleware Fix)
+- **Data Evidence**: `apps/web/src/app/dashboard/page.tsx` (Line 16) performs an asynchronous `fetch` for organizations before redirecting.
+- **Status**: Likely currently masked by the middleware crash (#41).
+- **Risk**: If the API is unreachable or returns a non-200 response, the `DashboardRedirectPage` might be triggering a secondary failure or an unintended redirect to `/onboarding`.
+- **Action Plan**: Add granular instrumentation to the `fetch` call and the JSON parsing block in the dashboard page component.
 
 

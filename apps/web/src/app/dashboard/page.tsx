@@ -28,6 +28,17 @@ export default async function DashboardRedirectPage() {
   const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
   const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`;
 
+  // 🔍 HIGH-VISIBILITY SSR INSTRUMENTATION
+  const requestId = `dash-redir-${Math.random().toString(36).substring(7)}`;
+  // eslint-disable-next-line no-console
+  console.log(`[Dashboard:Redirect] [${requestId}] Starting fetch for organizations`, { 
+    baseUrl, 
+    apiUrl,
+    hasToken: !!accessToken?.value,
+    tokenPrefix: accessToken?.value?.substring(0, 10),
+    timestamp: new Date().toISOString()
+  });
+
   try {
     const response = await fetch(apiUrl, {
       method: 'GET',
@@ -38,18 +49,39 @@ export default async function DashboardRedirectPage() {
       cache: 'no-store',
     });
 
+    // eslint-disable-next-line no-console
+    console.log(`[Dashboard:Redirect] [${requestId}] API Response received`, {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      timestamp: new Date().toISOString()
+    });
+
     if (!response.ok) {
-      logger.error(`[Dashboard Redirect] API returned ${response.status}`);
+      logger.error(`[Dashboard:Redirect] [${requestId}] API returned ${response.status}`);
+      // eslint-disable-next-line no-console
+      console.warn(`[Dashboard:Redirect] [${requestId}] Redirection to ONBOARDING due to non-OK response`);
       redirect(ROUTES.ONBOARDING);
     }
 
     const json = await response.json();
+    
+    // eslint-disable-next-line no-console
+    console.log(`[Dashboard:Redirect] [${requestId}] JSON parsed`, {
+      hasData: !!json?.data,
+      orgCount: json?.data?.organizations?.length || 0,
+      firstOrgSlug: json?.data?.organizations?.[0]?.slug,
+      timestamp: new Date().toISOString()
+    });
+
     const organizations = json?.data?.organizations;
 
     if (organizations && organizations.length > 0) {
       const activeOrg = organizations[0];
       if (activeOrg?.slug) {
-        logger.log(`[Dashboard Redirect] Redirecting to ${activeOrg.slug}`);
+        logger.log(`[Dashboard:Redirect] [${requestId}] Redirecting to ${activeOrg.slug}`);
+        // eslint-disable-next-line no-console
+        console.log(`[Dashboard:Redirect] [${requestId}] FINAL REDIRECT to /${activeOrg.slug}`);
         redirect(ROUTES.DASHBOARD(activeOrg.slug));
       }
     }
@@ -57,7 +89,13 @@ export default async function DashboardRedirectPage() {
     if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
       throw error;
     }
-    logger.error('[Dashboard Redirect] Failed to fetch organizations:', error);
+    // eslint-disable-next-line no-console
+    console.error(`[Dashboard:Redirect] [${requestId}] CRITICAL FETCH ERROR`, {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+    logger.error('[Dashboard:Redirect] Failed to fetch organizations:', error);
   }
 
   // Fallback: no organizations found or error occurred

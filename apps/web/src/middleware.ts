@@ -37,7 +37,7 @@ function matchesRoute(pathname: string, routes: string[]): boolean {
 function parseCookiesRaw(cookieHeader: string | null): Record<string, string> {
   if (!cookieHeader) return {};
   const cookies: Record<string, string> = {};
-  cookieHeader.split(';').forEach(cookie => {
+  cookieHeader.split(';').forEach((cookie) => {
     const [name, ...rest] = cookie.split('=');
     if (name && rest.length > 0) {
       cookies[name.trim()] = rest.join('=').trim();
@@ -49,7 +49,11 @@ function parseCookiesRaw(cookieHeader: string | null): Record<string, string> {
 /**
  * Get cookie safely with fallback (Finding 41)
  */
-function getSafeCookie(request: NextRequest, name: string, requestId: string): { value: string } | undefined {
+function getSafeCookie(
+  request: NextRequest,
+  name: string,
+  requestId: string
+): { value: string } | undefined {
   try {
     // eslint-disable-next-line no-console
     console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Attempting native cookies.get()`);
@@ -66,12 +70,15 @@ function getSafeCookie(request: NextRequest, name: string, requestId: string): {
     }
     // eslint-disable-next-line no-console
     console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Native MISSING`);
-  } catch (e: any) {
-    // eslint-disable-next-line no-console
-    console.warn(`[MW:Edge] [${requestId}] EP-1.${name}: Native CRASHED - Falling back to raw`, {
-      error: e.message
-    });
-  }
+    } catch (e: unknown) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[MW:Edge] [${requestId}] EP-1.${name}: Native CRASHED - Falling back to raw`,
+        {
+          error: e instanceof Error ? e.message : String(e),
+        }
+      );
+    }
 
   // Fallback to manual header parsing
   const rawHeader = request.headers.get('cookie');
@@ -110,12 +117,11 @@ export async function middleware(request: NextRequest) {
     const secretFP = await getSecretFingerprint();
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1: Middleware started`, { 
-      pathname, 
-      secretFP,
-      envAudit,
-      timestamp: new Date().toISOString() 
-    });
+    console.log(`[MW:Edge] [${requestId}] EP-1.0: Middleware started`, { pathname, timestamp: new Date().toISOString() });
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-1.1: Secret Fingerprint`, { secretFP });
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-1.2: Env Audit`, envAudit);
 
     // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping or Oversized Headers)
     let cookieScan: string[] = [];
@@ -157,12 +163,15 @@ export async function middleware(request: NextRequest) {
         // eslint-disable-next-line no-console
         console.log(`[MW:Edge] [${requestId}] EP-0.1.2: NO_COOKIE_HEADER`);
       }
-    } catch (auditErr: any) {
+    } catch (auditErr: unknown) {
       // eslint-disable-next-line no-console
-      console.error(`[MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED`, {
-        message: auditErr.message,
-        stack: auditErr.stack
-      });
+      console.error(
+        `[MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED`,
+        {
+          message: auditErr instanceof Error ? auditErr.message : String(auditErr),
+          stack: auditErr instanceof Error ? auditErr.stack : undefined,
+        }
+      );
     }
 
 
@@ -362,9 +371,10 @@ export async function middleware(request: NextRequest) {
       timestamp: new Date().toISOString()
     });
     
-    // In case of error in middleware, we should probably allow the request 
-    // to fall through to the page so Next.js can handle the error, 
-    // or return a safe redirect.
+    // CRITICAL FIX (Finding 41 & 44): Never return undefined from middleware.
+    // In case of error in the middleware itself, we allow the request 
+    // to fall through to the page as a safety measure.
+    return NextResponse.next();
   }
 }
 
