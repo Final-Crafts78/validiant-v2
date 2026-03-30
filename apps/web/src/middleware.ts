@@ -13,6 +13,17 @@ import { getSecretFingerprint } from './lib/auth-utils';
  * Protected route patterns
  * These routes require authentication
  */
+/**
+ * Cookie metadata summary
+ */
+interface CookieSummary {
+  name: string;
+  valueLength: number;
+  valuePrefix: string;
+  isDeleted: boolean;
+  isNull: boolean;
+}
+
 const PROTECTED_ROUTES = [
   '/dashboard/onboarding',
   '/organizations',
@@ -56,42 +67,58 @@ function getSafeCookie(
 ): { value: string } | undefined {
   try {
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Attempting native cookies.get()`);
+    console.debug(`
+      [MW:Edge] [${requestId}] EP-1.${name}: Attempting native cookies.get()
+    `);
     // Try native parser first
     const cookie = request.cookies.get(name);
     if (cookie) {
       // eslint-disable-next-line no-console
-      console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Native success`, { 
-        name, 
-        length: cookie.value?.length,
-        prefix: cookie.value?.substring(0, 10)
-      });
+      console.debug(
+        `
+        [MW:Edge] [${requestId}] EP-1.${name}: Native success
+      `,
+        {
+          name,
+          length: cookie.value?.length,
+          prefix: cookie.value?.substring(0, 10),
+        }
+      );
       return cookie;
     }
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Native MISSING`);
-    } catch (e: unknown) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[MW:Edge] [${requestId}] EP-1.${name}: Native CRASHED - Falling back to raw`,
-        {
-          error: e instanceof Error ? e.message : String(e),
-        }
-      );
-    }
+    console.debug(`
+      [MW:Edge] [${requestId}] EP-1.${name}: Native MISSING
+    `);
+  } catch (e: unknown) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `
+        [MW:Edge] [${requestId}] EP-1.${name}: Native CRASHED - Falling back to raw
+      `,
+      {
+        error: e instanceof Error ? e.message : String(e),
+      }
+    );
+  }
 
   // Fallback to manual header parsing
   const rawHeader = request.headers.get('cookie');
   const parsed = parseCookiesRaw(rawHeader);
   const val = parsed[name];
-  
+
   if (val) {
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: RAW FALLBACK SUCCESS`, { 
-      name, 
-      length: val.length,
-      prefix: val.substring(0, 10)
-    });
+    console.debug(
+      `
+      [MW:Edge] [${requestId}] EP-1.${name}: RAW FALLBACK SUCCESS
+    `,
+      {
+        name,
+        length: val.length,
+        prefix: val.substring(0, 10),
+      }
+    );
     return { value: val };
   }
 
@@ -103,77 +130,112 @@ function getSafeCookie(
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const requestId = request.headers.get('x-vercel-id') || 'local-' + Math.random().toString(36).substring(7);
+  const requestId =
+    request.headers.get('x-vercel-id') ||
+    'local-' + Math.random().toString(36).substring(7);
 
   try {
     // 0. ENVIRONMENT AUDIT (Finding 42)
-    const envAudit = {
-      JWT_SECRET: process.env.JWT_SECRET ? 'PRESENT' : 'MISSING',
-      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'MISSING',
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
-      NODE_ENV: process.env.NODE_ENV,
-    };
+    // eslint-disable-next-line no-console
+    console.log(`
+      [MW:Edge] [${requestId}] EP-1.0.1: Environment audit starting
+    `);
 
+    const jwtPresent = !!process.env.JWT_SECRET;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'MISSING';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'MISSING';
+    const nodeEnv = process.env.NODE_ENV || 'MISSING';
+
+    // eslint-disable-next-line no-console
+    console.log(`
+      [MW:Edge] [${requestId}] EP-1.0.2: ENV PRIMITIVES - jwtPresent=${jwtPresent}, apiUrl=${apiUrl}, appUrl=${appUrl}, nodeEnv=${nodeEnv}
+    `);
+
+    // eslint-disable-next-line no-console
+    console.log(`
+      [MW:Edge] [${requestId}] EP-1.0.3: Calling getSecretFingerprint()
+    `);
     const secretFP = await getSecretFingerprint();
+    // eslint-disable-next-line no-console
+    console.log(`
+      [MW:Edge] [${requestId}] EP-1.0.4: FP=${secretFP}
+    `);
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1.0: Middleware started`, { pathname, timestamp: new Date().toISOString() });
+    console.log(
+      `
+      [MW:Edge] [${requestId}] EP-1.0: Middleware started
+    `,
+      { pathname, timestamp: new Date().toISOString() }
+    );
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1.1: Secret Fingerprint`, { secretFP });
-    // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1.2: Env Audit`, envAudit);
+    console.log(`
+      [MW:Edge] [${requestId}] EP-1.1: Secret Fingerprint confirm: ${secretFP}
+    `);
 
     // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping or Oversized Headers)
     let cookieScan: string[] = [];
     let rawCookieHeader: string | null = null;
-    
+
     try {
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-0.1.0: Accessing headers.get('cookie')`);
+      console.log(`
+        [MW:Edge] [${requestId}] EP-0.1.0: Accessing headers.get('cookie')
+      `);
       rawCookieHeader = request.headers.get('cookie');
-      
+
       const headerLength = rawCookieHeader?.length || 0;
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-0.1.1: Header retrieved`, {
-        hasHeader: !!rawCookieHeader,
-        headerLength
-      });
+      console.log(`
+        [MW:Edge] [${requestId}] EP-0.1.1: Header retrieved - length=${headerLength}
+      `);
 
       if (rawCookieHeader) {
         // eslint-disable-next-line no-console
-        console.log(`[MW:Edge] [${requestId}] EP-0.1.2: Starting split parsing`);
-        
+        console.log(`
+          [MW:Edge] [${requestId}] EP-0.1.2: Starting split parsing
+        `);
+
         // Use a safe split limit to avoid regex DOS or memory issues in Edge Runtime
-        const parts = rawCookieHeader.split(';').slice(0, 50); 
-        
-        cookieScan = parts.map(c => {
+        const parts = rawCookieHeader.split(';').slice(0, 50);
+
+        cookieScan = parts.map((c) => {
           try {
             return c.split('=')[0]?.trim() || 'MALFORMED';
           } catch (e) {
             return 'ERROR_PARSING_PART';
           }
         });
-        
+
         // eslint-disable-next-line no-console
-        console.log(`[MW:Edge] [${requestId}] EP-0.1.3: Split parsing success`, {
-          cookieCount: parts.length,
-          cookieNames: cookieScan
-        });
+        console.log(
+          `
+          [MW:Edge] [${requestId}] EP-0.1.3: Split parsing success
+        `,
+          {
+            cookieCount: parts.length,
+            cookieNames: cookieScan,
+          }
+        );
       } else {
         // eslint-disable-next-line no-console
-        console.log(`[MW:Edge] [${requestId}] EP-0.1.2: NO_COOKIE_HEADER`);
+        console.log(`
+          [MW:Edge] [${requestId}] EP-0.1.2: NO_COOKIE_HEADER
+        `);
       }
     } catch (auditErr: unknown) {
       // eslint-disable-next-line no-console
       console.error(
-        `[MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED`,
+        `
+        [MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED
+      `,
         {
-          message: auditErr instanceof Error ? auditErr.message : String(auditErr),
+          message:
+            auditErr instanceof Error ? auditErr.message : String(auditErr),
           stack: auditErr instanceof Error ? auditErr.stack : undefined,
         }
       );
     }
-
 
     // 1. SAFE COOKIE ACCESS (Finding 41 Hardening)
     const accessToken = getSafeCookie(request, 'accessToken', requestId);
@@ -181,12 +243,17 @@ export async function middleware(request: NextRequest) {
     const userId = getSafeCookie(request, 'user_id', requestId);
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies retrieved`, {
-      hasAccess: !!accessToken,
-      hasRefresh: !!refreshToken,
-      hasUser: !!userId,
-      timestamp: new Date().toISOString()
-    });
+    console.log(
+      `
+      [MW:Edge] [${requestId}] EP-2: Single cookies retrieved
+    `,
+      {
+        hasAccess: !!accessToken,
+        hasRefresh: !!refreshToken,
+        hasUser: !!userId,
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // Check if route is protected
     const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
@@ -194,25 +261,34 @@ export async function middleware(request: NextRequest) {
     const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] EP-3: Routes matched`, {
-      isProtected: isProtectedRoute,
-      isAuth: isAuthRoute,
-      isSemi: isSemiPublic,
-      host: request.headers.get('host'),
-      timestamp: new Date().toISOString()
-    });
+    console.debug(
+      `
+      [MW:Edge] [${requestId}] EP-3: Routes matched
+    `,
+      {
+        isProtected: isProtectedRoute,
+        isAuth: isAuthRoute,
+        isSemi: isSemiPublic,
+        host: request.headers.get('host'),
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // 2. CRITICAL BLOCK: request.cookies.getAll() (Finding 41 suspicion)
-    let cookieScanSummary: any[] = [];
+    let cookieScanSummary: CookieSummary[] = [];
     let cookieCount = 0;
     try {
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-4: Attempting cookies.getAll()`);
+      console.log(`
+        [MW:Edge] [${requestId}] EP-4: Attempting cookies.getAll()
+      `);
       const allCookies = request.cookies.getAll();
       cookieCount = allCookies.length;
-      
+
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-5: getAll() success, count: ${cookieCount}`);
+      console.log(`
+        [MW:Edge] [${requestId}] EP-5: getAll() success, count: ${cookieCount}
+      `);
 
       cookieScanSummary = allCookies.map((c) => ({
         name: c.name,
@@ -221,39 +297,60 @@ export async function middleware(request: NextRequest) {
         isDeleted: c.value === 'deleted',
         isNull: c.value === 'null',
       }));
-      
+
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-6: Cookie mapping success`);
-    } catch (cookieErr: any) {
+      console.log(`
+        [MW:Edge] [${requestId}] EP-6: Cookie mapping success
+      `);
+    } catch (cookieErr: unknown) {
       // eslint-disable-next-line no-console
-      console.error(`[MW:Edge] [${requestId}] CRITICAL FAILURE in request.cookies.getAll()`, {
-        error: cookieErr.message,
-        stack: cookieErr.stack,
-        timestamp: new Date().toISOString()
-      });
+      console.error(
+        `
+        [MW:Edge] [${requestId}] CRITICAL FAILURE in request.cookies.getAll()
+      `,
+        {
+          error:
+            cookieErr instanceof Error ? cookieErr.message : String(cookieErr),
+          stack: cookieErr instanceof Error ? cookieErr.stack : undefined,
+          timestamp: new Date().toISOString(),
+        }
+      );
       // Fallback to avoid complete 500 if possible
-      cookieScanSummary = [{ name: 'ERROR', valuePrefix: 'FAILED_TO_LOAD' }];
+      cookieScanSummary = [
+        {
+          name: 'ERROR',
+          valuePrefix: 'FAILED_TO_LOAD',
+          valueLength: 0,
+          isDeleted: false,
+          isNull: false,
+        },
+      ];
     }
 
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] Cookie Detection Summary`, {
-      hasAccessToken: !!accessToken,
-      accessTokenPrefix: accessToken?.value.substring(0, 30),
-      accessTokenLength: accessToken?.value.length,
-      hasRefreshToken: !!refreshToken,
-      hasUserId: !!userId,
-      cookieCount,
-      allCookiesSummary: cookieScanSummary,
-      timestamp: new Date().toISOString(),
-    });
+    console.debug(
+      `
+      [MW:Edge] [${requestId}] Cookie Detection Summary
+    `,
+      {
+        hasAccessToken: !!accessToken,
+        accessTokenPrefix: accessToken?.value.substring(0, 30),
+        accessTokenLength: accessToken?.value.length,
+        hasRefreshToken: !!refreshToken,
+        hasUserId: !!userId,
+        cookieCount,
+        allCookiesSummary: cookieScanSummary,
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // CRITICAL: Basic validation to prevent using empty/cleared cookies
     const accessTokenValue = accessToken?.value || '';
-    
+
     // Finding 17/41: Relaxing length check if secret is missing to avoid loops
     // ONLY enforce 100+ length if we actually have a secret to verify against
-    const requiredLength = secretFP !== 'MISSING' ? 100 : 10; 
-    
+    const requiredLength = secretFP !== 'MISSING' ? 100 : 10;
+
     const isLengthValid = accessTokenValue.length >= requiredLength;
     const isNotEmpty =
       accessTokenValue !== 'deleted' &&
@@ -269,12 +366,17 @@ export async function middleware(request: NextRequest) {
         : 'NONE';
 
     // eslint-disable-next-line no-console
-    console.debug(`[MW:Edge] [${requestId}] EP-7: Auth logic check completed`, {
-      isAuthenticated,
-      authFailureReason,
-      tokenLength: accessTokenValue.length,
-      timestamp: new Date().toISOString()
-    });
+    console.debug(
+      `
+      [MW:Edge] [${requestId}] EP-7: Auth logic check completed
+    `,
+      {
+        isAuthenticated,
+        authFailureReason,
+        tokenLength: accessTokenValue.length,
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // ✅ Org-scoped detection
     const publicKeywords = [
@@ -292,43 +394,58 @@ export async function middleware(request: NextRequest) {
       firstSegment !== undefined && !publicKeywords.includes(firstSegment);
 
     // 🔒 CRITICAL SECURITY & LOOP PREVENTION
-    const forceLogout = request.nextUrl.searchParams.get('forceLogout') === 'true';
+    const forceLogout =
+      request.nextUrl.searchParams.get('forceLogout') === 'true';
     const reason = request.nextUrl.searchParams.get('reason');
-    
+
     if (forceLogout || reason === 'expired') {
       // eslint-disable-next-line no-console
-      console.warn(`[MW:Edge] [${requestId}] EP-8: Force logout detected`, {
-        pathname,
-        forceLogout,
-        reason,
-        timestamp: new Date().toISOString()
-      });
+      console.warn(
+        `
+        [MW:Edge] [${requestId}] EP-8: Force logout detected
+      `,
+        {
+          pathname,
+          forceLogout,
+          reason,
+          timestamp: new Date().toISOString(),
+        }
+      );
       return NextResponse.next();
     }
 
     // Unauthenticated → login
-    if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
+    if (
+      (isProtectedRoute || isOrgScoped) &&
+      !isSemiPublic &&
+      !isAuthenticated
+    ) {
       const branch = !accessToken
         ? 'MISSING_COOKIE'
         : !isLengthValid
           ? 'SHORT_TOKEN'
           : 'DELETED_OR_NULL_STRING';
-      
+
       // eslint-disable-next-line no-console
-      console.warn(`[MW:Edge] [${requestId}] EP-9: REDIRECT decisions`, {
-        pathname,
-        branch,
-        authFailureReason,
-        timestamp: new Date().toISOString()
-      });
+      console.warn(
+        `
+        [MW:Edge] [${requestId}] EP-9: REDIRECT decisions
+      `,
+        {
+          pathname,
+          branch,
+          authFailureReason,
+          timestamp: new Date().toISOString(),
+        }
+      );
 
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('from', pathname);
-      
+
       if (authFailureReason !== 'NONE') {
         loginUrl.searchParams.set('reason', 'unauthorized');
       }
-      
+
       return NextResponse.redirect(loginUrl);
     }
 
@@ -338,10 +455,15 @@ export async function middleware(request: NextRequest) {
       const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
 
       // eslint-disable-next-line no-console
-      console.debug(`[MW:Edge] [${requestId}] EP-10: Redirecting authed user from login`, {
-        dest,
-        timestamp: new Date().toISOString()
-      });
+      console.debug(
+        `
+        [MW:Edge] [${requestId}] EP-10: Redirecting authed user from login
+      `,
+        {
+          dest,
+          timestamp: new Date().toISOString(),
+        }
+      );
       return NextResponse.redirect(new URL(dest, request.url));
     }
 
@@ -351,28 +473,39 @@ export async function middleware(request: NextRequest) {
     requestHeaders.set('x-middleware-request-id', requestId);
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-FINAL: Proceeding to next()`, {
-      pathname,
-      isAuthenticated,
-      timestamp: new Date().toISOString()
-    });
+    console.log(
+      `
+      [MW:Edge] [${requestId}] EP-FINAL: Proceeding to next()
+    `,
+      {
+        pathname,
+        isAuthenticated,
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     return NextResponse.next({
       request: {
         headers: requestHeaders,
       },
     });
-  } catch (globalErr: any) {
+  } catch (globalErr: unknown) {
     // eslint-disable-next-line no-console
-    console.error(`[MW:Edge] [${requestId}] CRITICAL GLOBAL EXCEPTION`, {
-      message: globalErr.message,
-      stack: globalErr.stack,
-      pathname,
-      timestamp: new Date().toISOString()
-    });
-    
+    console.error(
+      `
+      [MW:Edge] [${requestId}] CRITICAL GLOBAL EXCEPTION
+    `,
+      {
+        message:
+          globalErr instanceof Error ? globalErr.message : String(globalErr),
+        stack: globalErr instanceof Error ? globalErr.stack : undefined,
+        pathname,
+        timestamp: new Date().toISOString(),
+      }
+    );
+
     // CRITICAL FIX (Finding 41 & 44): Never return undefined from middleware.
-    // In case of error in the middleware itself, we allow the request 
+    // In case of error in the middleware itself, we allow the request
     // to fall through to the page as a safety measure.
     return NextResponse.next();
   }

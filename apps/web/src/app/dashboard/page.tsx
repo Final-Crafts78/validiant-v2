@@ -31,47 +31,47 @@ export default async function DashboardRedirectPage() {
   // 🔍 HIGH-VISIBILITY SSR INSTRUMENTATION
   const requestId = `dash-redir-${Math.random().toString(36).substring(7)}`;
   // eslint-disable-next-line no-console
-  console.log(`[Dashboard:Redirect] [${requestId}] Starting fetch for organizations`, { 
-    baseUrl, 
-    apiUrl,
-    hasToken: !!accessToken?.value,
-    tokenPrefix: accessToken?.value?.substring(0, 10),
-    timestamp: new Date().toISOString()
-  });
+  console.log(`[Dashboard:Redirect] [${requestId}] EP-D1: Starting fetch sequence`);
+  // eslint-disable-next-line no-console
+  console.log(`[Dashboard:Redirect] [${requestId}] EP-D1.1: Config - baseUrl=${baseUrl}, apiUrl=${apiUrl}, hasToken=${!!accessToken?.value}`);
 
+  const startFetch = Date.now();
   try {
+    // eslint-disable-next-line no-console
+    console.log(`[Dashboard:Redirect] [${requestId}] EP-D2: Invoking fetch...`);
+    
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${accessToken.value}`,
+        Authorization: `Bearer ${accessToken?.value}`,
         'Content-Type': 'application/json',
       },
       cache: 'no-store',
     });
 
+    const elapsed = Date.now() - startFetch;
     // eslint-disable-next-line no-console
-    console.log(`[Dashboard:Redirect] [${requestId}] API Response received`, {
+    console.log(`[Dashboard:Redirect] [${requestId}] EP-D3: API Response received in ${elapsed}ms`, {
       status: response.status,
       statusText: response.statusText,
       ok: response.ok,
-      timestamp: new Date().toISOString()
     });
 
     if (!response.ok) {
       logger.error(`[Dashboard:Redirect] [${requestId}] API returned ${response.status}`);
       // eslint-disable-next-line no-console
-      console.warn(`[Dashboard:Redirect] [${requestId}] Redirection to ONBOARDING due to non-OK response`);
+      console.warn(`[Dashboard:Redirect] [${requestId}] EP-D3.ERROR: Redirection to ONBOARDING due to non-OK response`);
       redirect(ROUTES.ONBOARDING);
     }
 
+    // eslint-disable-next-line no-console
+    console.log(`[Dashboard:Redirect] [${requestId}] EP-D4: Starting JSON parse`);
     const json = await response.json();
     
     // eslint-disable-next-line no-console
-    console.log(`[Dashboard:Redirect] [${requestId}] JSON parsed`, {
+    console.log(`[Dashboard:Redirect] [${requestId}] EP-D5: JSON parsed`, {
       hasData: !!json?.data,
       orgCount: json?.data?.organizations?.length || 0,
-      firstOrgSlug: json?.data?.organizations?.[0]?.slug,
-      timestamp: new Date().toISOString()
     });
 
     const organizations = json?.data?.organizations;
@@ -81,7 +81,7 @@ export default async function DashboardRedirectPage() {
       if (activeOrg?.slug) {
         logger.log(`[Dashboard:Redirect] [${requestId}] Redirecting to ${activeOrg.slug}`);
         // eslint-disable-next-line no-console
-        console.log(`[Dashboard:Redirect] [${requestId}] FINAL REDIRECT to /${activeOrg.slug}`);
+        console.log(`[Dashboard:Redirect] [${requestId}] EP-FINAL: Redirecting to /${activeOrg.slug}`);
         redirect(ROUTES.DASHBOARD(activeOrg.slug));
       }
     }
@@ -89,11 +89,11 @@ export default async function DashboardRedirectPage() {
     if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
       throw error;
     }
+    const elapsedAtError = Date.now() - startFetch;
     // eslint-disable-next-line no-console
-    console.error(`[Dashboard:Redirect] [${requestId}] CRITICAL FETCH ERROR`, {
+    console.error(`[Dashboard:Redirect] [${requestId}] EP-ERROR: CRITICAL FETCH FAIL after ${elapsedAtError}ms`, {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString()
     });
     logger.error('[Dashboard:Redirect] Failed to fetch organizations:', error);
   }
