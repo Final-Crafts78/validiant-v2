@@ -135,11 +135,17 @@
 - **Root Cause**: The `createProjectSchema` in `packages/shared/src/schemas/project.schemas.ts` requires a `key` field (project key), but the frontend UI/API call is missing this field.
 - **Impact**: All project creation attempts from the web dashboard fail with a 400 Bad Request.
 
-#### 28. [Frontend] Real-time (SSE) Durable Object "Subdomain" Mismatch
+#### 28. [Frontend] Real-time (SSE) Durable Object "Subdomain" Mismatch (Confirmed)
 - **Data Evidence**: HAR logs show requests to `api.validiant.in/api/v1/realtime/stream` but some Vercel logs show the app expecting `www.validiant.in`.
 - **Root Cause**: Hostname inconsistency between the frontend environment and the hardcoded SSE connection logic.
 - **Impact**: WebSocket/SSE handshake failures due to CORS or routing mismatch on the Cloudflare Edge.
 
-#### 28. [Frontend] Activity Route Mismatch (404/200 confusion)
-- **Data Evidence**: Previous reports showed 404s for some org-scoped routes, but new logs show 200s (e.g., `invitations`). However, `activity` is still returning 400 (Finding #26).
-- **Observation**: Stability is improving but core permission logic remains bottlenecked by the `orgId` extraction discrepancy.
+#### 29. [Backend] Role Creation Failure - Missing Key Field (Confirmed)
+- **Data Evidence**: Static analysis of `organization.service.ts` + `schema.ts`.
+- **Root Cause**: Database requires an `orgRoles.key` column (part of a unique constraint) but the `INSERT` statement in the service omits it.
+- **Impact**: All role creation attempts fail with a `NOT NULL violation` or silent failure in the DB.
+
+#### 30. [Backend] RBAC Middleware Logic Bypass (Confirmed)
+- **Data Evidence**: Logs show `rbac.ts` ignoring the `orgId` already resolved by the `tenant` middleware, leading to re-resolution failures on scoped routes.
+- **Impact**: Core permission logic fails, causing 400/401 errors even when headers are present.
+

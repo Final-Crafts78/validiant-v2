@@ -30,7 +30,7 @@ export const requireOrgRole = (allowedRoles: string[]) => {
     const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
     const headerOrgId = c.req.header('X-Org-Id');
     
-    // Priority: Context (already resolved) > Header > Param > Query
+    // Priority: Context (already resolved by tenant middleware) > Header > Param > Query
     const orgId = contextOrgId || headerOrgId || paramOrgId || queryOrgId;
 
     const source = contextOrgId
@@ -43,7 +43,17 @@ export const requireOrgRole = (allowedRoles: string[]) => {
             ? 'QUERY'
             : 'NONE';
 
-    console.info('[RBAC:Org] Role Check started', {
+    if (contextOrgId) {
+      console.debug('[RBAC:Org] SUCCESS - Using pre-resolved Context OrgId:', { orgId: contextOrgId });
+    } else {
+      console.warn('[RBAC:Org] FALLBACK - Context OrgId missing. Resolving from other sources.', {
+        source,
+        resolvedOrgId: orgId || 'MISSING',
+        path: c.req.path
+      });
+    }
+
+    console.info('[RBAC:Org] Role Check Metadata', {
       path: c.req.path,
       method: c.req.method,
       requiredRoles: allowedRoles,

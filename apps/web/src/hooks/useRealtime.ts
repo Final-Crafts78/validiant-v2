@@ -89,15 +89,15 @@ export function useRealtime() {
       const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
       const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
 
-      console.debug('[Realtime] CONNECTION START', {
+      console.debug('[Realtime] CONNECTION START Trace', {
         activeOrgId,
         userId,
-        sseUrl: sseUrl.replace(/token=[^&]+/, 'token=REDACTED'),
-        apiBase,
+        rawApiUrlEnv: process.env.NEXT_PUBLIC_API_URL || 'UNDEFINED',
         rawApiBase,
+        normalizedApiBase: apiBase,
+        finalSseUrl: sseUrl.replace(/token=[^&]+/, 'token=REDACTED'),
         timestamp: new Date().toISOString(),
         windowLocation: typeof window !== 'undefined' ? window.location.href : 'NONE',
-        origin: typeof window !== 'undefined' ? window.location.origin : 'NONE',
       });
 
       const es = new EventSource(sseUrl, { withCredentials: true });
