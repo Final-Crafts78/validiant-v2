@@ -27,19 +27,33 @@ export default async function DashboardRedirectPage() {
   ).replace(/\/+$/, '');
   const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
   const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`;
-
   // 🔍 HIGH-VISIBILITY SSR INSTRUMENTATION
   const requestId = `dash-redir-${Math.random().toString(36).substring(7)}`;
   // eslint-disable-next-line no-console
   console.log(`[Dashboard:Redirect] [${requestId}] EP-D1: Starting fetch sequence`);
+
+  // 🔍 URL NORMALIZATION (Finding 46 Fix)
+  const raw = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace(/\/+$/, '');
+  const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
+  
+  // Safety check: if endpoints already contain /api/v1, don't double it
+  let endpoint = API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY;
+  if (endpoint.startsWith('/api/v1')) {
+    endpoint = endpoint.replace('/api/v1', '');
+  }
+  
+  const apiUrl = `${baseUrl}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
   // eslint-disable-next-line no-console
-  console.log(`[Dashboard:Redirect] [${requestId}] EP-D1.1: Config - baseUrl=${baseUrl}, apiUrl=${apiUrl}, hasToken=${!!accessToken?.value}`);
+  console.log(`[Dashboard:Redirect] [${requestId}] EP-D2: Fetching from ${apiUrl}`, {
+    baseUrl,
+    endpoint,
+    finalUrl: apiUrl,
+    tokenLength: accessToken.value.length,
+  });
 
   const startFetch = Date.now();
   try {
-    // eslint-disable-next-line no-console
-    console.log(`[Dashboard:Redirect] [${requestId}] EP-D2: Invoking fetch...`);
-    
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {

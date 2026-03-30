@@ -54,17 +54,41 @@ export function getCookieDomain(requestHostname?: string) {
     envProductionChecks.NODE_ENV === 'production' ||
     envProductionChecks.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
+  // 🔍 PRE-PARSE AUDIT (Finding 45 Hardening)
+  const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL || '';
+  const appUrlLength = appUrlRaw.length;
+  
+  console.debug('[Cookie:Utils] PRE-PARSE Audit', {
+    appUrlRaw,
+    appUrlLength,
+    isProduction,
+    timestamp: new Date().toISOString()
+  });
+
   // Fallback chain for hostname
-  const hostname =
-    requestHostname ||
-    (typeof window !== 'undefined' ? window.location.hostname : null) ||
-    new URL(appUrl).hostname;
+  let hostname: string | null = null;
+  try {
+    hostname =
+      requestHostname ||
+      (typeof window !== 'undefined' ? window.location.hostname : null);
+
+    if (!hostname && appUrlRaw) {
+      console.debug('[Cookie:Utils] Falling back to URL constructor for hostname', { appUrlRaw });
+      hostname = new URL(appUrlRaw).hostname;
+    }
+  } catch (urlErr) {
+    console.error('[Cookie:Utils] CRITICAL: URL Parsing failed', {
+      appUrlRaw,
+      error: urlErr instanceof Error ? urlErr.message : String(urlErr)
+    });
+    hostname = 'localhost'; // Safe fallback to prevent terminal crash
+  }
 
   console.debug('[Cookie:Utils] Evaluating domain', {
-    resolvedHostname: hostname,
+    resolvedHostname: hostname || 'NULL_FALLBACK',
     inputHostname: requestHostname || 'UNDEFINED',
     isProduction,
-    appUrl,
+    appUrl: appUrlRaw,
     envProductionChecks,
     processEnv: {
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
@@ -76,7 +100,7 @@ export function getCookieDomain(requestHostname?: string) {
       VERCEL_URL: process.env.VERCEL_URL || 'MISSING',
     },
     context: typeof window !== 'undefined' ? 'BROWSER' : 'SERVER',
-    stack: new Error().stack?.split('\n').slice(1, 5),
+    stack: new Error().stack?.split('\n').slice(1, 4),
     timestamp: new Date().toISOString(),
   });
 

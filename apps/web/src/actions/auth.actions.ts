@@ -26,6 +26,10 @@
 
 'use server';
 
+// 🔍 BFF MODULE INITIALIZATION TRACE (Finding 45)
+// eslint-disable-next-line no-console
+console.log(`[BFF:Module] [${Date.now()}] EP-0.1: Module loading started`);
+
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { cache } from 'react';
@@ -44,11 +48,15 @@ import type {
  * API Configuration with URL Normalization
  * Ensures /api/v1 prefix is present and prevents double prefixes
  */
+// eslint-disable-next-line no-console
+console.log(`[BFF:Module] [${Date.now()}] EP-0.2: Configuring API_BASE_URL`);
+
 const raw = (
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
 ).replace(/\/+$/, '');
 const API_BASE_URL = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
 
+// eslint-disable-next-line no-console
 console.debug('[BFF:Init] API Configuration', {
   raw: process.env.NEXT_PUBLIC_API_URL || 'MISSING',
   normalized: API_BASE_URL,

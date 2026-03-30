@@ -223,4 +223,12 @@
 - **Risk**: If the API is unreachable or returns a non-200 response, the `DashboardRedirectPage` might be triggering a secondary failure or an unintended redirect to `/onboarding`.
 - **Action Plan**: Add granular instrumentation to the `fetch` call and the JSON parsing block in the dashboard page component.
 
+#### 45. [Frontend] BFF Initialization Crash - URL Parsing (100% Confirmed)
+- **Data Evidence**: `vercellogs.txt` Request ID `4n7wn` for `/dashboard` returns 500 with only `[BFF:Init]` log present.
+- **Root Cause**: `auth-utils.ts` (Line 61) calls `new URL(appUrl).hostname`. If `NEXT_PUBLIC_APP_URL` is undefined or an empty string, this throws a terminal `TypeError` during module initialization.
+- **Impact**: Terminal 500 on all server-side authenticated requests, preventing dashboard redirection.
 
+#### 46. [Frontend] Dashboard Direct Fetch Double Prefix (100% Confirmed)
+- **Data Evidence**: `DashboardRedirectPage` (Line 29) manually constructs an `apiUrl` by appending `API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY` (which starts with `/`) to a `baseUrl` already ending in `/api/v1`.
+- **Impact**: Requests for `/dashboard` root redirect trigger a 404 at `api.validiant.in/api/v1/api/v1/organizations/my`, causing a fallback to `/onboarding` or a 500.
+- **Resolution Plan**: Normalize the `apiUrl` construction using a safe join or by moving to the central `apiClient`.

@@ -507,7 +507,10 @@ export async function middleware(request: NextRequest) {
     // CRITICAL FIX (Finding 41 & 44): Never return undefined from middleware.
     // In case of error in the middleware itself, we allow the request
     // to fall through to the page as a safety measure.
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set('X-MW-Bypass', 'true');
+    response.headers.set('X-MW-Error', globalErr instanceof Error ? globalErr.message.substring(0, 50) : 'unknown');
+    return response;
   }
 }
 
