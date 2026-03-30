@@ -32,6 +32,40 @@ function matchesRoute(pathname: string, routes: string[]): boolean {
 }
 
 /**
+ * Safely parse cookies from raw header string if the native parser fails (Finding 41)
+ */
+function parseCookiesRaw(cookieHeader: string | null): Record<string, string> {
+  if (!cookieHeader) return {};
+  const cookies: Record<string, string> = {};
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...rest] = cookie.split('=');
+    if (name && rest.length > 0) {
+      cookies[name.trim()] = rest.join('=').trim();
+    }
+  });
+  return cookies;
+}
+
+/**
+ * Get cookie safely with fallback (Finding 41)
+ */
+function getSafeCookie(request: NextRequest, name: string): { value: string } | undefined {
+  try {
+    // Try native parser first
+    const cookie = request.cookies.get(name);
+    if (cookie) return cookie;
+  } catch (e) {
+    // NO-OP, fallback to raw parsing
+  }
+
+  // Fallback to manual header parsing
+  const rawHeader = request.headers.get('cookie');
+  const parsed = parseCookiesRaw(rawHeader);
+  const val = parsed[name];
+  return val ? { value: val } : undefined;
+}
+
+/**
  * Middleware function with High-Visibility Instrumentation (Finding 41)
  */
 export async function middleware(request: NextRequest) {
@@ -39,19 +73,28 @@ export async function middleware(request: NextRequest) {
   const requestId = request.headers.get('x-vercel-id') || 'local-' + Math.random().toString(36).substring(7);
 
   try {
+    // 0. ENVIRONMENT AUDIT (Finding 42)
+    const envAudit = {
+      JWT_SECRET: process.env.JWT_SECRET ? 'PRESENT' : 'MISSING',
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'MISSING',
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'MISSING',
+      NODE_ENV: process.env.NODE_ENV,
+    };
+
     const secretFP = await getSecretFingerprint();
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-1: Middleware started`, { 
       pathname, 
       secretFP,
+      envAudit,
       timestamp: new Date().toISOString() 
     });
 
-    // 1. RAW COOKIE ACCESS (Before any complex mapping)
-    const accessToken = request.cookies.get('accessToken');
-    const refreshToken = request.cookies.get('refreshToken');
-    const userId = request.cookies.get('user_id');
+    // 1. SAFE COOKIE ACCESS (Finding 41 Hardening)
+    const accessToken = getSafeCookie(request, 'accessToken');
+    const refreshToken = getSafeCookie(request, 'refreshToken');
+    const userId = getSafeCookie(request, 'user_id');
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies retrieved`, {
@@ -122,7 +165,12 @@ export async function middleware(request: NextRequest) {
 
     // CRITICAL: Basic validation to prevent using empty/cleared cookies
     const accessTokenValue = accessToken?.value || '';
-    const isLengthValid = accessTokenValue.length > 100;
+    
+    // Finding 17/41: Relaxing length check if secret is missing to avoid loops
+    // ONLY enforce 100+ length if we actually have a secret to verify against
+    const requiredLength = secretFP !== 'MISSING' ? 100 : 10; 
+    
+    const isLengthValid = accessTokenValue.length >= requiredLength;
     const isNotEmpty =
       accessTokenValue !== 'deleted' &&
       accessTokenValue !== 'null' &&
