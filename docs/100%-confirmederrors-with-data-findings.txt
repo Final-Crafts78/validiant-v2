@@ -186,8 +186,22 @@
 - **Data Evidence**: `cloudflarelogs.txt` (Line 588) shows 400 for `POST /roles`. `organization.schemas.ts` (Line 531) requires `.min(1)` for the `permissions` array, but the frontend currently sends an empty array `[]` on initial creation.
 - **Impact**: Users cannot create new roles from the UI.
 
-#### 37. [Frontend] UI Visibility: White-on-White Text in Dark Mode
-- **Data Evidence**: User report confirmed by code audit of `RolesSettings` and `css-vars.css`.
-- **Root Cause**: Components use hardcoded light backgrounds (e.g., `bg-slate-50`, `bg-white`) on inputs, while global text color switches to white in dark mode (`data-theme="dark"`).
 - **Impact**: Text is invisible while typing across several areas of the platform.
+- **Resolution**: Updated `globals.css` with a theme-aware `.input` class and implemented `.modal-surface` / `.card-surface` utility classes. Replaced hardcoded `bg-white` and `text-slate-900` in the Create Task and Create Project modals.
+
+#### 38. [Backend] Task Creation - Missing Organization ID (100% Confirmed - RESOLVED)
+- **Data Evidence**: Vercel logs show `NeonDbError: null value in column "organization_id" violates not-null constraint`.
+- **Root Cause**: `apps/api/src/services/task.service.ts` (Line 210) was missing `organizationId` in the `db.insert(tasks).values()` call.
+- **Resolution**: Added `organizationId: data.orgId` to the `createTask` service method and added granular debug logging.
+- **Impact**: Users can now successfully create tasks without encountering a 500 Internal Server Error.
+
+#### 39. [Frontend] Dashboard "Active Projects" Zero Count (Found Context)
+- **Data Evidence**: `apps/web/src/app/(workspace)/[orgSlug]/dashboard/page.tsx` (Line 93) filters projects by `status === 'active'`.
+- **Root Cause**: Newly created projects default to status `planning`. The user confirmed that the dashboard should *only* count `active` projects, explaining why the count remained at zero after initial creation.
+- **Impact**: No code change required per user preference, but logic is now understood.
+
+#### 40. [Backend] Project/Task Service Observability (RESOLVED)
+- **Root Cause**: Lack of granular logging made it difficult to trace transient 500s and data visibility issues in production.
+- **Resolution**: Instrumented `task.service.ts` and `project.service.ts` with detailed debug logs, including timestamps and context IDs (orgId, userId, projectId).
+- **Impact**: Greatly improved visibility for future production troubleshooting.
 

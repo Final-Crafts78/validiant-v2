@@ -79,20 +79,20 @@ function CreateTaskModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="modal-surface w-full max-w-md">
+        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface-subtle/50">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-              <CheckSquare className="w-4 h-4 text-blue-600" />
+            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <CheckSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
-            <h2 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-lg font-semibold text-text-base">
               Create Task
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 text-text-muted hover:text-text-base hover:bg-surface-muted rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -109,9 +109,9 @@ function CreateTaskModal({
             <div>
               <label
                 htmlFor="projectId"
-                className="block text-sm font-medium text-slate-700 mb-1"
+                className="block text-sm font-medium text-text-subtle mb-1"
               >
-                Project <span className="text-red-500">*</span>
+                Project <span className="text-danger-500">*</span>
               </label>
               <select
                 id="projectId"
@@ -119,7 +119,7 @@ function CreateTaskModal({
                 onChange={(e) => setProjectId(e.target.value)}
                 required
                 disabled={!!defaultProjectId}
-                className="w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition disabled:bg-slate-50 disabled:text-slate-500"
+                className="input w-full"
               >
                 <option value="" disabled>
                   Select a project
@@ -177,7 +177,7 @@ function CreateTaskModal({
                 id="priority"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                className="input w-full"
               >
                 <option value="none">None</option>
                 <option value="low">Low</option>
@@ -192,7 +192,7 @@ function CreateTaskModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              className="btn btn-outline"
               disabled={isSubmitting}
             >
               Cancel

@@ -71,12 +71,12 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
-        <h2 className="text-lg font-bold text-slate-900">New Project</h2>
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="modal-surface w-full max-w-md p-6 space-y-5">
+        <h2 className="text-lg font-bold text-text-base">New Project</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
               Name *
             </label>
             <input
@@ -84,12 +84,12 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Q3 Field Audit"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input w-full"
               required
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
               Description
             </label>
             <textarea
@@ -97,17 +97,17 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
               onChange={(e) => setDesc(e.target.value)}
               rows={3}
               placeholder="What is this project about?"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input w-full resize-none"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
               Priority
             </label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as ProjectPriority)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input w-full"
             >
               <option value={ProjectPriority.LOW}>Low</option>
               <option value={ProjectPriority.MEDIUM}>Medium</option>
@@ -126,7 +126,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
             <button
               type="button"
               onClick={() => onClose()}
-              className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg"
+              className="btn btn-outline px-4"
             >
               Cancel
             </button>
@@ -165,8 +165,8 @@ export default function ProjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Projects</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-text-base">Projects</h1>
+          <p className="text-sm text-text-muted mt-0.5">
             {projects.length} project{projects.length !== 1 ? 's' : ''} in this
             workspace
           </p>
@@ -181,10 +181,10 @@ export default function ProjectsPage() {
 
       {/* Empty state */}
       {projects.length === 0 && (
-        <div className="text-center py-20 bg-white border border-dashed border-slate-200 rounded-2xl">
-          <FolderOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500 text-sm font-medium">No projects yet.</p>
-          <p className="text-slate-400 text-xs mt-1">
+        <div className="text-center py-20 card-surface border-dashed">
+          <FolderOpen className="w-10 h-10 text-text-muted mx-auto mb-3" />
+          <p className="text-text-subtle text-sm font-medium">No projects yet.</p>
+          <p className="text-text-muted text-xs mt-1">
             Create your first project to start tracking work.
           </p>
         </div>
@@ -199,11 +199,11 @@ export default function ProjectsPage() {
               setActiveProject(p.id);
               router.push(`/${orgSlug}/projects/${p.id}`);
             }}
-            className="bg-white border border-slate-200 rounded-xl p-5 text-left hover:border-blue-400 hover:shadow-md transition-all group"
+            className="card-surface p-5 text-left hover:border-blue-400 hover:shadow-md transition-all group"
           >
             {/* Top row: name + status */}
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors line-clamp-1">
+              <h3 className="font-semibold text-text-base leading-snug group-hover:text-blue-700 transition-colors line-clamp-1">
                 {p.name}
               </h3>
               <span

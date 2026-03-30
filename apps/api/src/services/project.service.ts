@@ -386,6 +386,12 @@ export const listOrganizationProjects = async (
     perPage?: number;
   }
 ): Promise<{ projects: ProjectWithStats[]; pagination: Pagination }> => {
+  logger.info('Listing organization projects...', {
+    organizationId,
+    params,
+    timestamp: new Date().toISOString(),
+  });
+
   const page = params?.page || 1;
   const perPage = Math.min(params?.perPage || 20, 100);
   const offset = (page - 1) * perPage;
@@ -454,7 +460,7 @@ export const listOrganizationProjects = async (
     .limit(perPage)
     .offset(offset);
 
-  return {
+  const result = {
     projects: projectList.map((p: (typeof projectList)[number]) => ({
       ...p,
       memberCount: Number(p.memberCount),
@@ -466,6 +472,15 @@ export const listOrganizationProjects = async (
       totalPages: Math.ceil(total / perPage),
     },
   };
+
+  logger.debug('Organization projects retrieved', {
+    organizationId,
+    count: result.projects.length,
+    total,
+    timestamp: new Date().toISOString(),
+  });
+
+  return result;
 };
 
 /**
@@ -474,6 +489,11 @@ export const listOrganizationProjects = async (
 export const getUserProjects = async (
   userId: string
 ): Promise<ProjectWithStats[]> => {
+  logger.info('Fetching user projects...', {
+    userId,
+    timestamp: new Date().toISOString(),
+  });
+
   const projectList = await db
     .select({
       id: projects.id,

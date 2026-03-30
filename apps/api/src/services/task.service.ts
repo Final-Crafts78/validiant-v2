@@ -25,12 +25,7 @@ import {
   organizations,
 } from '../db/schema';
 import { cache } from '../config/redis.config';
-import {
-  NotFoundError,
-  ConflictError,
-  BadRequestError,
-  assertExists,
-} from '../utils/errors';
+import { NotFoundError, ConflictError, BadRequestError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { broadcastTaskEvent, BroadcastEvent } from '../utils/broadcast';
 import {
@@ -192,6 +187,14 @@ export const createTask = async (
     orgId?: string;
   }
 ): Promise<Task> => {
+  logger.info('Creating new task...', {
+    projectId,
+    userId,
+    orgId: data.orgId,
+    title: data.title,
+    hasAssignees: !!data.assigneeIds?.length,
+    timestamp: new Date().toISOString(),
+  });
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Get next position
   const maxPositionResult = await db
@@ -209,6 +212,7 @@ export const createTask = async (
     .insert(tasks)
     .values({
       projectId,
+      organizationId: data.orgId, // 🔒 FIX: Added missing organizationId (NOT NULL constraint)
       title: data.title,
       description: data.description,
       statusKey: data.status || TaskStatus.PENDING,
@@ -264,7 +268,13 @@ export const createTask = async (
 
   const task = newTask;
 
-  logger.info('Task created', { taskId: task.id, projectId, userId });
+  logger.info('Task created successfully', {
+    taskId: task.id,
+    projectId,
+    userId,
+    orgId: data.orgId,
+    timestamp: new Date().toISOString(),
+  });
 
   // ✅ REAL-TIME: Broadcast to organization
   // Non-blocking - happens in background
@@ -281,7 +291,11 @@ export const createTask = async (
       }
     );
   } else {
-    logger.warn('Broadcast skipped for newTask: orgId not provided');
+    logger.warn('Broadcast skipped for newTask: ORG_ID_MISSING', {
+      taskId: task.id,
+      projectId,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   return task as Task;
@@ -296,6 +310,10 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
   const cached = await cache.get<TaskWithDetails>(cacheKey);
 
   if (cached) {
+    logger.debug('Returning cached task', {
+      taskId,
+      timestamp: new Date().toISOString(),
+    });
     return cached;
   }
 
@@ -377,7 +395,13 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
     .limit(1);
   const task = taskResult[0];
 
-  assertExists(task, 'Task');
+  if (!task) {
+    logger.error('Task not found in DB', {
+      taskId,
+      timestamp: new Date().toISOString(),
+    });
+    throw new NotFoundError('Task');
+  }
 
   // Get assignees separately (Drizzle doesn't support json_agg in joins elegantly)
   const assigneeList = await db

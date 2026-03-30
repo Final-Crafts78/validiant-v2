@@ -85,20 +85,20 @@ function CreateProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="modal-surface w-full max-w-md">
+        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface-subtle/50">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
-              <FolderKanban className="w-4 h-4 text-primary-600" />
+              <FolderKanban className="w-4 h-4 text-primary-600 dark:text-primary-400" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-text-base">
               Create Project
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-text-muted hover:text-text-base hover:bg-surface-muted rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -115,9 +115,9 @@ function CreateProjectModal({
             <div>
               <label
                 htmlFor="organizationId"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-text-subtle mb-1"
               >
-                Organization <span className="text-red-500">*</span>
+                Organization <span className="text-danger-500">*</span>
               </label>
               <select
                 id="organizationId"
@@ -125,7 +125,7 @@ function CreateProjectModal({
                 onChange={(e) => setOrganizationId(e.target.value)}
                 required
                 disabled={!!defaultOrganizationId}
-                className="input w-full bg-white"
+                className="input w-full"
               >
                 <option value="" disabled>
                   Select an organization

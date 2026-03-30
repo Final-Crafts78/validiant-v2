@@ -154,10 +154,11 @@
   /* Input styles */
   .input {
     @apply w-full px-4 py-2 rounded-lg transition-all duration-200;
-    @apply border border-[var(--color-border-base)];
-    background-color: var(--color-surface-base);
+    @apply border border-border-base;
+    background-color: var(--color-surface-subtle);
     color: var(--color-text-base);
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:bg-surface-base;
+    @apply hover:bg-surface-base;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
@@ -317,5 +318,18 @@
   .animate-gradient {
     background-size: 200% 200%;
     animation: gradient-shift 15s ease infinite;
+  }
+
+  /* Surface utilities for theme-aware backgrounds */
+  .card-surface {
+    background-color: var(--color-surface-base);
+    color: var(--color-text-base);
+    @apply border border-border-base rounded-xl shadow-sm;
+  }
+
+  .modal-surface {
+    background-color: var(--color-surface-base);
+    color: var(--color-text-base);
+    @apply rounded-2xl shadow-xl border border-border-subtle overflow-hidden;
   }
 }
