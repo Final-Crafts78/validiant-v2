@@ -509,7 +509,12 @@ export async function middleware(request: NextRequest) {
     // to fall through to the page as a safety measure.
     const response = NextResponse.next();
     response.headers.set('X-MW-Bypass', 'true');
-    response.headers.set('X-MW-Error', globalErr instanceof Error ? globalErr.message.substring(0, 50) : 'unknown');
+    response.headers.set(
+      'X-MW-Error',
+      globalErr instanceof Error
+        ? globalErr.message.substring(0, 50)
+        : 'unknown'
+    );
     return response;
   }
 }

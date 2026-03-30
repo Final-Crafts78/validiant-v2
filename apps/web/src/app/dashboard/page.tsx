@@ -21,12 +21,6 @@ export default async function DashboardRedirectPage() {
     redirect(ROUTES.LOGIN);
   }
 
-  // Determine API Base URL
-  const raw = (
-    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'
-  ).replace(/\/+$/, '');
-  const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
-  const apiUrl = `${baseUrl}${API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY}`;
   // 🔍 HIGH-VISIBILITY SSR INSTRUMENTATION
   const requestId = `dash-redir-${Math.random().toString(36).substring(7)}`;
   // eslint-disable-next-line no-console
@@ -37,7 +31,7 @@ export default async function DashboardRedirectPage() {
   const baseUrl = raw.endsWith('/api/v1') ? raw : `${raw}/api/v1`;
   
   // Safety check: if endpoints already contain /api/v1, don't double it
-  let endpoint = API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY;
+  let endpoint: string = API_CONFIG.ENDPOINTS.ORGANIZATIONS.MY;
   if (endpoint.startsWith('/api/v1')) {
     endpoint = endpoint.replace('/api/v1', '');
   }
