@@ -24,6 +24,16 @@ export function AuthStoreInitializer({
   user: AuthUser;
   accessToken?: string;
 }) {
+  // SERVER-SIDE SSR AUDIT (Finding 43)
+  if (typeof window === 'undefined') {
+    // eslint-disable-next-line no-console
+    console.debug('[AuthStore:Initializer] EP-SSR: Initializing on server', {
+      userId: user?.id,
+      hasToken: !!accessToken,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   const initialized = useRef(false);
 
   if (!initialized.current) {

@@ -49,20 +49,46 @@ function parseCookiesRaw(cookieHeader: string | null): Record<string, string> {
 /**
  * Get cookie safely with fallback (Finding 41)
  */
-function getSafeCookie(request: NextRequest, name: string): { value: string } | undefined {
+function getSafeCookie(request: NextRequest, name: string, requestId: string): { value: string } | undefined {
   try {
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Attempting native cookies.get()`);
     // Try native parser first
     const cookie = request.cookies.get(name);
-    if (cookie) return cookie;
-  } catch (e) {
-    // NO-OP, fallback to raw parsing
+    if (cookie) {
+      // eslint-disable-next-line no-console
+      console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Native success`, { 
+        name, 
+        length: cookie.value?.length,
+        prefix: cookie.value?.substring(0, 10)
+      });
+      return cookie;
+    }
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: Native MISSING`);
+  } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.warn(`[MW:Edge] [${requestId}] EP-1.${name}: Native CRASHED - Falling back to raw`, {
+      error: e.message
+    });
   }
 
   // Fallback to manual header parsing
   const rawHeader = request.headers.get('cookie');
   const parsed = parseCookiesRaw(rawHeader);
   const val = parsed[name];
-  return val ? { value: val } : undefined;
+  
+  if (val) {
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] EP-1.${name}: RAW FALLBACK SUCCESS`, { 
+      name, 
+      length: val.length,
+      prefix: val.substring(0, 10)
+    });
+    return { value: val };
+  }
+
+  return undefined;
 }
 
 /**
@@ -91,10 +117,24 @@ export async function middleware(request: NextRequest) {
       timestamp: new Date().toISOString() 
     });
 
+    // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping)
+    const rawCookieHeader = request.headers.get('cookie');
+    const cookieScan = rawCookieHeader 
+      ? rawCookieHeader.split(';').map(c => c.split('=')[0]?.trim()) 
+      : [];
+    
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-0.1: Raw Cookie Audit`, {
+      hasHeader: !!rawCookieHeader,
+      headerLength: rawCookieHeader?.length || 0,
+      cookieNames: cookieScan,
+      timestamp: new Date().toISOString()
+    });
+
     // 1. SAFE COOKIE ACCESS (Finding 41 Hardening)
-    const accessToken = getSafeCookie(request, 'accessToken');
-    const refreshToken = getSafeCookie(request, 'refreshToken');
-    const userId = getSafeCookie(request, 'user_id');
+    const accessToken = getSafeCookie(request, 'accessToken', requestId);
+    const refreshToken = getSafeCookie(request, 'refreshToken', requestId);
+    const userId = getSafeCookie(request, 'user_id', requestId);
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies retrieved`, {

@@ -63,6 +63,16 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
   const activeOrgSlug = useWorkspaceStore((state) => state.activeOrgSlug);
   const [isPending, startTransition] = useTransition();
 
+  // SERVER-SIDE SSR AUDIT (Finding 43)
+  if (typeof window === 'undefined') {
+    // eslint-disable-next-line no-console
+    console.debug('[DashboardHeader] EP-SSR: Rendering header on server', {
+      email: user?.email,
+      orgCount: orgs?.length || 0,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   /**
    * Computed Navigation Items
    * Handles dynamic routes based on the active organization slug.

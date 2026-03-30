@@ -95,18 +95,33 @@ export default async function DashboardLayout({
     redirect(ROUTES.ONBOARDING);
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <AuthStoreInitializer user={user} accessToken={accessToken} />
-      <WorkspaceInitializer orgs={orgs} />
+  try {
+    console.debug('[Dashboard:Layout] EP-RENDER: Starting component render', {
+      hasUser: !!user,
+      hasOrgs: orgs.length > 0,
+      timestamp: new Date().toISOString(),
+    });
 
-      <DashboardHeader user={user} orgs={orgs} />
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <AuthStoreInitializer user={user} accessToken={accessToken} />
+        <WorkspaceInitializer orgs={orgs} />
 
-      <main className="flex-1 container-custom py-4 md:py-8 pb-24 md:pb-12">
-        {children}
-      </main>
+        <DashboardHeader user={user} orgs={orgs} />
 
-      <CommandPalette />
-    </div>
-  );
+        <main className="flex-1 container-custom py-4 md:py-8 pb-24 md:pb-12">
+          {children}
+        </main>
+
+        <CommandPalette />
+      </div>
+    );
+  } catch (renderErr: any) {
+    console.error('[Dashboard:Layout] CRITICAL RENDER FAILURE', {
+      message: renderErr.message,
+      stack: renderErr.stack,
+      timestamp: new Date().toISOString(),
+    });
+    throw renderErr; // Re-throw so Next.js handles the 500 but we have the log
+  }
 }

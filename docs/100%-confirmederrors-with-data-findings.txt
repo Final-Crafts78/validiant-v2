@@ -212,8 +212,14 @@
 - **Resolution Plan**: Wrap cookie access in an isolated try-catch and implement manual header parsing fallback.
 
 #### 42. [Frontend] Missing JWT_SECRET in Vercel (100% CONFIRMED)
-- **Data Evidence**: Every log entry in `vercellogs.txt` reports `secretFP: 'MISSING'`.
+- **Data Evidence**: Every log entry in `vercellogs.txt` (e.g. Line 14, 15, 17) reports `secretFP: 'MISSING'` and `JWT_SECRET: 'MISSING'`.
 - **Root Cause**: `process.env.JWT_SECRET` is not injected into the Vercel Edge Runtime for the production deployment.
 - **Impact**: Server-side auth verification on the Vercel side is impossible.
 - **Action Required**: Add `JWT_SECRET` to Vercel environment variables for the production environment.
+
+#### 43. [Frontend] Dashboard Layout SSR 500 Error (DATA CONFIRMED)
+- **Data Evidence**: `vercellogs.txt` (Line 13) shows `[Dashboard:Layout] Organizations result` log with `count: 1` successfully fetched, but the request still terminates with a `500` status code.
+- **Root Cause**: Investigation is ongoing. Since it happens *after* the initial server-side logic in the layout but *before* the request completes, it is likely a crash in a child component during rendering (e.g., `AuthStoreInitializer`, `WorkspaceInitializer`, or `DashboardHeader`) or a hydration mismatch being treated as a server-side crash.
+- **Impact**: Users cannot see the dashboard content even after successful authentication.
+- **Next Step**: Add granular instrumentation to the layout components to isolate the crash point.
 

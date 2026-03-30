@@ -22,6 +22,16 @@ interface WorkspaceInitializerProps {
 }
 
 export function WorkspaceInitializer({ orgs }: WorkspaceInitializerProps) {
+  // SERVER-SIDE SSR AUDIT (Finding 43)
+  if (typeof window === 'undefined') {
+    // eslint-disable-next-line no-console
+    console.debug('[Workspace:Initializer] EP-SSR: Initializing on server', {
+      orgCount: orgs?.length || 0,
+      orgIds: orgs?.map((o) => o.id),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
   const setActiveOrg = useWorkspaceStore((s) => s.setActiveOrg);
 
