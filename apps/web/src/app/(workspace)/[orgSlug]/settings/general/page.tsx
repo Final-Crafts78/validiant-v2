@@ -86,28 +86,28 @@ export default function GeneralSettings() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-2xl font-bold text-[var(--color-text-base)] tracking-tight">
           General Settings
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-[var(--color-text-muted)] text-sm">
           Update your organization's basic information and public identity.
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm"
+        className="space-y-8 card-surface p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Organization Name */}
           <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-slate-700">
+            <label className="text-sm font-semibold text-[var(--color-text-subtle)]">
               Organization Name
             </label>
             <input
               {...register('name')}
               className={cn(
-                'w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none',
+                'w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none',
                 errors.name &&
                   'border-red-500 focus:ring-red-500/20 focus:border-red-500'
               )}
@@ -122,20 +122,20 @@ export default function GeneralSettings() {
 
           {/* Org Slug */}
           <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-slate-700">
+            <label className="text-sm font-semibold text-[var(--color-text-subtle)]">
               Organization Subdomain
             </label>
             <div className="relative">
               <input
                 {...register('slug')}
                 className={cn(
-                  'w-full pl-4 pr-32 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none',
+                  'w-full pl-4 pr-32 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none',
                   errors.slug &&
                     'border-red-500 focus:ring-red-500/20 focus:border-red-500'
                 )}
                 placeholder="acme"
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] text-sm font-medium">
                 .validiant.com
               </div>
             </div>
@@ -148,12 +148,12 @@ export default function GeneralSettings() {
 
           {/* Industry */}
           <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-slate-700">
+            <label className="text-sm font-semibold text-[var(--color-text-subtle)]">
               Industry
             </label>
             <select
               {...register('industry')}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none bg-white"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none"
             >
               <option value="">Select industry...</option>
               <option value="legal">Legal Services</option>
@@ -166,13 +166,13 @@ export default function GeneralSettings() {
 
           {/* Website */}
           <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-slate-700">
+            <label className="text-sm font-semibold text-[var(--color-text-subtle)]">
               Website
             </label>
             <input
               {...register('website')}
               className={cn(
-                'w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none',
+                'w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none',
                 errors.website &&
                   'border-red-500 focus:ring-red-500/20 focus:border-red-500'
               )}
@@ -188,29 +188,29 @@ export default function GeneralSettings() {
 
         {/* Description */}
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-700">
+          <label className="text-sm font-semibold text-[var(--color-text-subtle)]">
             About the Organization
           </label>
           <textarea
             {...register('description')}
             rows={4}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none resize-none"
+            className="w-full px-4 py-3 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none resize-none"
             placeholder="Describe your organization's mission and scope..."
           />
         </div>
 
         {/* Sticky Actions Bar (if dirty) */}
         {isDirty && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-4rem)] max-w-4xl bg-white border border-slate-200 shadow-2xl rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-8 duration-300 z-50">
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-4rem)] max-w-4xl bg-[var(--color-surface-base)] border border-[var(--color-border-base)] shadow-2xl rounded-2xl p-4 flex items-center justify-between animate-in slide-in-from-bottom-8 duration-300 z-50">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-amber-500" />
+              <div className="w-10 h-10 bg-warning-500/10 rounded-full flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-[var(--color-warning-base)]" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">
+                <p className="text-sm font-bold text-[var(--color-text-base)]">
                   Unsaved Changes
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--color-text-muted)]">
                   You have modified organization settings.
                 </p>
               </div>
@@ -219,14 +219,14 @@ export default function GeneralSettings() {
               <button
                 type="button"
                 onClick={() => reset()}
-                className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg transition-all"
+                className="px-4 py-2 text-sm font-bold text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] rounded-lg transition-all"
               >
                 Discard
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all disabled:opacity-50"
+                className="btn btn-primary px-6 py-2 shadow-lg shadow-[var(--color-accent-base)]/20 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -240,11 +240,11 @@ export default function GeneralSettings() {
         )}
 
         {/* Standard Submit Button (Backup) */}
-        <div className="flex justify-end pt-4 border-t border-slate-100">
+        <div className="flex justify-end pt-4 border-t border-[var(--color-border-base)]">
           <button
             type="submit"
             disabled={!isDirty || isSubmitting}
-            className="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            className="btn btn-primary px-8 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

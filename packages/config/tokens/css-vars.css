@@ -15,9 +15,8 @@
   --motion-easing-base: cubic-bezier(0.4, 0, 0.2, 1);
   --motion-easing-in: cubic-bezier(0.4, 0, 1, 1);
   --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
-  --color-surface-base: #FFFFFF;
-  --color-surface-subtle: #F9FAFB;
   --color-surface-muted: #F3F4F6;
+  --color-surface-soft: #F1F5F9; /* Slate 100 — subtle lift from #FFFFFF base */
   --color-surface-inverse: #111827;
   --color-text-base: #111827;
   --color-text-subtle: #4B5563;
@@ -45,9 +44,8 @@
 }
 
 [data-theme="dark"] {
-  --color-surface-base: #0B0C0E;
-  --color-surface-subtle: #141619;
   --color-surface-muted: #1C1F23;
+  --color-surface-soft: #1C1F23; /* Consistent dark surface for soft UI */
   --color-surface-inverse: #FFFFFF;
   --color-text-base: #F9FAFB;
   --color-text-subtle: #D1D5DB;

@@ -9,12 +9,18 @@ import { FolderOpen, Plus, Loader2, AlertCircle, Calendar } from 'lucide-react';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_STYLES: Record<string, string> = {
-  [ProjectStatus.ACTIVE]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  [ProjectStatus.PLANNING]: 'bg-blue-50    text-blue-700    border-blue-200',
-  [ProjectStatus.ON_HOLD]: 'bg-amber-50   text-amber-700   border-amber-200',
-  [ProjectStatus.COMPLETED]: 'bg-slate-100  text-slate-600   border-slate-200',
-  [ProjectStatus.ARCHIVED]: 'bg-slate-100  text-slate-400   border-slate-200',
-  [ProjectStatus.CANCELLED]: 'bg-red-50     text-red-600     border-red-200',
+  [ProjectStatus.ACTIVE]:
+    'bg-success-500/10 text-success-600 border-success-500/20',
+  [ProjectStatus.PLANNING]:
+    'bg-primary-500/10  text-[var(--color-accent-base)] border-[var(--color-accent-base)]/20',
+  [ProjectStatus.ON_HOLD]:
+    'bg-warning-500/10   text-warning-600   border-warning-500/20',
+  [ProjectStatus.COMPLETED]:
+    'bg-[var(--color-surface-soft)]  text-[var(--color-text-muted)]   border-[var(--color-border-base)]',
+  [ProjectStatus.ARCHIVED]:
+    'bg-[var(--color-surface-soft)]  text-[var(--color-text-muted)]/70   border-[var(--color-border-base)]',
+  [ProjectStatus.CANCELLED]:
+    'bg-critical-500/10     text-[var(--color-critical-base)]     border-critical-500/20',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -28,10 +34,13 @@ const STATUS_LABELS: Record<string, string> = {
 
 // ── Priority badge ────────────────────────────────────────────────────────────
 const PRIORITY_STYLES: Record<string, string> = {
-  [ProjectPriority.LOW]: 'bg-slate-100 text-slate-500',
-  [ProjectPriority.MEDIUM]: 'bg-blue-50   text-blue-600',
-  [ProjectPriority.HIGH]: 'bg-amber-50  text-amber-700',
-  [ProjectPriority.URGENT]: 'bg-red-50    text-red-700',
+  [ProjectPriority.LOW]:
+    'bg-[var(--color-surface-soft)] text-[var(--color-text-muted)]',
+  [ProjectPriority.MEDIUM]:
+    'bg-primary-500/10   text-[var(--color-accent-base)]',
+  [ProjectPriority.HIGH]: 'bg-warning-500/10  text-warning-600',
+  [ProjectPriority.URGENT]:
+    'bg-critical-500/10    text-[var(--color-critical-base)]',
 };
 
 // ── Create modal ──────────────────────────────────────────────────────────────
@@ -119,7 +128,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
             <button
               type="submit"
               disabled={createMutation.isPending || !name.trim()}
-              className="flex-1 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="flex-1 btn-primary py-2 text-sm font-semibold disabled:opacity-50 transition-colors"
             >
               {createMutation.isPending ? 'Creating…' : 'Create Project'}
             </button>
@@ -148,15 +157,17 @@ export default function ProjectsPage() {
   if (isLoading)
     return (
       <div className="flex items-center justify-center py-32">
-        <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
+        <Loader2 className="h-7 w-7 animate-spin text-[var(--color-accent-base)]" />
       </div>
     );
 
   if (isError)
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-3">
-        <AlertCircle className="h-8 w-8 text-red-500" />
-        <p className="text-sm text-slate-500">Failed to load projects.</p>
+        <AlertCircle className="h-8 w-8 text-[var(--color-critical-base)]" />
+        <p className="text-sm text-[var(--color-text-muted)]">
+          Failed to load projects.
+        </p>
       </div>
     );
 
@@ -173,7 +184,7 @@ export default function ProjectsPage() {
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold btn-primary transition-colors"
         >
           <Plus className="w-4 h-4" /> New Project
         </button>
@@ -183,7 +194,9 @@ export default function ProjectsPage() {
       {projects.length === 0 && (
         <div className="text-center py-20 card-surface border-dashed">
           <FolderOpen className="w-10 h-10 text-text-muted mx-auto mb-3" />
-          <p className="text-text-subtle text-sm font-medium">No projects yet.</p>
+          <p className="text-text-subtle text-sm font-medium">
+            No projects yet.
+          </p>
           <p className="text-text-muted text-xs mt-1">
             Create your first project to start tracking work.
           </p>
@@ -199,11 +212,11 @@ export default function ProjectsPage() {
               setActiveProject(p.id);
               router.push(`/${orgSlug}/projects/${p.id}`);
             }}
-            className="card-surface p-5 text-left hover:border-blue-400 hover:shadow-md transition-all group"
+            className="card-surface p-5 text-left hover:border-[var(--color-accent-base)] hover:shadow-md transition-all group"
           >
             {/* Top row: name + status */}
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-text-base leading-snug group-hover:text-blue-700 transition-colors line-clamp-1">
+              <h3 className="font-semibold text-text-base leading-snug group-hover:text-[var(--color-accent-base)] transition-colors line-clamp-1">
                 {p.name}
               </h3>
               <span
@@ -218,7 +231,7 @@ export default function ProjectsPage() {
 
             {/* Description */}
             {p.description && (
-              <p className="text-xs text-slate-500 line-clamp-2 mb-3">
+              <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 mb-3">
                 {p.description}
               </p>
             )}
@@ -226,16 +239,16 @@ export default function ProjectsPage() {
             {/* Progress bar */}
             <div className="mb-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] text-slate-400 font-medium">
+                <span className="text-[11px] text-[var(--color-text-muted)]/60 font-medium">
                   Progress
                 </span>
-                <span className="text-[11px] text-slate-600 font-semibold">
+                <span className="text-[11px] text-[var(--color-text-subtle)] font-semibold">
                   {p.progress ?? 0}%
                 </span>
               </div>
-              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[var(--color-surface-soft)] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-blue-500 rounded-full transition-all"
+                  className="h-full bg-[var(--color-accent-base)] rounded-full transition-all"
                   style={{ width: `${p.progress ?? 0}%` }}
                 />
               </div>
@@ -255,7 +268,7 @@ export default function ProjectsPage() {
 
               {/* Due date */}
               {p.endDate && (
-                <span className="flex items-center gap-1 text-[11px] text-slate-400">
+                <span className="flex items-center gap-1 text-[11px] text-[var(--color-text-muted)]">
                   <Calendar className="w-3 h-3" />
                   {new Date(p.endDate).toLocaleDateString('en-US', {
                     month: 'short',

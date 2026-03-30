@@ -24,32 +24,32 @@ const statusConfig = {
   [TaskStatus.PENDING]: {
     label: 'To Do',
     icon: Circle,
-    color: 'text-slate-400',
-    bg: 'bg-slate-50',
+    color: 'text-[var(--color-text-muted)]',
+    bg: 'bg-[var(--color-surface-muted)]',
   },
   [TaskStatus.IN_PROGRESS]: {
     label: 'In Progress',
     icon: Clock,
-    color: 'text-blue-500',
-    bg: 'bg-blue-50',
+    color: 'text-[var(--color-accent-base)]',
+    bg: 'bg-primary-500/10',
   },
   [TaskStatus.COMPLETED]: {
     label: 'Completed',
     icon: CheckCircle2,
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-50',
+    color: 'text-[var(--color-positive-base)]',
+    bg: 'bg-success-500/10',
   },
   [TaskStatus.VERIFIED]: {
     label: 'Verified',
     icon: CheckCircle2,
-    color: 'text-purple-500',
-    bg: 'bg-purple-50',
+    color: 'text-[var(--color-warning-base)]',
+    bg: 'bg-warning-500/10',
   },
   [TaskStatus.UNASSIGNED]: {
     label: 'Unassigned',
     icon: Circle,
-    color: 'text-slate-300',
-    bg: 'bg-slate-100',
+    color: 'text-[var(--color-text-muted)]',
+    bg: 'bg-[var(--color-surface-muted)]',
   },
 };
 
@@ -83,18 +83,18 @@ export function TasksBoard({ tasks, onTaskClick }: TasksBoardProps) {
           <div key={status} className="flex-shrink-0 w-80 flex flex-col gap-4">
             {/* Column Header */}
             <div
-              className={`flex items-center justify-between p-3 rounded-xl ${config.bg} border border-slate-200/50 shadow-sm`}
+              className={`flex items-center justify-between p-3 rounded-xl ${config.bg} border border-[var(--color-border-base)]/50 shadow-sm`}
             >
               <div className="flex items-center gap-2">
                 <Icon className={`h-4 w-4 ${config.color}`} />
-                <h3 className="text-sm font-bold text-slate-700">
+                <h3 className="text-sm font-bold text-[var(--color-text-subtle)]">
                   {config.label}
                 </h3>
-                <span className="text-[10px] font-bold bg-white text-slate-500 px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                <span className="text-[10px] font-bold bg-[var(--color-surface-base)] text-[var(--color-text-muted)] px-2 py-0.5 rounded-full border border-[var(--color-border-base)] shadow-sm">
                   {statusTasks.length}
                 </span>
               </div>
-              <button className="p-1 hover:bg-white rounded-md text-slate-400 transition-colors">
+              <button className="p-1 hover:bg-[var(--color-surface-base)] rounded-md text-[var(--color-text-muted)] transition-colors">
                 <MoreHorizontal className="h-4 w-4" />
               </button>
             </div>
@@ -105,27 +105,27 @@ export function TasksBoard({ tasks, onTaskClick }: TasksBoardProps) {
                 <div
                   key={task.id}
                   onClick={() => onTaskClick(task.id)}
-                  className="group bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer active:scale-[0.98]"
+                  className="group bg-[var(--color-surface-base)] p-4 rounded-xl border border-[var(--color-border-base)] shadow-sm hover:shadow-md hover:border-[var(--color-accent-base)] transition-all cursor-pointer active:scale-[0.98]"
                 >
                   <div className="flex flex-col gap-2">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-blue-700 transition-colors">
+                      <p className="text-sm font-semibold text-[var(--color-text-base)] leading-snug group-hover:text-[var(--color-accent-base)] transition-colors">
                         {task.title}
                       </p>
                     </div>
 
                     {task.description && (
-                      <p className="text-xs text-slate-500 line-clamp-2">
+                      <p className="text-xs text-[var(--color-text-muted)] line-clamp-2">
                         {task.description}
                       </p>
                     )}
 
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--color-border-base)]/30">
                       <div className="flex -space-x-1.5 overflow-hidden">
                         {task.assignees?.map((a: any) => (
                           <div
                             key={a.id}
-                            className="flex h-6 w-6 rounded-full ring-2 ring-white bg-slate-100 items-center justify-center text-[10px] font-bold text-slate-600 uppercase"
+                            className="flex h-6 w-6 rounded-full ring-2 ring-[var(--color-surface-base)] bg-[var(--color-surface-muted)] items-center justify-center text-[10px] font-bold text-[var(--color-text-subtle)] uppercase"
                             title={a.fullName}
                           >
                             {a.fullName.charAt(0)}
@@ -138,8 +138,8 @@ export function TasksBoard({ tasks, onTaskClick }: TasksBoardProps) {
                           className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                             task.priority === TaskPriority.HIGH ||
                             task.priority === TaskPriority.URGENT
-                              ? 'bg-red-50 text-red-600'
-                              : 'bg-slate-100 text-slate-500'
+                              ? 'bg-danger-500/10 text-danger-600'
+                              : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
                           }`}
                         >
                           {task.priority}
@@ -150,7 +150,7 @@ export function TasksBoard({ tasks, onTaskClick }: TasksBoardProps) {
                 </div>
               ))}
 
-              <button className="w-full py-3 flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50/50 transition-all font-medium text-xs">
+              <button className="w-full py-3 flex items-center justify-center gap-2 border-2 border-dashed border-[var(--color-border-base)] rounded-xl text-[var(--color-text-muted)] hover:text-[var(--color-accent-base)] hover:border-[var(--color-accent-base)] hover:bg-primary-500/5 transition-all font-medium text-xs">
                 <Plus className="h-4 w-4" />
                 Add Task
               </button>

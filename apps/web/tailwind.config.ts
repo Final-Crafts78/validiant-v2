@@ -38,6 +38,7 @@ const config: Config = {
         },
         surface: {
           base: 'var(--color-surface-base)',
+          soft: 'var(--color-surface-soft)',
           subtle: 'var(--color-surface-subtle)',
           muted: 'var(--color-surface-muted)',
           inverse: 'var(--color-surface-inverse)',

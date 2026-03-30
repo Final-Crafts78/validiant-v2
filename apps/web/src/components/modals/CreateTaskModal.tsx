@@ -135,9 +135,9 @@ function CreateTaskModal({
             <div>
               <label
                 htmlFor="title"
-                className="block text-sm font-medium text-slate-700 mb-1"
+                className="block text-sm font-medium text-text-subtle mb-1"
               >
-                Task Title <span className="text-red-500">*</span>
+                Task Title <span className="text-danger-500">*</span>
               </label>
               <input
                 id="title"
@@ -145,7 +145,7 @@ function CreateTaskModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 p-2 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg text-sm text-[var(--color-text-base)] p-2 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-base)] focus:border-transparent transition"
                 placeholder="e.g. Update user authentication"
               />
             </div>
@@ -153,7 +153,7 @@ function CreateTaskModal({
             <div>
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-slate-700 mb-1"
+                className="block text-sm font-medium text-text-subtle mb-1"
               >
                 Description
               </label>
@@ -161,7 +161,7 @@ function CreateTaskModal({
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-lg text-sm text-slate-900 p-2 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition min-h-[80px]"
+                className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg text-sm text-[var(--color-text-base)] p-2 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-base)] focus:border-transparent transition min-h-[80px]"
                 placeholder="Details about this task..."
               />
             </div>
@@ -169,7 +169,7 @@ function CreateTaskModal({
             <div>
               <label
                 htmlFor="priority"
-                className="block text-sm font-medium text-slate-700 mb-1"
+                className="block text-sm font-medium text-text-subtle mb-1"
               >
                 Priority
               </label>

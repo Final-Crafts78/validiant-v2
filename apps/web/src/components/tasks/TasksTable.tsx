@@ -100,7 +100,7 @@ export function TasksTable({
           <div className="px-1">
             <input
               type="checkbox"
-              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+              className="h-4 w-4 rounded border-[var(--color-border-base)] bg-[var(--color-surface-base)] text-[var(--color-accent-base)] focus:ring-[var(--color-accent-base)] cursor-pointer"
               checked={table.getIsAllPageRowsSelected()}
               onChange={table.getToggleAllPageRowsSelectedHandler()}
             />
@@ -127,15 +127,15 @@ export function TasksTable({
         cell: ({ row }) => {
           const val = row.original.status as TaskStatus;
           if (val === TaskStatus.COMPLETED) {
-            return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
+            return <CheckCircle2 className="h-4 w-4 text-[var(--color-positive-base)]" />;
           }
           if (val === TaskStatus.IN_PROGRESS) {
-            return <Clock className="h-4 w-4 text-blue-500" />;
+            return <Clock className="h-4 w-4 text-[var(--color-accent-base)]" />;
           }
           if (val === TaskStatus.VERIFIED) {
-            return <Clock className="h-4 w-4 text-amber-500" />;
+            return <Clock className="h-4 w-4 text-[var(--color-warning-base)]" />;
           }
-          return <Circle className="h-4 w-4 text-slate-300" />;
+          return <Circle className="h-4 w-4 text-[var(--color-text-muted)]" />;
         },
         size: 80,
       },
@@ -144,7 +144,7 @@ export function TasksTable({
         header: 'Title',
         accessorKey: 'title',
         cell: ({ row }) => (
-          <span className="font-medium text-slate-900 truncate block">
+          <span className="font-medium text-[var(--color-text-base)] truncate block">
             {row.original.title}
           </span>
         ),
@@ -157,11 +157,11 @@ export function TasksTable({
         cell: ({ row }) => {
           const p = row.original.priority as TaskPriority;
           const colors: Record<string, string> = {
-            [TaskPriority.URGENT]: 'bg-red-100 text-red-700',
-            [TaskPriority.HIGH]: 'bg-orange-100 text-orange-700',
-            [TaskPriority.MEDIUM]: 'bg-blue-100 text-blue-700',
-            [TaskPriority.LOW]: 'bg-slate-100 text-slate-700',
-            none: 'bg-slate-50 text-slate-400',
+            [TaskPriority.URGENT]: 'bg-danger-500/10 text-danger-600',
+            [TaskPriority.HIGH]: 'bg-warning-500/10 text-warning-600',
+            [TaskPriority.MEDIUM]: 'bg-primary-500/10 text-primary-600',
+            [TaskPriority.LOW]: 'bg-surface-muted text-text-subtle',
+            none: 'bg-surface-muted text-text-muted',
           };
           return (
             <span
@@ -194,14 +194,14 @@ export function TasksTable({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+        <h3 className="text-sm font-semibold text-[var(--color-text-subtle)] uppercase tracking-wider">
           Task Queue
         </h3>
 
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowColumnPicker(!showColumnPicker)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--color-text-subtle)] bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg hover:bg-[var(--color-surface-muted)] transition-all shadow-sm"
           >
             <Settings2 className="h-3.5 w-3.5" />
             Columns
@@ -211,8 +211,8 @@ export function TasksTable({
           </button>
 
           {showColumnPicker && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-1">
-              <p className="px-3 py-1 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-1">
+              <p className="px-3 py-1 text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-1">
                 Visibility
               </p>
               {columns.map((column) => (
@@ -227,11 +227,11 @@ export function TasksTable({
                       );
                     }
                   }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs text-[var(--color-text-subtle)] hover:bg-[var(--color-surface-muted)] transition-colors"
                 >
                   <span className="capitalize">{column.id}</span>
                   {column.id && columnVisibility[column.id] !== false && (
-                    <Check className="h-3 w-3 text-blue-600" />
+                    <Check className="h-3 w-3 text-[var(--color-accent-base)]" />
                   )}
                 </button>
               ))}
@@ -240,7 +240,7 @@ export function TasksTable({
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-xl overflow-hidden shadow-sm">
         <DataTable
           columns={columns}
           data={tasks}

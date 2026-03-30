@@ -14,6 +14,7 @@ import {
   Save,
   ImageIcon,
   AlertCircle,
+  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWorkspaceStore } from '@/store/workspace';
@@ -160,16 +161,16 @@ export default function BrandingSettings() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-[var(--color-text-base)] tracking-tight">
             Whitelabel Branding
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-[var(--color-text-muted)] text-sm">
             Customize the application look and feel for your clients.
           </p>
         </div>
         <button
           onClick={handleResetBranding}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] rounded-xl transition-all"
         >
           <RefreshCcw className="w-4 h-4" />
           Reset to Default
@@ -181,31 +182,31 @@ export default function BrandingSettings() {
         <div className="lg:col-span-2 space-y-6">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-8"
+            className="card-surface p-6 space-y-8"
           >
             {/* Display Identity */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-primary-500" /> Identity
+              <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-[var(--color-accent-base)]" /> Identity
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500">
+                  <label className="text-xs font-bold text-[var(--color-text-muted)]">
                     Brand Display Name
                   </label>
                   <input
                     {...register('displayName')}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] outline-none"
                     placeholder="e.g. Acme Verification"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500">
+                  <label className="text-xs font-bold text-[var(--color-text-muted)]">
                     Tagline / Subtext
                   </label>
                   <input
                     {...register('subtext')}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500/20 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] outline-none"
                     placeholder="Verification Excellence"
                   />
                 </div>
@@ -214,12 +215,12 @@ export default function BrandingSettings() {
 
             {/* Logo Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                <Upload className="w-4 h-4 text-primary-500" /> Organization
+              <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
+                <Upload className="w-4 h-4 text-[var(--color-accent-base)]" /> Organization
                 Logo
               </h3>
               <div className="flex items-center gap-6">
-                <div className="w-24 h-24 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
+                <div className="w-24 h-24 bg-[var(--color-surface-muted)] rounded-2xl border-2 border-dashed border-[var(--color-border-base)] flex items-center justify-center overflow-hidden">
                   {logoPreview ? (
                     <img
                       src={logoPreview}
@@ -227,14 +228,14 @@ export default function BrandingSettings() {
                       className="w-full h-full object-contain"
                     />
                   ) : (
-                    <ImageIcon className="w-8 h-8 text-slate-300" />
+                    <ImageIcon className="w-8 h-8 text-[var(--color-text-muted)]" />
                   )}
                 </div>
                 <div className="flex-1 space-y-2">
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold rounded-lg transition-all"
+                      className="px-4 py-2 bg-[var(--color-surface-soft)] hover:bg-[var(--color-surface-muted)] text-[var(--color-text-base)] text-xs font-bold rounded-lg transition-all"
                     >
                       Upload New Logo
                     </button>
@@ -245,13 +246,13 @@ export default function BrandingSettings() {
                           setLogoPreview(null);
                           setValue('logoUrl', '');
                         }}
-                        className="px-4 py-2 text-red-600 hover:bg-red-50 text-xs font-bold rounded-lg transition-all"
+                        className="px-4 py-2 text-[var(--color-critical-base)] hover:bg-[var(--color-critical-base)]/10 text-xs font-bold rounded-lg transition-all"
                       >
                         Remove
                       </button>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                  <p className="text-[10px] text-[var(--color-text-muted)] font-medium uppercase tracking-wider">
                     Recommended: SVG or Transparent PNG, 512x512px
                   </p>
                 </div>
@@ -259,13 +260,13 @@ export default function BrandingSettings() {
             </div>
 
             {/* Colors Section */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                <Palette className="w-4 h-4 text-primary-500" /> Color System
+            <div className="space-y-4 pt-4 border-t border-[var(--color-border-base)]">
+              <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
+                <Palette className="w-4 h-4 text-[var(--color-accent-base)]" /> Color System
               </h3>
               <div className="flex flex-wrap items-end gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500">
+                  <label className="text-xs font-bold text-[var(--color-text-muted)]">
                     Accent Color (Theme)
                   </label>
                   <div className="flex items-center gap-3">
@@ -282,7 +283,7 @@ export default function BrandingSettings() {
                           shouldDirty: true,
                         })
                       }
-                      className="w-24 px-3 py-2 text-sm font-mono bg-slate-50 border border-slate-200 rounded-lg outline-none"
+                      className="w-24 px-3 py-2 text-sm font-mono bg-[var(--color-surface-soft)] border border-[var(--color-border-base)] rounded-lg outline-none text-[var(--color-text-base)]"
                     />
                   </div>
                 </div>
@@ -295,8 +296,8 @@ export default function BrandingSettings() {
                         className={cn(
                           'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all',
                           contrastResults.light.passed
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                            : 'bg-red-50 text-red-700 border-red-100'
+                            ? 'bg-success-500/10 text-success-600 border-success-500/20'
+                            : 'bg-critical-500/10 text-critical-600 border-critical-500/20'
                         )}
                       >
                         {contrastResults.light.passed ? (
@@ -310,8 +311,8 @@ export default function BrandingSettings() {
                         className={cn(
                           'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold border transition-all',
                           contrastResults.dark.passed
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                            : 'bg-red-50 text-red-700 border-red-100'
+                            ? 'bg-success-500/10 text-success-600 border-success-500/20'
+                            : 'bg-critical-500/10 text-critical-600 border-critical-500/20'
                         )}
                       >
                         {contrastResults.dark.passed ? (
@@ -325,18 +326,18 @@ export default function BrandingSettings() {
                   )}
                 </div>
               </div>
-              <p className="text-xs text-slate-500 italic flex items-center gap-1">
+              <p className="text-xs text-[var(--color-text-muted)] italic flex items-center gap-1">
                 <AlertCircle className="w-3 h-3" /> WCAG AA compliance requires
                 at least 4.5:1 contrast against background surfaces.
               </p>
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end pt-4 border-t border-slate-100">
+            <div className="flex justify-end pt-4 border-t border-[var(--color-border-base)]">
               <button
                 type="submit"
                 disabled={!isDirty || isSubmitting}
-                className="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                className="btn btn-primary px-8 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -352,7 +353,7 @@ export default function BrandingSettings() {
         {/* Live Preview Column */}
         <div className="space-y-6">
           <div className="sticky top-24">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+            <h3 className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4">
               Live Preview
             </h3>
 
@@ -370,7 +371,7 @@ export default function BrandingSettings() {
                       className="w-6 h-6 object-contain"
                     />
                   ) : (
-                    <ImageIcon className="w-6 h-6 text-primary-600" />
+                    <Shield className="w-6 h-6 text-primary-600" />
                   )}
                 </div>
                 <div>
@@ -398,7 +399,7 @@ export default function BrandingSettings() {
             </div>
 
             {/* Sidebar Preview */}
-            <div className="mt-8 bg-white border border-slate-200 rounded-2xl shadow-sm p-4 space-y-4">
+            <div className="mt-8 card-surface p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -406,7 +407,7 @@ export default function BrandingSettings() {
                 >
                   <ImageIcon className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[var(--color-text-base)] text-sm">
                   Sidebar Icon
                 </span>
               </div>

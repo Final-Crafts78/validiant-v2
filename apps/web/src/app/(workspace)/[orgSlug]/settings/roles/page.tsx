@@ -115,6 +115,7 @@ export default function RolesSettings() {
 
   const togglePermission = (permKey: string) => {
     // Logic for updating permissions will go here in next phase
+    // eslint-disable-next-line no-console
     console.debug('[Roles:Permissions] Toggle intent:', {
       roleId: selectedRoleId,
       roleName: selectedRole?.name,
@@ -125,6 +126,7 @@ export default function RolesSettings() {
 
   const handleCreateRole = async () => {
     if (!newRoleName.trim() || !activeOrgId) {
+      // eslint-disable-next-line no-console
       console.warn('[Roles:Create] Validation failed', {
         name: newRoleName,
         orgId: activeOrgId,
@@ -132,6 +134,7 @@ export default function RolesSettings() {
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.info('[Roles:Create] Initiating role creation', {
       name: newRoleName,
       orgId: activeOrgId,
@@ -145,6 +148,7 @@ export default function RolesSettings() {
         permissions: [], // Start with empty permissions
       });
 
+      // eslint-disable-next-line no-console
       console.info('[Roles:Create] SUCCESS', {
         name: newRoleName,
         timestamp: new Date().toISOString(),
@@ -152,7 +156,9 @@ export default function RolesSettings() {
 
       setNewRoleName('');
       setIsCreating(false);
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as { message: string; details?: unknown };
+      // eslint-disable-next-line no-console
       console.error('[Roles:Create] FAILED', {
         error,
         name: newRoleName,
@@ -176,16 +182,16 @@ export default function RolesSettings() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-24">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-[var(--color-text-base)] tracking-tight">
             Roles & Permissions
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-[var(--color-text-muted)] text-sm">
             Define granular access control for your team members.
           </p>
         </div>
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all"
+          className="btn btn-primary px-4 py-2 shadow-lg shadow-[var(--color-accent-base)]/20 transition-all font-bold"
         >
           <Plus className="w-4 h-4" />
           Create New Role
@@ -195,19 +201,19 @@ export default function RolesSettings() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Roles Sidebar */}
         <div className="lg:col-span-1 space-y-3">
-          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+          <h3 className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest px-1">
             Available Roles
           </h3>
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="card-surface overflow-hidden">
             {roles?.map((role) => (
               <button
                 key={role.id}
                 onClick={() => setSelectedRoleId(role.id)}
                 className={cn(
-                  'w-full flex items-center justify-between p-4 text-left transition-all border-b border-slate-50 last:border-0 group',
+                  'w-full flex items-center justify-between p-4 text-left transition-all border-b border-[var(--color-border-base)]/30 last:border-0 group',
                   selectedRoleId === role.id
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'hover:bg-slate-50 text-slate-600'
+                    ? 'bg-primary-500/10 text-[var(--color-accent-base)]'
+                    : 'hover:bg-[var(--color-surface-soft)] text-[var(--color-text-subtle)]'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -215,13 +221,13 @@ export default function RolesSettings() {
                     className={cn(
                       'w-4 h-4',
                       selectedRoleId === role.id
-                        ? 'text-primary-600'
-                        : 'text-slate-400'
+                        ? 'text-[var(--color-accent-base)]'
+                        : 'text-[var(--color-text-muted)]'
                     )}
                   />
                   <div>
                     <p className="text-sm font-bold">{role.name}</p>
-                    <p className="text-[10px] uppercase font-medium text-slate-400">
+                    <p className="text-[10px] uppercase font-medium text-[var(--color-text-muted)]">
                       {role.isDefault ? 'System' : 'Custom'}
                     </p>
                   </div>
@@ -242,24 +248,24 @@ export default function RolesSettings() {
         {/* Permissions Builder */}
         <div className="lg:col-span-3">
           {selectedRole ? (
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="card-surface overflow-hidden">
+              <div className="p-6 border-b border-[var(--color-border-base)] flex items-center justify-between bg-[var(--color-surface-soft)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-primary-600" />
+                  <div className="w-12 h-12 bg-[var(--color-surface-base)] rounded-xl shadow-sm border border-[var(--color-border-base)] flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-[var(--color-accent-base)]" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-slate-900">
+                    <h2 className="text-lg font-bold text-[var(--color-text-base)]">
                       {selectedRole.name}
                     </h2>
-                    <p className="text-xs text-slate-500 max-w-md">
+                    <p className="text-xs text-[var(--color-text-muted)] max-w-md">
                       {selectedRole.description ||
                         'Configurable permissions for this role.'}
                     </p>
                   </div>
                 </div>
                 {selectedRole.isDefault && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-lg border border-slate-200">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] text-[10px] font-bold rounded-lg border border-[var(--color-border-base)]">
                     <Lock className="w-3 h-3" />
                     READ ONLY (SYSTEM ROLE)
                   </div>
@@ -271,9 +277,9 @@ export default function RolesSettings() {
                   const Icon = group.icon;
                   return (
                     <div key={group.name} className="space-y-4">
-                      <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-                        <Icon className="w-4 h-4 text-slate-400" />
-                        <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                      <div className="flex items-center gap-2 border-b border-[var(--color-border-base)]/50 pb-2">
+                        <Icon className="w-4 h-4 text-[var(--color-text-muted)]" />
+                        <h3 className="text-xs font-bold text-[var(--color-text-base)] uppercase tracking-wider">
                           {group.name}
                         </h3>
                       </div>
@@ -290,16 +296,16 @@ export default function RolesSettings() {
                               className={cn(
                                 'flex items-start gap-4 p-4 rounded-2xl border transition-all text-left group',
                                 isEnabled
-                                  ? 'bg-emerald-50/30 border-emerald-100 ring-1 ring-emerald-500/10'
-                                  : 'bg-white border-slate-100 hover:border-slate-200'
+                                  ? 'bg-success-500/10 border-success-500/20 ring-1 ring-success-500/10'
+                                  : 'bg-[var(--color-surface-base)] border-[var(--color-border-base)]/30 hover:border-[var(--color-border-base)]'
                               )}
                             >
                               <div
                                 className={cn(
                                   'mt-1 w-5 h-5 rounded-md flex items-center justify-center transition-all',
                                   isEnabled
-                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200'
-                                    : 'bg-slate-100 text-slate-300'
+                                    ? 'bg-success-500 text-white shadow-lg shadow-success-500/20'
+                                    : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
                                 )}
                               >
                                 {isEnabled ? (
@@ -313,17 +319,17 @@ export default function RolesSettings() {
                                   className={cn(
                                     'text-sm font-bold',
                                     isEnabled
-                                      ? 'text-slate-900'
-                                      : 'text-slate-500'
+                                      ? 'text-[var(--color-text-base)]'
+                                      : 'text-[var(--color-text-muted)]'
                                   )}
                                 >
                                   {perm.label}
                                 </p>
-                                <p className="text-[10px] text-slate-400 leading-relaxed font-medium mt-0.5">
+                                <p className="text-[10px] text-[var(--color-text-muted)] leading-relaxed font-medium mt-0.5">
                                   {perm.description}
                                 </p>
                               </div>
-                              <Info className="w-3.5 h-3.5 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              <Info className="w-3.5 h-3.5 text-[var(--color-text-muted)] opacity-0 group-hover:opacity-100 transition-opacity" />
                             </button>
                           );
                         })}
@@ -334,8 +340,8 @@ export default function RolesSettings() {
               </div>
 
               {!selectedRole.isDefault && (
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-                  <button className="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-200 transition-all">
+                <div className="p-6 bg-[var(--color-surface-soft)] border-t border-[var(--color-border-base)] flex justify-end">
+                  <button className="btn btn-primary px-8 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 transition-all font-bold">
                     <Save className="w-4 h-4" />
                     Save Changes
                   </button>
@@ -343,12 +349,12 @@ export default function RolesSettings() {
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-20 bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-3xl text-center">
-              <Shield className="w-12 h-12 text-slate-300 mb-4" />
-              <h3 className="text-lg font-bold text-slate-900">
+            <div className="flex flex-col items-center justify-center p-20 bg-[var(--color-surface-soft)]/50 border-2 border-dashed border-[var(--color-border-base)] rounded-3xl text-center">
+              <Shield className="w-12 h-12 text-[var(--color-text-muted)] mb-4" />
+              <h3 className="text-lg font-bold text-[var(--color-text-base)]">
                 No Role Selected
               </h3>
-              <p className="text-sm text-slate-500 mt-1 max-w-xs">
+              <p className="text-sm text-[var(--color-text-muted)] mt-1 max-w-xs">
                 Select a role from the sidebar to view and manage its
                 permissions.
               </p>
@@ -359,22 +365,22 @@ export default function RolesSettings() {
 
       {/* Create Role Modal Placeholder */}
       {isCreating && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-6 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-[var(--color-surface-subtle)]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[var(--color-surface-base)] w-full max-w-md rounded-3xl shadow-2xl border border-[var(--color-border-base)] p-6 space-y-6 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-900">
+              <h3 className="text-xl font-bold text-[var(--color-text-base)]">
                 Create Custom Role
               </h3>
               <button
                 onClick={() => setIsCreating(false)}
-                className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-all"
+                className="p-2 text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] rounded-xl transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500">
+                <label className="text-xs font-bold text-[var(--color-text-muted)]">
                   Role Name
                 </label>
                 <input
@@ -382,10 +388,10 @@ export default function RolesSettings() {
                   value={newRoleName}
                   onChange={(e) => setNewRoleName(e.target.value)}
                   placeholder="e.g. Regional Manager"
-                  className="input"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-surface-base)] text-[var(--color-text-base)] border border-[var(--color-border-base)] focus:ring-2 focus:ring-primary-500/20 focus:border-[var(--color-accent-base)] transition-all outline-none"
                 />
               </div>
-              <p className="text-[10px] text-slate-400 leading-relaxed italic">
+              <p className="text-[10px] text-[var(--color-text-muted)] leading-relaxed italic">
                 Custom roles inherit from the basic 'Member' role and allow you
                 to add specific granular permissions.
               </p>
@@ -394,14 +400,14 @@ export default function RolesSettings() {
               <button
                 onClick={() => setIsCreating(false)}
                 disabled={createRoleMutation.isPending}
-                className="flex-1 py-3 text-slate-600 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-xl transition-all disabled:opacity-50"
+                className="flex-1 py-3 text-[var(--color-text-subtle)] font-bold text-sm bg-[var(--color-surface-soft)] hover:bg-[var(--color-surface-muted)] rounded-xl transition-all disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateRole}
                 disabled={createRoleMutation.isPending}
-                className="flex-1 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="btn btn-primary flex-1 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {createRoleMutation.isPending ? (
                   <>

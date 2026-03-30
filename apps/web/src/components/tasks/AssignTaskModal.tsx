@@ -30,8 +30,8 @@ export function AssignTaskModal({
   };
 
   return (
-    <div className="absolute z-20 bg-white border border-slate-200 rounded-xl shadow-lg p-3 min-w-[220px]">
-      <p className="text-xs font-semibold text-slate-500 mb-2 px-1">
+    <div className="absolute z-20 bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-xl shadow-lg p-3 min-w-[220px]">
+      <p className="text-xs font-semibold text-[var(--color-text-muted)] mb-2 px-1">
         Assign to
       </p>
       <ul>
@@ -41,12 +41,12 @@ export function AssignTaskModal({
               type="button"
               onClick={() => handleAssign(m.userId)}
               disabled={assigning}
-              className="w-full text-left px-2 py-2 text-sm hover:bg-slate-50 rounded-lg flex items-center gap-2"
+              className="w-full text-left px-2 py-2 text-sm hover:bg-[var(--color-surface-muted)] rounded-lg flex items-center gap-2"
             >
-              <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center">
+              <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-bold flex items-center justify-center">
                 {m.user.fullName.charAt(0)}
               </div>
-              <span>{m.user.fullName}</span>
+              <span className="text-[var(--color-text-base)]">{m.user.fullName}</span>
             </button>
           </li>
         ))}

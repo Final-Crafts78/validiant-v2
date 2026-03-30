@@ -28,6 +28,7 @@ import type { AuthUser } from '@/types/auth.types';
 import { OrgSwitcher } from './OrgSwitcher';
 import { ProjectSwitcher } from './ProjectSwitcher';
 import { NotificationBell } from '../notifications/NotificationBell';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 /**
  * Navigation item type
@@ -135,24 +136,24 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-[var(--color-surface-base)] border-b border-[var(--color-border-base)] sticky top-0 z-40">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <Link href={dashboardHref} className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-[var(--color-accent-base)] rounded-lg flex items-center justify-center">
                   <LayoutDashboard className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-gray-900 hidden lg:inline">
+                <span className="text-xl font-bold text-[var(--color-text-base)] hidden lg:inline">
                   Validiant
                 </span>
               </Link>
 
               {orgs.length > 0 && (
                 <div className="hidden md:flex items-center gap-2">
-                  <span className="text-slate-300">/</span>
+                  <span className="text-[var(--color-text-muted)]">/</span>
                   <OrgSwitcher />
-                  <span className="text-slate-300">/</span>
+                  <span className="text-[var(--color-text-muted)]">/</span>
                   <ProjectSwitcher />
                 </div>
               )}
@@ -168,8 +169,8 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                     href={item.href}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                        ? 'bg-primary-500/10 text-[var(--color-accent-base)]'
+                        : 'text-[var(--color-text-subtle)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-base)]'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -180,13 +181,14 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
             </nav>
 
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <NotificationBell />
               <div className="hidden md:flex items-center gap-3">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-bold text-[var(--color-text-base)]">
                     {user.fullName}
                   </p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">{user.email}</p>
                 </div>
                 {user.avatarUrl ? (
                   <img
@@ -195,7 +197,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-[var(--color-accent-base)] rounded-full flex items-center justify-center">
                     <span className="text-sm font-semibold text-white">
                       {initials}
                     </span>
@@ -206,7 +208,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
               <button
                 onClick={handleLogout}
                 disabled={isPending}
-                className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-text-subtle)] hover:text-[var(--color-critical-base)] hover:bg-danger-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <LogOut className="h-4 w-4" />
                 <span>{isPending ? 'Logging out...' : 'Logout'}</span>
@@ -216,7 +218,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--color-surface-base)]/90 backdrop-blur-md border-t border-[var(--color-border-base)] z-50">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.slice(0, 5).map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -227,8 +229,8 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 href={item.href}
                 className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
                   isActive
-                    ? 'text-primary-600'
-                    : 'text-gray-500 hover:text-gray-900'
+                    ? 'text-[var(--color-accent-base)]'
+                    : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-base)]'
                 }`}
               >
                 <Icon className="h-5 w-5" />

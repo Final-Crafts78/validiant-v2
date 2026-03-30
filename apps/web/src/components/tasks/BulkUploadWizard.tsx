@@ -125,17 +125,17 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 animate-in fade-in zoom-in-95 duration-200"
+          className="modal-surface w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-            <h2 className="text-lg font-bold text-slate-900">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-base)]">
+            <h2 className="text-lg font-bold text-[var(--color-text-base)]">
               Bulk Upload Tasks
             </h2>
             <button
               onClick={handleClose}
-              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)] rounded-lg transition-colors"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -148,7 +148,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
             {step === 'upload' && (
               <div>
                 <div
-                  className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-[var(--color-border-base)] rounded-xl p-8 text-center hover:border-[var(--color-accent-base)] hover:bg-primary-500/5 transition-colors cursor-pointer"
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
@@ -159,11 +159,11 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
                       fileInputRef.current?.click();
                   }}
                 >
-                  <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                  <p className="text-sm font-medium text-slate-700 mb-1">
+                  <Upload className="w-10 h-10 text-[var(--color-text-muted)] mx-auto mb-3" />
+                  <p className="text-sm font-medium text-[var(--color-text-subtle)] mb-1">
                     Drag &amp; drop a file here, or click to browse
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[var(--color-text-muted)]">
                     Supported formats: .csv, .xlsx
                   </p>
                 </div>
@@ -176,7 +176,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
                 />
 
                 {parseError && (
-                  <div className="mt-4 flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+                  <div className="mt-4 flex items-start gap-2 bg-danger-500/10 border border-[var(--color-danger-base)]/20 text-[var(--color-critical-base)] text-sm rounded-lg px-4 py-3">
                     <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                     {parseError}
                   </div>
@@ -188,20 +188,20 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
             {step === 'preview' && (
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
-                    <FileSpreadsheet className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-primary-500/10 rounded-lg flex items-center justify-center shrink-0">
+                    <FileSpreadsheet className="w-5 h-5 text-[var(--color-accent-base)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-[var(--color-text-base)] truncate">
                       {file?.name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[var(--color-text-muted)]">
                       {rows.length} row{rows.length !== 1 ? 's' : ''} found
                     </p>
                   </div>
                   <button
                     onClick={reset}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-critical-base)] hover:bg-danger-500/10 rounded-lg transition-colors"
                     aria-label="Remove file"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -210,15 +210,15 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
 
                 {/* Column preview */}
                 {rows.length > 0 && (
-                  <div className="bg-slate-50 rounded-lg p-3 mb-4 overflow-x-auto">
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  <div className="bg-[var(--color-surface-muted)] rounded-lg p-3 mb-4 overflow-x-auto">
+                    <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-2">
                       Detected Columns
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {Object.keys(rows[0] ?? {}).map((col) => (
                         <span
                           key={col}
-                          className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-white border border-slate-200 rounded-md text-slate-700"
+                          className="inline-flex items-center px-2.5 py-1 text-xs font-medium bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-md text-[var(--color-text-subtle)]"
                         >
                           {col}
                         </span>
@@ -228,7 +228,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
                 )}
 
                 {mutation.isError && (
-                  <div className="mb-4 flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+                  <div className="mb-4 flex items-start gap-2 bg-danger-500/10 border border-[var(--color-danger-base)]/20 text-[var(--color-critical-base)] text-sm rounded-lg px-4 py-3">
                     <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                     {(mutation.error as { message?: string })?.message ||
                       'Failed to upload tasks. Please try again.'}
@@ -238,7 +238,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
                 <button
                   onClick={() => mutation.mutate(rows)}
                   disabled={mutation.isPending}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  className="btn btn-primary w-full shadow-sm"
                 >
                   {mutation.isPending ? (
                     <>
@@ -258,17 +258,17 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
             {/* Step: Done */}
             {step === 'done' && (
               <div className="text-center py-6">
-                <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-slate-900 mb-1">
+                <CheckCircle2 className="w-14 h-14 text-[var(--color-positive-base)] mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-[var(--color-text-base)] mb-1">
                   Upload Complete!
                 </h3>
-                <p className="text-sm text-slate-500 mb-6">
+                <p className="text-sm text-[var(--color-text-muted)] mb-6">
                   {rows.length} task{rows.length !== 1 ? 's' : ''} have been
                   created successfully.
                 </p>
                 <button
                   onClick={handleClose}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn btn-primary px-8"
                 >
                   Done
                 </button>

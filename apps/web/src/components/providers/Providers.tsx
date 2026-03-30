@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 import { RealtimeProvider } from './RealtimeProvider';
+import { ThemeProvider } from './ThemeProvider';
 
 /**
  * Props for Providers component
@@ -52,7 +53,9 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RealtimeProvider>{children}</RealtimeProvider>
+      <ThemeProvider>
+        <RealtimeProvider>{children}</RealtimeProvider>
+      </ThemeProvider>
       {/* React Query Devtools - only in development */}
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>

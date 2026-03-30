@@ -144,38 +144,38 @@ function GeneralDashboard({
         stats.slaBreached > 0
           ? `${stats.slaBreached} SLAs breached`
           : 'Optimized flow',
-      trendColor: stats.slaBreached > 0 ? 'text-rose-600' : 'text-emerald-600',
+      trendColor: stats.slaBreached > 0 ? 'text-[var(--color-critical-base)]' : 'text-[var(--color-positive-base)]',
       icon: Activity,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-600',
+      iconBg: 'bg-primary-500/10',
+      iconColor: 'text-[var(--color-accent-base)]',
     },
     {
       title: 'Pending Verifications',
       value: String(stats.pendingVerifications),
       trend: stats.pendingVerifications > 10 ? 'High volume' : 'Managed queue',
       trendColor:
-        stats.pendingVerifications > 10 ? 'text-amber-600' : 'text-slate-500',
+        stats.pendingVerifications > 10 ? 'text-[var(--color-warning-base)]' : 'text-[var(--color-text-muted)]',
       icon: ShieldCheck,
-      iconBg: 'bg-amber-50',
-      iconColor: 'text-amber-600',
+      iconBg: 'bg-warning-500/10',
+      iconColor: 'text-[var(--color-warning-base)]',
     },
     {
       title: 'Active Projects',
       value: String(stats.activeProjects),
       trend: 'Currently running',
-      trendColor: 'text-emerald-600',
+      trendColor: 'text-[var(--color-positive-base)]',
       icon: Target,
-      iconBg: 'bg-emerald-50',
-      iconColor: 'text-emerald-600',
+      iconBg: 'bg-success-500/10',
+      iconColor: 'text-[var(--color-positive-base)]',
     },
     {
       title: 'Organizations',
       value: String(stats.orgCount),
       trend: 'Associated workspaces',
-      trendColor: 'text-slate-500',
+      trendColor: 'text-[var(--color-text-muted)]',
       icon: AlertTriangle,
-      iconBg: 'bg-slate-100',
-      iconColor: 'text-slate-500',
+      iconBg: 'bg-[var(--color-surface-muted)]',
+      iconColor: 'text-[var(--color-text-muted)]',
     },
   ];
 
@@ -186,10 +186,10 @@ function GeneralDashboard({
       =================================================================== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">
+          <h1 className="text-2xl font-extrabold text-[var(--color-text-base)]">
             Welcome back, {firstName}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
             Here is your operational overview and compliance status.
           </p>
         </div>
@@ -197,7 +197,7 @@ function GeneralDashboard({
         <button
           type="button"
           onClick={() => router.push(`/${orgSlug}/projects`)}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors shrink-0"
+          className="btn btn-primary shadow-sm shrink-0"
         >
           <FileText className="h-4 w-4" />
           Generate Report
@@ -220,20 +220,20 @@ function GeneralDashboard({
           }) => (
             <div
               key={title}
-              className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col gap-3"
+              className="card-surface p-5 flex flex-col gap-3"
             >
               <div className="flex items-start justify-between">
-                <p className="text-sm font-medium text-slate-500">{title}</p>
+                <p className="text-sm font-medium text-[var(--color-text-muted)]">{title}</p>
                 <div
                   className={`w-9 h-9 rounded-full ${iconBg} flex items-center justify-center shrink-0`}
                 >
                   <Icon className={`h-4 w-4 ${iconColor}`} />
                 </div>
               </div>
-              <p className="text-3xl font-bold text-slate-900 leading-none">
+              <p className="text-3xl font-bold text-[var(--color-text-base)] leading-none">
                 {value}
               </p>
-              <p className={`text-xs font-medium ${trendColor}`}>{trend}</p>
+              <p className={`text-xs font-bold ${trendColor}`}>{trend}</p>
             </div>
           )
         )}
@@ -248,13 +248,13 @@ function GeneralDashboard({
         ----------------------------------------------------------------- */}
         <div className="lg:col-span-2 space-y-6">
           {/* Analytics Chart (Phase 27) */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+          <div className="card-surface p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-base font-semibold text-slate-900">
+              <h2 className="text-base font-semibold text-[var(--color-text-base)]">
                 Operational Velocity (7-Day Trend)
               </h2>
               {isAnalyticsLoading && (
-                <span className="text-xs text-slate-400 animate-pulse">
+                <span className="text-xs text-[var(--color-text-muted)] animate-pulse">
                   Syncing...
                 </span>
               )}
@@ -311,25 +311,25 @@ function GeneralDashboard({
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
+          <div className="card-surface overflow-hidden">
             {/* Panel Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <h2 className="text-base font-semibold text-slate-900">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-base)]">
+              <h2 className="text-base font-semibold text-[var(--color-text-base)]">
                 Recent Operational Activity
               </h2>
               <button
                 type="button"
                 onClick={() => router.push(`/${orgSlug}/tasks`)}
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                className="text-sm font-medium text-[var(--color-accent-base)] hover:opacity-80 transition-colors"
               >
                 View All
               </button>
             </div>
 
             {/* Activity List */}
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-[var(--color-border-base)]/50">
               {tasks.length === 0 && (
-                <li className="px-6 py-10 text-center text-sm text-slate-400">
+                <li className="px-6 py-10 text-center text-sm text-[var(--color-text-muted)]">
                   No recent activity
                 </li>
               )}
@@ -343,16 +343,16 @@ function GeneralDashboard({
                 .map((task) => (
                   <li
                     key={task.id}
-                    className="flex items-start gap-4 px-6 py-4"
+                    className="flex items-start gap-4 px-6 py-4 hover:bg-[var(--color-surface-muted)] transition-colors"
                   >
-                    <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
-                      <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                    <div className="w-9 h-9 rounded-full bg-primary-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4 text-[var(--color-accent-base)]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-slate-700 leading-snug truncate">
+                      <p className="text-sm text-[var(--color-text-subtle)] font-medium leading-snug truncate">
                         {task.title}
                       </p>
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                         {task.status} ·{' '}
                         {task.updatedAt
                           ? new Date(task.updatedAt).toLocaleString()
@@ -368,10 +368,10 @@ function GeneralDashboard({
         {/* -----------------------------------------------------------------
             RIGHT PANEL — Quick Actions (1 column)
         ----------------------------------------------------------------- */}
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
+        <div className="card-surface overflow-hidden">
           {/* Panel Header */}
-          <div className="px-6 py-4 border-b border-slate-200">
-            <h2 className="text-base font-semibold text-slate-900">
+          <div className="px-6 py-4 border-b border-[var(--color-border-base)]">
+            <h2 className="text-base font-semibold text-[var(--color-text-base)]">
               Quick Actions
             </h2>
           </div>
@@ -380,35 +380,35 @@ function GeneralDashboard({
           <div className="p-5 flex flex-col gap-3">
             <button
               onClick={() => router.push(`/${orgSlug}/tasks`)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-[var(--color-text-subtle)] bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors text-left"
             >
-              <Plus className="h-4 w-4 text-slate-500 shrink-0" /> Create New
+              <Plus className="h-4 w-4 text-[var(--color-text-muted)] shrink-0" /> Create New
               Task
             </button>
 
             <button
               onClick={() => router.push(`/${orgSlug}/tasks?status=pending`)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-[var(--color-text-subtle)] bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors text-left"
             >
-              <Flag className="h-4 w-4 text-slate-500 shrink-0" /> Review
+              <Flag className="h-4 w-4 text-[var(--color-text-muted)] shrink-0" /> Review
               Pending Tasks
             </button>
 
             <PermissionGate permission="manageOrg">
               <button
                 onClick={() => router.push(`/${orgSlug}/organizations`)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-[var(--color-text-subtle)] bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors text-left"
               >
-                <Lock className="h-4 w-4 text-slate-500 shrink-0" /> Manage
+                <Lock className="h-4 w-4 text-[var(--color-text-muted)] shrink-0" /> Manage
                 Organizations
               </button>
             </PermissionGate>
 
             <button
               onClick={() => router.push(`/${orgSlug}/projects`)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-[var(--color-text-subtle)] bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg hover:bg-[var(--color-surface-muted)] transition-colors text-left"
             >
-              <History className="h-4 w-4 text-slate-500 shrink-0" /> View All
+              <History className="h-4 w-4 text-[var(--color-text-muted)] shrink-0" /> View All
               Projects
             </button>
           </div>
@@ -428,10 +428,10 @@ export default function DashboardPage() {
   const { isGuest, isLoading: isPermsLoading } = usePermissions();
 
   if (isOrgsLoading || isPermsLoading)
-    return <div className="p-8 text-slate-400">Loading workspace...</div>;
+    return <div className="p-8 text-[var(--color-text-muted)]">Loading workspace...</div>;
 
   if (!activeOrgId || !activeOrgSlug)
-    return <div className="p-8 text-slate-400">No workspace selected.</div>;
+    return <div className="p-8 text-[var(--color-text-muted)]">No workspace selected.</div>;
 
   // GUEST gets a read-only shell with no action buttons
   if (isGuest) {
@@ -459,21 +459,21 @@ function GuestDashboard({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Your Tasks</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-extrabold text-[var(--color-text-base)]">Your Tasks</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">
           You have guest access. You can view and update tasks assigned to you.
         </p>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">
+      <div className="card-surface overflow-hidden">
+        <div className="px-6 py-4 border-b border-[var(--color-border-base)] flex items-center justify-between">
+          <h2 className="text-base font-semibold text-[var(--color-text-base)]">
             Assigned to You
           </h2>
-          <span className="text-xs text-slate-400">{tasks.length} tasks</span>
+          <span className="text-xs text-[var(--color-text-muted)]">{tasks.length} tasks</span>
         </div>
         {tasks.length === 0 ? (
-          <div className="py-12 text-center text-sm text-slate-400">
+          <div className="py-12 text-center text-sm text-[var(--color-text-muted)]">
             No tasks assigned yet.
           </div>
         ) : (
@@ -481,15 +481,15 @@ function GuestDashboard({
             {tasks.map((task) => (
               <li
                 key={task.id}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--color-surface-muted)] cursor-pointer transition-colors"
                 onClick={() => router.push(`/${orgSlug}/tasks`)}
               >
-                <CheckCircle2 className="w-4 h-4 text-slate-300 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[var(--color-text-muted)] shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 truncate">
+                  <p className="text-sm font-bold text-[var(--color-text-base)] truncate">
                     {task.title}
                   </p>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                     {task.status} · {task.priority}
                   </p>
                 </div>
