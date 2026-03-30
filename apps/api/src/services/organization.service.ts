@@ -695,6 +695,14 @@ export const createCustomRole = async (
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
+  console.info('[Service:Org:Role] Creating custom role', {
+    organizationId,
+    name: data.name,
+    generatedKey: key,
+    permissionCount: data.permissions?.length || 0,
+    timestamp: new Date().toISOString(),
+  });
+
   const [role] = await db
     .insert(orgRoles)
     .values({
@@ -707,6 +715,13 @@ export const createCustomRole = async (
       isSystem: false,
     })
     .returning();
+
+  console.info('[Service:Org:Role] SUCCESS', {
+    roleId: role.id,
+    name: role.name,
+    key: role.key,
+    timestamp: new Date().toISOString(),
+  });
 
   return role;
 };

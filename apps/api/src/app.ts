@@ -242,6 +242,7 @@ export const createHonoApp = () => {
     const orgManagementPaths = [
       '/api/v1/organizations/my',
       '/api/v1/organizations', // POST / is allowed, but GET /:id should hit the isolation
+      '/api/v1/auth/me', // Global user profile doesn't require org context
     ];
 
     if (

@@ -176,3 +176,18 @@
 - **Root Cause**: The `togglePermission` function was a literal stub.
 - **Resolution**: Added debug logging to `togglePermission` to capture the user's intent and data. Full backend wiring for permission updates is queued for the next phase.
 - **Impact**: Visibility into permission management intent is now captured in logs.
+
+#### 35. [Backend] Tenant Isolation False Positive on /auth/me
+- **Data Evidence**: `cloudflarelogs.txt` (Line 59) shows `[Tenant:MW] TERMINAL FAILURE - No organization context found` for `/api/v1/auth/me`.
+- **Root Cause**: The route `/api/v1/auth/me` is not excluded from `tenantIsolation` in `app.ts`, but it is a global user route that does not require an organization context.
+- **Impact**: Misleading error logs and potential future breakage if isolation is made strict.
+
+#### 36. [Backend] Role Creation Schema Validation Failure (Permissions Array)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 588) shows 400 for `POST /roles`. `organization.schemas.ts` (Line 531) requires `.min(1)` for the `permissions` array, but the frontend currently sends an empty array `[]` on initial creation.
+- **Impact**: Users cannot create new roles from the UI.
+
+#### 37. [Frontend] UI Visibility: White-on-White Text in Dark Mode
+- **Data Evidence**: User report confirmed by code audit of `RolesSettings` and `css-vars.css`.
+- **Root Cause**: Components use hardcoded light backgrounds (e.g., `bg-slate-50`, `bg-white`) on inputs, while global text color switches to white in dark mode (`data-theme="dark"`).
+- **Impact**: Text is invisible while typing across several areas of the platform.
+

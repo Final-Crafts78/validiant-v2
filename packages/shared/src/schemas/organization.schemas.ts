@@ -528,7 +528,7 @@ export const createCustomRoleSchema = z.object({
   description: z.string().max(200).optional(),
   permissions: z
     .array(z.string())
-    .min(1, 'At least one permission is required'),
+    .default([]),
 });
 
 /**

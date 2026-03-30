@@ -382,7 +382,7 @@ export default function RolesSettings() {
                   value={newRoleName}
                   onChange={(e) => setNewRoleName(e.target.value)}
                   placeholder="e.g. Regional Manager"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 outline-none"
+                  className="input"
                 />
               </div>
               <p className="text-[10px] text-slate-400 leading-relaxed italic">

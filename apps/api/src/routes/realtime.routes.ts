@@ -27,7 +27,9 @@ router.get('/stream', async (c) => {
     rawQuery: c.req.queries(), // Log the raw queries object
   });
 
-  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId');
+  const rawUrl = new URL(c.req.url);
+  const searchOrgId = rawUrl.searchParams.get('orgId') || rawUrl.searchParams.get('organizationId');
+  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId') || searchOrgId;
   const headerOrgId = c.req.header('X-Org-Id');
   const userOrgId = user?.organizationId;
   const cookieOrgId = getCookie(c, 'orgId');
@@ -38,12 +40,13 @@ router.get('/stream', async (c) => {
   const resolutionMarker = queryOrgId ? 'FROM_QUERY' : headerOrgId ? 'FROM_HEADER' : userOrgId ? 'FROM_USER_CONTEXT' : cookieOrgId ? 'FROM_COOKIE' : 'NOT_RESOLVED';
 
   logger.info('[Realtime:MW] Stream Isolation Decision', {
+    url: c.req.url,
     path: c.req.path,
     resolvedOrgId: orgId || 'NONE',
     decision: resolutionMarker,
     details: {
-      queryOrgId: c.req.query('orgId') || 'MISSING',
-      queryOrganizationId: c.req.query('organizationId') || 'MISSING',
+      searchParamsOrgId: searchOrgId || 'MISSING',
+      honoQueryOrgId: c.req.query('orgId') || 'MISSING',
       headerOrgId: headerOrgId || 'MISSING',
       userOrgId: userOrgId || 'MISSING',
       cookieOrgId: cookieOrgId || 'MISSING',

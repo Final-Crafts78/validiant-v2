@@ -105,5 +105,13 @@ export const tenantIsolation = async (
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
 
+  console.info('[Tenant:Context] Final Scope', {
+    userId: user.userId,
+    orgId,
+    resolvedFrom: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
+    path: c.req.path,
+    timestamp: new Date().toISOString(),
+  });
+
   await next();
 };

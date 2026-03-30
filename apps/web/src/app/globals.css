@@ -84,6 +84,24 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400;
   }
+
+  /* Base Form Elements */
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    background-color: transparent;
+    color: inherit;
+  }
+
+  /* Specific fix for autocomplete backgrounds */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-text-base);
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-surface-base) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 /* Components Layer - Reusable component styles */
@@ -135,10 +153,12 @@
 
   /* Input styles */
   .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-    @apply disabled:bg-gray-100 disabled:cursor-not-allowed;
-    @apply transition-all duration-200;
+    @apply w-full px-4 py-2 rounded-lg transition-all duration-200;
+    @apply border border-[var(--color-border-base)];
+    background-color: var(--color-surface-base);
+    color: var(--color-text-base);
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .input-error {
@@ -147,7 +167,8 @@
 
   /* Label styles */
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium mb-1;
+    color: var(--color-text-subtle);
   }
 
   .label-required::after {
