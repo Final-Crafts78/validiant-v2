@@ -8,6 +8,7 @@ export * from './components/atoms/Modal';
 export * from './components/atoms/Tooltip';
 export * from './components/atoms/Toast';
 export * from './components/atoms/Switch';
+export * from './components/atoms/Popover';
 export * from './components/atoms/ProgressBar';
 export * from './components/atoms/MultiSelect';
 export * from './components/atoms/Textarea';

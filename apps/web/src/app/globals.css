@@ -319,17 +319,45 @@
     background-size: 200% 200%;
     animation: gradient-shift 15s ease infinite;
   }
+}
 
-  /* Surface utilities for theme-aware backgrounds */
-  .card-surface {
-    background-color: var(--color-surface-base);
-    color: var(--color-text-base);
-    @apply border border-border-base rounded-xl shadow-sm;
-  }
+/* Base Theme Variables */
+:root {
+  --ease-spring: cubic-bezier(0.4, 0, 0.2, 1.4);
+  --color-text-input: #334155; /* Slate 700 (Dark grey) for light mode */
+}
 
-  .modal-surface {
-    background-color: var(--color-surface-base);
-    color: var(--color-text-base);
-    @apply rounded-2xl shadow-xl border border-border-subtle overflow-hidden;
-  }
+[data-theme='dark'] {
+  --color-surface-base: #0f172a;
+  --color-surface-soft: #1e293b;
+  --color-surface-subtle: #334155;
+  --color-border-base: #1e293b;
+  --color-text-base: #f8fafc;
+  --color-text-muted: #94a3b8;
+  
+  /* Input specific tokens */
+  --color-text-input: #f8fafc;
+}
+
+/* Premium Surface Utilities */
+.modal-surface {
+  @apply bg-[var(--color-surface-base)] border border-[var(--color-border-base)] shadow-2xl overflow-hidden;
+}
+
+.card-surface {
+  @apply bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-xl shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Theme-Aware Input Visibility Fix */
+.input, .textarea {
+  @apply bg-[var(--color-surface-soft)] border-[var(--color-border-base)] placeholder:text-[var(--color-text-muted)] p-2 rounded-md transition-all duration-200;
+  color: var(--color-text-input) !important;
+}
+
+.input:focus, .textarea:focus {
+  @apply outline-none ring-2 ring-[var(--color-accent-base)] border-transparent;
+}
+
+.ease-spring {
+  transition-timing-function: var(--ease-spring);
 }

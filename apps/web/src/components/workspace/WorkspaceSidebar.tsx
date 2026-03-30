@@ -3,6 +3,7 @@
 import React from 'react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '@validiant/ui';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 interface WorkspaceSidebarProps {
   collapsed: boolean;
@@ -52,10 +53,16 @@ export function WorkspaceSidebar({
         </div>
 
         {/* Sidebar Footer/Status */}
-        <div className="flex-shrink-0 border-t border-[var(--color-border-base)] p-4 bg-[var(--color-surface-subtle)]/30">
-          <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-            <span>Systems Operational</span>
+        <div className="mt-auto flex flex-col gap-4 border-t border-[var(--color-border-base)] p-4 bg-[var(--color-surface-subtle)]/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
+              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+              <span>Operational</span>
+            </div>
+            <ThemeToggle />
+          </div>
+          <div className="text-[10px] text-[var(--color-text-muted)] opacity-50">
+            v2.4.1-stable
           </div>
         </div>
       </div>

@@ -89,6 +89,14 @@ export async function GET(request: Request) {
   if (redirectTo && redirectTo.startsWith('/')) {
     loginUrl.searchParams.set('redirect', redirectTo);
   }
+  
+  // Forward the reason and force flags to the login page to signal to middleware
+  if (searchParams.get('reason')) {
+    loginUrl.searchParams.set('reason', searchParams.get('reason')!);
+  }
+  if (searchParams.get('force')) {
+    loginUrl.searchParams.set('forceLogout', 'true');
+  }
 
   const response = NextResponse.redirect(loginUrl);
 

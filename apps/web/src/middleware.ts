@@ -41,6 +41,12 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken');
   const userId = request.cookies.get('user_id');
 
+  // Check if route is protected
+  const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
+  const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
+  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
+
+  // eslint-disable-next-line no-console
   console.debug('[MW:Edge] Request Headers', {
     host: request.headers.get('host'),
     xForwardedHost: request.headers.get('x-forwarded-host'),
@@ -50,6 +56,7 @@ export function middleware(request: NextRequest) {
     pathname,
   });
 
+  // eslint-disable-next-line no-console
   console.debug('[MW:Edge] Cookie Detection', {
     hasAccessToken: !!accessToken,
     accessTokenPrefix: accessToken?.value.substring(0, 30),
@@ -68,21 +75,20 @@ export function middleware(request: NextRequest) {
   // CRITICAL: Basic validation to prevent using empty/cleared cookies
   const accessTokenValue = accessToken?.value || '';
   const isLengthValid = accessTokenValue.length > 100;
-  const isNotEmpty = accessTokenValue !== 'deleted' && accessTokenValue !== 'null' && accessTokenValue !== '';
-  
+  const isNotEmpty =
+    accessTokenValue !== 'deleted' &&
+    accessTokenValue !== 'null' &&
+    accessTokenValue !== '';
+
   const isAuthenticated = isLengthValid && isNotEmpty;
 
-  const authFailureReason = !isNotEmpty 
-    ? 'EMPTY_OR_DELETED_STRING' 
-    : !isLengthValid 
-      ? `LENGTH_INVALID_${accessTokenValue.length}` 
+  const authFailureReason = !isNotEmpty
+    ? 'EMPTY_OR_DELETED_STRING'
+    : !isLengthValid
+      ? `LENGTH_INVALID_${accessTokenValue.length}`
       : 'NONE';
 
-  // Check if route is protected
-  const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
-  const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
-  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
-
+  // eslint-disable-next-line no-console
   console.debug('[MW:Edge] Auth State Breakdown', {
     isAuthenticated,
     authFailureReason,
@@ -101,6 +107,7 @@ export function middleware(request: NextRequest) {
 
   // Debug logging for authentication issues
   if (pathname.includes('/dashboard') || pathname.includes('/onboarding')) {
+    // eslint-disable-next-line no-console
     console.log('[Middleware Debug]', {
       pathname,
       hasAccessToken: !!accessToken,
@@ -133,10 +140,35 @@ export function middleware(request: NextRequest) {
   const isOrgScoped =
     firstSegment !== undefined && !publicKeywords.includes(firstSegment);
 
+  // 🔒 CRITICAL SECURITY & LOOP PREVENTION: 
+  // If the URL has a 'forceLogout' flag or we are coming from session-expired, 
+  // do NOT redirect back to the dashboard even if a token appears to exist.
+  const forceLogout = request.nextUrl.searchParams.get('forceLogout') === 'true';
+  const reason = request.nextUrl.searchParams.get('reason');
+  
+  if (forceLogout || reason === 'expired') {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[MW:Edge] Force logout detected, bypassing auto-auth redirect',
+      {
+        pathname,
+        forceLogout,
+        reason,
+        timestamp: new Date().toISOString(),
+      }
+    );
+    return NextResponse.next();
+  }
+
   // Unauthenticated → login (Gate all protected or org-scoped routes)
   if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
-    const branch = !accessToken ? 'MISSING_COOKIE' : !isLengthValid ? 'SHORT_TOKEN' : 'DELETED_OR_NULL_STRING';
+    const branch = !accessToken
+      ? 'MISSING_COOKIE'
+      : !isLengthValid
+        ? 'SHORT_TOKEN'
+        : 'DELETED_OR_NULL_STRING';
     
+    // eslint-disable-next-line no-console
     console.warn(
       '[MW:Edge] REDIRECT: Unauthenticated access to protected route',
       {
@@ -149,8 +181,10 @@ export function middleware(request: NextRequest) {
         branch,
         accessTokenPresent: !!accessToken,
         accessTokenLength: accessToken?.value.length || 0,
-        accessTokenPrefix: accessToken?.value ? `${accessToken.value.substring(0, 10)}...` : 'NONE',
-        allCookiesNames: request.cookies.getAll().map(c => c.name),
+        accessTokenPrefix: accessToken?.value
+          ? `${accessToken.value.substring(0, 10)}...`
+          : 'NONE',
+        allCookiesNames: request.cookies.getAll().map((c) => c.name),
         host: request.headers.get('host'),
         xForwardedHost: request.headers.get('x-forwarded-host'),
         nextUrlHostname: request.nextUrl.hostname,
@@ -162,14 +196,21 @@ export function middleware(request: NextRequest) {
     const loginUrl = new URL('/auth/login', request.url);
     // Preserve the intended destination
     loginUrl.searchParams.set('from', pathname);
+    
+    // Signal to the login page that this was a forced redirect due to auth failure
+    if (authFailureReason !== 'NONE') {
+      loginUrl.searchParams.set('reason', 'unauthorized');
+    }
+    
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users from auth pages to dashboard
   if (isAuthRoute && isAuthenticated) {
     const destParam = request.nextUrl.searchParams.get('redirect');
-    const dest = destParam ? decodeURIComponent(destParam) : '/dashboard'; // Assuming ROUTES.DASHBOARD_ROOT is '/dashboard'
+    const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
 
+    // eslint-disable-next-line no-console
     console.debug('[MW:Edge] Already authed, redirecting to destination', {
       dest,
       isAuthenticated,
@@ -186,6 +227,7 @@ export function middleware(request: NextRequest) {
 
   const referer = request.headers.get('referer') || 'NO_REFERER';
 
+  // eslint-disable-next-line no-console
   console.debug('[MW:Edge] Final check before next()', {
     pathname,
     isAuthenticated,

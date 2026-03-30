@@ -1,0 +1,111 @@
+PS C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api> npx wrangler tail
+
+ ⛅️ wrangler 4.65.0 (update available 4.78.0)
+─────────────────────────────────────────────
+Successfully created tail, expires at 2026-03-30T11:20:46Z
+Connected to validiant-api, waiting for logs...
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:34 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:34.842Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:34.874Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:34.874Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:34.874Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 32ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:34 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:34.971Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:35.024Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:35.024Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:35.024Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 53ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:36 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:36.050Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:36.055Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:36.055Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:36.055Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 5ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:39 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:39.619Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:39.626Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:39.626Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:39.626Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 7ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:39 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:39.810Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:39.879Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:39.879Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:39.879Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 69ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:40 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:40.762Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:40.769Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:40.769Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:40.769Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 7ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:40 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:40.765Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:40.781Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:40.781Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:40.781Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 16ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:41 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:41.799Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:41.811Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:41.811Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:41.811Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 12ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:41 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:41.800Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:41.814Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:41.814Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:41.814Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 14ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:42 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:42.686Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:42.691Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:42.691Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:42.691Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 5ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:42 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:42.683Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:42.695Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:42.695Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:42.695Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 12ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:43 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:43.591Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:43.603Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:43.603Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:43.603Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 12ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:43 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:43.593Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:43.600Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:43.600Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:43.600Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 7ms
+GET https://api.validiant.in/api/v1/organizations/my - Ok @ 30/3/2026, 2:42:44 pm
+  (log) <-- GET /api/v1/organizations/my
+  (debug) 2026-03-30T09:12:44.476Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:44.487Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/organizations/my","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:44.487Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:44.487Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/organizations/my 401 11ms
+GET https://api.validiant.in/api/v1/auth/me - Ok @ 30/3/2026, 2:42:44 pm
+  (log) <-- GET /api/v1/auth/me
+  (debug) 2026-03-30T09:12:44.478Z [DEBUG] [CORS] Origin Check {"incomingOrigin":"NONE","isAllowed":true,"resultHeader":"*","credentials":true}
+  (log) 2026-03-30T09:12:44.491Z [INFO] [Auth Middleware] Incoming {"path":"/api/v1/auth/me","method":"GET","origin":"NONE","referer":"NONE","hasBearerToken":true,"hasCookieToken":false,"rawCookieHeader":"NONE"}
+  (debug) 2026-03-30T09:12:44.491Z [DEBUG] [Auth:MW] Token source resolution {"hasHeader":true,"hasCookie":false,"hasQuery":false,"finalTokenFound":true}
+  (error) 2026-03-30T09:12:44.491Z [ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyS...","tokenLength":375,"error":"Invalid or expired token"}
+  (log) --> GET /api/v1/auth/me 401 13ms

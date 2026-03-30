@@ -1,0 +1,4953 @@
+{
+  "log": {
+    "version": "1.2",
+    "creator": {
+      "name": "WebInspector",
+      "version": "537.36"
+    },
+    "pages": [
+      {
+        "startedDateTime": "2026-03-30T09:09:59.111Z",
+        "id": "page_4",
+        "title": "https://www.validiant.in/",
+        "pageTimings": {
+          "onContentLoad": 30288.665000000037,
+          "onLoad": 30293.752000085078
+        }
+      }
+    ],
+    "entries": [
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:23 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::w5gn4-1774861823038-845142d32890"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 96,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:22.818Z",
+        "time": 502.4699999485165,
+        "timings": {
+          "blocked": 3.3970000069960955,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.46599999999999997,
+          "wait": 497.01100001239774,
+          "receive": 1.5959999291226268,
+          "_blocked_queueing": 1.9120000069960952,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:23 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::k2p52-1774861823523-d403afc9a9b4"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 110,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:23.321Z",
+        "time": 319.57100005820394,
+        "timings": {
+          "blocked": 1.1809999773949384,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.32400000000000007,
+          "wait": 316.79000002718715,
+          "receive": 1.2760000536218286,
+          "_blocked_queueing": 0.5779999773949385,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:23 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::fmm2q-1774861823843-4739a5818035"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 204,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:23.640Z",
+        "time": 126.83399999514222,
+        "timings": {
+          "blocked": 1.1769999613016844,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.21199999999999997,
+          "wait": 124.34999996145815,
+          "receive": 1.0950000723823905,
+          "_blocked_queueing": 0.4229999613016844,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:24 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::g6tt7-1774861823973-da957b040884"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 100,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:23.767Z",
+        "time": 367.9380000103265,
+        "timings": {
+          "blocked": 2.7729999350830914,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.20500000000000007,
+          "wait": 363.62400003041324,
+          "receive": 1.3360000448301435,
+          "_blocked_queueing": 0.49599993508309126,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:24 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::g6tt7-1774861824339-99f39b2c080b"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 320,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:24.135Z",
+        "time": 288.4839999023825,
+        "timings": {
+          "blocked": 1.4739999318644403,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.17700000000000005,
+          "wait": 285.030999986209,
+          "receive": 1.8019999843090773,
+          "_blocked_queueing": 0.46499993186444044,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:24 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::wlrx5-1774861824685-956f03fa5b46"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 206,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:24.423Z",
+        "time": 200.11800003703684,
+        "timings": {
+          "blocked": 1.5600000120922923,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.21300000000000008,
+          "wait": 197.0470000366345,
+          "receive": 1.297999988310039,
+          "_blocked_queueing": 0.6590000120922923,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:25 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::j692h-1774861824838-a9d27b5b0b34"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 97,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:24.623Z",
+        "time": 361.7439999943599,
+        "timings": {
+          "blocked": 1.2130000481233,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.272,
+          "wait": 357.82000000093876,
+          "receive": 2.4389999452978373,
+          "_blocked_queueing": 0.5720000481233001,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:25 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::bg8hp-1774861825195-84919c43cdda"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 105,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:24.985Z",
+        "time": 301.50800000410527,
+        "timings": {
+          "blocked": 3.982000055268407,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.3169999999999997,
+          "wait": 294.2939999879152,
+          "receive": 2.9149999609217048,
+          "_blocked_queueing": 0.8940000552684069,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:25 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::tsgjg-1774861825550-83f996d10cb5"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 204,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:25.287Z",
+        "time": 218.0550000630319,
+        "timings": {
+          "blocked": 2.731999990820885,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.41600000000000015,
+          "wait": 212.4639999800399,
+          "receive": 2.4430000921711326,
+          "_blocked_queueing": 1.0689999908208847,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:25 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::928nx-1774861825718-d394b322122b"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 134,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:25.505Z",
+        "time": 386.7259999969974,
+        "timings": {
+          "blocked": 1.8519999063536525,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.31000000000000005,
+          "wait": 382.2989999568686,
+          "receive": 2.2650001337751746,
+          "_blocked_queueing": 0.7979999063536525,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:26 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::928nx-1774861826159-563014ab96f2"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 127,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:25.892Z",
+        "time": 469.4429999217391,
+        "timings": {
+          "blocked": 3.9759999408945443,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.43199999999999994,
+          "wait": 463.0420000555664,
+          "receive": 1.9929999252781272,
+          "_blocked_queueing": 0.9859999408945441,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:26 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::4lkmj-1774861826578-e81ec2f82f8b"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 213,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:26.361Z",
+        "time": 142.5010000821203,
+        "timings": {
+          "blocked": 2.597000006362796,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.42500000000000004,
+          "wait": 137.9410000061989,
+          "receive": 1.5380000695586205,
+          "_blocked_queueing": 0.8570000063627958,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:26 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::sx54l-1774861826708-8d6b774080c1"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 259,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:26.503Z",
+        "time": 405.46299994457513,
+        "timings": {
+          "blocked": 1.2279999251142144,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.366,
+          "wait": 402.6190000474006,
+          "receive": 1.2499999720603228,
+          "_blocked_queueing": 0.6169999251142144,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:27 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::928nx-1774861827178-b6eb1627cfa5"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 156,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:26.909Z",
+        "time": 354.7620000317693,
+        "timings": {
+          "blocked": 1.6739999829679728,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.17700000000000005,
+          "wait": 351.71700003749135,
+          "receive": 1.1940000113099813,
+          "_blocked_queueing": 0.48699998296797276,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:27 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::g4552-1774861827468-0d769f299f22"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 321,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:27.264Z",
+        "time": 140.8349999692291,
+        "timings": {
+          "blocked": 1.2279999525099994,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.15100000000000002,
+          "wait": 138.42199994315953,
+          "receive": 1.0340000735595822,
+          "_blocked_queueing": 0.4829999525099993,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:27 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::928nx-1774861827608-ef491157deb8"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 75,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:27.404Z",
+        "time": 394.7789999656379,
+        "timings": {
+          "blocked": 1.2590000088736415,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.18299999999999994,
+          "wait": 392.0669999488294,
+          "receive": 1.2700000079348683,
+          "_blocked_queueing": 0.6280000088736415,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:28 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::75q8r-1774861828066-a82d4af27a89"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 98,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:27.799Z",
+        "time": 484.8080000374466,
+        "timings": {
+          "blocked": 4.604000076383352,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.19599999999999973,
+          "wait": 475.92499995397776,
+          "receive": 4.083000007085502,
+          "_blocked_queueing": 0.5910000763833523,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:28 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::5l7qn-1774861828498-146771314cf3"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 204,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:28.284Z",
+        "time": 115.32099999021739,
+        "timings": {
+          "blocked": 4.934999961540103,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.40500000000000025,
+          "wait": 107.57099995495379,
+          "receive": 2.410000073723495,
+          "_blocked_queueing": 1.003999961540103,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:28 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::m5qgr-1774861828662-ef9a2a99624a"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 168,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:28.399Z",
+        "time": 525.3019999945536,
+        "timings": {
+          "blocked": 2.2340000701844693,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.43999999999999995,
+          "wait": 518.6749999758453,
+          "receive": 3.9529999485239387,
+          "_blocked_queueing": 1.1100000701844692,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:29 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::vw96k-1774861829128-42a892d385cd"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 0,
+          "_error": "net::ERR_TOO_MANY_REDIRECTS",
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "",
+        "startedDateTime": "2026-03-30T09:10:28.925Z",
+        "time": 413.1040000356734,
+        "timings": {
+          "blocked": 413.1040000356734,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0,
+          "wait": 0,
+          "receive": 0,
+          "_blocked_queueing": 1.0000000474974513
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:30 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::fqkpv-1774861830818-04f873da0440"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 134,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:30.593Z",
+        "time": 315.84699999075383,
+        "timings": {
+          "blocked": 9.000000027641654,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.27999999999999936,
+          "wait": 303.1769999941811,
+          "receive": 3.389999968931079,
+          "_blocked_queueing": 1.930000027641654,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:31 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::g4552-1774861831142-eab58c102090"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 231,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:30.909Z",
+        "time": 150.53400001488626,
+        "timings": {
+          "blocked": 4.420000002361834,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.7089999999999996,
+          "wait": 144.26699996196479,
+          "receive": 1.13800005055964,
+          "_blocked_queueing": 1.361000002361834,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:31 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::gljrp-1774861831283-628597e74cec"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 72,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:31.059Z",
+        "time": 429.77299995254725,
+        "timings": {
+          "blocked": 1.2740000164881349,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.25,
+          "wait": 426.1230000457913,
+          "receive": 2.125999890267849,
+          "_blocked_queueing": 0.6290000164881349,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/api/auth/session-expired?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-length",
+              "value": "0"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:31 GMT"
+            },
+            {
+              "name": "location",
+              "value": "https://www.validiant.in/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/api/auth/session-expired"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::q7zrx-1774861831703-b48a2992ec57"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 330,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:31.489Z",
+        "time": 306.37400003615767,
+        "timings": {
+          "blocked": 2.0090000535398724,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.238,
+          "wait": 302.473999968715,
+          "receive": 1.6530000139027834,
+          "_blocked_queueing": 0.5880000535398722,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_connectionId": "141053",
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "connection": "443",
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/auth/login?redirect=%2Fdashboard",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/auth/login?redirect=%2Fdashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "redirect",
+              "value": "%2Fdashboard"
+            }
+          ],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "http/2.0",
+          "headers": [
+            {
+              "name": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:32 GMT"
+            },
+            {
+              "name": "location",
+              "value": "/dashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::g4552-1774861832027-84c163864704"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "text/html"
+          },
+          "redirectURL": "/dashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 228,
+          "_error": null,
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "216.198.79.1",
+        "startedDateTime": "2026-03-30T09:10:31.795Z",
+        "time": 142.56399997975677,
+        "timings": {
+          "blocked": 2.2040000628829004,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0.3660000000000001,
+          "wait": 138.46200000941752,
+          "receive": 1.5319999074563384,
+          "_blocked_queueing": 0.8950000628829002,
+          "_workerStart": -1,
+          "_workerReady": -1,
+          "_workerFetchStart": -1,
+          "_workerRespondWithSettled": -1
+        }
+      },
+      {
+        "_initiator": {
+          "type": "other"
+        },
+        "_priority": "VeryHigh",
+        "_resourceType": "document",
+        "cache": {},
+        "pageref": "page_4",
+        "request": {
+          "method": "GET",
+          "url": "https://www.validiant.in/dashboard",
+          "httpVersion": "",
+          "headers": [
+            {
+              "name": ":authority",
+              "value": "www.validiant.in"
+            },
+            {
+              "name": ":method",
+              "value": "GET"
+            },
+            {
+              "name": ":path",
+              "value": "/dashboard"
+            },
+            {
+              "name": ":scheme",
+              "value": "https"
+            },
+            {
+              "name": "accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate, br, zstd"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "cache-control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "priority",
+              "value": "u=0, i"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "document"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "navigate"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "sec-fetch-user",
+              "value": "?1"
+            },
+            {
+              "name": "upgrade-insecure-requests",
+              "value": "1"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            }
+          ],
+          "queryString": [],
+          "cookies": [],
+          "headersSize": -1,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 307,
+          "statusText": "",
+          "httpVersion": "",
+          "headers": [
+            {
+              "name": "age",
+              "value": "0"
+            },
+            {
+              "name": "cache-control",
+              "value": "private, no-cache, no-store, max-age=0, must-revalidate"
+            },
+            {
+              "name": "content-type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "date",
+              "value": "Mon, 30 Mar 2026 09:10:32 GMT"
+            },
+            {
+              "name": "link",
+              "value": "</_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+            },
+            {
+              "name": "location",
+              "value": "/api/auth/session-expired?redirect=%2Fdashboard"
+            },
+            {
+              "name": "referrer-policy",
+              "value": "origin-when-cross-origin"
+            },
+            {
+              "name": "server",
+              "value": "Vercel"
+            },
+            {
+              "name": "strict-transport-security",
+              "value": "max-age=63072000"
+            },
+            {
+              "name": "vary",
+              "value": "RSC, Next-Router-State-Tree, Next-Router-Prefetch"
+            },
+            {
+              "name": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "name": "x-dns-prefetch-control",
+              "value": "on"
+            },
+            {
+              "name": "x-frame-options",
+              "value": "SAMEORIGIN"
+            },
+            {
+              "name": "x-matched-path",
+              "value": "/dashboard"
+            },
+            {
+              "name": "x-powered-by",
+              "value": "Next.js"
+            },
+            {
+              "name": "x-vercel-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "x-vercel-id",
+              "value": "bom1::iad1::zs7hc-1774861832158-3e0c72fd6708"
+            }
+          ],
+          "cookies": [],
+          "content": {
+            "size": 0,
+            "mimeType": "x-unknown"
+          },
+          "redirectURL": "/api/auth/session-expired?redirect=%2Fdashboard",
+          "headersSize": -1,
+          "bodySize": -1,
+          "_transferSize": 0,
+          "_error": "net::ERR_ABORTED",
+          "_fetchedViaServiceWorker": false
+        },
+        "serverIPAddress": "",
+        "startedDateTime": "2026-03-30T09:10:31.938Z",
+        "time": 376.302000018768,
+        "timings": {
+          "blocked": 376.302000018768,
+          "dns": -1,
+          "ssl": -1,
+          "connect": -1,
+          "send": 0,
+          "wait": 0,
+          "receive": 0,
+          "_blocked_queueing": 0.6130000110715628
+        }
+      }
+    ]
+  }
+}

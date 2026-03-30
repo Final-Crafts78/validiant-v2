@@ -368,7 +368,7 @@ apiClient.interceptors.response.use(
           });
 
           const targetUrl =
-            '/api/auth/session-expired?redirect=' +
+            '/api/auth/session-expired?reason=expired&force=true&redirect=' +
             encodeURIComponent(window.location.pathname);
 
           logger.info('[Axios:401] NAVIGATING to session-expired', {

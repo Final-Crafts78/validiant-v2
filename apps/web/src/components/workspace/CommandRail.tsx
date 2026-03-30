@@ -19,6 +19,9 @@ import {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from '@validiant/ui';
 
 interface RailItem {
@@ -99,14 +102,60 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
         <div className="h-px w-8 bg-[var(--color-border-base)] my-2" />
 
         <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className="flex items-center justify-center w-12 h-12 rounded-xl text-[var(--color-text-muted)] hover:bg-[var(--color-surface-soft)] hover:text-[var(--color-text-base)] transition-all">
-                <Plus className="w-5 h-5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Quick Create</TooltipContent>
-          </Tooltip>
+          <Popover>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PopoverTrigger asChild>
+                  <button className="flex items-center justify-center w-12 h-12 rounded-xl bg-[var(--color-surface-soft)] text-[var(--color-text-base)] hover:bg-[var(--color-surface-subtle)] transition-all shadow-sm border border-[var(--color-border-base)]/50 group">
+                    <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" />
+                  </button>
+                </PopoverTrigger>
+              </TooltipTrigger>
+              <TooltipContent side="right">Quick Create</TooltipContent>
+            </Tooltip>
+            <PopoverContent side="right" align="center" className="w-56 p-2 space-y-1">
+              <div className="px-2 py-1.5 mb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-muted)] opacity-50">
+                Quick Actions
+              </div>
+              <Link
+                href={`/${orgSlug}/tasks/new`}
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-accent-subtle)]/20">
+                  <CheckSquare className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span>New Task</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)]">Assign work to your team</span>
+                </div>
+              </Link>
+              <Link
+                href={`/${orgSlug}/infra/new`}
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-accent-subtle)]/20">
+                  <Database className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span>New Resource</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)]">Provision infrastructure</span>
+                </div>
+              </Link>
+              <div className="h-px bg-[var(--color-border-base)] my-1 mx-2" />
+              <Link
+                href="/organizations/new"
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)] transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-surface-subtle)]">
+                  <LayoutDashboard className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span>New Organization</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)]">Create a new workspace</span>
+                </div>
+              </Link>
+            </PopoverContent>
+          </Popover>
         </TooltipProvider>
       </div>
 

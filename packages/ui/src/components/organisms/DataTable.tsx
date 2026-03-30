@@ -96,87 +96,100 @@ export function DataTable<TData, TValue>({
             width: '100%',
             position: 'relative',
           }}
+          role="table"
         >
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 z-10 bg-[var(--color-surface-soft)] border-b border-[var(--color-border-base)]">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <th
-                        key={header.id}
-                        className="px-4 py-3 text-left font-semibold text-[var(--color-text-muted)] select-none uppercase tracking-wider text-[0.65rem]"
-                        style={{ width: header.getSize() }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div
-                            className={cn(
-                              header.column.getCanSort() &&
-                                'flex cursor-pointer items-center gap-1 hover:text-[var(--color-text-base)]'
-                            )}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {header.column.getCanSort() && (
-                              <span>
-                                {header.column.getIsSorted() === 'asc' ? (
-                                  <ChevronUp className="h-3 w-3" />
-                                ) : header.column.getIsSorted() === 'desc' ? (
-                                  <ChevronDown className="h-3 w-3" />
-                                ) : (
-                                  <ChevronsUpDown className="h-3 w-3 opacity-30" />
-                                )}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </th>
-                    );
-                  })}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {virtualizer.getVirtualItems().map((virtualRow) => {
-                const row = rows[virtualRow.index];
-                if (!row) return null;
-                return (
-                  <tr
-                    key={row.id}
-                    data-index={virtualRow.index}
-                    ref={virtualizer.measureElement}
-                    className={cn(
-                      'border-b border-[var(--color-border-base)] transition-colors hover:bg-[var(--color-surface-soft)]/50',
-                      onRowClick && 'cursor-pointer'
-                    )}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      transform: `translateY(${virtualRow.start}px)`,
+          {/* Table Header */}
+          <div 
+            className="sticky top-0 z-10 flex border-b border-[var(--color-border-base)] bg-[var(--color-surface-soft)]"
+            role="rowgroup"
+          >
+            {table.getHeaderGroups().map((headerGroup) => (
+              <div key={headerGroup.id} className="flex w-full" role="row">
+                {headerGroup.headers.map((header) => (
+                  <div
+                    key={header.id}
+                    className="flex items-center px-4 py-3 text-left font-semibold text-[var(--color-text-muted)] select-none uppercase tracking-wider text-[0.65rem]"
+                    style={{ 
+                      width: header.getSize(),
+                      flex: header.column.getCanResize() ? `0 0 ${header.getSize()}px` : '1 1 auto' 
                     }}
-                    onClick={() => onRowClick?.(row.original)}
+                    role="columnheader"
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="px-4 py-3 align-middle text-[var(--color-text-base)]"
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(
+                          'flex w-full items-center gap-1',
+                          header.column.getCanSort() &&
+                            'cursor-pointer hover:text-[var(--color-text-base)]'
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
                       >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getCanSort() && (
+                          <span className="shrink-0">
+                            {header.column.getIsSorted() === 'asc' ? (
+                              <ChevronUp className="h-3 w-3" />
+                            ) : header.column.getIsSorted() === 'desc' ? (
+                              <ChevronDown className="h-3 w-3" />
+                            ) : (
+                              <ChevronsUpDown className="h-3 w-3 opacity-30" />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Table Body */}
+          <div role="rowgroup">
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const row = rows[virtualRow.index];
+              if (!row) return null;
+              return (
+                <div
+                  key={row.id}
+                  data-index={virtualRow.index}
+                  role="row"
+                  ref={virtualizer.measureElement}
+                  className={cn(
+                    'absolute left-0 top-0 flex w-full border-b border-[var(--color-border-base)] transition-colors hover:bg-[var(--color-surface-soft)]/50',
+                    onRowClick && 'cursor-pointer'
+                  )}
+                  style={{
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  onClick={() => onRowClick?.(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      className="flex items-center px-4 py-3 text-[var(--color-text-base)] text-sm"
+                      style={{ 
+                        width: cell.column.getSize(),
+                        flex: cell.column.getCanResize() ? `0 0 ${cell.column.getSize()}px` : '1 1 auto'
+                      }}
+                      role="cell"
+                    >
+                      <div className="w-full truncate">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
