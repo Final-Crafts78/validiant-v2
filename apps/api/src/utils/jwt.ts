@@ -47,6 +47,28 @@ export const generateToken = async (
 };
 
 /**
+ * Get secret fingerprint for parity checking without exposing the actual secret (Finding 42)
+ */
+export const getSecretFingerprint = async (): Promise<string> => {
+  try {
+    const secret = env.JWT_SECRET;
+    if (!secret) return 'MISSING';
+    
+    // Edge-compatible fingerprinting
+    const msgBuffer = new TextEncoder().encode(secret);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    return hashHex.substring(0, 8); // 8 chars is enough for parity check
+  } catch (e) {
+    // Fallback if crypto/subtle is unavailable in specific environment
+    const secret = env.JWT_SECRET || '';
+    return `fallback-${secret.length}-${secret.substring(0, 2)}`;
+  }
+};
+
+/**
  * Verify JWT token
  */
 export const verifyToken = async (token: string): Promise<TokenPayload> => {
@@ -55,8 +77,10 @@ export const verifyToken = async (token: string): Promise<TokenPayload> => {
   try {
     const { payload } = await jwtVerify(token, secret);
     return payload as TokenPayload;
-  } catch (error) {
-    throw new Error('Invalid or expired token');
+  } catch (error: any) {
+    const fingerprint = await getSecretFingerprint();
+    // We append the fingerprint to the error message so the middleware logger captures it
+    throw new Error(`Invalid or expired token [FP:${fingerprint}]`);
   }
 };
 

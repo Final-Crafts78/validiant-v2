@@ -51,6 +51,9 @@ export const authenticate = async (
     logger.info('[Auth Middleware] Incoming', {
       path: c.req.path,
       method: c.req.method,
+      host: c.req.header('host'),
+      xForwardedHost: c.req.header('x-forwarded-host'),
+      cfRay: c.req.header('cf-ray'),
       origin: c.req.header('origin') || 'NONE',
       referer: c.req.header('referer') || 'NONE',
       hasBearerToken: !!token,

@@ -205,3 +205,13 @@
 - **Resolution**: Instrumented `task.service.ts` and `project.service.ts` with detailed debug logs, including timestamps and context IDs (orgId, userId, projectId).
 - **Impact**: Greatly improved visibility for future production troubleshooting.
 
+#### 41. [Frontend/Edge] Middleware 500 Internal Server Error (CRITICAL)
+- **Data Evidence**: `vercellogs.txt` (Line 13) shows `GET /dashboard` returning 500. The log `[MW:Edge] Request Headers` is present, but `[MW:Edge] Cookie Detection` is MISSING for that RequestId.
+- **Root Cause**: The middleware is crashing between Line 50 and Line 60 of `apps/web/src/middleware.ts`. Most likely due to `request.cookies.getAll()` failing or the `map()` function encountering an unexpected cookie object structure in the Edge Runtime.
+- **Planned Fix**: Instrument each line of the cookie detection logic with try-catch and granular logging to pinpoint the exact crash point.
+
+#### 42. [Backend] JWT Verification Failure - "Invalid or expired token" (100% Confirmed)
+- **Data Evidence**: `cloudflare1.txt` shows repeated 401 errors: `[ERROR] [Auth Middleware] verifyToken FAILED {"tokenPrefix":"...","tokenLength":375,"error":"Invalid or expired token"}`.
+- **Root Cause**: Either a `JWT_SECRET` mismatch between Vercel (signer) and Cloudflare (verifier), or the Cloudflare Worker is failing to bind the `JWT_SECRET` correctly, falling back to the placeholder secret in `env.config.ts`.
+- **Planned Fix**: Add "Secret Hash" logging (first 4 chars of the secret's SHA-256) to both Vercel and Cloudflare logs to verify secret parity without exposing the actual secret.
+

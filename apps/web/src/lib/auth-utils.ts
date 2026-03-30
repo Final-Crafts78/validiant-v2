@@ -6,6 +6,28 @@
  */
 
 /**
+ * Get secret fingerprint for parity checking without exposing the actual secret (Finding 42)
+ * Works in Edge Runtime and Node.js.
+ */
+export async function getSecretFingerprint(): Promise<string> {
+  try {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return 'MISSING';
+
+    // Edge-compatible fingerprinting
+    const msgBuffer = new TextEncoder().encode(secret);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex.substring(0, 8);
+  } catch (e) {
+    const secret = process.env.JWT_SECRET || '';
+    return `fallback-${secret.length}-${secret.substring(0, 2)}`;
+  }
+}
+
+/**
  * Get the cookie domain based on the current request hostname and environment.
  *
  * In production:

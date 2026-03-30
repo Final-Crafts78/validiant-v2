@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getSecretFingerprint } from './lib/auth-utils';
 
 /**
  * Protected route patterns
@@ -31,217 +32,217 @@ function matchesRoute(pathname: string, routes: string[]): boolean {
 }
 
 /**
- * Middleware function
+ * Middleware function with High-Visibility Instrumentation (Finding 41)
  */
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const requestId = request.headers.get('x-vercel-id') || 'local-' + Math.random().toString(36).substring(7);
 
-  // Get authentication cookie
-  const accessToken = request.cookies.get('accessToken');
-  const refreshToken = request.cookies.get('refreshToken');
-  const userId = request.cookies.get('user_id');
+  try {
+    const secretFP = await getSecretFingerprint();
 
-  // Check if route is protected
-  const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
-  const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
-  const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
-
-  // eslint-disable-next-line no-console
-  console.debug('[MW:Edge] Request Headers', {
-    host: request.headers.get('host'),
-    xForwardedHost: request.headers.get('x-forwarded-host'),
-    xForwardedProto: request.headers.get('x-forwarded-proto'),
-    nextUrlHostname: request.nextUrl.hostname,
-    nextUrlProtocol: request.nextUrl.protocol,
-    pathname,
-  });
-
-  // eslint-disable-next-line no-console
-  console.debug('[MW:Edge] Cookie Detection', {
-    hasAccessToken: !!accessToken,
-    accessTokenPrefix: accessToken?.value.substring(0, 30),
-    accessTokenLength: accessToken?.value.length,
-    hasRefreshToken: !!refreshToken,
-    hasUserId: !!userId,
-    allCookies: request.cookies.getAll().map((c) => ({
-      name: c.name,
-      valueLength: c.value?.length || 0,
-      valuePrefix: c.value?.substring(0, 10),
-      isDeleted: c.value === 'deleted',
-      isNull: c.value === 'null',
-    })),
-    timestamp: new Date().toISOString(),
-  });
-  // CRITICAL: Basic validation to prevent using empty/cleared cookies
-  const accessTokenValue = accessToken?.value || '';
-  const isLengthValid = accessTokenValue.length > 100;
-  const isNotEmpty =
-    accessTokenValue !== 'deleted' &&
-    accessTokenValue !== 'null' &&
-    accessTokenValue !== '';
-
-  const isAuthenticated = isLengthValid && isNotEmpty;
-
-  const authFailureReason = !isNotEmpty
-    ? 'EMPTY_OR_DELETED_STRING'
-    : !isLengthValid
-      ? `LENGTH_INVALID_${accessTokenValue.length}`
-      : 'NONE';
-
-  // eslint-disable-next-line no-console
-  console.debug('[MW:Edge] Auth State Breakdown', {
-    isAuthenticated,
-    authFailureReason,
-    isLengthValid,
-    isNotEmpty,
-    tokenLength: accessTokenValue.length,
-    tokenPrefix: accessTokenValue.substring(0, 10),
-    path: pathname,
-    isProtectedRoute,
-    isOrgScoped: undefined, // Will be defined later
-    isAuthRoute,
-    referer: request.headers.get('referer'),
-    userAgent: request.headers.get('user-agent'),
-    timestamp: new Date().toISOString(),
-  });
-
-  // Debug logging for authentication issues
-  if (pathname.includes('/dashboard') || pathname.includes('/onboarding')) {
     // eslint-disable-next-line no-console
-    console.log('[Middleware Debug]', {
-      pathname,
-      hasAccessToken: !!accessToken,
-      accessTokenValue: accessToken
-        ? `${accessToken.value.substring(0, 20)}...`
-        : 'none',
-      allCookies: Array.from(request.cookies.getAll()).map((c) => ({
-        name: c.name,
-        hasValue: !!c.value,
-        valueLength: c.value?.length || 0,
-      })),
-      isAuthenticated,
-      timestamp: new Date().toISOString(),
-      url: request.url,
+    console.log(`[MW:Edge] [${requestId}] EP-1: Middleware started`, { 
+      pathname, 
+      secretFP,
+      timestamp: new Date().toISOString() 
     });
-  }
 
-  // ✅ Org-scoped detection: If first segment isn't a known global path, it's an org slug
-  const publicKeywords = [
-    '',
-    'auth',
-    'api',
-    'onboarding',
-    'organizations',
-    'profile',
-    'dashboard',
-    'health',
-  ];
-  const firstSegment = pathname.split('/')[1];
-  const isOrgScoped =
-    firstSegment !== undefined && !publicKeywords.includes(firstSegment);
+    // 1. RAW COOKIE ACCESS (Before any complex mapping)
+    const accessToken = request.cookies.get('accessToken');
+    const refreshToken = request.cookies.get('refreshToken');
+    const userId = request.cookies.get('user_id');
 
-  // 🔒 CRITICAL SECURITY & LOOP PREVENTION: 
-  // If the URL has a 'forceLogout' flag or we are coming from session-expired, 
-  // do NOT redirect back to the dashboard even if a token appears to exist.
-  const forceLogout = request.nextUrl.searchParams.get('forceLogout') === 'true';
-  const reason = request.nextUrl.searchParams.get('reason');
-  
-  if (forceLogout || reason === 'expired') {
     // eslint-disable-next-line no-console
-    console.warn(
-      '[MW:Edge] Force logout detected, bypassing auto-auth redirect',
-      {
+    console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies retrieved`, {
+      hasAccess: !!accessToken,
+      hasRefresh: !!refreshToken,
+      hasUser: !!userId,
+      timestamp: new Date().toISOString()
+    });
+
+    // Check if route is protected
+    const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
+    const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
+    const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
+
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] EP-3: Routes matched`, {
+      isProtected: isProtectedRoute,
+      isAuth: isAuthRoute,
+      isSemi: isSemiPublic,
+      host: request.headers.get('host'),
+      timestamp: new Date().toISOString()
+    });
+
+    // 2. CRITICAL BLOCK: request.cookies.getAll() (Finding 41 suspicion)
+    let cookieScanSummary: any[] = [];
+    let cookieCount = 0;
+    try {
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-4: Attempting cookies.getAll()`);
+      const allCookies = request.cookies.getAll();
+      cookieCount = allCookies.length;
+      
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-5: getAll() success, count: ${cookieCount}`);
+
+      cookieScanSummary = allCookies.map((c) => ({
+        name: c.name,
+        valueLength: c.value?.length || 0,
+        valuePrefix: c.value?.substring(0, 10),
+        isDeleted: c.value === 'deleted',
+        isNull: c.value === 'null',
+      }));
+      
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-6: Cookie mapping success`);
+    } catch (cookieErr: any) {
+      // eslint-disable-next-line no-console
+      console.error(`[MW:Edge] [${requestId}] CRITICAL FAILURE in request.cookies.getAll()`, {
+        error: cookieErr.message,
+        stack: cookieErr.stack,
+        timestamp: new Date().toISOString()
+      });
+      // Fallback to avoid complete 500 if possible
+      cookieScanSummary = [{ name: 'ERROR', valuePrefix: 'FAILED_TO_LOAD' }];
+    }
+
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] Cookie Detection Summary`, {
+      hasAccessToken: !!accessToken,
+      accessTokenPrefix: accessToken?.value.substring(0, 30),
+      accessTokenLength: accessToken?.value.length,
+      hasRefreshToken: !!refreshToken,
+      hasUserId: !!userId,
+      cookieCount,
+      allCookiesSummary: cookieScanSummary,
+      timestamp: new Date().toISOString(),
+    });
+
+    // CRITICAL: Basic validation to prevent using empty/cleared cookies
+    const accessTokenValue = accessToken?.value || '';
+    const isLengthValid = accessTokenValue.length > 100;
+    const isNotEmpty =
+      accessTokenValue !== 'deleted' &&
+      accessTokenValue !== 'null' &&
+      accessTokenValue !== '';
+
+    const isAuthenticated = isLengthValid && isNotEmpty;
+
+    const authFailureReason = !isNotEmpty
+      ? 'EMPTY_OR_DELETED_STRING'
+      : !isLengthValid
+        ? `LENGTH_INVALID_${accessTokenValue.length}`
+        : 'NONE';
+
+    // eslint-disable-next-line no-console
+    console.debug(`[MW:Edge] [${requestId}] EP-7: Auth logic check completed`, {
+      isAuthenticated,
+      authFailureReason,
+      tokenLength: accessTokenValue.length,
+      timestamp: new Date().toISOString()
+    });
+
+    // ✅ Org-scoped detection
+    const publicKeywords = [
+      '',
+      'auth',
+      'api',
+      'onboarding',
+      'organizations',
+      'profile',
+      'dashboard',
+      'health',
+    ];
+    const firstSegment = pathname.split('/')[1];
+    const isOrgScoped =
+      firstSegment !== undefined && !publicKeywords.includes(firstSegment);
+
+    // 🔒 CRITICAL SECURITY & LOOP PREVENTION
+    const forceLogout = request.nextUrl.searchParams.get('forceLogout') === 'true';
+    const reason = request.nextUrl.searchParams.get('reason');
+    
+    if (forceLogout || reason === 'expired') {
+      // eslint-disable-next-line no-console
+      console.warn(`[MW:Edge] [${requestId}] EP-8: Force logout detected`, {
         pathname,
         forceLogout,
         reason,
-        timestamp: new Date().toISOString(),
-      }
-    );
-    return NextResponse.next();
-  }
-
-  // Unauthenticated → login (Gate all protected or org-scoped routes)
-  if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
-    const branch = !accessToken
-      ? 'MISSING_COOKIE'
-      : !isLengthValid
-        ? 'SHORT_TOKEN'
-        : 'DELETED_OR_NULL_STRING';
-    
-    // eslint-disable-next-line no-console
-    console.warn(
-      '[MW:Edge] REDIRECT: Unauthenticated access to protected route',
-      {
-        pathname,
-        isProtectedRoute,
-        isOrgScoped,
-        isSemiPublic,
-        isAuthenticated,
-        authFailureReason,
-        branch,
-        accessTokenPresent: !!accessToken,
-        accessTokenLength: accessToken?.value.length || 0,
-        accessTokenPrefix: accessToken?.value
-          ? `${accessToken.value.substring(0, 10)}...`
-          : 'NONE',
-        allCookiesNames: request.cookies.getAll().map((c) => c.name),
-        host: request.headers.get('host'),
-        xForwardedHost: request.headers.get('x-forwarded-host'),
-        nextUrlHostname: request.nextUrl.hostname,
-        redirectTo: '/auth/login',
-        timestamp: new Date().toISOString(),
-      }
-    );
-
-    const loginUrl = new URL('/auth/login', request.url);
-    // Preserve the intended destination
-    loginUrl.searchParams.set('from', pathname);
-    
-    // Signal to the login page that this was a forced redirect due to auth failure
-    if (authFailureReason !== 'NONE') {
-      loginUrl.searchParams.set('reason', 'unauthorized');
+        timestamp: new Date().toISOString()
+      });
+      return NextResponse.next();
     }
-    
-    return NextResponse.redirect(loginUrl);
-  }
 
-  // Redirect authenticated users from auth pages to dashboard
-  if (isAuthRoute && isAuthenticated) {
-    const destParam = request.nextUrl.searchParams.get('redirect');
-    const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
+    // Unauthenticated → login
+    if ((isProtectedRoute || isOrgScoped) && !isSemiPublic && !isAuthenticated) {
+      const branch = !accessToken
+        ? 'MISSING_COOKIE'
+        : !isLengthValid
+          ? 'SHORT_TOKEN'
+          : 'DELETED_OR_NULL_STRING';
+      
+      // eslint-disable-next-line no-console
+      console.warn(`[MW:Edge] [${requestId}] EP-9: REDIRECT decisions`, {
+        pathname,
+        branch,
+        authFailureReason,
+        timestamp: new Date().toISOString()
+      });
+
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('from', pathname);
+      
+      if (authFailureReason !== 'NONE') {
+        loginUrl.searchParams.set('reason', 'unauthorized');
+      }
+      
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Redirect authenticated users from auth pages to dashboard
+    if (isAuthRoute && isAuthenticated) {
+      const destParam = request.nextUrl.searchParams.get('redirect');
+      const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
+
+      // eslint-disable-next-line no-console
+      console.debug(`[MW:Edge] [${requestId}] EP-10: Redirecting authed user from login`, {
+        dest,
+        timestamp: new Date().toISOString()
+      });
+      return NextResponse.redirect(new URL(dest, request.url));
+    }
+
+    // Allow request to proceed
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-pathname', pathname);
+    requestHeaders.set('x-middleware-request-id', requestId);
 
     // eslint-disable-next-line no-console
-    console.debug('[MW:Edge] Already authed, redirecting to destination', {
-      dest,
+    console.log(`[MW:Edge] [${requestId}] EP-FINAL: Proceeding to next()`, {
+      pathname,
       isAuthenticated,
-      accessTokenLength: accessToken?.value.length,
-      accessTokenPrefix: accessToken?.value.substring(0, 20),
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
-    return NextResponse.redirect(new URL(dest, request.url));
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  } catch (globalErr: any) {
+    // eslint-disable-next-line no-console
+    console.error(`[MW:Edge] [${requestId}] CRITICAL GLOBAL EXCEPTION`, {
+      message: globalErr.message,
+      stack: globalErr.stack,
+      pathname,
+      timestamp: new Date().toISOString()
+    });
+    
+    // In case of error in middleware, we should probably allow the request 
+    // to fall through to the page so Next.js can handle the error, 
+    // or return a safe redirect.
   }
-
-  // Allow request to proceed (default allow pattern)
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-pathname', pathname);
-
-  const referer = request.headers.get('referer') || 'NO_REFERER';
-
-  // eslint-disable-next-line no-console
-  console.debug('[MW:Edge] Final check before next()', {
-    pathname,
-    isAuthenticated,
-    accessTokenPresent: !!accessToken,
-    accessTokenLength: accessToken?.value.length || 0,
-    referer,
-    timestamp: new Date().toISOString(),
-  });
-
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
 }
 
 /**
