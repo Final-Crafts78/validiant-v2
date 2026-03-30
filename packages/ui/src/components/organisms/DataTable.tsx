@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({
           role="table"
         >
           {/* Table Header */}
-          <div 
+          <div
             className="sticky top-0 z-10 flex border-b border-[var(--color-border-base)] bg-[var(--color-surface-soft)]"
             role="rowgroup"
           >
@@ -109,9 +109,11 @@ export function DataTable<TData, TValue>({
                   <div
                     key={header.id}
                     className="flex items-center px-4 py-3 text-left font-semibold text-[var(--color-text-muted)] select-none uppercase tracking-wider text-[0.65rem]"
-                    style={{ 
+                    style={{
                       width: header.getSize(),
-                      flex: header.column.getCanResize() ? `0 0 ${header.getSize()}px` : '1 1 auto' 
+                      flex: header.column.getCanResize()
+                        ? `0 0 ${header.getSize()}px`
+                        : '1 1 auto',
                     }}
                     role="columnheader"
                   >
@@ -172,9 +174,11 @@ export function DataTable<TData, TValue>({
                     <div
                       key={cell.id}
                       className="flex items-center px-4 py-3 text-[var(--color-text-base)] text-sm"
-                      style={{ 
+                      style={{
                         width: cell.column.getSize(),
-                        flex: cell.column.getCanResize() ? `0 0 ${cell.column.getSize()}px` : '1 1 auto'
+                        flex: cell.column.getCanResize()
+                          ? `0 0 ${cell.column.getSize()}px`
+                          : '1 1 auto',
                       }}
                       role="cell"
                     >
