@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWorkspaceStore } from '@/store/workspace';
-import { useOrgRoles } from '@/hooks/useOrganizations';
+import { useOrgRoles, useCreateCustomRole } from '@/hooks/useOrganizations';
 
 const PERMISSION_GROUPS = [
   {
@@ -98,6 +98,7 @@ const PERMISSION_GROUPS = [
 export default function RolesSettings() {
   const activeOrgId = useWorkspaceStore((state) => state.activeOrgId);
   const { data: roles, isLoading: isLoadingRoles } = useOrgRoles(activeOrgId);
+  const createRoleMutation = useCreateCustomRole(activeOrgId || '');
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -114,7 +115,53 @@ export default function RolesSettings() {
 
   const togglePermission = (permKey: string) => {
     // Logic for updating permissions will go here in next phase
-    console.log('Toggle permission:', permKey);
+    console.debug('[Roles:Permissions] Toggle intent:', {
+      roleId: selectedRoleId,
+      roleName: selectedRole?.name,
+      permissionKey: permKey,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
+  const handleCreateRole = async () => {
+    if (!newRoleName.trim() || !activeOrgId) {
+      console.warn('[Roles:Create] Validation failed', {
+        name: newRoleName,
+        orgId: activeOrgId,
+      });
+      return;
+    }
+
+    console.info('[Roles:Create] Initiating role creation', {
+      name: newRoleName,
+      orgId: activeOrgId,
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      await createRoleMutation.mutateAsync({
+        name: newRoleName,
+        description: `Custom role: ${newRoleName}`,
+        permissions: [], // Start with empty permissions
+      });
+
+      console.info('[Roles:Create] SUCCESS', {
+        name: newRoleName,
+        timestamp: new Date().toISOString(),
+      });
+
+      setNewRoleName('');
+      setIsCreating(false);
+    } catch (error: any) {
+      console.error('[Roles:Create] FAILED', {
+        error,
+        name: newRoleName,
+        message: error.message,
+        details: error.details,
+        timestamp: new Date().toISOString(),
+      });
+      // Error handling UI could be added here
+    }
   };
 
   if (isLoadingRoles) {
@@ -346,15 +393,24 @@ export default function RolesSettings() {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsCreating(false)}
-                className="flex-1 py-3 text-slate-600 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+                disabled={createRoleMutation.isPending}
+                className="flex-1 py-3 text-slate-600 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-xl transition-all disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={() => setIsCreating(false)}
-                className="flex-1 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary-200 transition-all"
+                onClick={handleCreateRole}
+                disabled={createRoleMutation.isPending}
+                className="flex-1 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-primary-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                Create Role
+                {createRoleMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Role'
+                )}
               </button>
             </div>
           </div>

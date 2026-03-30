@@ -87,15 +87,23 @@ export default function LoginPage() {
 
   // Handle Google Login
   const handleGoogleLogin = () => {
-    const target = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/google`;
-    console.debug('[Login:Page] Initiating Google OAuth redirect...', { target });
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const base = rawApiUrl.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
+    const target = `${base}/api/v1/oauth/google`;
+    console.debug('[Login:Page] Initiating Google OAuth redirect...', {
+      target,
+    });
     window.location.href = target;
   };
 
   // Handle GitHub Login
   const handleGitHubLogin = () => {
-    const target = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/oauth/github`;
-    console.debug('[Login:Page] Initiating GitHub OAuth redirect...', { target });
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const base = rawApiUrl.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
+    const target = `${base}/api/v1/oauth/github`;
+    console.debug('[Login:Page] Initiating GitHub OAuth redirect...', {
+      target,
+    });
     window.location.href = target;
   };
 

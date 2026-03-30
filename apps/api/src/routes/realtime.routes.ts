@@ -53,10 +53,13 @@ router.get('/stream', async (c) => {
   });
 
   if (!orgId) {
-    logger.error('[Realtime] TERMINAL FAILURE - No organization context', {
+    logger.error('[Realtime] TERMINAL FAILURE - No organization context found', {
       userId: user?.userId,
       path: c.req.path,
       attemptedDecision: resolutionMarker,
+      headers: c.req.header(),
+      query: c.req.queries(),
+      timestamp: new Date().toISOString(),
       suggestion: 'Client must pass orgId in query string for SSE.',
     });
     throw new BadRequestError(

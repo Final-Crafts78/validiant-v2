@@ -96,8 +96,10 @@ export function useRealtime() {
         tokenCapturedAt: new Date().toISOString(),
         normalizedApiBase: apiBase,
         finalSseUrl: sseUrl.replace(/token=[^&]+/, 'token=REDACTED'),
+        isDoublePrefixed: sseUrl.includes('/api/v1/api/v1'),
         timestamp: new Date().toISOString(),
-        windowLocation: typeof window !== 'undefined' ? window.location.href : 'NONE',
+        windowLocation:
+          typeof window !== 'undefined' ? window.location.href : 'NONE',
       });
 
       const es = new EventSource(sseUrl, { withCredentials: true });

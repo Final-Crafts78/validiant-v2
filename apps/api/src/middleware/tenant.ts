@@ -87,24 +87,21 @@ export const tenantIsolation = async (
   });
 
   if (!orgId) {
-    console.warn('[Tenant:MW] No organization context found for scoped route', {
+    console.error('[Tenant:MW] TERMINAL FAILURE - No organization context found', {
       path: c.req.path,
       method: c.req.method,
       userId: user.userId,
-      isAuthMe: c.req.path.includes('/auth/me'),
-      isScoped:
-        !c.req.path.includes('/auth/') && !c.req.path.includes('/health'),
-      suggestion:
-        'If this is /auth/me or /health, it is expected. If this is a scoped route, orgId is missing from Header, Param, Query, and JWT.',
+      headers: c.req.header(),
+      query: c.req.queries(),
+      timestamp: new Date().toISOString(),
+      suggestion: 'Ensure X-Org-Id header or orgId query parameter is provided.',
     });
-    // Some routes might not be org-scoped (like /auth/me), but for scoped routes, this is fatal.
-    // We allow it to pass if downstream logic handles global scope,
-    // but the spec suggests scoping "every single database query".
+    // For non-scoped routes, we allow it to pass, but log the warning
     await next();
     return;
   }
 
-  console.log(`[Tenant:MW] Handoff Check { orgId: '${orgId}', organizationId: '${orgId}' }`);
+  console.log(`[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY'}' }`);
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
 

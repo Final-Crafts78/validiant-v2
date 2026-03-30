@@ -127,11 +127,32 @@ apiClient.interceptors.request.use(
     
     // URL CONSTRUCTION TRACE
     // getBaseUrl() ends with /api/v1
-    const baseURL = config.baseURL?.replace(/\/+$/, ''); // Ensure no trailing slash
-    const relativePart = config.url?.replace(/^\/+/, ''); // Ensure no leading slash
+    const baseURL = config.baseURL?.replace(/\/+$/, '') || '';
+
+    // 🔒 SAFETY FILTER: Strip redundant prefixes from the relative URL
+    let relativePath = config.url || '';
+    if (relativePath.startsWith('/api/v1')) {
+      logger.warn('[API:PathNormalization] Stripping redundant /api/v1 prefix', {
+        original: relativePath,
+      });
+      relativePath = relativePath.replace(/^\/api\/v1/, '');
+    } else if (relativePath.startsWith('api/v1')) {
+      logger.warn('[API:PathNormalization] Stripping redundant api/v1 prefix', {
+        original: relativePath,
+      });
+      relativePath = relativePath.replace(/^api\/v1/, '');
+    }
+
+    // Ensure relativePath starts with a single slash for consistency
+    const relativePart = relativePath.startsWith('/')
+      ? relativePath.substring(1)
+      : relativePath;
     const finalFullURL = `${baseURL}/${relativePart}`;
-    
-    // 🚩 DOUBLE PREFIX DETECTION
+
+    // Re-apply the normalized URL to the config to prevent 404s
+    config.url = `/${relativePart}`;
+
+    // 🚩 DOUBLE PREFIX DETECTION (Sanity Check)
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
     const authStoreState = useAuthStore.getState();
@@ -146,9 +167,13 @@ apiClient.interceptors.request.use(
         urlPath: config.url,
         hasOrgId: !!finalOrgId,
         orgId: finalOrgId || 'MISSING',
-        orgIdSource: existingOrgId 
-          ? 'explicit-header' 
-          : (fromWorkspaceStore ? 'workspace-store' : fromAuthStore ? 'auth-store' : 'none'),
+        orgIdSource: existingOrgId
+          ? 'explicit-header'
+          : fromWorkspaceStore
+            ? 'workspace-store'
+            : fromAuthStore
+              ? 'auth-store'
+              : 'none',
         storeValues: {
           fromWorkspace: fromWorkspaceStore || 'null',
           fromAuth: fromAuthStore || 'null',
@@ -165,7 +190,10 @@ apiClient.interceptors.request.use(
         headers: {
           ...config.headers,
           'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
-          'User-Agent': typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
+          'User-Agent':
+            typeof window !== 'undefined'
+              ? window.navigator.userAgent
+              : 'SERVER',
           Referer: typeof window !== 'undefined' ? window.location.href : 'NONE',
         },
       }
