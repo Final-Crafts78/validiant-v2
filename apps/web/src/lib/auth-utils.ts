@@ -18,7 +18,9 @@ export async function getSecretFingerprint(): Promise<string> {
     const msgBuffer = new TextEncoder().encode(secret);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
 
     return hashHex.substring(0, 8);
   } catch (e) {
@@ -37,9 +39,9 @@ export async function getSecretFingerprint(): Promise<string> {
  * In development:
  * - Returns undefined (host-only cookie on localhost).
  */
-export function getCookieDomain(requestHostname?: string) {
+export function getCookieDomain(requestHostname?: string): string | undefined {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  
+
   // LOG ALL ENVIRONMENT INPUTS FOR DETERMINING PRODUCTION
   const envProductionChecks = {
     appUrlIncludesValidiant: appUrl.includes('validiant.in'),
@@ -57,33 +59,57 @@ export function getCookieDomain(requestHostname?: string) {
   // 🔍 PRE-PARSE AUDIT (Finding 45 Hardening)
   const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL || '';
   const appUrlLength = appUrlRaw.length;
-  
+
+  // eslint-disable-next-line no-console
   console.debug('[Cookie:Utils] PRE-PARSE Audit', {
     appUrlRaw,
     appUrlLength,
     isProduction,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // Fallback chain for hostname
   let hostname: string | null = null;
   try {
     hostname =
-      requestHostname ||
+      requestHostname ??
       (typeof window !== 'undefined' ? window.location.hostname : null);
 
     if (!hostname && appUrlRaw) {
-      console.debug('[Cookie:Utils] Falling back to URL constructor for hostname', { appUrlRaw });
-      hostname = new URL(appUrlRaw).hostname;
+      // eslint-disable-next-line no-console
+      console.debug(
+        '[Cookie:Utils] Falling back to URL constructor for hostname',
+        { appUrlRaw }
+      );
+      // Validate string starts with a protocol
+      try {
+        const url = new URL(
+          appUrlRaw.startsWith('http') ? appUrlRaw : `https://${appUrlRaw}`
+        );
+        hostname = url.hostname;
+      } catch {
+        // Fallback for malformed URLs
+        hostname = appUrlRaw.split(':')[0].split('/')[0];
+      }
     }
   } catch (urlErr) {
+    // eslint-disable-next-line no-console
     console.error('[Cookie:Utils] CRITICAL: URL Parsing failed', {
       appUrlRaw,
-      error: urlErr instanceof Error ? urlErr.message : String(urlErr)
+      error: urlErr instanceof Error ? urlErr.message : String(urlErr),
     });
-    hostname = 'localhost'; // Safe fallback to prevent terminal crash
   }
 
+  // Safety fallback for production domain logic
+  if (!hostname && isProduction) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[Cookie:Utils] Hostname missing in production, defaulting to localhost safety'
+    );
+    hostname = 'localhost';
+  }
+
+  // eslint-disable-next-line no-console
   console.debug('[Cookie:Utils] Evaluating domain', {
     resolvedHostname: hostname || 'NULL_FALLBACK',
     inputHostname: requestHostname || 'UNDEFINED',
@@ -105,14 +131,17 @@ export function getCookieDomain(requestHostname?: string) {
   });
 
   if (!isProduction) {
-    console.debug('[Cookie:Utils] NOT PRODUCTION - returning undefined (host-only)');
+    // eslint-disable-next-line no-console
+    console.debug(
+      '[Cookie:Utils] NOT PRODUCTION - returning undefined (host-only)'
+    );
     return undefined; // Host-only cookies for localhost
   }
 
   // If we are on any validiant.in subdomain, use the wildcard domain
   // CRITICAL: If we are in production but the hostname is missing or localhost (server-side context issues),
   // we force the production domain to ensure cookies are set/cleared correctly.
-  const isForceDomainMatch = 
+  const isForceDomainMatch =
     !hostname ||
     hostname === 'localhost' ||
     hostname.endsWith('validiant.in') ||
@@ -120,22 +149,32 @@ export function getCookieDomain(requestHostname?: string) {
 
   if (isProduction && isForceDomainMatch) {
     const finalDomain = '.validiant.in';
+    // eslint-disable-next-line no-console
     console.info('[Cookie:Utils] PRODUCTION DOMAIN APPLIED', {
       hostname,
       isProduction,
-      reason: !hostname ? 'HOSTNAME_MISSING' : hostname === 'localhost' ? 'LOCALHOST_FALLBACK' : 'DOMAIN_MATCH',
+      reason: !hostname
+        ? 'HOSTNAME_MISSING'
+        : hostname === 'localhost'
+          ? 'LOCALHOST_FALLBACK'
+          : 'DOMAIN_MATCH',
       finalDomain,
       timestamp: new Date().toISOString(),
     });
     return finalDomain;
   }
 
-  console.warn('[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH (Host-only cookie will be used)', {
-    hostname,
-    isProduction,
-    isForceDomainMatch,
-    suggestion: 'If this is a Vercel preview URL, host-only cookies are intentional. If this is production, check NEXT_PUBLIC_APP_URL.'
-  });
+  // eslint-disable-next-line no-console
+  console.warn(
+    '[Cookie:Utils] PRODUCTION but NO DOMAIN MATCH (Host-only cookie will be used)',
+    {
+      hostname,
+      isProduction,
+      isForceDomainMatch,
+      suggestion:
+        'If this is a Vercel preview URL, host-only cookies are intentional. If this is production, check NEXT_PUBLIC_APP_URL.',
+    }
+  );
 
   return undefined;
 }
@@ -165,6 +204,7 @@ export const getBaseCookieOptions = (hostname?: string) => {
     domain,
   };
 
+  // eslint-disable-next-line no-console
   console.debug('[Cookie:Utils] DOMAIN DECISION', {
     hostname: hostname || 'UNKNOWN',
     isProduction,
@@ -174,12 +214,21 @@ export const getBaseCookieOptions = (hostname?: string) => {
       ...options,
       sameSite: options.sameSite,
     },
-    clientAvailableCookies: typeof document !== 'undefined' ? document.cookie.split(';').length : 'N/A',
-    clientCookieNames: typeof document !== 'undefined' ? document.cookie.split(';').map(c => c.split('=')[0]?.trim() || 'UNKNOWN') : [],
+    clientAvailableCookies:
+      typeof document !== 'undefined'
+        ? document.cookie.split(';').length
+        : 'N/A',
+    clientCookieNames:
+      typeof document !== 'undefined'
+        ? document.cookie
+            .split(';')
+            .map((c) => c.split('=')[0]?.trim() || 'UNKNOWN')
+        : [],
     context: typeof window !== 'undefined' ? 'BROWSER' : 'SERVER',
     envNode: process.env.NODE_ENV,
     timestamp: new Date().toISOString(),
-    userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
+    userAgent:
+      typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
   });
 
   return options;

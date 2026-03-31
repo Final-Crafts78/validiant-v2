@@ -130,27 +130,20 @@ apiClient.interceptors.request.use(
     const baseURL = config.baseURL?.replace(/\/+$/, '') || '';
 
     // 🔒 SAFETY FILTER: Strip redundant prefixes from the relative URL
-    let relativePath = config.url || '';
-    if (relativePath.startsWith('/api/v1')) {
-      logger.warn('[API:PathNormalization] Stripping redundant /api/v1 prefix', {
-        original: relativePath,
-      });
-      relativePath = relativePath.replace(/^\/api\/v1/, '');
-    } else if (relativePath.startsWith('api/v1')) {
-      logger.warn('[API:PathNormalization] Stripping redundant api/v1 prefix', {
-        original: relativePath,
-      });
-      relativePath = relativePath.replace(/^api\/v1/, '');
+    let relativePart = config.url || '';
+    
+    // Remove leading /api/v1 or api/v1 multiple times if they exist
+    relativePart = relativePart.replace(/^(\/api\/v1)+/g, '');
+
+    // Ensure it starts with a slash
+    if (!relativePart.startsWith('/')) {
+      relativePart = '/' + relativePart;
     }
 
-    // Ensure relativePath starts with a single slash for consistency
-    const relativePart = relativePath.startsWith('/')
-      ? relativePath.substring(1)
-      : relativePath;
-    const finalFullURL = `${baseURL}/${relativePart}`;
+    // Update config URL to the relative part
+    config.url = relativePart;
 
-    // Re-apply the normalized URL to the config to prevent 404s
-    config.url = `/${relativePart}`;
+    const finalFullURL = `${baseURL}${relativePart}`.replace(/\/api\/v1\/api\/v1/g, '/api/v1');
 
     // 🚩 DOUBLE PREFIX DETECTION (Sanity Check)
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CommandRail } from '@/components/workspace/CommandRail';
 import {
   WorkspaceSidebar,
@@ -23,6 +23,16 @@ export function WorkspaceLayoutContent({
   orgSlug,
 }: WorkspaceLayoutContentProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // 🔍 LIFECYCLE AUDIT (Finding 45)
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('[Workspace:Layout] [EP-W1] Mounted', {
+      orgSlug,
+      timestamp: new Date().toISOString(),
+      userAgent: window.navigator.userAgent,
+    });
+  }, [orgSlug]);
 
   return (
     <div className="min-h-screen bg-[var(--color-surface-base)] text-[var(--color-text-base)]">

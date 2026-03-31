@@ -137,9 +137,7 @@ export async function middleware(request: NextRequest) {
   try {
     // 0. ENVIRONMENT AUDIT (Finding 42)
     // eslint-disable-next-line no-console
-    console.log(`
-      [MW:Edge] [${requestId}] EP-1.0.1: Environment audit starting
-    `);
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.1: Env Audit Starting`);
 
     const jwtPresent = !!process.env.JWT_SECRET;
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'MISSING';
@@ -147,184 +145,88 @@ export async function middleware(request: NextRequest) {
     const nodeEnv = process.env.NODE_ENV || 'MISSING';
 
     // eslint-disable-next-line no-console
-    console.log(`
-      [MW:Edge] [${requestId}] EP-1.0.2: ENV PRIMITIVES - jwtPresent=${jwtPresent}, apiUrl=${apiUrl}, appUrl=${appUrl}, nodeEnv=${nodeEnv}
-    `);
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.2: ENV - jwt=${jwtPresent}, api=${apiUrl}, app=${appUrl}, env=${nodeEnv}`);
 
     // eslint-disable-next-line no-console
-    console.log(`
-      [MW:Edge] [${requestId}] EP-1.0.3: Calling getSecretFingerprint()
-    `);
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.3: Fingerprint calc start`);
     const secretFP = await getSecretFingerprint();
     // eslint-disable-next-line no-console
-    console.log(`
-      [MW:Edge] [${requestId}] EP-1.0.4: FP=${secretFP}
-    `);
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.4: FP Value: ${secretFP}`);
 
     // eslint-disable-next-line no-console
-    console.log(
-      `
-      [MW:Edge] [${requestId}] EP-1.0: Middleware started
-    `,
-      { pathname, timestamp: new Date().toISOString() }
-    );
-    // eslint-disable-next-line no-console
-    console.log(`
-      [MW:Edge] [${requestId}] EP-1.1: Secret Fingerprint confirm: ${secretFP}
-    `);
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.5: Path: ${pathname}`);
 
-    // 0.1 RAW COOKIE AUDIT (Finding Cloudflare WAF stripping or Oversized Headers)
+    // 0.1 RAW COOKIE AUDIT
     let cookieScan: string[] = [];
     let rawCookieHeader: string | null = null;
 
     try {
       // eslint-disable-next-line no-console
-      console.log(`
-        [MW:Edge] [${requestId}] EP-0.1.0: Accessing headers.get('cookie')
-      `);
+      console.log(`[MW:Edge] [${requestId}] EP-0.1.0: Header Retrieval`);
       rawCookieHeader = request.headers.get('cookie');
 
       const headerLength = rawCookieHeader?.length || 0;
       // eslint-disable-next-line no-console
-      console.log(`
-        [MW:Edge] [${requestId}] EP-0.1.1: Header retrieved - length=${headerLength}
-      `);
+      console.log(`[MW:Edge] [${requestId}] EP-0.1.1: Header length: ${headerLength}`);
 
       if (rawCookieHeader) {
         // eslint-disable-next-line no-console
-        console.log(`
-          [MW:Edge] [${requestId}] EP-0.1.2: Starting split parsing
-        `);
+        console.log(`[MW:Edge] [${requestId}] EP-0.1.2: Parsing substrings`);
 
-        // Use a safe split limit to avoid regex DOS or memory issues in Edge Runtime
+        // Safer parsing for Edge Runtime
         const parts = rawCookieHeader.split(';').slice(0, 50);
-
-        cookieScan = parts.map((c) => {
-          try {
-            return c.split('=')[0]?.trim() || 'MALFORMED';
-          } catch (e) {
-            return 'ERROR_PARSING_PART';
-          }
-        });
+        cookieScan = parts.map((c) => c.split('=')[0]?.trim() || 'MALFORMED');
 
         // eslint-disable-next-line no-console
-        console.log(
-          `
-          [MW:Edge] [${requestId}] EP-0.1.3: Split parsing success
-        `,
-          {
-            cookieCount: parts.length,
-            cookieNames: cookieScan,
-          }
-        );
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(`
-          [MW:Edge] [${requestId}] EP-0.1.2: NO_COOKIE_HEADER
-        `);
+        console.log(`[MW:Edge] [${requestId}] EP-0.1.3: Names: ${cookieScan.join(', ')}`);
       }
     } catch (auditErr: unknown) {
       // eslint-disable-next-line no-console
-      console.error(
-        `
-        [MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Cookie Audit CRASHED
-      `,
-        {
-          message:
-            auditErr instanceof Error ? auditErr.message : String(auditErr),
-          stack: auditErr instanceof Error ? auditErr.stack : undefined,
-        }
-      );
+      console.error(`[MW:Edge] [${requestId}] EP-0.1.ERROR: Raw Audit Crash`, {
+        msg: auditErr instanceof Error ? auditErr.message : String(auditErr),
+      });
     }
 
-    // 1. SAFE COOKIE ACCESS (Finding 41 Hardening)
+    // 1. SAFE COOKIE ACCESS
     const accessToken = getSafeCookie(request, 'accessToken', requestId);
     const refreshToken = getSafeCookie(request, 'refreshToken', requestId);
     const userId = getSafeCookie(request, 'user_id', requestId);
 
     // eslint-disable-next-line no-console
-    console.log(
-      `
-      [MW:Edge] [${requestId}] EP-2: Single cookies retrieved
-    `,
-      {
-        hasAccess: !!accessToken,
-        hasRefresh: !!refreshToken,
-        hasUser: !!userId,
-        timestamp: new Date().toISOString(),
-      }
-    );
+    console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies: access=${!!accessToken}, refresh=${!!refreshToken}, user=${!!userId}`);
 
-    // Check if route is protected
+    // Route matching
     const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
     const isAuthRoute = matchesRoute(pathname, AUTH_ROUTES);
     const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
     // eslint-disable-next-line no-console
-    console.debug(
-      `
-      [MW:Edge] [${requestId}] EP-3: Routes matched
-    `,
-      {
-        isProtected: isProtectedRoute,
-        isAuth: isAuthRoute,
-        isSemi: isSemiPublic,
-        host: request.headers.get('host'),
-        timestamp: new Date().toISOString(),
-      }
-    );
+    console.log(`[MW:Edge] [${requestId}] EP-3: Logic Match - protected=${isProtectedRoute}, auth=${isAuthRoute}, semi=${isSemiPublic}`);
 
-    // 2. CRITICAL BLOCK: request.cookies.getAll() (Finding 41 suspicion)
+    // 2. COOKIE SCAN SUMMARY
     let cookieScanSummary: CookieSummary[] = [];
     let cookieCount = 0;
     try {
       // eslint-disable-next-line no-console
-      console.log(`
-        [MW:Edge] [${requestId}] EP-4: Attempting cookies.getAll()
-      `);
+      console.log(`[MW:Edge] [${requestId}] EP-4: getAll() start`);
       const allCookies = request.cookies.getAll();
       cookieCount = allCookies.length;
-
-      // eslint-disable-next-line no-console
-      console.log(`
-        [MW:Edge] [${requestId}] EP-5: getAll() success, count: ${cookieCount}
-      `);
 
       cookieScanSummary = allCookies.map((c) => ({
         name: c.name,
         valueLength: c.value?.length || 0,
         valuePrefix: c.value?.substring(0, 10),
-        isDeleted: c.value === 'deleted',
-        isNull: c.value === 'null',
+        isDeleted: c.value === 'deleted' || c.value === 'null',
+        isNull: !c.value,
       }));
 
       // eslint-disable-next-line no-console
-      console.log(`
-        [MW:Edge] [${requestId}] EP-6: Cookie mapping success
-      `);
+      console.log(`[MW:Edge] [${requestId}] EP-5: getAll() end, count=${cookieCount}`);
     } catch (cookieErr: unknown) {
       // eslint-disable-next-line no-console
-      console.error(
-        `
-        [MW:Edge] [${requestId}] CRITICAL FAILURE in request.cookies.getAll()
-      `,
-        {
-          error:
-            cookieErr instanceof Error ? cookieErr.message : String(cookieErr),
-          stack: cookieErr instanceof Error ? cookieErr.stack : undefined,
-          timestamp: new Date().toISOString(),
-        }
-      );
-      // Fallback to avoid complete 500 if possible
-      cookieScanSummary = [
-        {
-          name: 'ERROR',
-          valuePrefix: 'FAILED_TO_LOAD',
-          valueLength: 0,
-          isDeleted: false,
-          isNull: false,
-        },
-      ];
+      console.error(`[MW:Edge] [${requestId}] EP-5.ERROR: getAll() Crash`, {
+        msg: cookieErr instanceof Error ? cookieErr.message : String(cookieErr),
+      });
     }
 
     // eslint-disable-next-line no-console

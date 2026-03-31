@@ -14,17 +14,18 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
 
+  // Effect to apply theme
   useEffect(() => {
     // Check local storage or system preference
     const savedTheme = localStorage.getItem('theme') as Theme | null;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
     const initialTheme = savedTheme || systemTheme;
-    
+
     setThemeState(initialTheme);
     document.documentElement.setAttribute('data-theme', initialTheme);
-    setMounted(true);
   }, []);
 
   const setTheme = (newTheme: Theme) => {
@@ -37,14 +38,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  // Prevent hydration mismatch by only rendering children after mount
-  // or providing a fallback that doesn't depend on the theme state
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+      {/* 
+        Optional: During initial hydration mismatch window, 
+        we could suppress theme-dependent rendering if needed, 
+        but we MUST provide the context to avoid terminal crashes.
+      */}
       {children}
     </ThemeContext.Provider>
   );
