@@ -247,3 +247,9 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - [x] ThemeProvider SSR crash fixed
 - [x] API Double-Prefix 404s normalized globally
 - [x] Deep observability added (EP-L, EP-U, EP-W series)
+
+#### 50. [Frontend] Build Failure - TypeScript Type Mismatch (100% Confirmed - RESOLVED)
+- **Data Evidence**: Vercel build logs showed `Type 'string | undefined' is not assignable to type 'string | null'` in `lib/auth-utils.ts`.
+- **Root Cause**: Strict indexed access checks (`noUncheckedIndexedAccess`) in the production environment caused `split()[0]` to be treated as potentially `undefined`.
+- **Resolution**: Updated `hostname` type to allow `undefined` and used optional chaining `?.` on split operations.
+- **Impact**: Restored build stability for production deployments.

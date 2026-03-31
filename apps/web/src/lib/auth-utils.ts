@@ -69,7 +69,7 @@ export function getCookieDomain(requestHostname?: string): string | undefined {
   });
 
   // Fallback chain for hostname
-  let hostname: string | null = null;
+  let hostname: string | null | undefined = null;
   try {
     hostname =
       requestHostname ??
@@ -89,7 +89,7 @@ export function getCookieDomain(requestHostname?: string): string | undefined {
         hostname = url.hostname;
       } catch {
         // Fallback for malformed URLs
-        hostname = appUrlRaw.split(':')[0].split('/')[0];
+        hostname = appUrlRaw.split(':')[0]?.split('/')[0];
       }
     }
   } catch (urlErr) {
