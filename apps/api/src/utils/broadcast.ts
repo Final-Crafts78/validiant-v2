@@ -5,6 +5,7 @@
  * organization-scoped server-sent events.
  */
 
+import type { DurableObjectNamespace } from '@cloudflare/workers-types';
 import { logger } from './logger';
 
 /**

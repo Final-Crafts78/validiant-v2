@@ -118,20 +118,34 @@ export default function ProfilePage() {
     startTransition(async () => {
       try {
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+        const cleanBio = bio.trim();
+        const cleanPhone = phoneNumber.trim();
+
+        // ELITE DEFENSE: Final check to ensure we never send "$undefined" strings
+        const bioToSubmit =
+          cleanBio === '$undefined' || cleanBio === 'null' || !cleanBio
+            ? undefined
+            : cleanBio;
+        
+        const phoneToSubmit = 
+          cleanPhone === '$undefined' || cleanPhone === 'null' || !cleanPhone
+            ? undefined
+            : cleanPhone;
 
         // Trace logic for debugging profile persistence
         // eslint-disable-next-line no-console
-        console.log('[Profile:Update] Initiating synchronization...', {
+        console.log('[Profile:Update] Initiating synchronization (Trace):', {
           fullName,
-          phoneNumber: phoneNumber.trim(),
-          bio: bio.trim(),
+          phoneNumber: phoneToSubmit,
+          bio: bioToSubmit,
+          originalBio: bio,
         });
 
         const result = await updateProfileAction({
           fullName,
           displayName: displayName.trim() || undefined,
-          phoneNumber: phoneNumber.trim() || undefined,
-          bio: bio.trim() || undefined,
+          phoneNumber: phoneToSubmit,
+          bio: bioToSubmit,
         });
 
         if (result.success && result.user) {

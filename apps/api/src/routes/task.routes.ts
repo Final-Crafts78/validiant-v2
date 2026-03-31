@@ -17,8 +17,6 @@ import {
   updateTaskSchema,
   assignTaskSchema,
   bulkUploadTaskSchema,
-  bulkAssignTasksSchema,
-  bulkUpdateTaskStatusSchema,
 } from '@validiant/shared';
 import * as taskController from '../controllers/task.controller';
 import * as caseDataController from '../controllers/case-data.controller';
@@ -46,26 +44,6 @@ app.post(
   '/:id/assign',
   zValidator('json', assignTaskSchema),
   taskController.assignTask
-);
-app.patch(
-  '/bulk-assign',
-  zValidator('json', bulkAssignTasksSchema),
-  taskController.bulkAssignTasks
-);
-app.post(
-  '/bulk-assign',
-  zValidator('json', bulkAssignTasksSchema),
-  taskController.bulkAssignTasks
-);
-app.post(
-  '/projects/:projectId/tasks/bulk-assign',
-  zValidator('json', bulkAssignTasksSchema),
-  taskController.bulkAssignTasks
-);
-app.patch(
-  '/bulk-status',
-  zValidator('json', bulkUpdateTaskStatusSchema),
-  taskController.bulkUpdateStatus
 );
 app.post('/:id/complete', taskController.completeTask);
 app.post('/:id/reopen', taskController.reopenTask);

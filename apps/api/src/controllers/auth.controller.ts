@@ -465,6 +465,7 @@ export const getMe = async (c: Context) => {
 export const switchOrganization = async (c: Context) => {
   try {
     const user = c.get('user');
+    const refreshToken = getCookie(c, 'refreshToken');
     const { organizationId } = (await c.req.json()) as {
       organizationId: string;
     };
@@ -548,7 +549,7 @@ export const switchOrganization = async (c: Context) => {
       userId: user.userId,
       orgId: organizationId,
       accessTokenLength: accessToken.length,
-      refreshTokenLength: refreshToken.length,
+      refreshTokenLength: refreshToken?.length || 0,
       cookieOptions: {
         access: accessCookieOptions,
         refresh: refreshCookieOptions,
@@ -565,7 +566,7 @@ export const switchOrganization = async (c: Context) => {
     setCookie(
       c,
       'refreshToken',
-      refreshToken,
+      refreshToken || '',
       refreshCookieOptions
     );
 
@@ -579,7 +580,7 @@ export const switchOrganization = async (c: Context) => {
       success: true,
       data: {
         accessToken,
-        refreshToken,
+        refreshToken: refreshToken || '',
         message: 'Workspace switched successfully',
       },
     });

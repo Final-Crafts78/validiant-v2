@@ -17,122 +17,158 @@ import {
 import { logger } from '../utils/logger';
 
 export const rollupAnalytics = async () => {
-  logger.info('[Analytics Rollup] Starting aggregation...');
+  const startTime = performance.now();
+  logger.info('[Analytics Rollup] Starting batched aggregation...');
 
   try {
-    const orgs = await db.select({ id: organizations.id }).from(organizations);
     const now = new Date();
+    const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
+    // 1. Get all active organizations
+    const orgs = await db
+      .select({ id: organizations.id })
+      .from(organizations)
+      .where(isNull(organizations.deletedAt));
+
+    if (orgs.length === 0) {
+      logger.info('[Analytics Rollup] No organizations found. Skipping.');
+      return;
+    }
+
+    // 2. Batched Task Metrics (all orgs at once)
+    const allTaskStats = await db
+      .select({
+        orgId: tasks.organizationId,
+        status: tasks.statusKey,
+        count: count(),
+      })
+      .from(tasks)
+      .where(isNull(tasks.deletedAt))
+      .groupBy(tasks.organizationId, tasks.statusKey);
+
+    // 3. Batched SLA Breaches (all orgs at once)
+    const allSlaBreaches = await db
+      .select({
+        orgId: tasks.organizationId,
+        count: count(),
+      })
+      .from(tasks)
+      .where(
+        and(
+          isNull(tasks.completedAt),
+          isNull(tasks.deletedAt),
+          sql`${tasks.dueDate} < ${now}`
+        )
+      )
+      .groupBy(tasks.organizationId);
+
+    // 4. Batched Activity Metrics (all orgs at once)
+    const allDailyActivity = await db
+      .select({
+        orgId: activityLogs.organizationId,
+        count: count(),
+      })
+      .from(activityLogs)
+      .where(sql`${activityLogs.createdAt} > ${dayAgo}`)
+      .groupBy(activityLogs.organizationId);
+
+    // 5. Batched Productivity Metrics (all orgs at once)
+    const allDailyTime = await db
+      .select({
+        orgId: tasks.organizationId,
+        total: sum(timeEntries.duration),
+      })
+      .from(timeEntries)
+      .innerJoin(tasks, eq(timeEntries.taskId, tasks.id))
+      .where(sql`${timeEntries.createdAt} > ${dayAgo}`)
+      .groupBy(tasks.organizationId);
+
+    // 6. Combine data in memory
+    const orgData = new Map();
+
+    // Initialize map
     for (const org of orgs) {
-      try {
-        // 1. Task Metrics
-        const taskStats = await db
-          .select({
-            status: tasks.statusKey,
-            count: count(),
-          })
-          .from(tasks)
-          .where(and(eq(tasks.organizationId, org.id), isNull(tasks.deletedAt)))
-          .groupBy(tasks.statusKey);
+      orgData.set(org.id, {
+        taskStats: [],
+        slaBreaches: 0,
+        dailyActivity: 0,
+        dailyTimeSeconds: 0,
+      });
+    }
 
-        const totalTasks = taskStats.reduce(
-          (acc: number, curr: { count: number }) => acc + curr.count,
-          0
-        );
-        const completedTasks =
-          taskStats.find(
-            (s: { status: string; count: number }) => s.status === 'COMPLETED'
-          )?.count || 0;
+    // Fill data
+    allTaskStats.forEach((s: any) => {
+      if (orgData.has(s.orgId)) orgData.get(s.orgId).taskStats.push(s);
+    });
+    allSlaBreaches.forEach((s: any) => {
+      if (orgData.has(s.orgId)) orgData.get(s.orgId).slaBreaches = s.count;
+    });
+    allDailyActivity.forEach((s: any) => {
+      if (orgData.has(s.orgId))
+        orgData.get(s.orgId).dailyActivity = Number(s.count);
+    });
+    allDailyTime.forEach((s: any) => {
+      if (orgData.has(s.orgId))
+        orgData.get(s.orgId).dailyTimeSeconds = Number(s.total || 0);
+    });
 
-        // 2. SLA Metrics
-        const slaBreaches = await db
-          .select({ count: count() })
-          .from(tasks)
-          .where(
-            and(
-              eq(tasks.organizationId, org.id),
-              isNull(tasks.completedAt),
-              isNull(tasks.deletedAt),
-              lt(tasks.dueDate, now)
-            )
-          )
-          .then((res: { count: number }[]) => res[0]?.count || 0);
+    // 7. Generate snapshot values
+    const snapshotsToInsert = [];
 
-        // 3. Activity Metrics (Last 24 hours)
-        const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        const dailyActivity = await db
-          .select({ count: count() })
-          .from(activityLogs)
-          .where(
-            and(
-              eq(activityLogs.organizationId, org.id),
-              sql`${activityLogs.createdAt} > ${dayAgo}`
-            )
-          )
-          .then((res: { count: number }[]) => res[0]?.count || 0);
+    for (const [orgId, data] of orgData.entries()) {
+      const totalTasks = data.taskStats.reduce(
+        (acc: number, curr: { count: number }) => acc + curr.count,
+        0
+      );
+      const completedTasks =
+        data.taskStats.find(
+          (s: { status: string; count: number }) => s.status === 'COMPLETED'
+        )?.count || 0;
 
-        // 4. Productivity Metrics (Time tracked in last 24h)
-        const dailyTimeSeconds = await db
-          .select({ total: sum(timeEntries.duration) })
-          .from(timeEntries)
-          .innerJoin(tasks, eq(timeEntries.taskId, tasks.id))
-          .where(
-            and(
-              eq(tasks.organizationId, org.id),
-              sql`${timeEntries.createdAt} > ${dayAgo}`
-            )
-          )
-          .then((res: { total: string | null }[]) =>
-            Number(res[0]?.total || 0)
-          );
+      const metrics = {
+        tasks: {
+          total: totalTasks,
+          completed: completedTasks,
+          pending: totalTasks - completedTasks,
+          byStatus: Object.fromEntries(
+            data.taskStats.map((s: { status: string; count: number }) => [
+              s.status,
+              s.count,
+            ])
+          ),
+        },
+        sla: {
+          breached: data.slaBreaches,
+        },
+        productivity: {
+          dailyActivity: data.dailyActivity,
+          dailyTimeSeconds: data.dailyTimeSeconds,
+          averageTimePerTask:
+            completedTasks > 0 ? data.dailyTimeSeconds / completedTasks : 0,
+        },
+      };
 
-        // Compile metrics object
-        const metrics = {
-          tasks: {
-            total: totalTasks,
-            completed: completedTasks,
-            pending: totalTasks - completedTasks,
-            byStatus: Object.fromEntries(
-              taskStats.map((s: { status: string; count: number }) => [
-                s.status,
-                s.count,
-              ])
-            ),
-          },
-          sla: {
-            breached: slaBreaches,
-          },
-          productivity: {
-            dailyActivity,
-            dailyTimeSeconds,
-            averageTimePerTask:
-              completedTasks > 0 ? dailyTimeSeconds / completedTasks : 0,
-          },
-        };
+      snapshotsToInsert.push({
+        organizationId: orgId,
+        recordedAt: now,
+        metrics,
+      });
+    }
 
-        // Store snapshot
-        await db.insert(orgAnalyticsSnapshots).values({
-          organizationId: org.id,
-          recordedAt: now,
-          metrics,
-        });
-      } catch (orgError) {
-        logger.error(
-          `[Analytics Rollup] Failed for org ${org.id}:`,
-          orgError as Error
-        );
+    // 8. Bulk Insert (if any)
+    if (snapshotsToInsert.length > 0) {
+      // Chalk-board: We do it in chunks of 50 to be extra safe with SQL params length
+      for (let i = 0; i < snapshotsToInsert.length; i += 50) {
+        const chunk = snapshotsToInsert.slice(i, i + 50);
+        await db.insert(orgAnalyticsSnapshots).values(chunk);
       }
     }
 
     logger.info(
-      `[Analytics Rollup] Completed for ${orgs.length} organizations.`
+      `[Analytics Rollup] SUCCESS - Aggregated ${orgs.length} orgs in ${(performance.now() - startTime).toFixed(2)}ms using ${5 + Math.ceil(snapshotsToInsert.length / 50)} subrequests.`
     );
   } catch (error) {
-    logger.error('[Analytics Rollup] Critical failure:', error as Error);
+    logger.error('[Analytics Rollup] CRITICAL FAILURE:', error as Error);
   }
 };
 
-// Helper for LT (Less Than) since it was missing in imports
-function lt(column: any, value: any) {
-  return sql`${column} < ${value}`;
-}

@@ -133,18 +133,19 @@ export default function ProfilePage() {
     startTransition(async () => {
       try {
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+        const cleanBio = bio.trim();
 
         // ELITE DEFENSE: Final check to ensure we never send "$undefined" strings
-        const cleanBio = bio.trim();
         const bioToSubmit =
           cleanBio === '$undefined' || cleanBio === 'null' || !cleanBio
             ? undefined
             : cleanBio;
 
         // eslint-disable-next-line no-console
-        console.log('[ProfilePage] Submitting profile update:', {
+        console.log('[ProfilePage] Submitting profile update (Extreme Trace):', {
           fullName,
           bio: bioToSubmit,
+          originalBio: bio,
         });
 
         const result = await updateProfileAction({
@@ -159,7 +160,7 @@ export default function ProfilePage() {
             ? undefined
             : cleanPhone;
 
-        if (phoneToSubmit) {
+        if (phoneToSubmit || fullName) {
           try {
             await usersApi.updateProfile({
               fullName,
@@ -168,10 +169,9 @@ export default function ProfilePage() {
           } catch (apiError) {
             // eslint-disable-next-line no-console
             console.warn(
-              '[ProfilePage] usersApi.updateProfile failed:',
+              '[ProfilePage] usersApi.updateProfile failed (non-blocking):',
               apiError
             );
-            // Non-blocking: phone number is best-effort
           }
         }
 

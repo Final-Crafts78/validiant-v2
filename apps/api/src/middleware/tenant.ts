@@ -55,7 +55,14 @@ export const tenantIsolation = async (
   const paramOrgId = c.req.param('orgId');
   const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
 
-  const orgId = headerOrgId || paramOrgId || queryOrgId;
+  // 3. Final Fallback: Use the organizationId attached to the user's JWT session
+  // This ensures that if a user is "logged into" an org, we use it as the default.
+  let orgId = headerOrgId || paramOrgId || queryOrgId;
+  const isFallbackUsed = !orgId && !!user.organizationId;
+  
+  if (isFallbackUsed) {
+    orgId = user.organizationId;
+  }
 
   // ELITE: Deep Trace for isolation debugging
   console.info('[Tenant:MW] Isolation Trace Entry', {
@@ -68,27 +75,18 @@ export const tenantIsolation = async (
         ? 'PARAM'
         : queryOrgId
           ? 'QUERY'
-          : 'NONE',
+          : isFallbackUsed
+            ? 'JWT_CONTEXT'
+            : 'NONE',
+    isSSE: c.req.path.includes('stream') || c.req.header('Accept') === 'text/event-stream',
     sources: {
       header: headerOrgId || 'MISSING',
       param: paramOrgId || 'MISSING',
       queryOrgId: c.req.query('orgId') || 'MISSING',
       queryOrganizationId: c.req.query('organizationId') || 'MISSING',
       jwtContext: user.organizationId || 'MISSING',
-      rawXOrgIdHeader: c.req.header('X-Org-Id') || 'NULL',
-    },
-    contextState: {
-      hasOrgId: !!c.get('orgId'),
-      hasOrganizationId: !!c.get('organizationId'),
-    },
-    rawQueries: {
-      orgId: c.req.queries('orgId'),
-      organizationId: c.req.queries('organizationId'),
     },
     userId: user.userId,
-    userAgent: c.req.header('User-Agent') || 'UNKNOWN',
-    referer: c.req.header('Referer') || 'NONE',
-    duration: `${(performance.now() - startTime).toFixed(2)}ms`,
     timestamp: new Date().toISOString(),
   });
 
@@ -101,7 +99,6 @@ export const tenantIsolation = async (
         method: c.req.method,
         resolvedOrgId: orgId,
         userId: user.userId,
-        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
         timestamp: new Date().toISOString(),
       }
     );
@@ -115,18 +112,13 @@ export const tenantIsolation = async (
   }
 
   if (!orgId) {
-    console.error(
-      '[Tenant:MW] TERMINAL FAILURE - No organization context found',
+    console.warn(
+      '[Tenant:MW] WARNING - No organization context found for scoped route',
       {
         path: c.req.path,
         method: c.req.method,
         userId: user.userId,
-        headers: c.req.header(),
-        query: c.req.queries(),
-        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
         timestamp: new Date().toISOString(),
-        suggestion:
-          'Ensure X-Org-Id header or orgId query parameter is provided.',
       }
     );
     // For non-scoped routes, we allow it to pass, but log the warning
@@ -135,19 +127,10 @@ export const tenantIsolation = async (
   }
 
   console.log(
-    `[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY'}', duration: ${(performance.now() - startTime).toFixed(2)}ms }`
+    `[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : queryOrgId ? 'QUERY' : 'JWT_FALLBACK'}', isSSE: ${c.req.path.includes('stream')} }`
   );
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
-
-  console.info('[Tenant:Context] Final Scope', {
-    userId: user.userId,
-    orgId,
-    resolvedFrom: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
-    path: c.req.path,
-    duration: `${(performance.now() - startTime).toFixed(2)}ms`,
-    timestamp: new Date().toISOString(),
-  });
 
   await next();
 };

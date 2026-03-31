@@ -12,15 +12,19 @@
 
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { ZodError } from 'zod';
 import {
   createProjectSchema,
   updateProjectSchema,
   updateProjectSettingsSchema,
   addProjectMemberSchema,
   createTaskSchema,
+  bulkAssignTasksSchema,
+  bulkUpdateTaskStatusSchema,
 } from '@validiant/shared';
 import * as projectController from '../controllers/project.controller';
 import * as taskController from '../controllers/task.controller';
+import { logger } from '../utils/logger';
 
 const app = new Hono();
 
@@ -29,12 +33,13 @@ app.post(
   '/',
   zValidator('json', createProjectSchema, async (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
       const rawBody = await c.req
         .json()
         .catch(() => ({ error: 'Could not parse body' }));
-      
-      console.error('[Project:Routes] Validation FAILED (POST /)', {
+
+      logger.error('[Project:Routes] Validation FAILED (POST /)', {
         errors: flattenedErrors.fieldErrors,
         rawBody, // CRITICAL: See what the frontend actually sent
         path: c.req.path,
@@ -50,8 +55,9 @@ app.put(
   '/:id',
   zValidator('json', updateProjectSchema, (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      console.error('[Project:Routes] Validation FAILED (PUT /:id)', {
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error('[Project:Routes] Validation FAILED (PUT /:id)', {
         errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
@@ -62,10 +68,22 @@ app.put(
 );
 app.patch(
   '/:id',
+  (c, next) => {
+    // EXTREME VISIBILITY: Track 404 root cause
+    const id = c.req.param('id');
+    logger.info(`[Route:Project:PATCH] Received update request for ID: ${id}`, {
+      url: c.req.url,
+      method: c.req.method,
+      contentType: c.req.header('Content-Type'),
+      timestamp: new Date().toISOString(),
+    });
+    return next();
+  },
   zValidator('json', updateProjectSchema, (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      console.error('[Project:Routes] Validation FAILED (PATCH /:id)', {
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error('[Project:Routes] Validation FAILED (PATCH /:id)', {
         errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
@@ -78,15 +96,13 @@ app.patch(
   '/:id/settings',
   zValidator('json', updateProjectSettingsSchema, (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      console.error(
-        '[Project:Routes] Validation FAILED (PATCH /:id/settings)',
-        {
-          errors: flattenedErrors.fieldErrors,
-          projectId: c.req.param('id'),
-          timestamp: new Date().toISOString(),
-        }
-      );
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error('[Project:Routes] Validation FAILED (PATCH /:id/settings)', {
+        errors: flattenedErrors.fieldErrors,
+        projectId: c.req.param('id'),
+        timestamp: new Date().toISOString(),
+      });
     }
   }),
   projectController.updateProjectSettings
@@ -106,8 +122,9 @@ app.post(
   '/:id/members',
   zValidator('json', addProjectMemberSchema, (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      console.error('[Project:Routes] Validation FAILED (POST /:id/members)', {
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error('[Project:Routes] Validation FAILED (POST /:id/members)', {
         errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
@@ -118,14 +135,27 @@ app.post(
 );
 app.delete('/:id/members/:userId', projectController.removeProjectMember);
 
-// Task sub-routes
+// ============================================================================
+// TASK OPERATIONS (Phase 24 Refactor)
+// ============================================================================
+
+/**
+ * GET /:projectId/tasks
+ * List project tasks
+ */
 app.get('/:projectId/tasks', taskController.listProjectTasks);
+
+/**
+ * POST /:projectId/tasks
+ * Create a new task in project
+ */
 app.post(
   '/:projectId/tasks',
   zValidator('json', createTaskSchema, (result, c) => {
     if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      console.error(
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error(
         '[Project:Routes] Validation FAILED (POST /:projectId/tasks)',
         {
           errors: flattenedErrors.fieldErrors,
@@ -136,6 +166,62 @@ app.post(
     }
   }),
   taskController.createTask
+);
+
+/**
+ * POST /:projectId/tasks/bulk-assign
+ * Bulk assign multiple tasks to a user
+ */
+app.post(
+  '/:projectId/tasks/bulk-assign',
+  zValidator('json', bulkAssignTasksSchema, (result, c) => {
+    if (!result.success) {
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error(
+        '[Project:Routes] Validation FAILED (POST /:projectId/tasks/bulk-assign)',
+        {
+          errors: flattenedErrors.fieldErrors,
+          projectId: c.req.param('projectId'),
+          timestamp: new Date().toISOString(),
+        }
+      );
+    }
+  }),
+  taskController.bulkAssignTasks
+);
+
+/**
+ * POST /:projectId/tasks/bulk-status
+ * Bulk update status for multiple tasks
+ */
+app.post(
+  '/:projectId/tasks/bulk-status',
+  zValidator('json', bulkUpdateTaskStatusSchema, (result, c) => {
+    if (!result.success) {
+      const error = (result as { error: ZodError }).error;
+      const flattenedErrors = error.flatten();
+      logger.error(
+        '[Project:Routes] Validation FAILED (POST /:projectId/tasks/bulk-status)',
+        {
+          errors: flattenedErrors.fieldErrors,
+          projectId: c.req.param('projectId'),
+          timestamp: new Date().toISOString(),
+        }
+      );
+    }
+  }),
+  taskController.bulkUpdateStatus
+);
+
+/**
+ * PATCH /:projectId/tasks/bulk-status
+ * Alias for PATCH support
+ */
+app.patch(
+  '/:projectId/tasks/bulk-status',
+  zValidator('json', bulkUpdateTaskStatusSchema),
+  taskController.bulkUpdateStatus
 );
 
 export default app;
