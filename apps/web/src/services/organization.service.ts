@@ -12,6 +12,8 @@ export interface Organization {
   logoUrl?: string;
   settings: Record<string, unknown>;
   role?: string; // caller's role in this org
+  memberCount?: number;
+  projectCount?: number;
 }
 
 export interface OrgMember {

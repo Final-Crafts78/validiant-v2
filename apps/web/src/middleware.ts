@@ -352,21 +352,41 @@ export async function middleware(request: NextRequest) {
     }
 
     // Redirect authenticated users from auth pages to dashboard
-    if (isAuthRoute && isAuthenticated) {
-      const destParam = request.nextUrl.searchParams.get('redirect');
+    // CRITICAL: We MUST NOT redirect if forceLogout or reason=expired is present,
+    // as that indicates a session cleanup is in progress (Finding 48 Loop Prevention)
+    if (isAuthRoute && isAuthenticated && !forceLogout && reason !== 'expired') {
+      const destParam = request.nextUrl.searchParams.get('redirect') || 
+                        request.nextUrl.searchParams.get('from'); // Standard query param
       const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
 
       // eslint-disable-next-line no-console
-      console.debug(
+      console.warn(
         `
-        [MW:Edge] [${requestId}] EP-10: Redirecting authed user from login
+        [MW:Edge] [${requestId}] [EP-AUTH-REDIRECT] Redirecting authed user from login page back to app
       `,
         {
           dest,
+          forceLogout,
+          reason,
+          isAuthenticated,
           timestamp: new Date().toISOString(),
         }
       );
       return NextResponse.redirect(new URL(dest, request.url));
+    } else if (isAuthRoute && (forceLogout || reason === 'expired')) {
+      // eslint-disable-next-line no-console
+      console.info(
+        `
+        [MW:Edge] [${requestId}] [EP-LOOP-PREVENTION] Staying on auth route despite cookie - Loop Prevention Active
+      `,
+        {
+          pathname,
+          forceLogout,
+          reason,
+          isAuthenticated,
+          timestamp: new Date().toISOString(),
+        }
+      );
     }
 
     // Allow request to proceed

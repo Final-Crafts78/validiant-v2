@@ -5,7 +5,7 @@
  * Ensures the system stays within compliance retention windows.
  */
 
-import { sql, eq, and } from 'drizzle-orm'; // We define lt below as helper if missing
+import { sql, and } from 'drizzle-orm'; // We define lt below as helper if missing
 import { db, schema } from '../db';
 import { logger } from '../utils/logger';
 import { logActivity } from '../utils/activity';
@@ -19,9 +19,14 @@ function lessThan(
 }
 
 export const purgeAuditLogs = async () => {
-  logger.info('[Audit Retention] Starting purge cycle...');
+  const workerStartTime = new Date();
+  // eslint-disable-next-line no-console
+  console.info('[Worker:AuditRetention] Lifecycle START', {
+    timestamp: workerStartTime.toISOString(),
+  });
 
   try {
+    // 1. Get all organizations and their unique retention windows
     const orgs = await db
       .select({
         id: schema.organizations.id,
@@ -30,61 +35,93 @@ export const purgeAuditLogs = async () => {
       })
       .from(schema.organizations);
 
+    if (orgs.length === 0) {
+      // eslint-disable-next-line no-console
+      console.info('[Worker:AuditRetention] No organizations found. Exiting.');
+      return;
+    }
+
+    // 2. Group org IDs by their retention value to minimize subrequests
+    const retentionGroups: Record<number, string[]> = {};
+    orgs.forEach((org: { id: string; retentionDays: number | null }) => {
+      const days = org.retentionDays || 90; // Default 90 days if null
+      if (!retentionGroups[days]) retentionGroups[days] = [];
+      retentionGroups[days].push(org.id);
+    });
+
+    const retentionWindows = Object.keys(retentionGroups).map(Number);
+    // eslint-disable-next-line no-console
+    console.debug('[Worker:AuditRetention] Grouped organizations', {
+      uniqueRetentionWindows: retentionWindows,
+      orgCount: orgs.length,
+    });
+
+    let totalPurged = 0;
     const now = new Date();
 
-    for (const org of orgs) {
-      try {
-        const threshold = new Date(
-          now.getTime() - org.retentionDays * 24 * 60 * 60 * 1000
-        );
+    // 3. Process each retention window as a single batch
+    for (const days of retentionWindows) {
+      const orgIds = retentionGroups[days];
+      const threshold = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-        // 1. Calculate how many logs will be purged
-        const countRes = await db
-          .select({ count: sql<number>`count(*)` })
-          .from(schema.activityLogs)
+      try {
+        // 🔥 BATCH DELETE: One query for N organizations
+        const purgeRes = await db
+          .delete(schema.activityLogs)
           .where(
             and(
-              eq(schema.activityLogs.organizationId, org.id),
+              sql`${schema.activityLogs.organizationId} IN (${sql.join(
+                orgIds.map((id) => sql`${id}`),
+                sql`, `
+              )})`,
               lessThan(schema.activityLogs.createdAt, threshold)
             )
-          );
+          )
+          .returning({ id: schema.activityLogs.id });
 
-        const toPurgeCount = Number(countRes[0]?.count || 0);
+        const purgedInBatch = purgeRes.length;
+        totalPurged += purgedInBatch;
 
-        if (toPurgeCount > 0) {
-          // 2. Perform deletion
-          await db
-            .delete(schema.activityLogs)
-            .where(
-              and(
-                eq(schema.activityLogs.organizationId, org.id),
-                lessThan(schema.activityLogs.createdAt, threshold)
-              )
-            );
-
-          logger.info(
-            `[Audit Retention] Purged ${toPurgeCount} logs for org ${org.name} (${org.id})`
-          );
-
-          // 3. Log the operation itself as a permanent audit record
-          await logActivity({
-            organizationId: org.id,
-            action: 'AUDIT_LOG_PURGED',
-            entityId: org.id,
-            entityType: 'organization',
-            details: `Automated retention policy applied. Purged ${toPurgeCount} logs older than ${org.retentionDays} days.`,
-          });
-        }
-      } catch (orgError) {
-        logger.error(
-          `[Audit Retention] Org ${org.name} failed:`,
-          orgError as Error
-        );
+        // eslint-disable-next-line no-console
+        console.info(`[Worker:AuditRetention] Purge Batch SUCCESS`, {
+          days,
+          orgCount: orgIds.length,
+          purgedCount: purgedInBatch,
+        });
+      } catch (batchError) {
+        // eslint-disable-next-line no-console
+        console.error(`[Worker:AuditRetention] Purge Batch FAILED`, {
+          days,
+          orgIds: orgIds.length,
+          error: (batchError as Error).message,
+        });
       }
     }
 
-    logger.info('[Audit Retention] Purge cycle completed.');
+    // 4. Single system-level log for the entire cycle (Minimizes subrequests)
+    if (totalPurged > 0) {
+      await logActivity({
+        action: 'SYSTEM_RETENTION_CYCLE',
+        details: `Automated audit retention cycle completed. Total logs purged across all organizations: ${totalPurged}. Total organizations affected: ${orgs.length}.`,
+        entityType: 'system',
+      });
+    }
+
+    const workerEndTime = new Date();
+    const durationMs = workerEndTime.getTime() - workerStartTime.getTime();
+
+    // eslint-disable-next-line no-console
+    console.info('[Worker:AuditRetention] Lifecycle END', {
+      totalPurged,
+      durationMs,
+      timestamp: workerEndTime.toISOString(),
+    });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[Worker:AuditRetention] CRITICAL FAILURE', {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+    });
     logger.error('[Audit Retention] Critical worker failure:', error as Error);
   }
 };

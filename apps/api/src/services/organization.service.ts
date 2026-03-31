@@ -695,6 +695,7 @@ export const createCustomRole = async (
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
+  // eslint-disable-next-line no-console
   console.info('[Service:Org:Role] Creating custom role', {
     organizationId,
     name: data.name,
@@ -716,6 +717,7 @@ export const createCustomRole = async (
     })
     .returning();
 
+  // eslint-disable-next-line no-console
   console.info('[Service:Org:Role] SUCCESS', {
     roleId: role.id,
     name: role.name,
@@ -737,6 +739,15 @@ export const updateCustomRole = async (
     permissions?: string[];
   }
 ) => {
+  // 🔍 EXTREME VISIBILITY LOGGING
+  // eslint-disable-next-line no-console
+  console.info('[Service:Org:Role] Updating custom role', {
+    roleId,
+    updates: Object.keys(data),
+    permissionCount: data.permissions?.length,
+    timestamp: new Date().toISOString(),
+  });
+
   const [role] = await db
     .update(orgRoles)
     .set({
@@ -745,6 +756,24 @@ export const updateCustomRole = async (
     })
     .where(eq(orgRoles.id, roleId))
     .returning();
+
+  if (role) {
+    // eslint-disable-next-line no-console
+    console.info('[Service:Org:Role] UPDATE SUCCESS', {
+      roleId: role.id,
+      name: role.name,
+      permissions: role.permissions?.length || 0,
+      timestamp: new Date().toISOString(),
+    });
+  } else {
+    // eslint-disable-next-line no-console
+    console.error(
+      '[Service:Org:Role] UPDATE FAILED - Role not found or no rows affected',
+      {
+        roleId,
+      }
+    );
+  }
 
   return role;
 };

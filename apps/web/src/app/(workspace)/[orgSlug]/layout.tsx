@@ -7,7 +7,6 @@
  * 3. Render the Obsidian Command Shell
  */
 
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
@@ -30,21 +29,16 @@ async function getData(): Promise<{
   const result = await getCurrentUserAction();
 
   if (!result.success || !result.user || !result.accessToken) {
-    const headersList = headers();
-    const currentPath =
-      headersList.get('x-pathname') ||
-      headersList.get('x-invoke-path') ||
-      headersList.get('x-next-url') ||
-      '/';
-
+    console.warn('[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED', {
+      reason: result.error,
+      timestamp: new Date().toISOString(),
+    });
     redirect(
-      `/api/auth/session-expired?redirect=${encodeURIComponent(
-        currentPath
-      )}&reason=expired&force=true`
+      `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent('/dashboard')}`
     );
   }
 
-  const orgs = await getUserOrganizationsAction(result.accessToken as string);
+  const orgs = await getUserOrganizationsAction(result.accessToken);
 
   return {
     user: result.user,
@@ -52,6 +46,7 @@ async function getData(): Promise<{
     accessToken: result.accessToken,
   };
 }
+
 
 export default async function OrgLayout({
   children,

@@ -17,7 +17,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWorkspaceStore } from '@/store/workspace';
-import { useOrgRoles, useCreateCustomRole, useUpdateCustomRole } from '@/hooks/useOrganizations';
+import {
+  useOrgRoles,
+  useCreateCustomRole,
+  useUpdateCustomRole,
+} from '@/hooks/useOrganizations';
 
 const PERMISSION_GROUPS = [
   {
@@ -104,40 +108,100 @@ export default function RolesSettings() {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [newRoleName, setNewRoleName] = useState('');
+  const [pendingPermissions, setPendingPermissions] = useState<string[]>([]);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const selectedRole = roles?.find((r) => r.id === selectedRoleId);
+
+  // Sync pending permissions when selected role changes
+  React.useEffect(() => {
+    if (selectedRole) {
+      // eslint-disable-next-line no-console
+      console.debug('[Roles:Sync] Synchronizing pending permissions', {
+        roleName: selectedRole.name,
+        permissionsCount: selectedRole.permissions?.length || 0,
+      });
+      setPendingPermissions(selectedRole.permissions || []);
+      setHasChanges(false);
+    }
+  }, [selectedRole]);
 
   // Default to first role if none selected
   React.useEffect(() => {
     if (roles?.length && !selectedRoleId) {
-      setSelectedRoleId(roles?.[0]?.id || '');
+      const firstRoleId = roles?.[0]?.id || '';
+      // eslint-disable-next-line no-console
+      console.debug('[Roles:Init] Defaulting to first role', { firstRoleId });
+      setSelectedRoleId(firstRoleId);
     }
   }, [roles, selectedRoleId]);
 
-  const togglePermission = async (permKey: string) => {
-    if (!selectedRole || selectedRole.isDefault || !activeOrgId) return;
+  const togglePermission = (permKey: string) => {
+    if (!selectedRole || selectedRole.isDefault || !activeOrgId) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[Roles:Permissions] Toggle ignored (System role or no org)',
+        {
+          permKey,
+          isDefault: selectedRole?.isDefault,
+        }
+      );
+      return;
+    }
 
-    const currentPermissions = selectedRole.permissions || [];
-    const newPermissions = currentPermissions.includes(permKey)
-      ? currentPermissions.filter((p) => p !== permKey)
-      : [...currentPermissions, permKey];
+    setPendingPermissions((prev) => {
+      const next = prev.includes(permKey)
+        ? prev.filter((p) => p !== permKey)
+        : [...prev, permKey];
+
+      // Compare with original permissions to see if we have changes
+      const original = selectedRole.permissions || [];
+      const isDifferent =
+        next.length !== original.length ||
+        !next.every((p) => original.includes(p));
+
+      setHasChanges(isDifferent);
+
+      // eslint-disable-next-line no-console
+      console.debug('[Roles:Permissions] Toggling local state', {
+        roleId: selectedRoleId,
+        permission: permKey,
+        newState: next.includes(permKey),
+        totalPending: next.length,
+        hasChanges: isDifferent,
+      });
+
+      return next;
+    });
+  };
+
+  const handleSaveChanges = async () => {
+    if (!selectedRole || !activeOrgId || !hasChanges) return;
 
     // eslint-disable-next-line no-console
-    console.debug('[Roles:Permissions] Toggling permission:', {
-      roleId: selectedRoleId,
-      permission: permKey,
-      newState: newPermissions.includes(permKey),
+    console.info('[Roles:Save] Initiating manual save', {
+      roleId: selectedRole.id,
+      roleName: selectedRole.name,
+      permissions: pendingPermissions,
       timestamp: new Date().toISOString(),
     });
 
     try {
       await updateRoleMutation.mutateAsync({
         roleId: selectedRole.id,
-        payload: { permissions: newPermissions },
+        payload: { permissions: pendingPermissions },
       });
+
+      // eslint-disable-next-line no-console
+      console.info('[Roles:Save] SUCCESS', {
+        roleId: selectedRole.id,
+        newPermissionsTotal: pendingPermissions.length,
+      });
+      
+      setHasChanges(false);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error('[Roles:Permissions] Toggle FAILED', err);
+      console.error('[Roles:Save] FAILED', err);
     }
   };
 
@@ -303,7 +367,7 @@ export default function RolesSettings() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {group.permissions.map((perm) => {
                           const isEnabled =
-                            selectedRole.permissions.includes(perm.key) ||
+                            pendingPermissions.includes(perm.key) ||
                             selectedRole.key === 'owner';
                           return (
                             <button
@@ -358,9 +422,22 @@ export default function RolesSettings() {
 
               {!selectedRole.isDefault && (
                 <div className="p-6 bg-[var(--color-surface-soft)] border-t border-[var(--color-border-base)] flex justify-end">
-                  <button className="btn btn-primary px-8 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 transition-all font-bold">
-                    <Save className="w-4 h-4" />
-                    Save Changes
+                  <button
+                    onClick={handleSaveChanges}
+                    disabled={updateRoleMutation.isPending || !hasChanges}
+                    className="btn btn-primary px-8 py-3 shadow-lg shadow-[var(--color-accent-base)]/20 transition-all font-bold disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {updateRoleMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Saving Changes...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        Save Changes
+                      </>
+                    )}
                   </button>
                 </div>
               )}

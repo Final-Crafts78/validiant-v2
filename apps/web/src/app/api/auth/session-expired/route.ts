@@ -59,12 +59,21 @@ export async function GET(request: Request) {
   // CRITICAL: Uses explicit overwrite method for multiple potential domain scopes
   // (.validiant.in and host-only) to ensure browser compliance.
   
-  const domainsToClear = [COOKIE_OPTIONS.domain, undefined];
+  const isProd = process.env.NODE_ENV === 'production' || 
+                 process.env.NEXT_PUBLIC_APP_URL?.includes('validiant.in');
+                 
+  const domainsToClear = [
+    COOKIE_OPTIONS.domain, 
+    undefined, 
+    isProd ? '.validiant.in' : undefined
+  ].filter((d, i, arr) => arr.indexOf(d) === i); // Unique domains
+
   const cookieNames = ['accessToken', 'refreshToken', 'user_id', 'oauth_state'];
 
-  console.warn('[SessionExpired] Starting multi-domain cookie clear', {
+  console.warn('[SessionExpired] Starting multi-domain cookie clear (Finding 48)', {
     domains: domainsToClear,
     names: cookieNames,
+    timestamp: new Date().toISOString(),
   });
 
   for (const domain of domainsToClear) {
@@ -76,7 +85,7 @@ export async function GET(request: Request) {
         path: '/',
         secure: COOKIE_OPTIONS.secure,
         sameSite: 'lax',
-        domain,
+        domain: domain as string | undefined, // Type cast for iteration
       });
     }
   }
@@ -84,30 +93,37 @@ export async function GET(request: Request) {
   console.debug('[SessionExpired] Cookie deletion sequence completed');
 
   // Redirect back to login, preserving the intended destination if provided
-  // Redirect back to login, preserving the intended destination if provided
   const loginUrl = new URL(ROUTES.LOGIN, request.url);
-  if (redirectTo && redirectTo.startsWith('/')) {
-    loginUrl.searchParams.set('redirect', redirectTo);
+  
+  // Normalize redirect param (sometimes it's 'redirect', sometimes 'from')
+  const redirectToVal = redirectTo || searchParams.get('from');
+  if (redirectToVal && redirectToVal.startsWith('/')) {
+    loginUrl.searchParams.set('redirect', redirectToVal);
   }
   
   // Forward the reason and force flags to the login page to signal to middleware
-  if (searchParams.get('reason')) {
-    loginUrl.searchParams.set('reason', searchParams.get('reason')!);
-  }
-  if (searchParams.get('force')) {
-    loginUrl.searchParams.set('forceLogout', 'true');
-  }
+  // CRITICAL: Middleware needs these to break redirection loops.
+  const reasonVal = searchParams.get('reason') || 'expired';
+  loginUrl.searchParams.set('reason', reasonVal);
+  
+  const forceVal = searchParams.get('force') || searchParams.get('forceLogout') || 'true';
+  loginUrl.searchParams.set('forceLogout', forceVal);
+
+  console.info('[SessionExpired] Propagating loop prevention flags', {
+    reason: reasonVal,
+    forceLogout: forceVal,
+    target: loginUrl.pathname + loginUrl.search,
+  });
 
   const response = NextResponse.redirect(loginUrl);
 
   // DEBUG: Inspect the headers that will be sent to the browser
   const setCookieHeaders = response.headers.getSetCookie();
   
-  console.info('[SessionExpired] Finalizing redirect', {
+  console.info('[SessionExpired] [EP-FINAL] Finalizing redirect', {
     target: loginUrl.toString(),
     setCookieCount: setCookieHeaders.length,
     setCookieHeaders: setCookieHeaders.map(h => h.split(';')[0] + '; ...'), // Partial for security
-    allHeaderNames: Array.from(response.headers.keys()),
     timestamp: new Date().toISOString(),
   });
 

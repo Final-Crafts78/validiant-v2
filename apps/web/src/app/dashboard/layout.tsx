@@ -55,18 +55,19 @@ export default async function DashboardLayout({
   });
 
   if (!result.success || !result.user) {
+    const reason = result.error || 'MISSING_USER_DATA';
     console.warn(
-      '[Dashboard:Layout] Redirecting to SESSION-EXPIRED - No valid user session',
+      '[Dashboard:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED - No valid user session',
       {
-        reason: result.error || 'MISSING_USER_DATA',
+        reason,
         success: result.success,
         path: currentPath,
+        timestamp: new Date().toISOString(),
       }
     );
+    // CRITICAL: Include reason=expired and force=true to prevent redirect loops in Middleware (Finding 48)
     redirect(
-      `/api/auth/session-expired?redirect=${encodeURIComponent(
-        currentPath
-      )}&reason=expired&force=true`
+      `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(currentPath)}`
     );
   }
 
