@@ -3,7 +3,6 @@
 import React from 'react';
 import { 
   CheckSquare, 
-  Search, 
   Plus, 
   Calendar,
   LayoutGrid,
