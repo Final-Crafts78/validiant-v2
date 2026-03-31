@@ -7,6 +7,7 @@
  * 3. Render the Obsidian Command Shell
  */
 
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
@@ -29,10 +30,21 @@ async function getData(): Promise<{
   const result = await getCurrentUserAction();
 
   if (!result.success || !result.user || !result.accessToken) {
-    redirect(ROUTES.LOGIN);
+    const headersList = headers();
+    const currentPath =
+      headersList.get('x-pathname') ||
+      headersList.get('x-invoke-path') ||
+      headersList.get('x-next-url') ||
+      '/';
+
+    redirect(
+      `/api/auth/session-expired?redirect=${encodeURIComponent(
+        currentPath
+      )}&reason=expired&force=true`
+    );
   }
 
-  const orgs = await getUserOrganizationsAction(result.accessToken);
+  const orgs = await getUserOrganizationsAction(result.accessToken as string);
 
   return {
     user: result.user,
@@ -40,7 +52,6 @@ async function getData(): Promise<{
     accessToken: result.accessToken,
   };
 }
-
 
 export default async function OrgLayout({
   children,

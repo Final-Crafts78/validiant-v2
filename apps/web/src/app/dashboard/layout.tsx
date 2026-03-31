@@ -64,7 +64,9 @@ export default async function DashboardLayout({
       }
     );
     redirect(
-      `/api/auth/session-expired?redirect=${encodeURIComponent(currentPath)}`
+      `/api/auth/session-expired?redirect=${encodeURIComponent(
+        currentPath
+      )}&reason=expired&force=true`
     );
   }
 
