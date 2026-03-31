@@ -1,4 +1,4 @@
-import { get, post, put } from '@/lib/api';
+import { get, post, put, patch, del } from '@/lib/api';
 import { API_CONFIG } from '@/lib/config';
 import type { APIResponse } from '@/lib/api';
 
@@ -134,6 +134,26 @@ export const createCustomRole = async (
   );
   if (!res.data.data?.role) throw new Error('Creation failed');
   return res.data.data.role;
+};
+
+export const updateCustomRole = async (
+  orgId: string,
+  roleId: string,
+  payload: Partial<CustomRole>
+): Promise<CustomRole> => {
+  const res = await patch<APIResponse<{ role: CustomRole }>>(
+    `/organizations/${orgId}/roles/${roleId}`,
+    payload
+  );
+  if (!res.data.data?.role) throw new Error('Update failed');
+  return res.data.data.role;
+};
+
+export const deleteCustomRole = async (
+  orgId: string,
+  roleId: string
+): Promise<void> => {
+  await del(`/organizations/${orgId}/roles/${roleId}`);
 };
 
 export const acceptInvite = async (

@@ -14,7 +14,7 @@ interface CreateProjectModalProps {
   defaultOrganizationId?: string;
 }
 
-function CreateProjectModal({
+export function CreateProjectModal({
   open,
   onClose,
   defaultOrganizationId,

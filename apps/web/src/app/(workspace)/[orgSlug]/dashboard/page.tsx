@@ -26,6 +26,7 @@ import {
   Flag,
   Lock,
   History,
+  LayoutGrid,
 } from 'lucide-react';
 
 import { useOrganizations } from '@/hooks/useOrganizations';
@@ -194,14 +195,25 @@ function GeneralDashboard({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => router.push(`/${orgSlug}/projects`)}
-          className="btn btn-primary shadow-sm shrink-0"
-        >
-          <FileText className="h-4 w-4" />
-          Generate Report
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => router.push('/dashboard')}
+            className="btn btn-secondary shadow-sm"
+          >
+            <LayoutGrid className="h-4 w-4 text-[var(--color-text-muted)]" />
+            Switch Organization
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push(`/${orgSlug}/projects`)}
+            className="btn btn-primary shadow-sm"
+          >
+            <FileText className="h-4 w-4" />
+            Generate Report
+          </button>
+        </div>
       </div>
 
       {/* ===================================================================

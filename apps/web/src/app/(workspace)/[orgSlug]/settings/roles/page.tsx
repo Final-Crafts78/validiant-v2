@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWorkspaceStore } from '@/store/workspace';
-import { useOrgRoles, useCreateCustomRole } from '@/hooks/useOrganizations';
+import { useOrgRoles, useCreateCustomRole, useUpdateCustomRole } from '@/hooks/useOrganizations';
 
 const PERMISSION_GROUPS = [
   {
@@ -99,6 +99,7 @@ export default function RolesSettings() {
   const activeOrgId = useWorkspaceStore((state) => state.activeOrgId);
   const { data: roles, isLoading: isLoadingRoles } = useOrgRoles(activeOrgId);
   const createRoleMutation = useCreateCustomRole(activeOrgId || '');
+  const updateRoleMutation = useUpdateCustomRole(activeOrgId || '');
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -113,15 +114,31 @@ export default function RolesSettings() {
     }
   }, [roles, selectedRoleId]);
 
-  const togglePermission = (permKey: string) => {
-    // Logic for updating permissions will go here in next phase
+  const togglePermission = async (permKey: string) => {
+    if (!selectedRole || selectedRole.isDefault || !activeOrgId) return;
+
+    const currentPermissions = selectedRole.permissions || [];
+    const newPermissions = currentPermissions.includes(permKey)
+      ? currentPermissions.filter((p) => p !== permKey)
+      : [...currentPermissions, permKey];
+
     // eslint-disable-next-line no-console
-    console.debug('[Roles:Permissions] Toggle intent:', {
+    console.debug('[Roles:Permissions] Toggling permission:', {
       roleId: selectedRoleId,
-      roleName: selectedRole?.name,
-      permissionKey: permKey,
+      permission: permKey,
+      newState: newPermissions.includes(permKey),
       timestamp: new Date().toISOString(),
     });
+
+    try {
+      await updateRoleMutation.mutateAsync({
+        roleId: selectedRole.id,
+        payload: { permissions: newPermissions },
+      });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[Roles:Permissions] Toggle FAILED', err);
+    }
   };
 
   const handleCreateRole = async () => {

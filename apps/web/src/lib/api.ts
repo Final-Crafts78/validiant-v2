@@ -421,6 +421,17 @@ apiClient.interceptors.response.use(
       });
     }
 
+    // 🚩 GHOST ROUTE TRACING (404)
+    if (statusCode === 404) {
+      console.warn('[API:404] GHOST ROUTE DETECTED', {
+        url: error.config?.url,
+        method: error.config?.method?.toUpperCase(),
+        referer: typeof window !== 'undefined' ? window.location.href : 'SERVER',
+        headers: error.config?.headers,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     // Return structured error
     const apiError: APIError = {
       success: false,

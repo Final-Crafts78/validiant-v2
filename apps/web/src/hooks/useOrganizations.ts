@@ -102,3 +102,29 @@ export function useCreateCustomRole(orgId: string) {
     },
   });
 }
+
+export function useUpdateCustomRole(orgId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      roleId,
+      payload,
+    }: {
+      roleId: string;
+      payload: Partial<orgService.CustomRole>;
+    }) => orgService.updateCustomRole(orgId, roleId, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ORG_KEYS.roles(orgId) });
+    },
+  });
+}
+
+export function useDeleteCustomRole(orgId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (roleId: string) => orgService.deleteCustomRole(orgId, roleId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ORG_KEYS.roles(orgId) });
+    },
+  });
+}

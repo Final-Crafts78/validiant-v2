@@ -23,6 +23,9 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from '@validiant/ui';
+import { CreateTaskModal } from '../modals/CreateTaskModal';
+import { CreateProjectModal } from '../modals/CreateProjectModal';
+import { CreateOrganizationModal } from '../modals/CreateOrganizationModal';
 
 interface RailItem {
   icon: React.ElementType;
@@ -50,6 +53,9 @@ const secondaryItems: RailItem[] = [
  */
 export function CommandRail({ orgSlug }: { orgSlug: string }) {
   const pathname = usePathname();
+  const [createTaskOpen, setCreateTaskOpen] = React.useState(false);
+  const [createProjectOpen, setCreateProjectOpen] = React.useState(false);
+  const [createOrgOpen, setCreateOrgOpen] = React.useState(false);
 
   const isActive = (href: string, exact = false) => {
     const fullHref = `/${orgSlug}${href}`;
@@ -58,12 +64,16 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-16 bg-[var(--color-surface-subtle)] border-r border-[var(--color-border-base)] flex flex-col items-center py-4 z-50">
-      {/* Brand Logo Slot */}
-      <div className="mb-8 p-2 rounded-xl bg-[var(--color-accent-base)] text-white shadow-lg shadow-[var(--color-accent-base)]/20">
+      {/* Brand Logo Slot (Global Escape Hatch) */}
+      <Link 
+        href="/dashboard"
+        className="mb-8 p-2 rounded-xl bg-[var(--color-accent-base)] text-white shadow-lg shadow-[var(--color-accent-base)]/20 hover:scale-105 active:scale-95 transition-transform"
+        title="Switch Organization"
+      >
         <div className="w-8 h-8 flex items-center justify-center font-bold text-xl">
           V
         </div>
-      </div>
+      </Link>
 
       {/* Global Actions */}
       <div className="flex flex-col gap-4 flex-1 w-full items-center">
@@ -121,9 +131,9 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
               <div className="px-2 py-1.5 mb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-muted)] opacity-50">
                 Quick Actions
               </div>
-              <Link
-                href={`/${orgSlug}/tasks/new`}
-                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group"
+              <button
+                onClick={() => setCreateTaskOpen(true)}
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group text-left"
               >
                 <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-accent-subtle)]/20">
                   <CheckSquare className="w-4 h-4" />
@@ -134,25 +144,25 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
                     Assign work to your team
                   </span>
                 </div>
-              </Link>
-              <Link
-                href={`/${orgSlug}/infra/new`}
-                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group"
+              </button>
+              <button
+                onClick={() => setCreateProjectOpen(true)}
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-accent-subtle)]/10 hover:text-[var(--color-accent-base)] transition-colors group text-left"
               >
                 <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-accent-subtle)]/20">
                   <Database className="w-4 h-4" />
                 </div>
                 <div className="flex flex-col">
-                  <span>New Resource</span>
+                  <span>New Project</span>
                   <span className="text-[10px] text-[var(--color-text-muted)]">
-                    Provision infrastructure
+                    Start a new initiative
                   </span>
                 </div>
-              </Link>
+              </button>
               <div className="h-px bg-[var(--color-border-base)] my-1 mx-2" />
-              <Link
-                href="/organizations/new"
-                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)] transition-colors group"
+              <button
+                onClick={() => setCreateOrgOpen(true)}
+                className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)] transition-colors group text-left"
               >
                 <div className="w-8 h-8 rounded-md bg-[var(--color-surface-soft)] flex items-center justify-center group-hover:bg-[var(--color-surface-subtle)]">
                   <LayoutDashboard className="w-4 h-4" />
@@ -163,7 +173,7 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
                     Create a new workspace
                   </span>
                 </div>
-              </Link>
+              </button>
             </PopoverContent>
           </Popover>
         </TooltipProvider>
@@ -195,6 +205,18 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
           })}
         </TooltipProvider>
       </div>
+      <CreateTaskModal
+        open={createTaskOpen}
+        onClose={() => setCreateTaskOpen(false)}
+      />
+      <CreateProjectModal
+        open={createProjectOpen}
+        onClose={() => setCreateProjectOpen(false)}
+      />
+      <CreateOrganizationModal
+        open={createOrgOpen}
+        onClose={() => setCreateOrgOpen(false)}
+      />
     </aside>
   );
 }

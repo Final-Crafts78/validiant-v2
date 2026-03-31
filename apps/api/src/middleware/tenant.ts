@@ -86,6 +86,27 @@ export const tenantIsolation = async (
     timestamp: new Date().toISOString(),
   });
 
+  // ELITE: Catch literal "undefined" or "null" strings from frontend logic errors
+  if (orgId === 'undefined' || orgId === 'null') {
+    console.error(
+      '[Tenant:MW] CRITICAL FAILURE - Literal "undefined" or "null" ID detected',
+      {
+        path: c.req.path,
+        method: c.req.method,
+        resolvedOrgId: orgId,
+        userId: user.userId,
+        timestamp: new Date().toISOString(),
+      }
+    );
+    return c.json(
+      {
+        success: false,
+        error: `Invalid Organization ID: ${orgId}. Check frontend client for missing state.`,
+      },
+      400
+    );
+  }
+
   if (!orgId) {
     console.error('[Tenant:MW] TERMINAL FAILURE - No organization context found', {
       path: c.req.path,

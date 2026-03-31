@@ -10,7 +10,7 @@ interface CreateOrganizationModalProps {
   onClose: () => void;
 }
 
-function CreateOrganizationModal({
+export function CreateOrganizationModal({
   open,
   onClose,
 }: CreateOrganizationModalProps) {

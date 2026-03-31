@@ -176,6 +176,13 @@ export function useUpdateTask() {
       projectId: string;
       data: Partial<Task>;
     }) => {
+      if (!taskId || taskId === 'undefined') {
+        console.error(
+          '[useUpdateTask] CRITICAL: Attempted to update task with invalid ID',
+          { taskId, data }
+        );
+        throw new Error('Task ID is missing or invalid');
+      }
       const response = await patch<TaskResponse>(`/tasks/${taskId}`, data);
       return response.data.data.task;
     },
@@ -236,6 +243,13 @@ export function useAssignTask() {
       userId: string;
       assign?: boolean;
     }) => {
+      if (!taskId || taskId === 'undefined') {
+        console.error(
+          '[useAssignTask] CRITICAL: Attempted to assign task with invalid ID',
+          { taskId, userId, assign }
+        );
+        throw new Error('Task ID is missing or invalid');
+      }
       if (assign) {
         return await post(`/tasks/${taskId}/assign`, { userId });
       } else {

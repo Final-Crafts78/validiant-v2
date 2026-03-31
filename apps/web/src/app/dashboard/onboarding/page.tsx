@@ -93,6 +93,7 @@ export default function OnboardingPage() {
     setError('');
 
     startTransition(async () => {
+      console.log('[Onboarding:Submit] Starting creation...', { name: name.trim(), industry });
       try {
         const { data } = await apiClient.post('/organizations', {
           name: name.trim(),
@@ -100,17 +101,33 @@ export default function OnboardingPage() {
         });
 
         const org = data?.data;
+        console.log('[Onboarding:Response] SUCCESS', { 
+          id: org?.id, 
+          slug: org?.slug
+        });
+
         if (org?.id) {
           // Set this new org as active workspace
           setActiveOrg(org.id, org.slug);
           // Invalidate orgs query so the switcher picks it up
           queryClient.invalidateQueries({ queryKey: ['organizations', 'my'] });
+          
+          const dest = ROUTES.DASHBOARD(org.slug);
+          console.log('[Onboarding:Navigate] Redirecting to:', dest);
+          
           // Navigate to dashboard
-          router.push(ROUTES.DASHBOARD(org.slug));
+          router.push(dest);
           router.refresh();
+        } else {
+          console.error('[Onboarding:ERROR] Missing org ID', { data });
+          setError('Organization was created, but we couldn\'t identify it. Please refresh.');
         }
       } catch (err: any) {
-        console.error('[Onboarding] Error creating org:', err);
+        console.error('[Onboarding:FAIL] Request failed', {
+          msg: err?.message,
+          data: err?.response?.data,
+          status: err?.response?.status
+        });
         setError(
           err?.message || 'Failed to create organization. Please try again.'
         );

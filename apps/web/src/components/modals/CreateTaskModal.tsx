@@ -12,7 +12,7 @@ interface CreateTaskModalProps {
   defaultProjectId?: string;
 }
 
-function CreateTaskModal({
+export function CreateTaskModal({
   open,
   onClose,
   defaultProjectId,

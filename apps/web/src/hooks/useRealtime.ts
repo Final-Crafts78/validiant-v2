@@ -116,6 +116,11 @@ export function useRealtime() {
 
       // Handle incoming messages
       es.onmessage = (event) => {
+        console.debug('[Realtime] Received message:', {
+          data: event.data,
+          lastEventId: event.lastEventId,
+          timestamp: new Date().toISOString(),
+        });
         try {
           const data: RealtimeMessage = JSON.parse(event.data);
           handleMessage(data, queryClient, userId);
@@ -130,19 +135,28 @@ export function useRealtime() {
       es.onerror = (error) => {
         console.error('[Realtime] SSE CRITICAL ERROR', {
           readyState: es.readyState,
-          readyStateDesc: es.readyState === 0 ? 'CONNECTING' : es.readyState === 2 ? 'CLOSED' : 'UNKNOWN',
+          readyStateDesc:
+            es.readyState === 0
+              ? 'CONNECTING'
+              : es.readyState === 2
+                ? 'CLOSED'
+                : 'UNKNOWN',
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
           errorType: error.type,
           errorIsTrusted: error.isTrusted,
           // Capture as much from the error event as possible
           eventPhase: (error as any).eventPhase,
           timestamp: new Date().toISOString(),
-          windowOnline: typeof window !== 'undefined' ? window.navigator.onLine : 'N/A',
+          windowOnline:
+            typeof window !== 'undefined' ? window.navigator.onLine : 'N/A',
         });
       };
 
-      es.addEventListener('connected', (_e: any) => {
-        console.log('[Realtime] SSE Connected');
+      es.addEventListener('connected', (e: any) => {
+        console.log('[Realtime] SSE Connected Event Received', {
+          data: e.data,
+          timestamp: new Date().toISOString(),
+        });
       });
     }, 500);
 
