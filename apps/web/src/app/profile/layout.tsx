@@ -11,7 +11,6 @@ import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
 import { CommandPalette } from '@/components/CommandPalette';
-import { ROUTES } from '@/lib/config';
 import {
   getCurrentUserAction,
   getUserOrganizationsAction,
@@ -35,7 +34,6 @@ export default async function ProfileLayout({
   const result = await getCurrentUserAction();
 
   if (!result.success || !result.user) {
-    const reason = result.error || 'MISSING_USER_DATA';
     redirect(
       `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(currentPath)}`
     );

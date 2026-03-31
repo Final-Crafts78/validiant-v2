@@ -245,7 +245,7 @@ export const createHonoApp = () => {
       '/api/v1/users/me', // User-specific profile endoints (ELITE: No tenant scope needed)
       '/api/v1/users/me/preferences',
       '/api/v1/users/me/notifications',
-      '/api/v1/auth/me',       // Global user profile doesn't require org context
+      '/api/v1/auth/me', // Global user profile doesn't require org context
     ];
 
     if (

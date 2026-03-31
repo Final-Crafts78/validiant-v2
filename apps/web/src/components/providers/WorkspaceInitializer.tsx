@@ -33,9 +33,9 @@ export function WorkspaceInitializer({ orgs }: WorkspaceInitializerProps) {
     });
   }
 
-  const activeOrgId = useWorkspaceStore((s: any) => s.activeOrgId);
-  const setActiveOrg = useWorkspaceStore((s: any) => s.setActiveOrg);
-  const user = useAuthStore((s: any) => s.user);
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  const setActiveOrg = useWorkspaceStore((s) => s.setActiveOrg);
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     if (!orgs || orgs.length === 0) return;

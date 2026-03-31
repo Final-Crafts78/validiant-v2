@@ -15,8 +15,6 @@ import { format } from 'date-fns';
 import {
   Shield,
   Lock,
-  Eye,
-  EyeOff,
   Save,
   Camera,
   Loader2,
@@ -55,8 +53,6 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<
     'profile' | 'security' | 'notifications'
   >('profile');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +120,7 @@ export default function ProfilePage() {
       try {
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
 
+        // eslint-disable-next-line no-console
         console.log('[Profile:Update] Submitting profile update:', {
           fullName,
           bio: bio.trim(),
@@ -141,11 +138,13 @@ export default function ProfilePage() {
               phoneNumber: phoneNumber.trim(),
             });
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.error('[Profile:Update] Phone number sync failed:', err);
           }
         }
 
         if (result.success && result.user) {
+          // eslint-disable-next-line no-console
           console.info('[Profile:Update] SUCCESS', { userId: result.user.id });
 
           const mergedUserData = {
@@ -157,10 +156,12 @@ export default function ProfilePage() {
           updateUser(mergedUserData);
           alert('Profile updated successfully!');
         } else {
+          // eslint-disable-next-line no-console
           console.error('[Profile:Update] FAILED', result);
           alert(result.message || 'Failed to update profile');
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('[Profile:Update] CRITICAL ERROR:', error);
         alert('An unexpected error occurred. Please try again.');
       }
@@ -191,13 +192,18 @@ export default function ProfilePage() {
 
     setIsUploading(true);
     try {
-      console.log('[Profile:Avatar] Uploading file...', { name: file.name, size: file.size });
+      // eslint-disable-next-line no-console
+      console.log('[Profile:Avatar] Uploading file...', {
+        name: file.name,
+        size: file.size,
+      });
       const response = await usersApi.uploadAvatar(file);
-      
+
       if (response.data?.success && response.data.data?.avatarUrl) {
         const newAvatarUrl = response.data.data.avatarUrl;
+        // eslint-disable-next-line no-console
         console.info('[Profile:Avatar] Upload SUCCESS', { newAvatarUrl });
-        
+
         // Update user in store
         if (user) {
           updateUser({ ...user, avatarUrl: newAvatarUrl });
@@ -207,6 +213,7 @@ export default function ProfilePage() {
         throw new Error(response.data?.message || 'Upload failed');
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('[Profile:Avatar] Upload error:', err);
       alert('Failed to upload profile picture. Please try again.');
     } finally {
@@ -251,10 +258,13 @@ export default function ProfilePage() {
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm relative overflow-hidden">
         {/* Decorative background element */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full -mr-16 -mt-16 blur-3xl" />
-        
+
         <div className="flex flex-col md:flex-row items-center md:items-center gap-8 relative z-10">
           {/* Avatar with upload trigger */}
-          <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+          <div
+            className="relative group cursor-pointer"
+            onClick={handleAvatarClick}
+          >
             <div className="w-28 h-28 rounded-3xl bg-slate-50 flex items-center justify-center border-2 border-slate-100 group-hover:border-blue-200 transition-all shadow-inner overflow-hidden">
               {user.avatarUrl ? (
                 <img
@@ -267,7 +277,7 @@ export default function ProfilePage() {
                   {initials}
                 </div>
               )}
-              
+
               {/* Overlay for hover */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
                 {isUploading ? (
@@ -275,18 +285,20 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <Camera className="h-6 w-6 mb-1" />
-                    <span className="text-[10px] font-bold uppercase tracking-tighter">Change</span>
+                    <span className="text-[10px] font-bold uppercase tracking-tighter">
+                      Change
+                    </span>
                   </>
                 )}
               </div>
             </div>
-            
+
             {/* Hidden Input */}
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleFileChange} 
-              className="hidden" 
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
               accept="image/*"
             />
           </div>
@@ -295,7 +307,9 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">
               {user.fullName}
             </h2>
-            <p className="text-slate-500 font-bold text-sm mt-1 mb-4">{user.email}</p>
+            <p className="text-slate-500 font-bold text-sm mt-1 mb-4">
+              {user.email}
+            </p>
             <div className="flex flex-wrap justify-center md:justify-start items-center gap-2">
               <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">
                 ACTIVE SESSION
@@ -306,7 +320,8 @@ export default function ProfilePage() {
                 </span>
               )}
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter ml-1">
-                JOINED {format(new Date(user.createdAt), 'MMM yyyy').toUpperCase()}
+                JOINED{' '}
+                {format(new Date(user.createdAt), 'MMM yyyy').toUpperCase()}
               </span>
             </div>
           </div>
@@ -334,20 +349,26 @@ export default function ProfilePage() {
       <div className="transition-all duration-300">
         {activeTab === 'profile' && (
           <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-             <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-5">
+            <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-5">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
                 <Shield className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">Identity Metadata</h3>
-                <p className="text-xs text-slate-400 font-bold">Manage your core profile visibility</p>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                  Identity Metadata
+                </h3>
+                <p className="text-xs text-slate-400 font-bold">
+                  Manage your core profile visibility
+                </p>
               </div>
             </div>
 
             <form className="space-y-6" onSubmit={handleProfileSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="firstName" className={labelCls}>First Name</label>
+                  <label htmlFor="firstName" className={labelCls}>
+                    First Name
+                  </label>
                   <input
                     id="firstName"
                     type="text"
@@ -359,7 +380,9 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className={labelCls}>Last Name</label>
+                  <label htmlFor="lastName" className={labelCls}>
+                    Last Name
+                  </label>
                   <input
                     id="lastName"
                     type="text"
@@ -373,7 +396,9 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label htmlFor="email" className={labelCls}>Email Address</label>
+                <label htmlFor="email" className={labelCls}>
+                  Email Address
+                </label>
                 <div className="relative">
                   <input
                     id="email"
@@ -393,7 +418,9 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label htmlFor="phoneNumber" className={labelCls}>Mobile Connection</label>
+                <label htmlFor="phoneNumber" className={labelCls}>
+                  Mobile Connection
+                </label>
                 <input
                   id="phoneNumber"
                   type="tel"
@@ -406,7 +433,9 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label htmlFor="bio" className={labelCls}>Professional Summary</label>
+                <label htmlFor="bio" className={labelCls}>
+                  Professional Summary
+                </label>
                 <textarea
                   id="bio"
                   rows={4}
@@ -427,7 +456,11 @@ export default function ProfilePage() {
                 >
                   Discard Changes
                 </button>
-                <button type="submit" className={btnPrimary} disabled={isPending}>
+                <button
+                  type="submit"
+                  className={btnPrimary}
+                  disabled={isPending}
+                >
                   {isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
@@ -449,14 +482,20 @@ export default function ProfilePage() {
                   <Lock className="w-5 h-5 text-indigo-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight">Security Credentials</h3>
-                  <p className="text-xs text-slate-400 font-bold">Manage authentication and access</p>
+                  <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                    Security Credentials
+                  </h3>
+                  <p className="text-xs text-slate-400 font-bold">
+                    Manage authentication and access
+                  </p>
                 </div>
               </div>
-              
+
               <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl text-center bg-slate-50/30">
                 <AlertCircle className="w-8 h-8 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm font-bold text-slate-500">Security preferences are managed via Enterprise Auth Tunnel.</p>
+                <p className="text-sm font-bold text-slate-500">
+                  Security preferences are managed via Enterprise Auth Tunnel.
+                </p>
                 <button className="mt-4 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
                   Request Access Reset
                 </button>
@@ -471,7 +510,9 @@ export default function ProfilePage() {
                     <Fingerprint className="h-5 w-5 text-indigo-600" />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-slate-900 tracking-tight">Biometric Passkey</h3>
+                    <h3 className="text-base font-black text-slate-900 tracking-tight">
+                      Biometric Passkey
+                    </h3>
                     <p className="text-xs text-slate-500 font-bold mt-1">
                       Register FaceID / TouchID for frictionless entry
                     </p>
@@ -490,9 +531,15 @@ export default function ProfilePage() {
                     try {
                       setPasskeyStatus('loading');
                       const optionsRes = await passkeyApi.generateOptions();
-                      const { startRegistration } = await import('@simplewebauthn/browser');
-                      const attResp = await startRegistration(optionsRes.data as any);
-                      await passkeyApi.verifyRegistration({ response: attResp });
+                      const { startRegistration } =
+                        await import('@simplewebauthn/browser');
+                      const attResp = await startRegistration(
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        optionsRes.data as any
+                      );
+                      await passkeyApi.verifyRegistration({
+                        response: attResp,
+                      });
                       setPasskeyStatus('success');
                       setPasskeyMsg('Passkey successfully linked');
                     } catch (err) {
@@ -508,30 +555,50 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
-        
+
         {/* NOTIFICATIONS TAB (Simplified) */}
         {activeTab === 'notifications' && (
           <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                  <Fingerprint className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight">Signal Preferences</h3>
-                  <p className="text-xs text-slate-400 font-bold">Configure platform communication channels</p>
-                </div>
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <Fingerprint className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                  Signal Preferences
+                </h3>
+                <p className="text-xs text-slate-400 font-bold">
+                  Configure platform communication channels
+                </p>
+              </div>
             </div>
-            
+
             <div className="space-y-6">
               {[
-                { title: 'Project Telemetry', desc: 'Real-time updates on active workspace milestones' },
-                { title: 'Collaboration Mentions', desc: 'Direct alerts when team members request participation' },
-                { title: 'Security Audit Notifications', desc: 'Critical alerts for login attempts and access changes' }
+                {
+                  title: 'Project Telemetry',
+                  desc: 'Real-time updates on active workspace milestones',
+                },
+                {
+                  title: 'Collaboration Mentions',
+                  desc: 'Direct alerts when team members request participation',
+                },
+                {
+                  title: 'Security Audit Notifications',
+                  desc: 'Critical alerts for login attempts and access changes',
+                },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:border-blue-100 transition-colors">
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:border-blue-100 transition-colors"
+                >
                   <div>
-                    <p className="text-sm font-black text-slate-700 tracking-tight">{item.title}</p>
-                    <p className="text-xs text-slate-400 font-medium">{item.desc}</p>
+                    <p className="text-sm font-black text-slate-700 tracking-tight">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-slate-400 font-medium">
+                      {item.desc}
+                    </p>
                   </div>
                   <div className="w-12 h-6 bg-slate-100 rounded-full relative cursor-pointer">
                     <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
