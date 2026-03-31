@@ -665,8 +665,20 @@ export const usersApi = {
     fullName?: string;
     phoneNumber?: string;
     bio?: string;
+    avatarUrl?: string;
   }): Promise<AxiosResponse<APIResponse<unknown>>> =>
     put<APIResponse<unknown>>('/users/me', data),
+
+  /** Upload a profile picture */
+  uploadAvatar: (file: File): Promise<AxiosResponse<APIResponse<{ avatarUrl: string }>>> => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return post<APIResponse<{ avatarUrl: string }>>('/users/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };
 
 // ---------------------------------------------------------------------------

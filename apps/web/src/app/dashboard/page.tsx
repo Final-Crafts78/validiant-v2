@@ -153,7 +153,10 @@ export default function BasicDashboard() {
             icon={Users}
             color="emerald"
           />
-          <div className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all cursor-pointer overflow-hidden relative">
+          <div 
+            onClick={() => router.push(ROUTES.PROFILE)}
+            className="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all cursor-pointer overflow-hidden relative"
+          >
             <div className="relative z-10">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
                 My Settings

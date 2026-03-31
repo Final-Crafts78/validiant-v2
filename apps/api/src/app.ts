@@ -174,7 +174,7 @@ export const createHonoApp = () => {
     const corsMiddleware = cors({
       origin: (origin) => {
         const isAllowed = !origin || allowedOrigins.includes(origin);
-        const result = isAllowed ? (origin || '*') : null;
+        const result = isAllowed ? origin || '*' : null;
 
         appLogger.debug('[CORS] Origin Check', {
           incomingOrigin: origin || 'NONE',
@@ -242,7 +242,10 @@ export const createHonoApp = () => {
     const orgManagementPaths = [
       '/api/v1/organizations/my',
       '/api/v1/organizations', // POST / is allowed, but GET /:id should hit the isolation
-      '/api/v1/auth/me', // Global user profile doesn't require org context
+      '/api/v1/users/me', // User-specific profile endoints (ELITE: No tenant scope needed)
+      '/api/v1/users/me/preferences',
+      '/api/v1/users/me/notifications',
+      '/api/v1/auth/me',       // Global user profile doesn't require org context
     ];
 
     if (
@@ -346,7 +349,9 @@ export const createHonoApp = () => {
     const allHeaders: Record<string, string> = {};
     Object.entries(c.req.header()).forEach(([key, value]) => {
       // Sensitive data scrubbing
-      if (['authorization', 'cookie', 'set-cookie'].includes(key.toLowerCase())) {
+      if (
+        ['authorization', 'cookie', 'set-cookie'].includes(key.toLowerCase())
+      ) {
         allHeaders[key] = '[SCRUBBED]';
       } else {
         allHeaders[key] = value as string;

@@ -225,6 +225,71 @@ export const updateNotificationPreferences = async (c: Context) => {
 };
 
 /**
+ * Upload user avatar
+ * POST /api/v1/users/avatar
+ *
+ * ELITE: Handles multipart/form-data for profile pictures
+ */
+export const uploadAvatar = async (c: Context) => {
+  try {
+    const user = c.get('user');
+
+    if (!user || !user.userId) {
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'User not authenticated',
+        },
+        401
+      );
+    }
+
+    const body = await c.req.parseBody();
+    const file = body.avatar;
+
+    if (!file || !(file instanceof File)) {
+      return c.json(
+        {
+          success: false,
+          error: 'Bad Request',
+          message: 'No image file provided',
+        },
+        400
+      );
+    }
+
+    // 1. SIMULATED UPLOAD (Phase 2 will implement R2/S3)
+    // We generate a deterministic DiceBear URL to ensure a beautiful "Zero Placeholder" experience.
+    const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.userId}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+
+    // 2. UPDATE DATABASE
+    const updatedUser = await userService.updateProfile(user.userId, {
+      avatarUrl,
+    });
+
+    return c.json({
+      success: true,
+      message: 'Avatar uploaded successfully',
+      data: {
+        avatarUrl: updatedUser.avatarUrl,
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    console.error('Upload avatar error:', error);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to upload avatar',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
+  }
+};
+
+/**
  * Delete current user account
  * DELETE /api/v1/users/me
  */

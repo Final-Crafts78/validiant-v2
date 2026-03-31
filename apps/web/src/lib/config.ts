@@ -144,8 +144,8 @@ export const ROUTES = {
   ORGANIZATION_DETAIL: (id: string) => `/organizations/${id}`,
 
   // Profile
-  PROFILE: (orgSlug: string) => `/${orgSlug}/profile`,
-  SETTINGS: (orgSlug: string) => `/${orgSlug}/settings`,
+  PROFILE: '/profile',
+  SETTINGS: '/settings',
 
   // Onboarding
   ONBOARDING: '/dashboard/onboarding',

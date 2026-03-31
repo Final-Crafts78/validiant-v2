@@ -8,6 +8,7 @@
 
 import { useEffect } from 'react';
 import { useWorkspaceStore } from '@/store/workspace';
+import { useAuthStore } from '@/store/auth';
 
 interface Organization {
   id: string;
@@ -32,20 +33,34 @@ export function WorkspaceInitializer({ orgs }: WorkspaceInitializerProps) {
     });
   }
 
-  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
-  const setActiveOrg = useWorkspaceStore((s) => s.setActiveOrg);
+  const activeOrgId = useWorkspaceStore((s: any) => s.activeOrgId);
+  const setActiveOrg = useWorkspaceStore((s: any) => s.setActiveOrg);
+  const user = useAuthStore((s: any) => s.user);
 
   useEffect(() => {
-    if (orgs.length === 0) return;
+    if (!orgs || orgs.length === 0) return;
 
-    // If no org is selected, or the persisted org no longer exists, auto-select the first
     const orgIds = orgs.map((o) => o.id);
-    if (!activeOrgId || !orgIds.includes(activeOrgId)) {
-      if (orgs.length > 0 && orgs[0]) {
-        setActiveOrg(orgs[0].id, orgs[0].slug || '');
+    const userPreferredOrgId = user?.activeOrganizationId;
+
+    // ELITE: Multi-tenant context resolution strategy
+    // 1. If currently selected org is STILL valid, keep it.
+    if (activeOrgId && orgIds.includes(activeOrgId)) return;
+
+    // 2. If user has a preferred org in their profile, and it belongs to this list, use it.
+    if (userPreferredOrgId && orgIds.includes(userPreferredOrgId)) {
+      const preferredOrg = orgs.find((o) => o.id === userPreferredOrgId);
+      if (preferredOrg) {
+        setActiveOrg(preferredOrg.id, preferredOrg.slug || '');
+        return;
       }
     }
-  }, [orgs, activeOrgId, setActiveOrg]);
+
+    // 3. Fallback: Select the first available organization from the list
+    if (orgs.length > 0 && orgs[0]) {
+      setActiveOrg(orgs[0].id, orgs[0].slug || '');
+    }
+  }, [orgs, activeOrgId, setActiveOrg, user?.activeOrganizationId]);
 
   return null; // Headless component — no UI
 }
