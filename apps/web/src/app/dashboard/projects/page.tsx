@@ -1,28 +1,39 @@
 'use client';
 
 import React from 'react';
-import { 
-  FolderKanban, 
-  Search, 
-  Filter, 
+import {
+  FolderKanban,
+  Search,
+  Filter,
   ChevronRight,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { useOrganizations } from '@/hooks/useOrganizations';
 
 export default function GlobalProjectsPage() {
   const { data: organizations = [], isLoading } = useOrganizations();
 
-  // Aggregate all projects from all organizations
-  const allProjects = organizations.flatMap(org => 
-    (org as any).projects?.map((p: any) => ({ ...p, orgName: org.name, orgSlug: org.slug })) || []
-  );
+  // Aggregate all projects from all organizations with type safety
+  const allProjects = React.useMemo(() => {
+    return organizations.flatMap((org) => {
+      const projects = (org as any)?.projects;
+      if (!Array.isArray(projects)) return [];
+
+      return projects.map((p: any) => ({
+        ...p,
+        orgName: org.name || 'Unknown Workspace',
+        orgSlug: org.slug || 'unknown',
+      }));
+    });
+  }, [organizations]);
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-6"></div>
-        <h2 className="text-xl font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Aggregating Projects...</h2>
+        <h2 className="text-xl font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
+          Aggregating Projects...
+        </h2>
       </div>
     );
   }
@@ -35,14 +46,15 @@ export default function GlobalProjectsPage() {
             Global Projects
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
-            Unified view of all strategic initiatives across your decentralized network
+            Unified view of all strategic initiatives across your decentralized
+            network
           </p>
         </div>
         <div className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Filter projects..."
               className="pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 outline-none transition-all w-64"
             />
@@ -58,15 +70,18 @@ export default function GlobalProjectsPage() {
           <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-blue-600">
             <FolderKanban className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">No Active Projects</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+            No Active Projects
+          </h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8 font-medium">
-            Project data will aggregate here once you initialize initiatives within your workspaces.
+            Project data will aggregate here once you initialize initiatives
+            within your workspaces.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {allProjects.map((project: any) => (
-            <div 
+            <div
               key={project.id}
               className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] p-6 shadow-sm hover:shadow-xl transition-all group cursor-pointer"
             >
@@ -85,17 +100,24 @@ export default function GlobalProjectsPage() {
               <div className="flex items-center justify-between pt-5 border-t border-slate-50 dark:border-slate-800/50">
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-bold text-slate-400"
+                      >
                         U
                       </div>
                     ))}
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">+5 members</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    +5 members
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-400">
                   <Clock className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold uppercase">2d ago</span>
+                  <span className="text-[10px] font-bold uppercase">
+                    2d ago
+                  </span>
                 </div>
               </div>
             </div>
