@@ -2,12 +2,10 @@
 
 import React from 'react';
 import { 
-  Settings, 
   Shield, 
   Bell, 
   Globe, 
   Zap, 
-  Lock, 
   ChevronRight,
   Monitor,
   Moon,
@@ -39,7 +37,7 @@ export default function GlobalSettingsPage() {
              { icon: Globe, label: 'Regional', active: false },
              { icon: Shield, label: 'Access Control', active: false },
              { icon: Zap, label: 'Integrations', active: false },
-           ].map((item, idx) => (
+           ].map((item) => (
              <button 
                 key={item.label}
                 className={cn(

@@ -4,10 +4,8 @@ import React from 'react';
 import { 
   CheckSquare, 
   Search, 
-  Filter, 
   Plus, 
   Calendar,
-  Clock,
   LayoutGrid,
   List as ListIcon,
   AlertCircle
@@ -15,7 +13,7 @@ import {
 import { cn } from '@validiant/ui';
 
 export default function GlobalTasksPage() {
-  const [activeView, setActiveView] = React.useState<'grid' | 'list'>('grid');
+  const [activeView] = React.useState<'grid' | 'list'>('grid');
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -30,18 +28,16 @@ export default function GlobalTasksPage() {
         </div>
         <div className="flex gap-2">
             <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-              <button 
-                onClick={() => setActiveView('grid')}
-                className={cn("p-1.5 rounded-lg transition-all", activeView === 'grid' ? "bg-white dark:bg-slate-800 shadow-sm text-blue-600" : "text-slate-400 hover:text-slate-600")}
+              <div 
+                className={cn("p-1.5 rounded-lg transition-all", activeView === 'grid' ? "bg-white dark:bg-slate-800 shadow-sm text-blue-600" : "text-slate-400")}
               >
                 <LayoutGrid className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => setActiveView('list')}
-                className={cn("p-1.5 rounded-lg transition-all", activeView === 'list' ? "bg-white dark:bg-slate-800 shadow-sm text-blue-600" : "text-slate-400 hover:text-slate-600")}
+              </div>
+              <div 
+                className={cn("p-1.5 rounded-lg transition-all", activeView === 'list' ? "bg-white dark:bg-slate-800 shadow-sm text-blue-600" : "text-slate-400")}
               >
                 <ListIcon className="w-4 h-4" />
-              </button>
+              </div>
             </div>
             <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 group">
               <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />

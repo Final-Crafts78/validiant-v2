@@ -5,12 +5,8 @@ import {
   FolderKanban, 
   Search, 
   Filter, 
-  Plus, 
   ChevronRight,
-  Clock,
-  Users,
-  LayoutGrid,
-  List as ListIcon
+  Clock
 } from 'lucide-react';
 import { useOrganizations } from '@/hooks/useOrganizations';
 
@@ -21,6 +17,15 @@ export default function GlobalProjectsPage() {
   const allProjects = organizations.flatMap(org => 
     (org as any).projects?.map((p: any) => ({ ...p, orgName: org.name, orgSlug: org.slug })) || []
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-6"></div>
+        <h2 className="text-xl font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Aggregating Projects...</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -57,10 +62,6 @@ export default function GlobalProjectsPage() {
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8 font-medium">
             Project data will aggregate here once you initialize initiatives within your workspaces.
           </p>
-          <button className="px-8 py-3 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2 mx-auto">
-            <Plus className="w-4 h-4" />
-            Initialize Project
-          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -5,12 +5,8 @@ import {
   Building2, 
   Search, 
   Plus, 
-  ChevronRight,
   ArrowRight,
-  Users,
-  Briefcase,
-  Shield,
-  Activity
+  Shield
 } from 'lucide-react';
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { useRouter } from 'next/navigation';
@@ -26,6 +22,15 @@ export default function GlobalOrganizationsPage() {
     setActiveOrg(orgId, slug);
     router.push(ROUTES.DASHBOARD(slug));
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-6"></div>
+        <h2 className="text-xl font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Synchronizing Hub...</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -61,7 +66,7 @@ export default function GlobalOrganizationsPage() {
         {organizations.map((org) => (
           <div 
             key={org.id}
-            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-900/30 transition-all duration-500 transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl hover:border-blue-200 dark:hover:border-blue-900/30 transition-all duration-500 transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between min-h-[350px]"
             onClick={() => handleSelectOrg(org.id, org.slug)}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-blue-600/10 transition-colors" />
@@ -94,7 +99,7 @@ export default function GlobalOrganizationsPage() {
                 {org.name}
               </h3>
               <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.1em] mt-1 opacity-70">
-                Identifier: {org.id.split('-')[0].toUpperCase()}
+                Identifier: {org.id ? org.id.split('-')[0].toUpperCase() : 'UNKNOWN'}
               </p>
               
               <div className="grid grid-cols-2 gap-4 mt-8">
