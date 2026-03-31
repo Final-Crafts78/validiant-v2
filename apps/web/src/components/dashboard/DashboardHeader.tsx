@@ -103,12 +103,12 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
       },
       {
         name: 'Settings',
-        href: ROUTES.SETTINGS(slug),
+        href: ROUTES.SETTINGS,
         icon: Settings,
       },
       {
         name: 'Profile',
-        href: ROUTES.PROFILE(slug),
+        href: ROUTES.PROFILE,
         icon: User,
       },
     ];
@@ -198,7 +198,9 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                   <p className="text-sm font-bold text-[var(--color-text-base)]">
                     {user.fullName}
                   </p>
-                  <p className="text-xs text-[var(--color-text-muted)]">{user.email}</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">
+                    {user.email}
+                  </p>
                 </div>
                 {user.avatarUrl ? (
                   <img
