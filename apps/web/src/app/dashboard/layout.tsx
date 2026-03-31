@@ -24,6 +24,7 @@ import {
   getCurrentUserAction,
   getUserOrganizationsAction,
 } from '@/actions/auth.actions';
+import { GlobalSidebar } from '@/components/dashboard/GlobalSidebar';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -106,17 +107,21 @@ export default async function DashboardLayout({
     });
 
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-[var(--color-surface-soft)] dark:bg-slate-950 flex transition-colors duration-300">
         <AuthStoreInitializer user={user} accessToken={accessToken} />
         <WorkspaceInitializer orgs={orgs} />
 
-        <DashboardHeader user={user} orgs={orgs} />
+        <GlobalSidebar />
 
-        <main className="flex-1 container-custom py-4 md:py-8 pb-24 md:pb-12">
-          {children}
-        </main>
+        <div className="flex-1 flex flex-col min-w-0">
+          <DashboardHeader user={user} orgs={orgs} />
 
-        <CommandPalette />
+          <main className="flex-1 container-custom py-4 md:py-8 pb-24 md:pb-12 overflow-y-auto">
+            {children}
+          </main>
+
+          <CommandPalette />
+        </div>
       </div>
     );
   } catch (renderErr: any) {

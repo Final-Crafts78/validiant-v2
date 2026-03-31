@@ -26,6 +26,7 @@ interface AuthState {
   clearAuth: () => void;
   setLoading: (isLoading: boolean) => void;
   initialize: () => void;
+  fetchUser: () => Promise<void>;
 }
 
 /**
@@ -141,6 +142,20 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   setLoading: (isLoading) => {
     console.debug('[AuthStore] setLoading', { isLoading });
     set({ isLoading });
+  },
+
+  // NEW: Fetch user from server and sync store
+  fetchUser: async () => {
+    try {
+      const { getCurrentUserAction } = await import('@/actions/auth.actions');
+      const result = await getCurrentUserAction();
+      
+      if (result.success && result.user) {
+        get().setAuth({ user: result.user, accessToken: result.accessToken });
+      }
+    } catch (error) {
+      console.error('[AuthStore] fetchUser failed:', error);
+    }
   },
 }));
 

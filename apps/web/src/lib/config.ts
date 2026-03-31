@@ -127,6 +127,11 @@ export const ROUTES = {
   RESET_PASSWORD: '/auth/reset-password',
 
   DASHBOARD_ROOT: '/dashboard',
+  DASHBOARD_PROJECTS: '/dashboard/projects',
+  DASHBOARD_TASKS: '/dashboard/tasks',
+  DASHBOARD_ORGANIZATIONS: '/dashboard/organizations',
+  DASHBOARD_SETTINGS: '/dashboard/settings',
+  DASHBOARD_PROFILE: '/dashboard/profile',
 
   // Protected routes - Dashboard
   DASHBOARD: (orgSlug: string) => `/${orgSlug}/dashboard`,
@@ -144,8 +149,8 @@ export const ROUTES = {
   ORGANIZATION_DETAIL: (id: string) => `/organizations/${id}`,
 
   // Profile
-  PROFILE: '/profile',
-  SETTINGS: '/settings',
+  PROFILE: '/dashboard/profile',
+  SETTINGS: '/dashboard/settings',
 
   // Onboarding
   ONBOARDING: '/dashboard/onboarding',

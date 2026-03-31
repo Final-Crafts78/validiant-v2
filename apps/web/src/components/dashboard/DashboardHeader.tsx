@@ -78,8 +78,44 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
    * Handles dynamic routes based on the active organization slug.
    */
   const navItems = useMemo<NavItem[]>(() => {
-    const slug = activeOrgSlug || 'org'; // fallback if slug is not yet loaded
+    // If we are in the Global Dashboard scope (no specific org context)
+    if (!activeOrgSlug || pathname.startsWith('/dashboard')) {
+      return [
+        {
+          name: 'Home',
+          href: ROUTES.DASHBOARD_ROOT,
+          icon: LayoutDashboard,
+        },
+        {
+          name: 'Projects',
+          href: ROUTES.DASHBOARD_PROJECTS,
+          icon: FolderKanban,
+        },
+        {
+          name: 'Tasks',
+          href: ROUTES.DASHBOARD_TASKS,
+          icon: CheckSquare,
+        },
+        {
+          name: 'Organizations',
+          href: ROUTES.DASHBOARD_ORGANIZATIONS,
+          icon: Building2,
+        },
+        {
+          name: 'Settings',
+          href: ROUTES.DASHBOARD_SETTINGS,
+          icon: Settings,
+        },
+        {
+          name: 'Profile',
+          href: ROUTES.DASHBOARD_PROFILE,
+          icon: User,
+        },
+      ];
+    }
 
+    // Workspace specific routes
+    const slug = activeOrgSlug;
     return [
       {
         name: 'Dashboard',
@@ -103,16 +139,16 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
       },
       {
         name: 'Settings',
-        href: ROUTES.SETTINGS,
+        href: ROUTES.DASHBOARD_SETTINGS,
         icon: Settings,
       },
       {
         name: 'Profile',
-        href: ROUTES.PROFILE,
+        href: ROUTES.DASHBOARD_PROFILE,
         icon: User,
       },
     ];
-  }, [activeOrgSlug]);
+  }, [activeOrgSlug, pathname]);
 
   // Get initials from fullName with null-safety
   const initials = useMemo(() => {
@@ -159,7 +195,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 </span>
               </Link>
 
-              {orgs.length > 0 && (
+              {orgs.length > 0 && activeOrgSlug && !pathname.startsWith('/dashboard') && (
                 <div className="hidden md:flex items-center gap-2">
                   <span className="text-[var(--color-text-muted)]">/</span>
                   <OrgSwitcher />
@@ -170,24 +206,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
             </div>
 
             <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
-                const isActive = pathname.startsWith(item.href);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-primary-500/10 text-[var(--color-accent-base)]'
-                        : 'text-[var(--color-text-subtle)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text-base)]'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
+              {/* Optional: Show breadcrumbs or simplified nav here if GlobalSidebar is present */}
             </nav>
 
             <div className="flex items-center gap-4">

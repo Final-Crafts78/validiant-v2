@@ -234,12 +234,24 @@ export async function registerAction(
 
 export async function updateProfileAction(payload: {
   fullName: string;
+  displayName?: string;
   bio?: string;
+  phoneNumber?: string;
+  avatarUrl?: string;
 }): Promise<UpdateProfileActionResult> {
   const cookieStore = cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
 
+  // eslint-disable-next-line no-console
+  console.log(`[BFF:UpdateProfile] [${Date.now()}] EP-P1: Start`, {
+    payloadKeys: Object.keys(payload),
+    hasToken: !!accessToken,
+    timestamp: new Date().toISOString(),
+  });
+
   if (!accessToken) {
+    // eslint-disable-next-line no-console
+    console.error(`[BFF:UpdateProfile] [${Date.now()}] EP-P1.ERROR: No token`);
     return {
       success: false,
       error: 'Unauthenticated',
@@ -248,25 +260,59 @@ export async function updateProfileAction(payload: {
   }
 
   try {
+    // ELITE: Clean payload - remove empty strings that might fail Zod validation on backend
+    const cleanPayload: any = {};
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== '' && value !== undefined && value !== null) {
+        cleanPayload[key] = value;
+      }
+    });
+
+    // eslint-disable-next-line no-console
+    console.log(`[BFF:UpdateProfile] [${Date.now()}] EP-P2: Fetching /users/me`, {
+      url: `${API_BASE_URL}/users/me`,
+      originalKeys: Object.keys(payload),
+      cleanKeys: Object.keys(cleanPayload),
+      payloadPreview: JSON.stringify(cleanPayload).substring(0, 100),
+    });
+
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(cleanPayload),
       cache: 'no-store',
     });
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `[BFF:UpdateProfile] [${Date.now()}] EP-P3: Status=${response.status}`
+    );
 
     const data = await response.json();
 
     if (!response.ok || !data.success) {
+      // eslint-disable-next-line no-console
+      console.warn(`[BFF:UpdateProfile] [${Date.now()}] EP-P3.ERROR: Fail`, {
+        status: response.status,
+        error: data.error,
+        message: data.message,
+      });
       return {
         success: false,
         error: data.error || 'UpdateFailed',
         message: data.message || 'Unable to update profile',
       };
     }
+
+    // eslint-disable-next-line no-console
+    console.log(`[BFF:UpdateProfile] [${Date.now()}] EP-P4: SUCCESS`, {
+      userId: data.data.user?.id,
+      email: data.data.user?.email,
+      updatedFields: Object.keys(cleanPayload),
+    });
 
     revalidatePath('/dashboard/profile');
     revalidatePath('/dashboard', 'layout');
@@ -277,7 +323,10 @@ export async function updateProfileAction(payload: {
     };
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('[BFF:UpdateProfile] ERROR:', error);
+    console.error(
+      `[BFF:UpdateProfile] [${Date.now()}] EP-P.ERROR: CRASH`,
+      error
+    );
     return {
       success: false,
       error: 'NetworkError',
