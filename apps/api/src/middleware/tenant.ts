@@ -38,14 +38,12 @@ export const tenantIsolation = async (
 
   const existingOrgId = c.get('orgId') || c.get('organizationId');
   if (existingOrgId) {
-    console.debug(
-      '[Tenant:MW] REDUNDANCY CHECK: orgId already set in context',
-      {
-        existingOrgId,
-        path: c.req.path,
-        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
-      }
-    );
+    // eslint-disable-next-line no-console
+    console.debug('[Tenant:MW] REDUNDANCY CHECK: orgId already set in context', {
+      existingOrgId,
+      path: c.req.path,
+      duration: `${(performance.now() - startTime).toFixed(2)}ms`,
+    });
   }
 
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)
@@ -59,13 +57,13 @@ export const tenantIsolation = async (
   // This ensures that if a user is "logged into" an org, we use it as the default.
   let orgId = headerOrgId || paramOrgId || queryOrgId;
   const isFallbackUsed = !orgId && !!user.organizationId;
-  
   if (isFallbackUsed) {
     orgId = user.organizationId;
   }
 
   // ELITE: Deep Trace for isolation debugging
-  console.info('[Tenant:MW] Isolation Trace Entry', {
+  // eslint-disable-next-line no-console
+  console.debug('[Tenant:MW] Isolation Trace Entry', {
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -78,7 +76,9 @@ export const tenantIsolation = async (
           : isFallbackUsed
             ? 'JWT_CONTEXT'
             : 'NONE',
-    isSSE: c.req.path.includes('stream') || c.req.header('Accept') === 'text/event-stream',
+    isSSE:
+      c.req.path.includes('stream') ||
+      c.req.header('Accept') === 'text/event-stream',
     sources: {
       header: headerOrgId || 'MISSING',
       param: paramOrgId || 'MISSING',
@@ -126,7 +126,8 @@ export const tenantIsolation = async (
     return;
   }
 
-  console.log(
+  // eslint-disable-next-line no-console
+  console.debug(
     `[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : queryOrgId ? 'QUERY' : 'JWT_FALLBACK'}', isSSE: ${c.req.path.includes('stream')} }`
   );
   c.set('orgId', orgId);

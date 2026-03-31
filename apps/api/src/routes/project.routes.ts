@@ -74,6 +74,10 @@ app.patch(
     logger.info(`[Route:Project:PATCH] Received update request for ID: ${id}`, {
       url: c.req.url,
       method: c.req.method,
+      matchedPath: c.req.routePath,
+      headers: c.req.header(),
+      params: c.req.param(),
+      query: c.req.query(),
       contentType: c.req.header('Content-Type'),
       timestamp: new Date().toISOString(),
     });

@@ -8,6 +8,7 @@ import { DurableObject } from 'cloudflare:workers';
  */
 export class RealtimeRoom extends DurableObject<import('../app').Env> {
   private sessions = new Set<ReadableStreamDefaultController>();
+  private heartbeatInterval: any = null;
 
   constructor(state: DurableObjectState, env: import('../app').Env) {
     super(state, env);
@@ -43,33 +44,52 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
     const stream = new ReadableStream({
       start: (controller) => {
         const sessionId = crypto.randomUUID().substring(0, 8);
-        (controller as any)._sessionId = sessionId;
+        (
+          controller as ReadableStreamDefaultController & {
+            _sessionId?: string;
+          }
+        )._sessionId = sessionId;
         this.sessions.add(controller);
 
-        console.info(`[Realtime:DO] Session ADDED`, {
+        // eslint-disable-next-line no-console
+        console.info('[Realtime:DO] Session ADDED', {
           sessionId,
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
         });
+
+        // Start heartbeat if not running
+        this.ensureHeartbeat();
 
         // Send initial heartbeat/keep-alive
         controller.enqueue(encoder.encode('retry: 10000\n\n'));
         controller.enqueue(
           encoder.encode(
-            `event: connected\ndata: ${JSON.stringify({ sessionId, timestamp: Date.now() })}\n\n`
+            `event: connected\ndata: ${JSON.stringify({
+              sessionId,
+              timestamp: Date.now(),
+            })}\n\n`
           )
         );
       },
       cancel: (controller) => {
-        const sessionId = (controller as any)._sessionId || 'UNKNOWN';
+        const sessionId =
+          (controller as ReadableStreamDefaultController & { _sessionId?: string })
+            ._sessionId || 'UNKNOWN';
         this.sessions.delete(
           controller as unknown as ReadableStreamDefaultController
         );
-        console.info(`[Realtime:DO] Session REMOVED (Client Cancel)`, {
+        // eslint-disable-next-line no-console
+        console.info('[Realtime:DO] Session REMOVED (Client Cancel)', {
           sessionId,
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
         });
+
+        if (this.sessions.size === 0 && this.heartbeatInterval) {
+          clearInterval(this.heartbeatInterval);
+          this.heartbeatInterval = null;
+        }
       },
     });
 
@@ -80,6 +100,37 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         Connection: 'keep-alive',
       },
     });
+  }
+
+  /**
+   * Ensure heartbeat interval is running
+   */
+  private ensureHeartbeat() {
+    if (this.heartbeatInterval) return;
+
+    const encoder = new TextEncoder();
+    const heartbeat = encoder.encode(': heartbeat\n\n');
+
+    this.heartbeatInterval = setInterval(() => {
+      if (this.sessions.size === 0) {
+        clearInterval(this.heartbeatInterval);
+        this.heartbeatInterval = null;
+        return;
+      }
+
+      // eslint-disable-next-line no-console
+      console.debug(
+        `[Realtime:DO] Sending HEARTBEAT to ${this.sessions.size} sessions`
+      );
+
+      for (const session of this.sessions) {
+        try {
+          session.enqueue(heartbeat);
+        } catch {
+          this.sessions.delete(session);
+        }
+      }
+    }, 20000); // 20 seconds
   }
 
   /**

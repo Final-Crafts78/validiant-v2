@@ -260,10 +260,16 @@ export async function updateProfileAction(payload: {
   }
 
   try {
-    // ELITE: Clean payload - remove empty strings that might fail Zod validation on backend
+    // ELITE: Clean payload - remove empty strings and poison markers ("$undefined", "null")
     const cleanPayload: any = {};
     Object.entries(payload).forEach(([key, value]) => {
-      if (value !== '' && value !== undefined && value !== null) {
+      if (
+        value !== '' &&
+        value !== undefined &&
+        value !== null &&
+        value !== '$undefined' &&
+        value !== 'null'
+      ) {
         cleanPayload[key] = value;
       }
     });

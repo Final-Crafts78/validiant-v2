@@ -50,7 +50,7 @@ router.get('/stream', async (c) => {
           ? 'FROM_COOKIE'
           : 'NOT_RESOLVED';
 
-  logger.info('[Realtime:MW] Stream Isolation Decision', {
+  logger.debug('[Realtime:MW] Stream Isolation Decision', {
     url: c.req.url,
     path: c.req.path,
     resolvedOrgId: orgId || 'NONE',
