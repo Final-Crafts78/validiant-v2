@@ -914,14 +914,14 @@ export const createCustomRole = async (c: Context) => {
     }
 
     const validatedData = await c.req.json();
-    console.debug('[Role:Create] Input Data:', { 
-      orgId: id, 
-      userId: user.userId, 
-      payload: validatedData 
+    console.debug('[Role:Create] Input Data:', {
+      orgId: id,
+      userId: user.userId,
+      payload: validatedData,
     });
 
     const role = await organizationService.createCustomRole(id, validatedData);
-    
+
     console.debug('[Role:Create] Success:', { roleId: role.id });
 
     return c.json(
@@ -935,11 +935,14 @@ export const createCustomRole = async (c: Context) => {
   } catch (error) {
     console.error('[Role:Create] CRITICAL FAILURE:', {
       orgId: c.req.param('id'),
-      error: error instanceof Error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      } : error
+      error:
+        error instanceof Error
+          ? {
+              message: error.message,
+              stack: error.stack,
+              name: error.name,
+            }
+          : error,
     });
     return c.json(
       {

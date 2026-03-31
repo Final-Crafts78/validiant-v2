@@ -266,10 +266,7 @@ export function BulkUploadWizard({ open, onClose }: BulkUploadWizardProps) {
                   {rows.length} task{rows.length !== 1 ? 's' : ''} have been
                   created successfully.
                 </p>
-                <button
-                  onClick={handleClose}
-                  className="btn btn-primary px-8"
-                >
+                <button onClick={handleClose} className="btn btn-primary px-8">
                   Done
                 </button>
               </div>

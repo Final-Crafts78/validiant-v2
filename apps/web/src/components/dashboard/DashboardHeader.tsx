@@ -195,14 +195,16 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 </span>
               </Link>
 
-              {orgs.length > 0 && activeOrgSlug && !pathname.startsWith('/dashboard') && (
-                <div className="hidden md:flex items-center gap-2">
-                  <span className="text-[var(--color-text-muted)]">/</span>
-                  <OrgSwitcher />
-                  <span className="text-[var(--color-text-muted)]">/</span>
-                  <ProjectSwitcher />
-                </div>
-              )}
+              {orgs.length > 0 &&
+                activeOrgSlug &&
+                !pathname.startsWith('/dashboard') && (
+                  <div className="hidden md:flex items-center gap-2">
+                    <span className="text-[var(--color-text-muted)]">/</span>
+                    <OrgSwitcher />
+                    <span className="text-[var(--color-text-muted)]">/</span>
+                    <ProjectSwitcher />
+                  </div>
+                )}
             </div>
 
             <nav className="hidden md:flex items-center gap-1">

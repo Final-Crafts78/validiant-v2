@@ -1,7 +1,11 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { theme } from '../../src/lib/theme';
-import { LayoutDashboard, ClipboardList, UserCircle } from 'lucide-react-native';
+import {
+  LayoutDashboard,
+  ClipboardList,
+  UserCircle,
+} from 'lucide-react-native';
 import { useBrandStore } from '../../src/store/brand';
 
 /**

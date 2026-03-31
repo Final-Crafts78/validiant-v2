@@ -65,7 +65,7 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-16 bg-[var(--color-surface-subtle)] border-r border-[var(--color-border-base)] flex flex-col items-center py-4 z-50">
       {/* Brand Logo Slot (Global Escape Hatch) */}
-      <Link 
+      <Link
         href="/dashboard"
         className="mb-8 p-2 rounded-xl bg-[var(--color-accent-base)] text-white shadow-lg shadow-[var(--color-accent-base)]/20 hover:scale-105 active:scale-95 transition-transform"
         title="Switch Organization"

@@ -103,7 +103,7 @@ export async function loginAction(
   try {
     // eslint-disable-next-line no-console
     console.log(`[BFF:Login] [${Date.now()}] EP-L1: Start for ${email}`);
-    
+
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -118,7 +118,9 @@ export async function loginAction(
 
     if (!response.ok || !data.success) {
       // eslint-disable-next-line no-console
-      console.warn(`[BFF:Login] [${Date.now()}] EP-L2.ERROR: Fail, msg=${data.message}`);
+      console.warn(
+        `[BFF:Login] [${Date.now()}] EP-L2.ERROR: Fail, msg=${data.message}`
+      );
       return {
         success: false,
         error: data.error || 'Login failed',
@@ -130,7 +132,9 @@ export async function loginAction(
 
     if (!accessToken || !refreshToken || !user) {
       // eslint-disable-next-line no-console
-      console.error(`[BFF:Login] [${Date.now()}] EP-L2.CRITICAL: Missing tokens`);
+      console.error(
+        `[BFF:Login] [${Date.now()}] EP-L2.CRITICAL: Missing tokens`
+      );
       return {
         success: false,
         error: 'Invalid response',
@@ -142,7 +146,9 @@ export async function loginAction(
     const domain = (COOKIE_OPTIONS as any).domain || 'HOST_ONLY';
 
     // eslint-disable-next-line no-console
-    console.log(`[BFF:Login] [${Date.now()}] EP-L3: Setting cookies, domain=${domain}`);
+    console.log(
+      `[BFF:Login] [${Date.now()}] EP-L3: Setting cookies, domain=${domain}`
+    );
 
     cookieStore.set('accessToken', accessToken, {
       ...COOKIE_OPTIONS,
@@ -182,7 +188,7 @@ export async function registerAction(
   try {
     // eslint-disable-next-line no-console
     console.log(`[BFF:Reg] [${Date.now()}] EP-R1: Start for ${email}`);
-    
+
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -275,12 +281,15 @@ export async function updateProfileAction(payload: {
     });
 
     // eslint-disable-next-line no-console
-    console.log(`[BFF:UpdateProfile] [${Date.now()}] EP-P2: Fetching /users/me`, {
-      url: `${API_BASE_URL}/users/me`,
-      originalKeys: Object.keys(payload),
-      cleanKeys: Object.keys(cleanPayload),
-      payloadPreview: JSON.stringify(cleanPayload).substring(0, 100),
-    });
+    console.log(
+      `[BFF:UpdateProfile] [${Date.now()}] EP-P2: Fetching /users/me`,
+      {
+        url: `${API_BASE_URL}/users/me`,
+        originalKeys: Object.keys(payload),
+        cleanKeys: Object.keys(cleanPayload),
+        payloadPreview: JSON.stringify(cleanPayload).substring(0, 100),
+      }
+    );
 
     const response = await fetch(`${API_BASE_URL}/users/me`, {
       method: 'PUT',
@@ -380,7 +389,9 @@ export const getCurrentUserAction = cache(
       const accessToken = cookieStore.get('accessToken')?.value;
 
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${!!accessToken}`);
+      console.log(
+        `[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${!!accessToken}`
+      );
 
       if (!accessToken) {
         return {
@@ -404,11 +415,15 @@ export const getCurrentUserAction = cache(
       });
 
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U3: Response status=${response.status}`);
+      console.log(
+        `[BFF:GetUser] [${Date.now()}] EP-U3: Response status=${response.status}`
+      );
 
       if (response.status === 401 || response.status === 403) {
         // eslint-disable-next-line no-console
-        console.warn(`[BFF:GetUser] [${Date.now()}] EP-U3.WARN: Auth failure, status=${response.status}`);
+        console.warn(
+          `[BFF:GetUser] [${Date.now()}] EP-U3.WARN: Auth failure, status=${response.status}`
+        );
         return {
           success: false,
           error: 'TokenInvalid',
@@ -421,7 +436,9 @@ export const getCurrentUserAction = cache(
         data = await response.json();
       } catch (jsonError) {
         // eslint-disable-next-line no-console
-        console.error(`[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: JSON parse fail`);
+        console.error(
+          `[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: JSON parse fail`
+        );
         return {
           success: false,
           error: 'InvalidResponse',
@@ -431,7 +448,9 @@ export const getCurrentUserAction = cache(
 
       if (!response.ok || !data.success) {
         // eslint-disable-next-line no-console
-        console.warn(`[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: API error, msg=${data.message}`);
+        console.warn(
+          `[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: API error, msg=${data.message}`
+        );
         return {
           success: false,
           error: data.error || 'Failed to fetch user',
@@ -441,7 +460,9 @@ export const getCurrentUserAction = cache(
 
       if (!data.data || !data.data.user) {
         // eslint-disable-next-line no-console
-        console.error(`[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: User data missing`);
+        console.error(
+          `[BFF:GetUser] [${Date.now()}] EP-U3.ERROR: User data missing`
+        );
         return {
           success: false,
           error: 'InvalidResponse',
@@ -450,7 +471,9 @@ export const getCurrentUserAction = cache(
       }
 
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U4: SUCCESS for ${data.data.user.email}`);
+      console.log(
+        `[BFF:GetUser] [${Date.now()}] EP-U4: SUCCESS for ${data.data.user.email}`
+      );
 
       return {
         success: true,
@@ -459,7 +482,10 @@ export const getCurrentUserAction = cache(
       };
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(`[BFF:GetUser] [${Date.now()}] EP-U.ERROR: CRITICAL`, error);
+      console.error(
+        `[BFF:GetUser] [${Date.now()}] EP-U.ERROR: CRITICAL`,
+        error
+      );
       return {
         success: false,
         error: 'NetworkError',
@@ -485,17 +511,24 @@ export const getUserOrganizationsAction = cache(
 
       if (!response.ok) {
         // eslint-disable-next-line no-console
-        console.error(`[BFF:GetOrgs] [${Date.now()}] EP-O2.ERROR: Status ${response.status}`);
+        console.error(
+          `[BFF:GetOrgs] [${Date.now()}] EP-O2.ERROR: Status ${response.status}`
+        );
         return [];
       }
 
       const data = await response.json();
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${data?.data?.organizations?.length || 0}`);
+      console.log(
+        `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${data?.data?.organizations?.length || 0}`
+      );
       return data?.data?.organizations ?? [];
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(`[BFF:GetOrgs] [${Date.now()}] EP-O.ERROR: CRITICAL`, error);
+      console.error(
+        `[BFF:GetOrgs] [${Date.now()}] EP-O.ERROR: CRITICAL`,
+        error
+      );
       return [];
     }
   }

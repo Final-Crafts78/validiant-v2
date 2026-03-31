@@ -29,18 +29,24 @@ export const requireOrgRole = (allowedRoles: string[]) => {
     const headerOrgId = c.req.header('X-Org-Id');
     const paramOrgId = c.req.param('orgId');
     const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
-    
+
     // 🔒 CRITICAL: Strict Priority - Context (Tenant MW) > Header > Param > Query
     const orgId = contextOrgId || headerOrgId || paramOrgId || queryOrgId;
 
     if (contextOrgId) {
-      console.info('[RBAC:Org] SUCCESS - Using tenant-resolved Context OrgId:', { orgId: contextOrgId });
+      console.info(
+        '[RBAC:Org] SUCCESS - Using tenant-resolved Context OrgId:',
+        { orgId: contextOrgId }
+      );
     } else if (orgId) {
-      console.warn('[RBAC:Org] WARNING - Context OrgId missing but resolved from other source.', {
-        source: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
-        resolvedOrgId: orgId,
-        path: c.req.path
-      });
+      console.warn(
+        '[RBAC:Org] WARNING - Context OrgId missing but resolved from other source.',
+        {
+          source: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
+          resolvedOrgId: orgId,
+          path: c.req.path,
+        }
+      );
     }
 
     console.info('[RBAC:Org] Role Check Trace', {
@@ -63,7 +69,8 @@ export const requireOrgRole = (allowedRoles: string[]) => {
         path: c.req.path,
         method: c.req.method,
         userId: user.userId,
-        suggestion: 'Ensure X-Org-Id header is passed OR organizationId query param.',
+        suggestion:
+          'Ensure X-Org-Id header is passed OR organizationId query param.',
       });
       return c.json({ success: false, error: 'Organization ID required' }, 400);
     }
@@ -86,7 +93,9 @@ export const requireOrgRole = (allowedRoles: string[]) => {
         found: !!membership,
         role: membership?.role || 'NONE',
         allowedRoles,
-        allMembershipData: membership ? { id: membership.id, role: membership.role } : null,
+        allMembershipData: membership
+          ? { id: membership.id, role: membership.role }
+          : null,
         timestamp: new Date().toISOString(),
       });
 
@@ -97,7 +106,9 @@ export const requireOrgRole = (allowedRoles: string[]) => {
           lookupFound: !!membership,
           userRole: membership?.role || 'NONE',
           requiredRoles: allowedRoles,
-          reason: !membership ? 'NO_MEMBERSHIP_RECORD' : 'ROLE_NOT_IN_ALLOWED_LIST',
+          reason: !membership
+            ? 'NO_MEMBERSHIP_RECORD'
+            : 'ROLE_NOT_IN_ALLOWED_LIST',
           path: c.req.path,
           timestamp: new Date().toISOString(),
         });

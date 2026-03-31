@@ -197,7 +197,7 @@ export default function RolesSettings() {
         roleId: selectedRole.id,
         newPermissionsTotal: pendingPermissions.length,
       });
-      
+
       setHasChanges(false);
     } catch (err) {
       // eslint-disable-next-line no-console

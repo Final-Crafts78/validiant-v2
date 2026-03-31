@@ -526,9 +526,7 @@ export const organizationStatsRequestSchema = z.object({
 export const createCustomRoleSchema = z.object({
   name: z.string().min(2, 'Role name must be at least 2 characters').max(50),
   description: z.string().max(200).optional(),
-  permissions: z
-    .array(z.string())
-    .default([]),
+  permissions: z.array(z.string()).default([]),
 });
 
 /**

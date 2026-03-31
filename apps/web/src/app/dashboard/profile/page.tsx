@@ -56,7 +56,9 @@ export default function ProfilePage() {
   const updateUser = useAuthStore((state) => state.updateUser);
   const fetchUser = useAuthStore((state) => state.fetchUser);
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications'>('profile');
+  const [activeTab, setActiveTab] = useState<
+    'profile' | 'security' | 'notifications'
+  >('profile');
   const [isPending, startTransition] = useTransition();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,11 +79,14 @@ export default function ProfilePage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [bio, setBio] = useState('');
 
-  const [passkeyStatus, setPasskeyStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [passkeyStatus, setPasskeyStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
   const [passkeyMsg, setPasskeyMsg] = useState('');
-  const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(
-    null
-  );
+  const [statusMsg, setStatusMsg] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   // Initialize form state
   useEffect(() => {
@@ -99,7 +104,8 @@ export default function ProfilePage() {
     if (!user || !user.fullName) return 'U';
     const parts = user.fullName.trim().split(' ');
     const firstInitial = parts[0]?.charAt(0) || '';
-    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
+    const lastInitial =
+      parts.length > 1 ? parts[parts.length - 1]?.charAt(0) : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   }, [user]);
 
@@ -126,8 +132,8 @@ export default function ProfilePage() {
           cleanBio === '$undefined' || cleanBio === 'null' || !cleanBio
             ? undefined
             : cleanBio;
-        
-        const phoneToSubmit = 
+
+        const phoneToSubmit =
           cleanPhone === '$undefined' || cleanPhone === 'null' || !cleanPhone
             ? undefined
             : cleanPhone;
@@ -150,7 +156,9 @@ export default function ProfilePage() {
 
         if (result.success && result.user) {
           // eslint-disable-next-line no-console
-          console.info('[Profile:Update] SUCCESS confirmed by BFF', { userId: result.user.id });
+          console.info('[Profile:Update] SUCCESS confirmed by BFF', {
+            userId: result.user.id,
+          });
           updateUser(result.user);
           setStatusMsg({
             type: 'success',
@@ -162,12 +170,21 @@ export default function ProfilePage() {
         } else {
           // eslint-disable-next-line no-console
           console.error('[Profile:Update] REJECTED by BFF', result);
-          setStatusMsg({ type: 'error', text: result.message || 'Synchronization failed' });
+          setStatusMsg({
+            type: 'error',
+            text: result.message || 'Synchronization failed',
+          });
         }
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('[Profile:Update] EXCEPTION caught in UI transition', error);
-        setStatusMsg({ type: 'error', text: 'Network exception during synchronization' });
+        console.error(
+          '[Profile:Update] EXCEPTION caught in UI transition',
+          error
+        );
+        setStatusMsg({
+          type: 'error',
+          text: 'Network exception during synchronization',
+        });
       }
     });
   };
@@ -281,7 +298,10 @@ export default function ProfilePage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/5 rounded-full -ml-32 -mb-32 blur-3xl group-hover:bg-indigo-600/10 transition-colors duration-1000" />
 
         <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-          <div className="relative group/avatar cursor-pointer" onClick={handleAvatarClick}>
+          <div
+            className="relative group/avatar cursor-pointer"
+            onClick={handleAvatarClick}
+          >
             <div className="w-32 h-32 rounded-[2rem] bg-slate-50 dark:bg-slate-800 flex items-center justify-center border-4 border-white dark:border-slate-900 group-hover/avatar:border-blue-100 dark:group-hover/avatar:border-blue-900/30 transition-all duration-500 shadow-2xl overflow-hidden">
               {user.avatarUrl ? (
                 <img
@@ -511,7 +531,11 @@ export default function ProfilePage() {
                 >
                   Reset Defaults
                 </button>
-                <button type="submit" className={btnPrimary} disabled={isPending}>
+                <button
+                  type="submit"
+                  className={btnPrimary}
+                  disabled={isPending}
+                >
                   {isPending ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
@@ -547,11 +571,14 @@ export default function ProfilePage() {
                   Managed Authentication
                 </h4>
                 <p className="text-sm text-slate-500 dark:text-slate-500 mt-2 max-w-sm mx-auto">
-                  Your core credentials are encrypted and managed via Validiant Auth Gateway for
-                  maximum isolation.
+                  Your core credentials are encrypted and managed via Validiant
+                  Auth Gateway for maximum isolation.
                 </p>
                 <button
-                  className={cn(btnGhost, 'mt-6 py-2.5 px-5 bg-white dark:bg-transparent shadow-sm')}
+                  className={cn(
+                    btnGhost,
+                    'mt-6 py-2.5 px-5 bg-white dark:bg-transparent shadow-sm'
+                  )}
                 >
                   Initiate Credential Reset
                 </button>
@@ -586,9 +613,14 @@ export default function ProfilePage() {
                     try {
                       setPasskeyStatus('loading');
                       const optionsRes = await passkeyApi.generateOptions();
-                      const { startRegistration } = await import('@simplewebauthn/browser');
-                      const attResp = await startRegistration(optionsRes.data as any);
-                      await passkeyApi.verifyRegistration({ response: attResp });
+                      const { startRegistration } =
+                        await import('@simplewebauthn/browser');
+                      const attResp = await startRegistration(
+                        optionsRes.data as any
+                      );
+                      await passkeyApi.verifyRegistration({
+                        response: attResp,
+                      });
                       setPasskeyStatus('success');
                       setPasskeyMsg('Linked Successfully');
                     } catch (err) {

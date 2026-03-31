@@ -15,7 +15,10 @@ import {
 } from 'lucide-react';
 
 export default function CaseCommandCenterPage() {
-  const { caseId, orgSlug } = useParams() as { caseId: string; orgSlug: string };
+  const { caseId, orgSlug } = useParams() as {
+    caseId: string;
+    orgSlug: string;
+  };
   const router = useRouter();
   const { data: task, isLoading, error } = useCaseHub(caseId);
 

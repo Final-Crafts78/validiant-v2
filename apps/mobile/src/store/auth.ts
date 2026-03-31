@@ -49,14 +49,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       await secureStore.saveAccessToken(accessToken);
       await secureStore.saveRefreshToken(refreshToken);
-      
+
       const bioEnabled = await secureStore.isBiometricEnabled();
-      
-      set({ 
-        user, 
-        isAuthenticated: true, 
+
+      set({
+        user,
+        isAuthenticated: true,
         isLoading: false,
-        biometricEnabled: bioEnabled
+        biometricEnabled: bioEnabled,
       });
     } catch (error) {
       set({ isLoading: false });
@@ -87,14 +87,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // Fetch current user
       const { data } = await api.get('/auth/me');
       const { user } = data.data;
-      
+
       const bioEnabled = await secureStore.isBiometricEnabled();
 
-      set({ 
-        user, 
-        isAuthenticated: true, 
+      set({
+        user,
+        isAuthenticated: true,
         isLoading: false,
-        biometricEnabled: bioEnabled
+        biometricEnabled: bioEnabled,
       });
       return true;
     } catch (error) {

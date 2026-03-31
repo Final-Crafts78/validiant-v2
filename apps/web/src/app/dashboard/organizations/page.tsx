@@ -62,7 +62,9 @@ export default function GlobalOrganizationsPage() {
         {organizations.map((org) => {
           // DEFENSIVE IDENTIFIER EXTRACTION
           const orgId = org?.id || '';
-          const identifier = orgId ? orgId.split('-')[0]?.toUpperCase() : 'UNKNOWN';
+          const identifier = orgId
+            ? orgId.split('-')[0]?.toUpperCase()
+            : 'UNKNOWN';
 
           return (
             <div

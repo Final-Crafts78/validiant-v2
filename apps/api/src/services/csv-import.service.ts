@@ -183,7 +183,9 @@ export const executeImport = async (
     const vTypes = (await tx
       .select()
       .from(verificationTypes)
-      .where(eq(verificationTypes.organizationId, organizationId))) as VerificationType[];
+      .where(
+        eq(verificationTypes.organizationId, organizationId)
+      )) as VerificationType[];
 
     const vTypeMap = new Map(vTypes.map((v: VerificationType) => [v.code, v]));
 
@@ -248,7 +250,11 @@ export const getImportTemplates = async (organizationId: string) => {
         { columnName: 'Candidate Name', targetField: 'candidateName' },
         { columnName: 'Candidate Email', targetField: 'candidateEmail' },
         { columnName: 'Check Type', targetField: 'checkType' },
-        { columnName: 'Priority', targetField: 'priority', defaultValue: 'medium' },
+        {
+          columnName: 'Priority',
+          targetField: 'priority',
+          defaultValue: 'medium',
+        },
       ],
     },
   ];

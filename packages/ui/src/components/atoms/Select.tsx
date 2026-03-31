@@ -53,7 +53,9 @@ const Select = ({
         onValueChange={onValueChange}
         disabled={disabled}
       >
-        <SelectTrigger className={cn(error && 'border-[var(--color-danger-base)]')}>
+        <SelectTrigger
+          className={cn(error && 'border-[var(--color-danger-base)]')}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

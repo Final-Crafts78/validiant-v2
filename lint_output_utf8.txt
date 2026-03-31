@@ -1,0 +1,3378 @@
+﻿
+> @validiant/web@2.0.0 lint
+> next lint
+
+node.exe : 
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" "C:
+\Users\manso\AppData\Roami
+ng\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (:  
+  String) [], RemoteExc   
+ eption
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+ ΓÜá The Next.js plugin 
+was not detected in your 
+ESLint configuration. See 
+https://nextjs.org/docs/ba
+sic-features/eslint#migrat
+ing-existing-config
+
+./src/actions/auth.actions
+.ts
+56:32  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+94:36  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+106:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+121:20  Error: Replace ``[
+BFF:Login]┬╖[${Date.now()}
+]┬╖EP-L2.ERROR:┬╖Fail,┬╖ms
+g=${data.message}`` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[BFF:L
+ogin]┬╖[${Date.now()}]┬╖EP
+-L2.ERROR:┬╖Fail,┬╖msg=${d
+ata.message}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+133:21  Error: Replace ``[
+BFF:Login]┬╖[${Date.now()}
+]┬╖EP-L2.CRITICAL:┬╖Missin
+g┬╖tokens`` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖`[BFF:Login]┬╖[
+${Date.now()}]┬╖EP-L2.CRIT
+ICAL:┬╖Missing┬╖tokens`ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+142:39  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+145:17  Error: Replace ``[
+BFF:Login]┬╖[${Date.now()}
+]┬╖EP-L3:┬╖Setting┬╖cookie
+s,┬╖domain=${domain}`` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`[BFF
+:Login]┬╖[${Date.now()}]┬╖
+EP-L3:┬╖Setting┬╖cookies,┬
+╖domain=${domain}`ΓÅÄ┬╖┬╖┬
+╖┬╖`  prettier/prettier
+185:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+264:25  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+278:17  Error: Replace ``[
+BFF:UpdateProfile]┬╖[${Dat
+e.now()}]┬╖EP-P2:┬╖Fetchin
+g┬╖/users/me`,` with `ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖`[BFF:UpdatePro
+file]┬╖[${Date.now()}]┬╖EP
+-P2:┬╖Fetching┬╖/users/me`
+,ΓÅÄ┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+279:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+280:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+281:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+282:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+283:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+383:19  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U1:┬╖Access┬╖token
+=${!!accessToken}`` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[BFF:G
+etUser]┬╖[${Date.now()}]┬╖
+EP-U1:┬╖Access┬╖token=${!!
+accessToken}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+407:19  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U3:┬╖Response┬╖sta
+tus=${response.status}`` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+[BFF:GetUser]┬╖[${Date.now
+()}]┬╖EP-U3:┬╖Response┬╖st
+atus=${response.status}`ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+411:22  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U3.WARN:┬╖Auth┬╖fa
+ilure,┬╖status=${response.
+status}`` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖`[BFF:GetUser
+]┬╖[${Date.now()}]┬╖EP-U3.
+WARN:┬╖Auth┬╖failure,┬╖sta
+tus=${response.status}`ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+424:23  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U3.ERROR:┬╖JSON┬╖p
+arse┬╖fail`` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[BFF:GetU
+ser]┬╖[${Date.now()}]┬╖EP-
+U3.ERROR:┬╖JSON┬╖parse┬╖fa
+il`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+434:22  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U3.ERROR:┬╖API┬╖er
+ror,┬╖msg=${data.message}`
+` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖`[BFF:GetUser]┬╖[${Da
+te.now()}]┬╖EP-U3.ERROR:┬╖
+API┬╖error,┬╖msg=${data.me
+ssage}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+444:23  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U3.ERROR:┬╖User┬╖d
+ata┬╖missing`` with `ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[BFF:Ge
+tUser]┬╖[${Date.now()}]┬╖E
+P-U3.ERROR:┬╖User┬╖data┬╖m
+issing`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+453:19  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U4:┬╖SUCCESS┬╖for┬
+╖${data.data.user.email}``
+ with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`[BFF:GetUser]┬╖[${Date.no
+w()}]┬╖EP-U4:┬╖SUCCESS┬╖fo
+r┬╖${data.data.user.email}
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+462:21  Error: Replace ``[
+BFF:GetUser]┬╖[${Date.now(
+)}]┬╖EP-U.ERROR:┬╖CRITICAL
+`,┬╖error` with `ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`[BFF:GetUser]┬╖
+[${Date.now()}]┬╖EP-U.ERRO
+R:┬╖CRITICAL`,ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖errorΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+488:23  Error: Replace ``[
+BFF:GetOrgs]┬╖[${Date.now(
+)}]┬╖EP-O2.ERROR:┬╖Status┬
+╖${response.status}`` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`[BFF:GetOrgs]┬╖[${Date
+.now()}]┬╖EP-O2.ERROR:┬╖St
+atus┬╖${response.status}`Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+494:19  Error: Replace ``[
+BFF:GetOrgs]┬╖[${Date.now(
+)}]┬╖EP-O3:┬╖SUCCESS,┬╖cou
+nt=${data?.data?.organizat
+ions?.length┬╖||┬╖0}`` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+[BFF:GetOrgs]┬╖[${Date.now
+()}]┬╖EP-O3:┬╖SUCCESS,┬╖co
+unt=${data?.data?.organiza
+tions?.length┬╖||┬╖0}`ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+498:21  Error: Replace ``[
+BFF:GetOrgs]┬╖[${Date.now(
+)}]┬╖EP-O.ERROR:┬╖CRITICAL
+`,┬╖error` with `ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`[BFF:GetOrgs]┬╖
+[${Date.now()}]┬╖EP-O.ERRO
+R:┬╖CRITICAL`,ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖errorΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/cases/[caseId]/page.
+tsx
+18:47  Error: Replace `┬╖c
+aseId:┬╖string;┬╖orgSlug:┬
+╖string` with `ΓÅÄ┬╖┬╖┬╖┬╖
+caseId:┬╖string;ΓÅÄ┬╖┬╖┬╖┬
+╖orgSlug:┬╖string;ΓÅÄ┬╖`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/dashboard/page.tsx
+148:18  Error: Replace `┬╖
+stats.slaBreached┬╖>┬╖0┬╖?
+┬╖'text-[var(--color-criti
+cal-base)]'` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖stats.slaBreac
+hed┬╖>┬╖0ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖?┬╖'text-[var(--colo
+r-critical-base)]'ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+158:40  Error: Replace `┬╖
+?┬╖'text-[var(--color-warn
+ing-base)]'` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'text-[
+var(--color-warning-base)]
+'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+233:17  Error: Replace `ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖key={title}ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classNa
+me="card-surface┬╖p-5┬╖fle
+x┬╖flex-col┬╖gap-3"ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with `┬╖key={title}┬╖class
+Name="card-surface┬╖p-5┬╖f
+lex┬╖flex-col┬╖gap-3"`  
+prettier/prettier
+238:83  Error: Replace 
+`{title}` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖{title}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+397:83  Error: Replace `┬╖
+Create┬╖NewΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `{'┬╖
+'}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖Create┬╖New`  
+prettier/prettier
+405:83  Error: Replace 
+`┬╖Review` with `{'┬╖'}`  
+prettier/prettier
+406:14  Error: Insert 
+`┬╖Review`  
+prettier/prettier
+414:85  Error: Replace 
+`┬╖Manage` with `{'┬╖'}`  
+prettier/prettier
+415:16  Error: Insert 
+`┬╖Manage`  
+prettier/prettier
+423:86  Error: Replace `┬╖
+View┬╖AllΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖` with `{'┬╖'}
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖View┬╖All`  
+prettier/prettier
+443:12  Error: Replace `<d
+iv┬╖className="p-8┬╖text-[
+var(--color-text-muted)]">
+Loading┬╖workspace...</div
+>` with `(ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖<
+div┬╖className="p-8┬╖text-
+[var(--color-text-muted)]"
+>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Loadin
+g┬╖workspace...ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖</div>ΓÅÄ┬╖┬╖┬╖┬╖)`  
+prettier/prettier
+446:12  Error: Replace `<d
+iv┬╖className="p-8┬╖text-[
+var(--color-text-muted)]">
+No┬╖workspace┬╖selected.</
+div>` with `(ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖<div┬╖className="p-8┬╖te
+xt-[var(--color-text-muted
+)]">ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖No┬
+╖workspace┬╖selected.ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖</div>ΓÅÄ┬╖┬╖┬╖┬
+╖)`  prettier/prettier
+474:79  Error: Replace 
+`Your┬╖Tasks` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Your┬╖Tas
+ksΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+485:68  Error: Replace 
+`{tasks.length}┬╖tasks` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖{tasks.length}┬╖tas
+ksΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/infra/new/page.tsx
+5:3  Error: Delete `┬╖`  
+prettier/prettier
+8:43  Error: Replace `┬╖pa
+rams┬╖}:┬╖{┬╖params:┬╖{┬╖o
+rgSlug:┬╖string┬╖}┬╖` 
+with `ΓÅÄ┬╖┬╖params,ΓÅÄ}:┬
+╖{ΓÅÄ┬╖┬╖params:┬╖{┬╖orgSl
+ug:┬╖string┬╖};ΓÅÄ`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/layout.tsx
+25:9  Warning: Unexpected 
+any. Specify a different 
+type.  @typescript-eslint/
+no-explicit-any
+26:9  Warning: Unexpected 
+any. Specify a different 
+type.  @typescript-eslint/
+no-explicit-any
+50:1  Error: Delete `ΓÅÄ` 
+ prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/notifications/page.t
+sx
+3:9  Error: Replace `┬╖use
+Notifications,┬╖useMarkAsR
+ead,┬╖useMarkAllAsRead,┬╖u
+seDeleteNotification┬╖` 
+with `ΓÅÄ┬╖┬╖useNotificati
+ons,ΓÅÄ┬╖┬╖useMarkAsRead,Γ
+ÅÄ┬╖┬╖useMarkAllAsRead,ΓÅÄ
+┬╖┬╖useDeleteNotification,
+ΓÅÄ`  prettier/prettier
+4:9  Error: Replace `┬╖Bel
+l,┬╖CheckCircle2,┬╖Trash2,
+┬╖ExternalLink,┬╖Calendar,
+┬╖AlertTriangle,┬╖Info┬╖` 
+with `ΓÅÄ┬╖┬╖Bell,ΓÅÄ┬╖┬╖C
+heckCircle2,ΓÅÄ┬╖┬╖Trash2,
+ΓÅÄ┬╖┬╖ExternalLink,ΓÅÄ┬╖┬
+╖Calendar,ΓÅÄ┬╖┬╖AlertTria
+ngle,ΓÅÄ┬╖┬╖Info,ΓÅÄ`  
+prettier/prettier
+18:21  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+19:19  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+20:15  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+29:77  Error: Replace 
+`Alert┬╖Center` with `ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Ale
+rt┬╖CenterΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖`  
+prettier/prettier
+30:46  Error: Replace `Upd
+ates┬╖and┬╖compliance┬╖not
+ices┬╖for┬╖<span┬╖classNam
+e="font-bold┬╖text-blue-60
+0">{orgSlug}</span>` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖Updates┬╖and┬╖compliance
+┬╖notices┬╖for{'┬╖'}ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<span
+┬╖className="font-bold┬╖te
+xt-blue-600">{orgSlug}</sp
+an>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+33:18  Error: Delete `┬╖` 
+ prettier/prettier
+48:55  Error: Replace `Syn
+cing┬╖notifications...` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖Syncing┬╖notifi
+cations...ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+55:62  Error: Replace 
+`Silence┬╖is┬╖compliance` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖Silence┬╖is┬╖co
+mplianceΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+56:65  Error: Replace `You
+┬╖don&apos;t┬╖have┬╖any┬╖u
+nread┬╖alerts┬╖at┬╖the┬╖mo
+ment.┬╖Keep┬╖up┬╖the┬╖good
+┬╖work!` with `ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖You┬╖d
+on&apos;t┬╖have┬╖any┬╖unre
+ad┬╖alerts┬╖at┬╖the┬╖momen
+t.┬╖Keep┬╖up┬╖theΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖good
+┬╖work!ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+61:19  Error: Delete `┬╖` 
+ prettier/prettier
+62:27  Error: Delete `┬╖` 
+ prettier/prettier
+68:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+71:24  Error: Replace `┬╖c
+lassName={`text-base┬╖lead
+ing-tight┬╖${!n.readAt┬╖?┬
+╖'font-bold┬╖text-slate-90
+0'┬╖:┬╖'text-slate-600'}`}
+` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖className={`text-base┬╖
+leading-tight┬╖${!n.readAt
+┬╖?┬╖'font-bold┬╖text-slat
+e-900'┬╖:┬╖'text-slate-600
+'}`}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+76:68  Error: Replace 
+`┬╖addSuffix:┬╖true` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+addSuffix:┬╖true,ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+79:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖`  prettier/prettier
+86:28  Error: Delete `┬╖` 
+ prettier/prettier
+94:30  Error: Delete `┬╖` 
+ prettier/prettier
+104:24  Error: Delete 
+`┬╖`  prettier/prettier
+119:72  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/profile/page.tsx
+145:21  Error: Replace `'[
+ProfilePage]┬╖Submitting┬╖
+profile┬╖update┬╖(Extreme┬
+╖Trace):',` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'[ProfilePa
+ge]┬╖Submitting┬╖profile┬╖
+update┬╖(Extreme┬╖Trace):'
+,ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+146:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+147:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+148:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+149:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖}` with `
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖}ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+179:11  Warning: 
+Unexpected console 
+statement.  no-console
+
+./src/app/(workspace)/[org
+Slug]/search/page.tsx
+4:9  Error: Replace `┬╖Sea
+rch┬╖as┬╖SearchIcon,┬╖Filt
+er,┬╖Command,┬╖ArrowRight┬
+╖` with `ΓÅÄ┬╖┬╖Search┬╖as
+┬╖SearchIcon,ΓÅÄ┬╖┬╖Filter
+,ΓÅÄ┬╖┬╖Command,ΓÅÄ┬╖┬╖Arr
+owRight,ΓÅÄ`  
+prettier/prettier
+12:6  Error: Replace `┬╖ty
+pe:┬╖'Task',┬╖title:┬╖'Upd
+ate┬╖compliance┬╖documenta
+tion',┬╖route:┬╖`/${orgSlu
+g}/tasks`` with `ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖type:┬╖'Task',ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖title:┬╖'Update┬╖
+compliance┬╖documentation'
+,ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖route:┬╖`/
+${orgSlug}/tasks`,ΓÅÄ┬╖┬╖┬
+╖`  prettier/prettier
+13:6  Error: Replace `┬╖ty
+pe:┬╖'Project',┬╖title:┬╖'
+Q4┬╖Financial┬╖Audit',┬╖ro
+ute:┬╖`/${orgSlug}/project
+s`` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖t
+ype:┬╖'Project',ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖title:┬╖'Q4┬╖Financia
+l┬╖Audit',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖r
+oute:┬╖`/${orgSlug}/projec
+ts`,ΓÅÄ┬╖┬╖┬╖`  
+prettier/prettier
+14:6  Error: Replace `┬╖ty
+pe:┬╖'Member',┬╖title:┬╖'S
+arah┬╖Jenkins┬╖(Admin)',┬╖
+route:┬╖`/${orgSlug}/setti
+ngs/members`` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖type:┬╖'Member',Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖title:┬╖'Sar
+ah┬╖Jenkins┬╖(Admin)',ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖route:┬╖`/${org
+Slug}/settings/members`,ΓÅ
+Ä┬╖┬╖┬╖`  
+prettier/prettier
+21:80  Error: Replace 
+`Global┬╖Index┬╖Search` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖Global┬╖Index┬╖SearchΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+22:39  Error: Replace `Sca
+nning┬╖through┬╖<span┬╖cla
+ssName="text-blue-600┬╖fon
+t-bold">{orgSlug}</span>┬╖
+workspace┬╖resources.` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖Scanning┬╖through{'┬╖'}
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<sp
+an┬╖className="text-blue-6
+00┬╖font-bold">{orgSlug}</
+span>┬╖workspaceΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖resources.ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+32:17  Error: Delete `┬╖` 
+ prettier/prettier
+41:13  Error: Delete `┬╖` 
+ prettier/prettier
+42:1  Error: Delete `┬╖`  
+prettier/prettier
+43:13  Error: Delete `┬╖` 
+ prettier/prettier
+44:1  Error: Delete `┬╖`  
+prettier/prettier
+45:1  Error: Delete `┬╖`  
+prettier/prettier
+46:13  Error: Delete `┬╖` 
+ prettier/prettier
+53:11  Error: Replace `'Al
+l┬╖Results',┬╖'Tasks',┬╖'P
+rojects',┬╖'Members',┬╖'Ar
+tifacts',┬╖'Settings'` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖'All┬╖Results',ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'Tasks',ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'Proje
+cts',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖'Members',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖'Artifacts',ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'Setting
+s',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+54:18  Error: Delete `┬╖` 
+ prettier/prettier
+57:22  Error: Replace `┬╖?
+┬╖'bg-slate-900┬╖border-sl
+ate-900┬╖text-white┬╖shado
+w-lg'` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'
+bg-slate-900┬╖border-slate
+-900┬╖text-white┬╖shadow-l
+g'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+73:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<h2┬
+╖className="text-sm┬╖font-
+black┬╖text-slate-400┬╖upp
+ercase┬╖tracking-widest┬╖m
+b-4">Recommended┬╖for┬╖you
+` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖<h2┬╖className="text
+-sm┬╖font-black┬╖text-slat
+e-400┬╖uppercase┬╖tracking
+-widest┬╖mb-4">ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Recomm
+ended┬╖for┬╖youΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+74:1  Error: Delete `┬╖`  
+prettier/prettier
+75:15  Error: Delete `┬╖` 
+ prettier/prettier
+76:17  Error: Replace 
+`┬╖<a┬╖` with `<a`  
+prettier/prettier
+77:1  Error: Delete `┬╖`  
+prettier/prettier
+78:19  Error: Delete `┬╖` 
+ prettier/prettier
+79:1  Error: Delete `┬╖`  
+prettier/prettier
+80:1  Error: Delete `┬╖`  
+prettier/prettier
+81:19  Error: Delete `┬╖` 
+ prettier/prettier
+82:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖<span┬╖classNa
+me="text-[10px]┬╖font-blac
+k┬╖uppercase┬╖text-blue-60
+0┬╖bg-blue-50┬╖px-2┬╖py-0.
+5┬╖rounded-md">{s.type}` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<span┬
+╖className="text-[10px]┬╖f
+ont-black┬╖uppercase┬╖text
+-blue-600┬╖bg-blue-50┬╖px-
+2┬╖py-0.5┬╖rounded-md">ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖{s.type}
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+83:1  Error: Delete `┬╖`  
+prettier/prettier
+84:1  Error: Delete `┬╖`  
+prettier/prettier
+85:19  Error: Delete `┬╖` 
+ prettier/prettier
+86:17  Error: Delete `┬╖` 
+ prettier/prettier
+87:15  Error: Delete `┬╖` 
+ prettier/prettier
+88:1  Error: Delete `┬╖`  
+prettier/prettier
+96:11  Error: Delete `┬╖` 
+ prettier/prettier
+97:1  Error: Delete `┬╖`  
+prettier/prettier
+98:11  Error: Delete `┬╖` 
+ prettier/prettier
+99:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<h3┬╖cla
+ssName="text-xl┬╖font-bold
+┬╖text-slate-800">No┬╖imme
+diate┬╖matches┬╖found` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+<h3┬╖className="text-xl┬╖f
+ont-bold┬╖text-slate-800">
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖No┬╖immediate┬╖matches┬╖f
+oundΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+100:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<p┬╖cla
+ssName="text-slate-500┬╖ma
+x-w-xs┬╖mx-auto">We┬╖could
+n&apos;t┬╖find┬╖anything┬╖
+matching┬╖&quot;{query}&qu
+ot;.┬╖Try┬╖adjusting┬╖your
+┬╖filters┬╖or┬╖checking┬╖y
+our┬╖spelling.` with `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<p┬╖classN
+ame="text-slate-500┬╖max-w
+-xs┬╖mx-auto">ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖We┬╖couldn&
+apos;t┬╖find┬╖anything┬╖ma
+tching┬╖&quot;{query}&quot
+;.┬╖TryΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖adjusting┬╖your┬╖f
+ilters┬╖or┬╖checking┬╖your
+┬╖spelling.ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/settings/branding/pa
+ge.tsx
+83:52  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+190:82  Error: Insert `{'┬
+╖'}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+219:79  Error: Replace 
+`┬╖Organization` with 
+`{'┬╖'}`  
+prettier/prettier
+220:16  Error: Insert 
+`┬╖Organization`  
+prettier/prettier
+265:80  Error: Insert `{'┬
+╖'}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/settings/config/page
+.tsx
+33:78  Error: Replace `┬╖a
+dvanced┬╖multi-layered┬╖wo
+rkflows.┬╖This┬╖module┬╖wi
+ll┬╖be┬╖available┬╖in┬╖the
+` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖advanced┬╖multi-layer
+ed┬╖workflows.┬╖This┬╖modu
+le┬╖will┬╖be┬╖available┬╖i
+n┬╖theΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+36:18  Error: Delete `┬╖` 
+ prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/settings/members/pag
+e.tsx
+206:79  Error: Insert `{'┬
+╖'}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖`  prettier/prettier
+230:68  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/app/(workspace)/[org
+Slug]/settings/roles/page.
+tsx
+200:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/tasks/new/page.tsx
+5:3  Error: Delete `┬╖`  
+prettier/prettier
+6:67  Error: Delete `┬╖`  
+prettier/prettier
+9:43  Error: Replace `┬╖pa
+rams┬╖}:┬╖{┬╖params:┬╖{┬╖o
+rgSlug:┬╖string┬╖}┬╖` 
+with `ΓÅÄ┬╖┬╖params,ΓÅÄ}:┬
+╖{ΓÅÄ┬╖┬╖params:┬╖{┬╖orgSl
+ug:┬╖string┬╖};ΓÅÄ`  
+prettier/prettier
+
+./src/app/(workspace)/[org
+Slug]/tasks/page.tsx
+206:37  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/app/accept-invite/pa
+ge.tsx
+70:29  Error: Replace 
+`┬╖?┬╖err.message` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖e
+rr.messageΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖`  prettier/prettier
+158:61  Error: Replace `ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖{errorHeader}ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`{errorHeader}`  
+prettier/prettier
+
+./src/app/api/auth/session
+-expired/route.ts
+45:3  Warning: Unexpected 
+console statement.  
+no-console
+46:32  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+61:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+62:17  Error: Replace `┬╖p
+rocess.env.NODE_ENV┬╖===┬╖
+'production'┬╖||┬╖` with `
+ΓÅÄ┬╖┬╖┬╖┬╖process.env.NOD
+E_ENV┬╖===┬╖'production'┬╖
+||`  prettier/prettier
+63:5  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+64:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+66:27  Error: Delete `┬╖` 
+ prettier/prettier
+67:15  Error: Delete `┬╖` 
+ prettier/prettier
+68:41  Error: Insert `,`  
+prettier/prettier
+73:16  Error: Replace `'[S
+essionExpired]┬╖Starting┬╖
+multi-domain┬╖cookie┬╖clea
+r┬╖(Finding┬╖48)',` with `
+ΓÅÄ┬╖┬╖┬╖┬╖'[SessionExpire
+d]┬╖Starting┬╖multi-domain
+┬╖cookie┬╖clear┬╖(Finding┬
+╖48)',ΓÅÄ┬╖┬╖┬╖`  
+prettier/prettier
+74:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+75:1  Error: Replace 
+`┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+76:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+77:1  Error: Replace 
+`┬╖┬╖}` with 
+`┬╖┬╖┬╖┬╖}ΓÅÄ┬╖┬╖`  
+prettier/prettier
+93:3  Warning: Unexpected 
+console statement.  
+no-console
+97:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+103:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+108:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+109:19  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖`  
+prettier/prettier
+112:3  Warning: 
+Unexpected console 
+statement.  no-console
+122:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+123:3  Warning: 
+Unexpected console 
+statement.  no-console
+126:44  Error: Replace 
+`h` with `(h)`  
+prettier/prettier
+
+./src/app/auth/login/page.
+tsx
+93:5  Warning: Unexpected 
+console statement.  
+no-console
+104:5  Warning: 
+Unexpected console 
+statement.  no-console
+363:19  Error: Replace `┬╖
+className="h-4┬╖w-4┬╖shrin
+k-0"┬╖viewBox="0┬╖0┬╖24┬╖2
+4"┬╖aria-hidden="true"` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖className="
+h-4┬╖w-4┬╖shrink-0"ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖viewBox="0┬╖0┬╖24┬╖24"ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖aria-hidden="true"Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+390:19  Error: Replace `┬╖
+className="h-4┬╖w-4┬╖shrin
+k-0"┬╖fill="currentColor"┬
+╖viewBox="0┬╖0┬╖24┬╖24"┬╖a
+ria-hidden="true"` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖className="h-4┬╖w-
+4┬╖shrink-0"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖fill=
+"currentColor"ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖vie
+wBox="0┬╖0┬╖24┬╖24"ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖aria-hidden="true"ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+
+./src/app/auth/reset-passw
+ord/page.tsx
+107:30  Warning: 
+Forbidden non-null 
+assertion.  @typescript-es
+lint/no-non-null-assertion
+
+./src/app/dashboard/layout
+.tsx
+44:3  Warning: Unexpected 
+console statement.  
+no-console
+50:3  Warning: Unexpected 
+console statement.  
+no-console
+82:3  Warning: Unexpected 
+console statement.  
+no-console
+89:3  Warning: Unexpected 
+console statement.  
+no-console
+103:5  Warning: 
+Unexpected console 
+statement.  no-console
+127:23  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/app/dashboard/onboar
+ding/page.tsx
+44:3  Warning: Unexpected 
+console statement.  
+no-console
+55:5  Warning: Unexpected 
+console statement.  
+no-console
+63:18  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+64:21  Error: Replace `┬╖t
+ypeof┬╖document┬╖!==┬╖'und
+efined'┬╖?┬╖document.cooki
+e.split(';').map(c┬╖=>┬╖c.
+split('=')[0]?.trim()┬╖||┬
+╖'UNKNOWN')` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖typeof┬╖do
+cument┬╖!==┬╖'undefined'ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?
+┬╖document.cookieΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+.split(';')ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖.map((
+c)┬╖=>┬╖c.split('=')[0]?.t
+rim()┬╖||┬╖'UNKNOWN')ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+72:5  Warning: Unexpected 
+console statement.  
+no-console
+76:28  Error: Replace 
+`.split(';')` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖.
+split(';')ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+96:7  Warning: Unexpected 
+console statement.  
+no-console
+96:64  Error: Replace `┬╖n
+ame:┬╖name.trim(),┬╖indust
+ry` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖name:┬╖name.trim(),ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖industry,ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+104:9  Warning: 
+Unexpected console 
+statement.  no-console
+104:55  Error: Delete 
+`┬╖`  prettier/prettier
+105:23  Error: Delete 
+`┬╖`  prettier/prettier
+106:26  Error: Insert `,` 
+ prettier/prettier
+114:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+116:11  Warning: 
+Unexpected console 
+statement.  no-console
+117:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+123:20  Error: Replace `'O
+rganization┬╖was┬╖created,
+┬╖but┬╖we┬╖couldn\'t┬╖iden
+tify┬╖it.┬╖Please┬╖refresh
+.'` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖"Organization┬╖
+was┬╖created,┬╖but┬╖we┬╖co
+uldn't┬╖identify┬╖it.┬╖Ple
+ase┬╖refresh."ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+125:21  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+129:40  Error: Insert `,` 
+ prettier/prettier
+
+./src/app/dashboard/organi
+zations/page.tsx
+65:35  Error: Replace `┬╖?
+┬╖orgId.split('-')[0]?.toU
+pperCase()` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖orgI
+d.split('-')[0]?.toUpperCa
+se()ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+
+./src/app/dashboard/profil
+e/page.tsx
+59:46  Error: Replace `'pr
+ofile'┬╖|┬╖'security'┬╖|┬╖
+'notifications'` with `ΓÅÄ
+┬╖┬╖┬╖┬╖'profile'┬╖|┬╖'sec
+urity'┬╖|┬╖'notifications'
+ΓÅÄ┬╖┬╖`  
+prettier/prettier
+80:54  Error: Replace `'id
+le'┬╖|┬╖'loading'┬╖|┬╖'suc
+cess'┬╖|┬╖'error'` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖'idle'┬╖|┬╖'load
+ing'┬╖|┬╖'success'┬╖|┬╖'er
+ror'ΓÅÄ┬╖┬╖`  
+prettier/prettier
+82:47  Error: Replace `┬╖t
+ype:┬╖'success'┬╖|┬╖'error
+';┬╖text:┬╖string┬╖}┬╖|┬╖n
+ull>(ΓÅÄ┬╖┬╖┬╖┬╖nullΓÅÄ┬╖┬
+╖` with `ΓÅÄ┬╖┬╖┬╖┬╖type:┬
+╖'success'┬╖|┬╖'error';ΓÅÄ
+┬╖┬╖┬╖┬╖text:┬╖string;ΓÅÄ┬
+╖┬╖}┬╖|┬╖null>(null`  
+prettier/prettier
+102:24  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+129:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+130:30  Error: Delete 
+`┬╖`  prettier/prettier
+153:70  Error: Replace `┬╖
+userId:┬╖result.user.id` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖userId:┬╖result.use
+r.id,ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+165:25  Error: Replace `┬╖
+type:┬╖'error',┬╖text:┬╖re
+sult.message┬╖||┬╖'Synchro
+nization┬╖failed'` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+type:┬╖'error',ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖text:┬╖res
+ult.message┬╖||┬╖'Synchron
+ization┬╖failed',ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+169:23  Error: Replace `'[
+Profile:Update]┬╖EXCEPTION
+┬╖caught┬╖in┬╖UI┬╖transiti
+on',┬╖error` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'[Profile:
+Update]┬╖EXCEPTION┬╖caught
+┬╖in┬╖UI┬╖transition',ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖errorΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+170:23  Error: Replace `┬╖
+type:┬╖'error',┬╖text:┬╖'N
+etwork┬╖exception┬╖during┬
+╖synchronization'` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖type
+:┬╖'error',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖text:┬╖'Network┬╖e
+xception┬╖during┬╖synchron
+ization',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+284:15  Error: Replace `┬╖
+className="relative┬╖group
+/avatar┬╖cursor-pointer"┬╖
+onClick={handleAvatarClick
+}` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖className="relat
+ive┬╖group/avatar┬╖cursor-
+pointer"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖onClick={handleAv
+atarClick}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖`  
+prettier/prettier
+514:24  Error: Replace `┬╖
+type="submit"┬╖className={
+btnPrimary}┬╖disabled={isP
+ending}` with `ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖type="submit"ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖className={btnPrimary}ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖disabled={isPen
+ding}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+550:80  Error: Delete 
+`┬╖Auth┬╖Gateway┬╖for`  
+prettier/prettier
+551:18  Error: Insert 
+`┬╖Auth┬╖Gateway┬╖for`  
+prettier/prettier
+554:33  Error: Replace `bt
+nGhost,┬╖'mt-6┬╖py-2.5┬╖px
+-5┬╖bg-white┬╖dark:bg-tran
+sparent┬╖shadow-sm'` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖btnGhost
+,ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'mt-6┬╖p
+y-2.5┬╖px-5┬╖bg-white┬╖dar
+k:bg-transparent┬╖shadow-s
+m'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+589:52  Error: Insert `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+590:63  Error: Replace `op
+tionsRes.data┬╖as┬╖any` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖optionsRes.data┬╖as┬╖
+anyΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+590:82  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+591:60  Error: Replace 
+`┬╖response:┬╖attResp` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖response:┬╖attResp,ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/app/dashboard/projec
+ts/page.tsx
+19:32  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+22:31  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+83:38  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/app/dashboard/settin
+gs/page.tsx
+4:9  Error: Delete `┬╖`  
+prettier/prettier
+5:10  Error: Delete `┬╖`  
+prettier/prettier
+6:8  Error: Delete `┬╖`  
+prettier/prettier
+7:9  Error: Delete `┬╖`  
+prettier/prettier
+8:7  Error: Delete `┬╖`  
+prettier/prettier
+13:9  Error: Insert `,`  
+prettier/prettier
+18:56  Error: Replace `'li
+ght'┬╖|┬╖'dark'┬╖|┬╖'syste
+m'` with `ΓÅÄ┬╖┬╖┬╖┬╖'ligh
+t'┬╖|┬╖'dark'┬╖|┬╖'system'
+ΓÅÄ┬╖┬╖`  
+prettier/prettier
+34:11  Error: Delete `┬╖` 
+ prettier/prettier
+35:1  Error: Delete `┬╖`  
+prettier/prettier
+36:13  Error: Delete `┬╖` 
+ prettier/prettier
+37:1  Error: Delete `┬╖`  
+prettier/prettier
+38:13  Error: Delete `┬╖` 
+ prettier/prettier
+39:13  Error: Delete `┬╖` 
+ prettier/prettier
+40:1  Error: Delete `┬╖`  
+prettier/prettier
+41:13  Error: Replace 
+`┬╖<button┬╖` with 
+`<button`  
+prettier/prettier
+42:15  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+43:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+44:17  Error: Replace `┬╖┬
+╖"w-full┬╖flex┬╖items-cent
+er┬╖justify-between┬╖px-4┬
+╖py-3┬╖rounded-xl┬╖text-sm
+┬╖font-black┬╖uppercase┬╖t
+racking-widest┬╖transition
+-all"` with `'w-full┬╖flex
+┬╖items-center┬╖justify-be
+tween┬╖px-4┬╖py-3┬╖rounded
+-xl┬╖text-sm┬╖font-black┬╖
+uppercase┬╖tracking-widest
+┬╖transition-all'`  
+prettier/prettier
+45:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖item.active┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖item.active`  
+prettier/prettier
+46:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖?┬╖"bg-blue-600/
+10┬╖text-blue-600┬╖dark:bg
+-blue-600/20┬╖dark:text-bl
+ue-400┬╖shadow-sm"` with `
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖?┬╖'bg-blue-600/
+10┬╖text-blue-600┬╖dark:bg
+-blue-600/20┬╖dark:text-bl
+ue-400┬╖shadow-sm'`  
+prettier/prettier
+47:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖:┬╖"text-slate-4
+00┬╖hover:text-slate-600┬╖
+dark:hover:text-slate-300┬
+╖hover:bg-slate-50┬╖dark:h
+over:bg-slate-900"` with `
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖:┬╖'text-slate-4
+00┬╖hover:text-slate-600┬╖
+dark:hover:text-slate-300┬
+╖hover:bg-slate-50┬╖dark:h
+over:bg-slate-900'`  
+prettier/prettier
+48:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+49:13  Error: Delete `┬╖` 
+ prettier/prettier
+50:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+51:17  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+52:17  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+53:15  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+54:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+55:13  Error: Delete `┬╖` 
+ prettier/prettier
+56:1  Error: Delete `┬╖`  
+prettier/prettier
+61:1  Error: Delete `┬╖`  
+prettier/prettier
+62:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+63:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+64:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+65:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+66:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+67:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+68:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+69:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+70:17  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+71:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+72:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+73:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+74:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+74:65  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+75:19  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+76:21  Error: Replace `┬╖┬
+╖┬╖┬╖"flex┬╖flex-col┬╖item
+s-center┬╖gap-3┬╖p-6┬╖roun
+ded-3xl┬╖border-2┬╖transit
+ion-all┬╖group"` with `'fl
+ex┬╖flex-col┬╖items-center
+┬╖gap-3┬╖p-6┬╖rounded-3xl┬
+╖border-2┬╖transition-all┬
+╖group'`  
+prettier/prettier
+77:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖activeTh
+eme┬╖===┬╖theme.id┬╖` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖active
+Theme┬╖===┬╖theme.id`  
+prettier/prettier
+78:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖"
+border-blue-600┬╖bg-blue-6
+00/5┬╖dark:bg-blue-600/10"
+┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖?┬╖'border-blue-600┬╖bg-
+blue-600/5┬╖dark:bg-blue-6
+00/10'`  prettier/prettier
+79:23  Error: Replace `┬╖┬
+╖┬╖┬╖:┬╖"border-slate-100┬
+╖dark:border-slate-800┬╖ho
+ver:border-slate-200┬╖dark
+:hover:border-slate-700"` 
+with `:┬╖'border-slate-100
+┬╖dark:border-slate-800┬╖h
+over:border-slate-200┬╖dar
+k:hover:border-slate-700'`
+  prettier/prettier
+80:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+81:13  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+82:19  Error: Replace 
+`┬╖┬╖┬╖<div` with `<divΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+83:23  Error: Replace `┬╖┬
+╖"p-4┬╖rounded-2xl┬╖transi
+tion-all┬╖shadow-sm"` 
+with `'p-4┬╖rounded-2xl┬╖t
+ransition-all┬╖shadow-sm'`
+  prettier/prettier
+84:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖activeTh
+eme┬╖===┬╖theme.id┬╖?┬╖"bg
+-blue-600┬╖text-white┬╖sha
+dow-blue-600/20"┬╖:┬╖"bg-s
+late-50┬╖dark:bg-slate-950
+┬╖text-slate-400┬╖group-ho
+ver:text-slate-600"` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖activeT
+heme┬╖===┬╖theme.idΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'bg-b
+lue-600┬╖text-white┬╖shado
+w-blue-600/20'ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖:┬╖'bg-slate-
+50┬╖dark:bg-slate-950┬╖tex
+t-slate-400┬╖group-hover:t
+ext-slate-600'`  
+prettier/prettier
+85:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖)}>` with `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖)}`  
+prettier/prettier
+86:18  Error: Insert `┬╖>Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+87:19  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+88:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖<span` with `┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖<spanΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+89:23  Error: Replace `┬╖┬
+╖"text-[10px]┬╖font-black┬
+╖uppercase┬╖tracking-wides
+t"` with `'text-[10px]┬╖fo
+nt-black┬╖uppercase┬╖track
+ing-widest'`  
+prettier/prettier
+90:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖activeTh
+eme┬╖===┬╖theme.id┬╖?┬╖"te
+xt-blue-600┬╖dark:text-blu
+e-400"┬╖:┬╖"text-slate-400
+"` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖activeTheme┬╖===┬╖theme.i
+dΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+?┬╖'text-blue-600┬╖dark:te
+xt-blue-400'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖:┬╖'text-slate-
+400'`  prettier/prettier
+91:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖)}>` with `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖)}`  
+prettier/prettier
+92:19  Error: Insert `>ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+93:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+94:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+95:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+96:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+97:11  Error: Delete `┬╖` 
+ prettier/prettier
+99:1  Error: Delete `┬╖`  
+prettier/prettier
+100:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+101:15  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+102:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+103:1  Error: Delete `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+104:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+105:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+106:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+107:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+108:19  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+109:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with `┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+110:17  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+111:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+112:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+113:17  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+114:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+115:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+116:11  Error: Delete 
+`┬╖`  prettier/prettier
+118:1  Error: Delete `┬╖` 
+ prettier/prettier
+119:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+120:1  Error: Delete `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+121:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+122:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+123:17  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+124:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+125:17  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+126:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖<h3┬╖className=
+"text-xl┬╖font-black┬╖trac
+king-tight">Security┬╖Hard
+ening` with `┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<h3┬╖cl
+assName="text-xl┬╖font-bla
+ck┬╖tracking-tight">ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖Security┬╖Hardening
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+127:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+128:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+129:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖Manage┬╖session
+┬╖duration,┬╖concurrent┬╖d
+evice┬╖limits,┬╖and┬╖biome
+tric` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Manage┬╖
+session┬╖duration,┬╖concur
+rent┬╖device┬╖limits,┬╖and
+┬╖biometricΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+130:15  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+131:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+132:17  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+133:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+134:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+135:1  Error: Delete `┬╖` 
+ prettier/prettier
+
+./src/app/dashboard/tasks/
+page.tsx
+4:9  Error: Delete `┬╖`  
+prettier/prettier
+5:15  Error: Delete `┬╖`  
+prettier/prettier
+6:8  Error: Delete `┬╖`  
+prettier/prettier
+10:14  Error: Insert `,`  
+prettier/prettier
+29:11  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+30:13  Error: Replace 
+`┬╖┬╖<div┬╖` with `<div`  
+prettier/prettier
+31:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖className={cn("p-1.5┬╖ro
+unded-lg┬╖transition-all",
+┬╖activeView┬╖===┬╖'grid'┬
+╖?┬╖"bg-white┬╖dark:bg-sla
+te-800┬╖shadow-sm┬╖text-bl
+ue-600"┬╖:┬╖"text-slate-40
+0")}` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖className={c
+n(ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖'p-1.5┬╖rounded
+-lg┬╖transition-all',ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖activeView┬╖===┬╖'grid
+'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'bg-white
+┬╖dark:bg-slate-800┬╖shado
+w-sm┬╖text-blue-600'ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖:┬╖'text-slate-400'
+`  prettier/prettier
+32:15  Error: Replace `>` 
+with `)}`  
+prettier/prettier
+33:11  Error: Insert `┬╖┬╖
+>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+34:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+35:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<d
+iv┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖<div`  
+prettier/prettier
+36:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖className={cn("p-1.5┬╖ro
+unded-lg┬╖transition-all",
+┬╖activeView┬╖===┬╖'list'┬
+╖?┬╖"bg-white┬╖dark:bg-sla
+te-800┬╖shadow-sm┬╖text-bl
+ue-600"┬╖:┬╖"text-slate-40
+0")}` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖className={c
+n(ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖'p-1.5┬╖rounded
+-lg┬╖transition-all',ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖activeView┬╖===┬╖'list
+'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'bg-white
+┬╖dark:bg-slate-800┬╖shado
+w-sm┬╖text-blue-600'ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖:┬╖'text-slate-400'
+`  prettier/prettier
+37:15  Error: Replace `>` 
+with `)}`  
+prettier/prettier
+38:3  Error: Insert `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ`  
+prettier/prettier
+39:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+40:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+41:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+42:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+43:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+44:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+50:9  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+51:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+52:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+53:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+54:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+55:11  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+56:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<h
+2┬╖className="text-2xl┬╖fo
+nt-black┬╖text-slate-900┬╖
+dark:text-white┬╖mb-2">No┬
+╖Active┬╖Task┬╖Telemetry` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+<h2┬╖className="text-2xl┬╖
+font-black┬╖text-slate-900
+┬╖dark:text-white┬╖mb-2">Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+No┬╖Active┬╖Task┬╖Telemetr
+yΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+57:11  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+58:13  Error: Replace `┬╖┬
+╖┬╖┬╖Your┬╖universal┬╖work
+list┬╖will┬╖populate┬╖here
+┬╖once┬╖you┬╖are┬╖assigned
+` with `Your┬╖universal┬╖w
+orklist┬╖will┬╖populate┬╖h
+ere┬╖once┬╖you┬╖are┬╖assig
+nedΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+59:11  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+60:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+61:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+62:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+63:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+64:13  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+65:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+66:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+67:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+68:11  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+69:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+73:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+74:11  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+75:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+76:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖<h3┬╖className="text-sm┬
+╖font-black┬╖uppercase┬╖tr
+acking-widest┬╖text-slate-
+500">Scheduled┬╖Priorities
+` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖<h3┬╖className="text
+-sm┬╖font-black┬╖uppercase
+┬╖tracking-widest┬╖text-sl
+ate-500">ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖Scheduled┬╖P
+rioritiesΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+77:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+78:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+79:13  Error: Replace `┬╖┬
+╖┬╖┬╖<p┬╖className="text-x
+s┬╖font-bold┬╖text-slate-4
+00┬╖uppercase┬╖tracking-ti
+ghter">Timeline┬╖Initializ
+ation┬╖Pending` with `<p┬╖
+className="text-xs┬╖font-b
+old┬╖text-slate-400┬╖upper
+case┬╖tracking-tighter">ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖Timeline┬╖Initializatio
+n┬╖PendingΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+80:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+81:9  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+82:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+83:11  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+84:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+85:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖<h3┬╖className="text-sm┬
+╖font-black┬╖uppercase┬╖tr
+acking-widest┬╖text-slate-
+500">High┬╖Risk┬╖Markers` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖<h3┬╖className="text-s
+m┬╖font-black┬╖uppercase┬╖
+tracking-widest┬╖text-slat
+e-500">ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖High┬╖Risk┬╖Ma
+rkersΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖`  prettier/prettier
+86:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+87:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+88:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖<p┬╖className="text-xs┬╖
+font-bold┬╖text-slate-400┬
+╖uppercase┬╖tracking-tight
+er">No┬╖Critical┬╖Risks┬╖I
+dentified` with `┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<p┬╖classNa
+me="text-xs┬╖font-bold┬╖te
+xt-slate-400┬╖uppercase┬╖t
+racking-tighter">ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖No┬╖
+Critical┬╖Risks┬╖Identifie
+dΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+89:1  Error: Delete 
+`┬╖┬╖┬╖`  
+prettier/prettier
+90:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+
+./src/app/manifest.ts
+9:8  Error: Replace `┬╖src
+:┬╖'/icon-192x192.png',┬╖s
+izes:┬╖'192x192',┬╖type:┬╖
+'image/png',┬╖purpose:┬╖'a
+ny'` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖src:┬╖'/icon-192x192.p
+ng',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖siz
+es:┬╖'192x192',ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖type:┬╖'image/png'
+,ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖purpos
+e:┬╖'any',ΓÅÄ┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+10:8  Error: Replace `┬╖sr
+c:┬╖'/icon-512x512.png',┬╖
+sizes:┬╖'512x512',┬╖type:┬
+╖'image/png',┬╖purpose:┬╖'
+any'` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖src:┬╖'/icon-512x512.
+png',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖si
+zes:┬╖'512x512',ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖type:┬╖'image/png
+',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖purpo
+se:┬╖'any',ΓÅÄ┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+
+./src/app/organizations/ne
+w/page.tsx
+5:3  Error: Delete `┬╖`  
+prettier/prettier
+6:57  Error: Delete `┬╖`  
+prettier/prettier
+
+./src/components/audit/Jso
+nDiff.tsx
+11:13  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+12:13  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/cases/Act
+ionPanel.tsx
+46:22  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+54:31  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+83:43  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+89:24  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+106:33  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+108:26  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+118:24  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/cases/Cas
+eFieldGrid.tsx
+40:40  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+63:26  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+71:24  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+185:42  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+196:40  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/cases/Cas
+eSlaBanner.tsx
+48:36  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/cases/Rej
+ectionModal.tsx
+43:40  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/dashboard
+/DashboardHeader.tsx
+198:34  Error: Replace 
+`┬╖activeOrgSlug┬╖&&` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖activeOrgSl
+ug┬╖&&ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+199:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+200:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+201:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+202:19  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+203:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖` with `┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+204:17  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+205:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+
+./src/components/dashboard
+/OrgSwitcher.tsx
+63:66  Error: Replace `{ac
+tiveOrg?.name┬╖??┬╖'Select
+┬╖Org'}` with `ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖{activeOrg?.na
+me┬╖??┬╖'Select┬╖Org'}ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+106:81  Error: Replace 
+`{org.name}` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖{org.name}ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+
+./src/components/dashboard
+/ProjectSwitcher.tsx
+40:7  Warning: Unexpected 
+console statement.  
+no-console
+56:22  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+125:83  Error: Replace 
+`{project.name}` with `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖{project.nam
+e}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/components/landing/F
+ooter.tsx
+24:81  Error: Insert `ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+33:95  Error: Replace 
+`Product` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Produ
+ctΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+35:17  Error: Replace `┬╖h
+ref="#features"┬╖className
+="text-sm┬╖font-medium┬╖te
+xt-slate-500┬╖hover:text-b
+lue-600┬╖transition-colors
+">Features` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖href="#features"ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+className="text-sm┬╖font-m
+edium┬╖text-slate-500┬╖hov
+er:text-blue-600┬╖transiti
+on-colors"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖F
+eaturesΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+36:17  Error: Replace `┬╖h
+ref="#how-it-works"┬╖class
+Name="text-sm┬╖font-medium
+┬╖text-slate-500┬╖hover:te
+xt-blue-600┬╖transition-co
+lors">How┬╖it┬╖Works` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖href="#how-
+it-works"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classNam
+e="text-sm┬╖font-medium┬╖t
+ext-slate-500┬╖hover:text-
+blue-600┬╖transition-color
+s"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖How┬╖it┬╖
+WorksΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+37:17  Error: Replace `┬╖h
+ref="#pricing"┬╖className=
+"text-sm┬╖font-medium┬╖tex
+t-slate-500┬╖hover:text-bl
+ue-600┬╖transition-colors"
+>Pricing` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖h
+ref="#pricing"ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖cla
+ssName="text-sm┬╖font-medi
+um┬╖text-slate-500┬╖hover:
+text-blue-600┬╖transition-
+colors"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Pric
+ingΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+38:20  Error: Replace `┬╖h
+ref="/changelog"┬╖classNam
+e="text-sm┬╖font-medium┬╖t
+ext-slate-500┬╖hover:text-
+blue-600┬╖transition-color
+s">Changelog` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖href="/changelog"ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖className="text-sm┬╖fon
+t-medium┬╖text-slate-500┬╖
+hover:text-blue-600┬╖trans
+ition-colors"ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖ChangelogΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+44:95  Error: Replace 
+`Company` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Compa
+nyΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+46:20  Error: Replace `┬╖h
+ref="/about"┬╖className="t
+ext-sm┬╖font-medium┬╖text-
+slate-500┬╖hover:text-blue
+-600┬╖transition-colors">A
+bout` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖href=
+"/about"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖className
+="text-sm┬╖font-medium┬╖te
+xt-slate-500┬╖hover:text-b
+lue-600┬╖transition-colors
+"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖AboutΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+47:20  Error: Replace `┬╖h
+ref="/security"┬╖className
+="text-sm┬╖font-medium┬╖te
+xt-slate-500┬╖hover:text-b
+lue-600┬╖transition-colors
+">Security` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖href="/security"ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+className="text-sm┬╖font-m
+edium┬╖text-slate-500┬╖hov
+er:text-blue-600┬╖transiti
+on-colors"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖S
+ecurityΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+48:20  Error: Replace `┬╖h
+ref="/privacy"┬╖className=
+"text-sm┬╖font-medium┬╖tex
+t-slate-500┬╖hover:text-bl
+ue-600┬╖transition-colors"
+>Privacy┬╖Policy` with `ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖href="/privacy"ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖className="text-sm┬╖f
+ont-medium┬╖text-slate-500
+┬╖hover:text-blue-600┬╖tra
+nsition-colors"ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖Privacy┬╖PolicyΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+49:20  Error: Replace `┬╖h
+ref="/terms"┬╖className="t
+ext-sm┬╖font-medium┬╖text-
+slate-500┬╖hover:text-blue
+-600┬╖transition-colors">T
+erms┬╖of┬╖Service` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖href="/terms"ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖className="text-sm┬╖fo
+nt-medium┬╖text-slate-500┬
+╖hover:text-blue-600┬╖tran
+sition-colors"ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖Terms┬╖of┬╖ServiceΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+55:95  Error: Replace 
+`Developers` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖De
+velopersΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+57:20  Error: Replace `┬╖h
+ref="/docs"┬╖className="te
+xt-sm┬╖font-medium┬╖text-s
+late-500┬╖hover:text-blue-
+600┬╖transition-colors">AP
+I┬╖Docs` with `ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖hr
+ef="/docs"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classNa
+me="text-sm┬╖font-medium┬╖
+text-slate-500┬╖hover:text
+-blue-600┬╖transition-colo
+rs"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖API┬╖Doc
+sΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖`  prettier/prettier
+58:20  Error: Replace `┬╖h
+ref="/status"┬╖className="
+text-sm┬╖font-medium┬╖text
+-slate-500┬╖hover:text-blu
+e-600┬╖transition-colors">
+Status` with `ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖hre
+f="/status"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classN
+ame="text-sm┬╖font-medium┬
+╖text-slate-500┬╖hover:tex
+t-blue-600┬╖transition-col
+ors"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖StatusΓ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+59:17  Error: Replace `┬╖h
+ref="#request-demo"┬╖class
+Name="text-sm┬╖font-medium
+┬╖text-slate-500┬╖hover:te
+xt-blue-600┬╖transition-co
+lors">Contact┬╖Support` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖href="#requ
+est-demo"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classNam
+e="text-sm┬╖font-medium┬╖t
+ext-slate-500┬╖hover:text-
+blue-600┬╖transition-color
+s"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Contact┬╖
+SupportΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+60:20  Error: Replace `┬╖h
+ref="https://github.com"┬╖
+className="text-sm┬╖font-m
+edium┬╖text-slate-500┬╖hov
+er:text-blue-600┬╖transiti
+on-colors">GitHub` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖href="https://gith
+ub.com"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖className=
+"text-sm┬╖font-medium┬╖tex
+t-slate-500┬╖hover:text-bl
+ue-600┬╖transition-colors"
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖GitHubΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+70:13  Error: Delete `┬╖` 
+ prettier/prettier
+71:1  Error: Replace `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<spa
+n┬╖className="text-[10px]┬
+╖font-black┬╖uppercase┬╖tr
+acking-widest┬╖text-slate-
+900">System┬╖Status:┬╖Oper
+ational` with `┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖<span┬╖classN
+ame="text-[10px]┬╖font-bla
+ck┬╖uppercase┬╖tracking-wi
+dest┬╖text-slate-900">ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖System┬╖Status:┬╖Operatio
+nalΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+
+./src/components/landing/H
+ero.tsx
+15:13  Error: Delete `┬╖` 
+ prettier/prettier
+19:29  Error: Insert `ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+43:80  Error: Replace `┬╖m
+aintain┬╖a┬╖tamper-proof┬╖
+audit┬╖chain.┬╖ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Bu
+ilt┬╖for┬╖scale,┬╖verified
+` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖maintain┬
+╖a┬╖tamper-proof┬╖audit┬╖c
+hain.┬╖Built┬╖for┬╖scale,┬
+╖verifiedΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+68:70  Error: Replace 
+`10,000+` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖10,000+ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+69:85  Error: Replace 
+`Tasks┬╖Tracked` with `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖Tasks┬╖Track
+edΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+73:70  Error: Replace 
+`99.9%` with `ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖99.9%ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+74:85  Error: Replace 
+`Uptime┬╖SLA` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖Uptime┬╖SLAΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+78:70  Error: Replace 
+`&lt;2s` with `ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖&lt;2sΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+79:85  Error: Replace 
+`Avg.┬╖API┬╖Response` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Avg
+.┬╖API┬╖ResponseΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+89:23  Error: Delete `┬╖` 
+ prettier/prettier
+90:58  Error: Delete `┬╖` 
+ prettier/prettier
+91:54  Error: Delete `┬╖` 
+ prettier/prettier
+92:30  Error: Delete `┬╖` 
+ prettier/prettier
+99:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+107:115  Error: Replace 
+`Identity┬╖Verified` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖Iden
+tity┬╖VerifiedΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖`  prettier/prettier
+108:90  Error: Replace `Fo
+rensic┬╖ID┬╖Match:┬╖99.8%`
+ with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖Forensic┬╖ID┬╖Match:┬╖99
+.8%ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+121:42  Error: Replace 
+`i` with `(i)`  
+prettier/prettier
+122:27  Error: Replace `┬╖
+key={i}┬╖className="w-6┬╖h
+-1┬╖bg-slate-100┬╖rounded-
+full┬╖overflow-hidden"` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖key={i}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖className="w-6┬
+╖h-1┬╖bg-slate-100┬╖rounde
+d-full┬╖overflow-hidden"ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+123:29  Error: Replace `┬╖
+className="w-full┬╖h-full┬
+╖bg-blue-600┬╖animate-grow
+"┬╖style={{┬╖animationDela
+y:┬╖`${i┬╖*┬╖0.4}s`┬╖}}` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖className="w-full
+┬╖h-full┬╖bg-blue-600┬╖ani
+mate-grow"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖style={{┬╖ani
+mationDelay:┬╖`${i┬╖*┬╖0.4
+}s`┬╖}}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+
+./src/components/landing/P
+ricing.tsx
+13:16  Error: Replace `'Up
+┬╖to┬╖10┬╖field┬╖agents',┬
+╖'Basic┬╖identity┬╖verific
+ation',┬╖'Audit┬╖log┬╖basi
+cs',┬╖'Standard┬╖support'`
+ with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'Up┬
+╖to┬╖10┬╖field┬╖agents',ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖'Basic┬╖ident
+ity┬╖verification',ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖'Audit┬╖log┬╖basic
+s',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'Standar
+d┬╖support',ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+21:16  Error: Replace `'Un
+limited┬╖projects/KYC',┬╖'
+Real-time┬╖PartyKit┬╖sync'
+,┬╖'Advanced┬╖audit┬╖chain
+ing',┬╖'Priority┬╖support'
+` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'Un
+limited┬╖projects/KYC',ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖'Real-time┬╖Pa
+rtyKit┬╖sync',ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖'Advanced┬╖audit┬╖chain
+ing',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'Prior
+ity┬╖support',ΓÅÄ┬╖┬╖┬╖┬╖`
+  prettier/prettier
+29:16  Error: Replace `'SS
+O┬╖&┬╖SAML┬╖integration',┬
+╖'SLA┬╖guarantees',┬╖'Dedi
+cated┬╖support',┬╖'Custom┬
+╖report┬╖exports'` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'SSO┬╖&┬╖SAM
+L┬╖integration',ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖'SLA┬╖guarantees',ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖'Dedicated┬╖su
+pport',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖'Cus
+tom┬╖report┬╖exports',ΓÅÄ┬
+╖┬╖┬╖┬╖`  
+prettier/prettier
+37:13  Error: Replace `┬╖i
+d="pricing"┬╖className="bg
+-white┬╖py-32┬╖lg:py-48┬╖s
+croll-mt-20┬╖overflow-hidd
+en"` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖
+id="pricing"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖className="bg-white┬╖py-3
+2┬╖lg:py-48┬╖scroll-mt-20┬
+╖overflow-hidden"ΓÅÄ┬╖┬╖┬╖
+┬╖`  prettier/prettier
+50:26  Error: Delete `┬╖` 
+ prettier/prettier
+52:22  Error: Replace 
+`idx┬╖*┬╖100` with 
+`(idx┬╖*┬╖100)`  
+prettier/prettier
+52:35  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+55:19  Error: Delete `┬╖` 
+ prettier/prettier
+57:31  Error: Delete `┬╖` 
+ prettier/prettier
+58:85  Error: Delete `┬╖` 
+ prettier/prettier
+67:1  Error: Delete `┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖`  prettier/prettier
+69:73  Error: Replace 
+`{tier.name}` with `ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖{tier.name}ΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+71:74  Error: Replace 
+`{tier.price}` with `ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖{tier.pric
+e}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+72:48  Error: Replace `<sp
+an┬╖className="text-slate-
+400┬╖font-bold">/org</span
+>` with `(ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖<span┬╖className="tex
+t-slate-400┬╖font-bold">/o
+rg</span>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+)`  prettier/prettier
+82:35  Error: Replace `┬╖s
+ize={18}┬╖className="text-
+blue-600┬╖shrink-0┬╖mt-0.5
+"` with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖size={18}ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖className=
+"text-blue-600┬╖shrink-0┬╖
+mt-0.5"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+`  prettier/prettier
+83:76  Error: Replace 
+`{feature}` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖{feature}
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+89:25  Error: Replace `tie
+r.cta┬╖===┬╖'Contact┬╖Sale
+s'┬╖?┬╖'#request-demo'┬╖:┬
+╖ROUTES.REGISTER` with `ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖tier.cta┬╖=
+==┬╖'Contact┬╖Sales'ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖'#reques
+t-demo'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖:┬╖ROUTES.REGISTERΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/components/providers
+/AuthStoreInitializer.tsx
+41:5  Warning: Unexpected 
+console statement.  
+no-console
+41:19  Error: Replace `'[A
+uthStore:Initializer]┬╖See
+ding┬╖store┬╖with┬╖server-
+fetched┬╖data',` with `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖'[AuthStore:In
+itializer]┬╖Seeding┬╖store
+┬╖with┬╖server-fetched┬╖da
+ta',ΓÅÄ┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+42:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+43:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+44:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+45:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+46:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+47:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+48:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+49:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+50:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+51:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+56:5  Warning: Unexpected 
+console statement.  
+no-console
+56:19  Error: Replace `'[A
+uthStore:Initializer]┬╖Ski
+pping┬╖-┬╖Already┬╖initial
+ized┬╖during┬╖this┬╖render
+┬╖cycle',` with `ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖'[AuthStore:Initiali
+zer]┬╖Skipping┬╖-┬╖Already
+┬╖initialized┬╖during┬╖thi
+s┬╖render┬╖cycle',ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖`  prettier/prettier
+57:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+58:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+59:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/components/providers
+/ThemeProvider.tsx
+22:74  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/components/tasks/Ass
+ignTaskModal.tsx
+49:63  Error: Replace 
+`{m.user.fullName}` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖{m.user.fullName}
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖`  prettier/prettier
+
+./src/components/tasks/Bul
+kUploadWizard.tsx
+269:24  Error: Replace `ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖onClick={handle
+Close}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖classNa
+me="btn┬╖btn-primary┬╖px-8
+"ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖` with `┬╖onClic
+k={handleClose}┬╖className
+="btn┬╖btn-primary┬╖px-8"`
+  prettier/prettier
+
+./src/components/tasks/Tas
+kDetailSlideOver.tsx
+99:37  Warning: Forbidden 
+non-null assertion.  @type
+script-eslint/no-non-null-
+assertion
+139:53  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+151:56  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+243:69  Error: Replace 
+`Loading┬╖taskΓÇª` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖Loading┬╖taskΓÇªΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖`  prettier/prettier
+311:25  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+327:61  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/tasks/Tas
+ksBoard.tsx
+125:50  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/tasks/Tas
+ksTable.tsx
+130:20  Error: Replace `<C
+heckCircle2┬╖className="h-
+4┬╖w-4┬╖text-[var(--color-
+positive-base)]"┬╖/>` 
+with `(ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖<CheckCircle2┬
+╖className="h-4┬╖w-4┬╖text
+-[var(--color-positive-bas
+e)]"┬╖/>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖)`  
+prettier/prettier
+133:20  Error: Replace `<C
+lock┬╖className="h-4┬╖w-4┬
+╖text-[var(--color-accent-
+base)]"┬╖/>` with `(ΓÅÄ┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖<
+Clock┬╖className="h-4┬╖w-4
+┬╖text-[var(--color-accent
+-base)]"┬╖/>ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖)`  
+prettier/prettier
+136:20  Error: Replace `<C
+lock┬╖className="h-4┬╖w-4┬
+╖text-[var(--color-warning
+-base)]"┬╖/>` with `(ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+<Clock┬╖className="h-4┬╖w-
+4┬╖text-[var(--color-warni
+ng-base)]"┬╖/>ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖)`  
+prettier/prettier
+256:31  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+263:31  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/components/workspace
+/CommandRail.tsx
+68:12  Error: Delete `┬╖` 
+ prettier/prettier
+
+./src/hooks/useAuth.ts
+41:5  Warning: Unexpected 
+console statement.  
+no-console
+43:19  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+46:5  Warning: Unexpected 
+console statement.  
+no-console
+53:19  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+59:7  Warning: Unexpected 
+console statement.  
+no-console
+
+./src/hooks/useCaseHub.ts
+95:15  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/hooks/useNotificatio
+ns.ts
+19:28  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+38:60  Error: Replace `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'/notifica
+tions'ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖` 
+with `'/notifications'`  
+prettier/prettier
+
+./src/hooks/useRBAC.ts
+30:33  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+36:34  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+47:34  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/hooks/useRealtime.ts
+43:20  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+76:7  Warning: Unexpected 
+console statement.  
+no-console
+92:7  Warning: Unexpected 
+console statement.  
+no-console
+110:9  Warning: 
+Unexpected console 
+statement.  no-console
+119:9  Warning: 
+Unexpected console 
+statement.  no-console
+148:33  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+155:44  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+156:9  Warning: 
+Unexpected console 
+statement.  no-console
+166:9  Warning: 
+Unexpected console 
+statement.  no-console
+181:16  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+186:3  Warning: 
+Unexpected console 
+statement.  no-console
+
+./src/hooks/useTasks.ts
+62:19  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/lib/api.ts
+110:5  Warning: 
+Unexpected console 
+statement.  no-console
+110:28  Error: Replace ``[
+API:Initiate]┬╖${config.me
+thod?.toUpperCase()}┬╖${co
+nfig.url}`` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖`[API:Initiate]┬╖${
+config.method?.toUpperCase
+()}┬╖${config.url}`ΓÅÄ┬╖┬╖
+┬╖┬╖`  prettier/prettier
+111:5  Warning: 
+Unexpected console 
+statement.  no-console
+118:5  Warning: 
+Unexpected console 
+statement.  no-console
+119:5  Warning: 
+Unexpected console 
+statement.  no-console
+134:51  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+140:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+147:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+169:18  Error: Replace ``[
+API:Request]┬╖${config.met
+hod?.toUpperCase()}┬╖${con
+fig.url}`,` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖`[API:Request]┬╖${c
+onfig.method?.toUpperCase(
+)}┬╖${config.url}`,ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖`  prettier/prettier
+170:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+171:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+172:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+173:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+174:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+175:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+176:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+177:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+178:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+179:9  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+180:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+181:11  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+182:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+183:13  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+184:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+185:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+186:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+187:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+188:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+189:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+190:9  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+191:9  Error: Replace 
+`userActiveOrgId:` with `┬
+╖┬╖userActiveOrgId:ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+192:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+193:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+194:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+195:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+196:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+197:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+198:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+199:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+200:9  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+201:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖typeof┬╖w
+indow┬╖!==┬╖'undefined'┬╖?
+┬╖window.navigator.userAge
+nt` with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖typeof┬╖window┬╖!=
+=┬╖'undefined'ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖wind
+ow.navigator.userAgentΓÅÄ┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`
+  prettier/prettier
+202:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖Referer:` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+Referer:ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖┬╖┬╖`  
+prettier/prettier
+203:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+204:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+245:18  Error: Replace ``[
+API:Success]┬╖${response.s
+tatus}┬╖${response.config.
+method?.toUpperCase()}┬╖${
+response.config.url}`,` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`[API
+:Success]┬╖${response.stat
+us}┬╖${response.config.met
+hod?.toUpperCase()}┬╖${res
+ponse.config.url}`,ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖`  prettier/prettier
+246:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+247:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+248:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+249:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+250:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+251:7  Error: Replace `dat
+aSummary:┬╖typeof┬╖respons
+e.data┬╖===┬╖'object'┬╖?┬╖
+Object.keys(response.data┬
+╖||┬╖{})` with `┬╖┬╖dataSu
+mmary:ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬
+╖┬╖typeof┬╖response.data┬╖
+===┬╖'object'ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖Object.ke
+ys(response.data┬╖||┬╖{})Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+ prettier/prettier
+252:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+253:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+273:18  Error: Replace ``[
+API:Error]┬╖${statusCode}┬
+╖${error.config?.method?.t
+oUpperCase()}┬╖${error.con
+fig?.url}`,` with `ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖`[API:Error]┬╖${st
+atusCode}┬╖${error.config?
+.method?.toUpperCase()}┬╖$
+{error.config?.url}`,ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+274:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+275:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+276:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+277:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+278:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` with 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+279:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+280:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+281:9  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+282:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+283:7  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+284:5  Error: Replace `}` 
+with `┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+293:40  Error: Replace `┬╖
+?┬╖(error.config.baseURL┬╖
+?┬╖`${error.config.baseURL
+}${error.config.url}`┬╖:┬╖
+error.config.url)` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖error
+.config.baseURLΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖?┬╖`${error.co
+nfig.baseURL}${error.confi
+g.url}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖:┬╖error.config.urlΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+374:28  Error: Delete `ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+376:13  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+377:1  Error: Delete 
+`┬╖┬╖`  prettier/prettier
+379:23  Error: Replace `'[
+Axios:401]┬╖[EP-AUTH-FAIL]
+┬╖Redirecting┬╖to┬╖session
+-expired',` with `ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖'[Axios
+:401]┬╖[EP-AUTH-FAIL]┬╖Red
+irecting┬╖to┬╖session-expi
+red',ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+380:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+381:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+382:1  Error: Replace `┬╖┬
+╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖`  
+prettier/prettier
+383:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+384:13  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+385:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖}` 
+with `┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+426:35  Error: Replace `┬╖
+?┬╖(error.config.baseURL┬╖
+?┬╖`${error.config.baseURL
+}${error.config.url}`┬╖:┬╖
+error.config.url)` with `Γ
+ÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖e
+rror.config.baseURLΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖?┬╖`${
+error.config.baseURL}${err
+or.config.url}`ΓÅÄ┬╖┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖:┬╖error.c
+onfig.urlΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖┬╖`  prettier/prettier
+441:17  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+684:18  Error: Replace 
+`file:┬╖File` with `ΓÅÄ┬╖┬
+╖┬╖┬╖file:┬╖FileΓÅÄ┬╖┬╖`  
+prettier/prettier
+781:39  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+782:32  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+788:50  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+790:40  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+806:27  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+814:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+816:75  Error: Delete 
+`┬╖`  prettier/prettier
+818:59  Error: Replace `/\
+/api\/v1\/api\/v1/,┬╖'/api
+/v1');` with `ΓÅÄ┬╖┬╖┬╖┬╖┬
+╖┬╖/\/api\/v1\/api\/v1/,ΓÅ
+Ä┬╖┬╖┬╖┬╖┬╖┬╖'/api/v1'`  
+prettier/prettier
+819:5  Error: Insert 
+`);ΓÅÄ`  prettier/prettier
+820:5  Warning: 
+Unexpected console 
+statement.  no-console
+826:1  Error: Delete 
+`┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+./src/lib/query-client.ts
+53:52  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+60:52  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/lib/query-keys.ts
+48:35  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/lib/utils.ts
+247:37  Warning: 
+Forbidden non-null 
+assertion.  @typescript-es
+lint/no-non-null-assertion
+247:51  Warning: 
+Forbidden non-null 
+assertion.  @typescript-es
+lint/no-non-null-assertion
+256:46  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+256:56  Warning: 
+Unexpected any. Specify a 
+different type.  @typescri
+pt-eslint/no-explicit-any
+
+./src/middleware.ts
+148:17  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-1.0.2:┬╖ENV┬╖-┬╖jwt=${j
+wtPresent},┬╖api=${apiUrl}
+,┬╖app=${appUrl},┬╖env=${n
+odeEnv}`` with `ΓÅÄ┬╖┬╖┬╖┬
+╖┬╖┬╖`[MW:Edge]┬╖[${reques
+tId}]┬╖EP-1.0.2:┬╖ENV┬╖-┬╖
+jwt=${jwtPresent},┬╖api=${
+apiUrl},┬╖app=${appUrl},┬╖
+env=${nodeEnv}`ΓÅÄ┬╖┬╖┬╖┬╖
+`  prettier/prettier
+170:19  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-0.1.1:┬╖Header┬╖length:
+┬╖${headerLength}`` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[MW:Ed
+ge]┬╖[${requestId}]┬╖EP-0.
+1.1:┬╖Header┬╖length:┬╖${h
+eaderLength}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+181:21  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-0.1.3:┬╖Names:┬╖${cooki
+eScan.join(',┬╖')}`` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-0.1.3:┬╖Names:┬╖${cooki
+eScan.join(',┬╖')}`ΓÅÄ┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+196:17  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-2:┬╖Single┬╖cookies:┬╖a
+ccess=${!!accessToken},┬╖r
+efresh=${!!refreshToken},┬
+╖user=${!!userId}`` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`[MW:Edge]┬
+╖[${requestId}]┬╖EP-2:┬╖Si
+ngle┬╖cookies:┬╖access=${!
+!accessToken},┬╖refresh=${
+!!refreshToken},┬╖user=${!
+!userId}`ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+204:17  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-3:┬╖Logic┬╖Match┬╖-┬╖pr
+otected=${isProtectedRoute
+},┬╖auth=${isAuthRoute},┬╖
+semi=${isSemiPublic}`` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖`[MW:
+Edge]┬╖[${requestId}]┬╖EP-
+3:┬╖Logic┬╖Match┬╖-┬╖prote
+cted=${isProtectedRoute},┬
+╖auth=${isAuthRoute},┬╖sem
+i=${isSemiPublic}`ΓÅÄ┬╖┬╖┬
+╖┬╖`  prettier/prettier
+224:19  Error: Replace ``[
+MW:Edge]┬╖[${requestId}]┬╖
+EP-5:┬╖getAll()┬╖end,┬╖cou
+nt=${cookieCount}`` with `
+ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖`[MW:Ed
+ge]┬╖[${requestId}]┬╖EP-5:
+┬╖getAll()┬╖end,┬╖count=${
+cookieCount}`ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+357:9  Error: Replace `isA
+uthRoute┬╖&&┬╖isAuthentica
+ted┬╖&&┬╖!forceLogout┬╖&&┬
+╖reason┬╖!==┬╖'expired'` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖isAut
+hRoute┬╖&&ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖i
+sAuthenticated┬╖&&ΓÅÄ┬╖┬╖┬
+╖┬╖┬╖┬╖!forceLogout┬╖&&ΓÅÄ
+┬╖┬╖┬╖┬╖┬╖┬╖reason┬╖!==┬╖'
+expired'ΓÅÄ┬╖┬╖┬╖┬╖`  
+prettier/prettier
+358:24  Error: Replace `┬╖
+request.nextUrl.searchPara
+ms.get('redirect')┬╖||┬╖` 
+with `ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖r
+equest.nextUrl.searchParam
+s.get('redirect')┬╖||`  
+prettier/prettier
+359:1  Error: Delete `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+
+./src/services/auth.servic
+e.ts
+71:19  Warning: Forbidden 
+non-null assertion.  @type
+script-eslint/no-non-null-
+assertion
+81:19  Warning: Forbidden 
+non-null assertion.  @type
+script-eslint/no-non-null-
+assertion
+102:35  Warning: 
+Forbidden non-null 
+assertion.  @typescript-es
+lint/no-non-null-assertion
+111:14  Warning: 
+Forbidden non-null 
+assertion.  @typescript-es
+lint/no-non-null-assertion
+
+./src/store/auth.ts
+49:7  Warning: Unexpected 
+console statement.  
+no-console
+69:5  Warning: Unexpected 
+console statement.  
+no-console
+86:5  Warning: Unexpected 
+console statement.  
+no-console
+86:50  Error: Delete `┬╖` 
+ prettier/prettier
+87:23  Error: Delete `┬╖` 
+ prettier/prettier
+105:1  Error: Replace 
+`┬╖┬╖┬╖┬╖` with 
+`ΓÅÄ┬╖┬╖┬╖┬╖if┬╖(`  
+prettier/prettier
+106:5  Error: Replace `if┬
+╖(newActiveOrgId┬╖&&┬╖newA
+ctiveOrgId┬╖!==┬╖currentUs
+er?.activeOrganizationId` 
+with `┬╖┬╖newActiveOrgId┬╖
+&&ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖newActive
+OrgId┬╖!==┬╖currentUser?.a
+ctiveOrganizationIdΓÅÄ┬╖┬╖
+┬╖┬╖`  prettier/prettier
+107:7  Warning: 
+Unexpected console 
+statement.  no-console
+107:20  Error: Replace ``[
+AuthStore:Org]┬╖CHANGING┬╖
+ACTIVE┬╖ORG:┬╖${currentUse
+r?.activeOrganizationId┬╖?
+?┬╖'NONE'}┬╖->┬╖${newActiv
+eOrgId}`,` with `ΓÅÄ┬╖┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖`[AuthStore:Org]
+┬╖CHANGING┬╖ACTIVE┬╖ORG:┬╖
+${currentUser?.activeOrgan
+izationId┬╖??┬╖'NONE'}┬╖->
+┬╖${newActiveOrgId}`,ΓÅÄ┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+108:1  Error: Insert 
+`┬╖┬╖`  prettier/prettier
+109:9  Error: Replace `tim
+estamp:┬╖new┬╖Date().toISO
+String()` with `┬╖┬╖timest
+amp:┬╖new┬╖Date().toISOStr
+ing(),`  prettier/prettier
+110:1  Error: Replace 
+`┬╖┬╖┬╖┬╖┬╖┬╖}` with `┬╖┬╖
+┬╖┬╖┬╖┬╖┬╖┬╖}ΓÅÄ┬╖┬╖┬╖┬╖┬╖
+┬╖`  prettier/prettier
+113:5  Warning: 
+Unexpected console 
+statement.  no-console
+113:53  Error: Delete 
+`┬╖`  prettier/prettier
+116:22  Error: Insert 
+`ΓÅÄ┬╖┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+143:5  Warning: 
+Unexpected console 
+statement.  no-console
+152:1  Error: Delete 
+`┬╖┬╖┬╖┬╖┬╖┬╖`  
+prettier/prettier
+
+info  - Need to disable 
+some ESLint rules? Learn 
+more here: https://nextjs.
+org/docs/basic-features/es
+lint#disabling-rules
+npm error Lifecycle 
+script `lint` failed with 
+error:
+npm error code 1
+npm error path C:\Users\ma
+nso\OneDrive\Documents\Val
+idiant-v2\validiant-v2\app
+s\web
+npm error workspace 
+@validiant/web@2.0.0
+npm error location C:\User
+s\manso\OneDrive\Documents
+\Validiant-v2\validiant-v2
+\apps\web
+npm error command failed
+npm error command C:\WINDO
+WS\system32\cmd.exe /d /s 
+/c next lint

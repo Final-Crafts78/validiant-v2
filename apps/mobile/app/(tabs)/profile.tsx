@@ -11,15 +11,15 @@ import {
 import { theme } from '../../src/lib/theme';
 import { useAuthStore } from '../../src/store/auth';
 import { useWorkspaceStore } from '../../src/store/workspace';
-import { 
-  LogOut, 
-  Shield, 
-  Settings, 
-  Building2, 
-  Fingerprint, 
+import {
+  LogOut,
+  Shield,
+  Settings,
+  Building2,
+  Fingerprint,
   ChevronRight,
   User,
-  Bell
+  Bell,
 } from 'lucide-react-native';
 
 /**
@@ -28,18 +28,15 @@ import {
  * User account settings, organization context, and security preferences.
  */
 export default function ProfileScreen() {
-  const { user, logout, biometricEnabled, setBiometricEnabled } = useAuthStore();
+  const { user, logout, biometricEnabled, setBiometricEnabled } =
+    useAuthStore();
   const { activeOrgSlug } = useWorkspaceStore();
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', style: 'destructive', onPress: logout }
-      ]
-    );
+    Alert.alert('Logout', 'Are you sure you want to sign out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', style: 'destructive', onPress: logout },
+    ]);
   };
 
   return (
@@ -52,7 +49,9 @@ export default function ProfileScreen() {
           </Text>
         </View>
         <Text style={styles.userName}>{user?.fullName || 'User Name'}</Text>
-        <Text style={styles.userEmail}>{user?.email || 'user@example.com'}</Text>
+        <Text style={styles.userEmail}>
+          {user?.email || 'user@example.com'}
+        </Text>
       </View>
 
       <View style={styles.section}>
@@ -63,7 +62,9 @@ export default function ProfileScreen() {
               <Building2 size={20} color={theme.colors.slate[400]} />
               <View>
                 <Text style={styles.menuLabel}>Organization</Text>
-                <Text style={styles.menuValue}>{activeOrgSlug || 'Personal'}</Text>
+                <Text style={styles.menuValue}>
+                  {activeOrgSlug || 'Personal'}
+                </Text>
               </View>
             </View>
             <ChevronRight size={18} color={theme.colors.slate[300]} />
@@ -73,7 +74,9 @@ export default function ProfileScreen() {
               <Shield size={20} color={theme.colors.slate[400]} />
               <View>
                 <Text style={styles.menuLabel}>Access Role</Text>
-                <Text style={styles.menuValue}>{user?.role || 'Executive'}</Text>
+                <Text style={styles.menuValue}>
+                  {user?.role || 'Executive'}
+                </Text>
               </View>
             </View>
           </View>
@@ -91,7 +94,10 @@ export default function ProfileScreen() {
             <Switch
               value={biometricEnabled}
               onValueChange={setBiometricEnabled}
-              trackColor={{ false: theme.colors.slate[200], true: theme.colors.primary }}
+              trackColor={{
+                false: theme.colors.slate[200],
+                true: theme.colors.primary,
+              }}
               thumbColor={theme.colors.white}
             />
           </View>
@@ -106,10 +112,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section}>
-        <TouchableOpacity 
-          style={styles.logoutButton}
-          onPress={handleLogout}
-        >
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <LogOut size={20} color={theme.colors.rose[600]} />
           <Text style={styles.logoutText}>Sign Out</Text>
         </TouchableOpacity>
@@ -117,7 +120,9 @@ export default function ProfileScreen() {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Validiant Mobile v1.0.0</Text>
-        <Text style={styles.footerSub}>Secure Field Operations Environment</Text>
+        <Text style={styles.footerSub}>
+          Secure Field Operations Environment
+        </Text>
       </View>
     </ScrollView>
   );

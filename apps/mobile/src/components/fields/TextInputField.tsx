@@ -10,7 +10,13 @@ interface Props {
   secureTextEntry?: boolean;
 }
 
-export function TextInputField({ value, onChange, keyboardType, placeholder, secureTextEntry }: Props) {
+export function TextInputField({
+  value,
+  onChange,
+  keyboardType,
+  placeholder,
+  secureTextEntry,
+}: Props) {
   return (
     <TextInput
       style={styles.input}

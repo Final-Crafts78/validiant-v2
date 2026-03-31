@@ -58,23 +58,27 @@ export async function GET(request: Request) {
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
   // CRITICAL: Uses explicit overwrite method for multiple potential domain scopes
   // (.validiant.in and host-only) to ensure browser compliance.
-  
-  const isProd = process.env.NODE_ENV === 'production' || 
-                 process.env.NEXT_PUBLIC_APP_URL?.includes('validiant.in');
-                 
+
+  const isProd =
+    process.env.NODE_ENV === 'production' ||
+    process.env.NEXT_PUBLIC_APP_URL?.includes('validiant.in');
+
   const domainsToClear = [
-    COOKIE_OPTIONS.domain, 
-    undefined, 
-    isProd ? '.validiant.in' : undefined
+    COOKIE_OPTIONS.domain,
+    undefined,
+    isProd ? '.validiant.in' : undefined,
   ].filter((d, i, arr) => arr.indexOf(d) === i); // Unique domains
 
   const cookieNames = ['accessToken', 'refreshToken', 'user_id', 'oauth_state'];
 
-  console.warn('[SessionExpired] Starting multi-domain cookie clear (Finding 48)', {
-    domains: domainsToClear,
-    names: cookieNames,
-    timestamp: new Date().toISOString(),
-  });
+  console.warn(
+    '[SessionExpired] Starting multi-domain cookie clear (Finding 48)',
+    {
+      domains: domainsToClear,
+      names: cookieNames,
+      timestamp: new Date().toISOString(),
+    }
+  );
 
   for (const domain of domainsToClear) {
     for (const name of cookieNames) {
@@ -94,19 +98,20 @@ export async function GET(request: Request) {
 
   // Redirect back to login, preserving the intended destination if provided
   const loginUrl = new URL(ROUTES.LOGIN, request.url);
-  
+
   // Normalize redirect param (sometimes it's 'redirect', sometimes 'from')
   const redirectToVal = redirectTo || searchParams.get('from');
   if (redirectToVal && redirectToVal.startsWith('/')) {
     loginUrl.searchParams.set('redirect', redirectToVal);
   }
-  
+
   // Forward the reason and force flags to the login page to signal to middleware
   // CRITICAL: Middleware needs these to break redirection loops.
   const reasonVal = searchParams.get('reason') || 'expired';
   loginUrl.searchParams.set('reason', reasonVal);
-  
-  const forceVal = searchParams.get('force') || searchParams.get('forceLogout') || 'true';
+
+  const forceVal =
+    searchParams.get('force') || searchParams.get('forceLogout') || 'true';
   loginUrl.searchParams.set('forceLogout', forceVal);
 
   console.info('[SessionExpired] Propagating loop prevention flags', {
@@ -119,11 +124,11 @@ export async function GET(request: Request) {
 
   // DEBUG: Inspect the headers that will be sent to the browser
   const setCookieHeaders = response.headers.getSetCookie();
-  
+
   console.info('[SessionExpired] [EP-FINAL] Finalizing redirect', {
     target: loginUrl.toString(),
     setCookieCount: setCookieHeaders.length,
-    setCookieHeaders: setCookieHeaders.map(h => h.split(';')[0] + '; ...'), // Partial for security
+    setCookieHeaders: setCookieHeaders.map((h) => h.split(';')[0] + '; ...'), // Partial for security
     timestamp: new Date().toISOString(),
   });
 

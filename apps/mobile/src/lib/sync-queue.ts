@@ -41,7 +41,7 @@ class SyncQueueService {
     const queue = this.getQueue();
     queue.push(item);
     this.saveQueue(queue);
-    
+
     // Attempt processing if online (race condition protection)
     this.processQueue();
   }
@@ -52,7 +52,7 @@ class SyncQueueService {
 
   async processQueue(onProgress?: (current: number, total: number) => void) {
     if (this.isProcessing) return;
-    
+
     const queue = this.getQueue();
     if (queue.length === 0) return;
 
@@ -67,10 +67,10 @@ class SyncQueueService {
     for (const item of queue) {
       try {
         onProgress?.(processed + 1, total);
-        
+
         // 1. Handle file uploads if any
         const uploadedFiles: Record<string, string> = {};
-        
+
         for (const file of item.files) {
           // Obtain presigned URL
           const { data: presignedData } = await api.post('/storage/presign', {
@@ -83,7 +83,7 @@ class SyncQueueService {
           const { uploadUrl, key } = presignedData.data;
 
           // Perform native upload (using fetch for blob support in RN)
-          const blob = await fetch(file.uri).then(r => r.blob());
+          const blob = await fetch(file.uri).then((r) => r.blob());
           await fetch(uploadUrl, {
             method: 'PUT',
             body: blob,
@@ -104,7 +104,7 @@ class SyncQueueService {
         // 3. Remove from queue
         remainingItems.shift();
         this.saveQueue(remainingItems);
-        
+
         processed++;
         console.log(`[SyncQueue] Successfully synced item ${item.id}`);
       } catch (error) {

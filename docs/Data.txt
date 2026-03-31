@@ -1,0 +1,45 @@
+Task Creation & the Unassigned Pool
+Every task goes into the tasks table. The key field is status and assigned_to:
+
+Field	What it means
+Field	What it means
+title	The Case ID or task name
+client_name	Who the task is for
+pincode	6-digit location pincode
+map_url	A Google Maps link pasted by the admin
+latitude / longitude	Either entered manually or auto-extracted from the Maps URL
+status	Starts as "Unassigned" — this is what puts it in the Unassigned Pool
+assigned_to	null when unassigned; holds the employee's user ID when assigned
+assigned_date	Set to today's date at the moment of assignment
+notes	Any admin instructions
+completed_lat / completed_lng	Where the employee was when they marked it complete (GPS capture)
+completed_at / verified_at	Timestamps for completion and verification
+The Unassigned Pool is not a separate view or table. It is simply every task where status = "Unassigned". When the admin leaves the employee dropdown blank on the Assign Task form, the task goes in as status: "Unassigned" and assigned_to: null.
+
+the Assign Task form, two things happen simultaneously:
+
+If an employee is selected → status becomes "Pending", assigned_to is set to that employee's ID, and assigned_date is stamped today
+
+If no employee is selected → status stays "Unassigned", task goes to the pool
+
+From the Unassigned Pool, the admin can also pick any task and assign it to an employee later — this hits /api/tasks/:taskId/assign which does the same thing: sets assigned_to, flips status to "Pending", stamps the date.
+
+Reassigning a task (changing which employee it belongs to) works the same way but preserves "Completed" or "Verified" status if the task was already finished — it won't reset those terminal states.
+
+
+All Tasks
+The All Tasks view queries everything in the tasks table with no status filter, then joins against users to show the assigned employee's name. The columns shown in that view come from:
+
+Field displayed	Where it comes from
+Case ID / Title	tasks.title
+Client Name	tasks.client_name
+Assigned To	Resolved from users via tasks.assigned_to
+Pincode	tasks.pincode
+Status	tasks.status — Unassigned / Pending / In Progress / Completed / Verified
+Assigned Date	tasks.assigned_date
+Map	Whether tasks.map_url exists
+You can filter by status, by employee, and by pincode. The admin can edit, reassign, unassign (returns task to the Unassigned Pool), or delete any task from this view.
+
+Employee Side
+Employees only ever see their own tasks filtered to status IN ("Pending", "In Progress"). They can tap a task to see details and the Maps link, update status (Completed, Left Job, Not Picking, etc.), and when they mark it Completed, the app silently captures their GPS coordinates and stores them in completed_lat / completed_lng on the task record.
+

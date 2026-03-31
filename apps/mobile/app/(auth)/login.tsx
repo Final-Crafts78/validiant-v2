@@ -35,7 +35,9 @@ export default function LoginScreen() {
     try {
       await login(email, password);
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      const message =
+        error.response?.data?.message ||
+        'Login failed. Please check your credentials.';
       Alert.alert('Login Failed', message);
     } finally {
       setIsSubmitting(false);
@@ -58,7 +60,11 @@ export default function LoginScreen() {
 
         <View style={styles.form}>
           <View style={styles.inputGroup}>
-            <User size={20} color={theme.colors.slate[400]} style={styles.inputIcon} />
+            <User
+              size={20}
+              color={theme.colors.slate[400]}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Email address"
@@ -72,7 +78,11 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Lock size={20} color={theme.colors.slate[400]} style={styles.inputIcon} />
+            <Lock
+              size={20}
+              color={theme.colors.slate[400]}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Password"

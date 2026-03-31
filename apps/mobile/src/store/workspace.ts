@@ -5,7 +5,7 @@ import { storage } from '../lib/mmkv';
 interface WorkspaceState {
   activeOrgId: string | null;
   activeOrgSlug: string | null;
-  
+
   setActiveOrg: (id: string, slug: string) => void;
   clearWorkspace: () => void;
 }

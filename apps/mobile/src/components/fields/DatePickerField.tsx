@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Platform, View } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Platform,
+  View,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { theme } from '../../lib/theme';
 import { Calendar } from 'lucide-react-native';
@@ -23,12 +29,17 @@ export function DatePickerField({ value, onChange }: Props) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.pickerButton} 
+      <TouchableOpacity
+        style={styles.pickerButton}
         onPress={() => setShow(true)}
       >
         <Calendar size={18} color={theme.colors.slate[400]} />
-        <Text style={[styles.dateText, !value && { color: theme.colors.slate[400] }]}>
+        <Text
+          style={[
+            styles.dateText,
+            !value && { color: theme.colors.slate[400] },
+          ]}
+        >
           {value ? format(dateValue, 'PPP') : 'Select Date'}
         </Text>
       </TouchableOpacity>

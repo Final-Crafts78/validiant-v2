@@ -53,13 +53,15 @@ export const getSecretFingerprint = async (): Promise<string> => {
   try {
     const secret = env.JWT_SECRET;
     if (!secret) return 'MISSING';
-    
+
     // Edge-compatible fingerprinting
     const msgBuffer = new TextEncoder().encode(secret);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
     return hashHex.substring(0, 8); // 8 chars is enough for parity check
   } catch (e) {
     // Fallback if crypto/subtle is unavailable in specific environment

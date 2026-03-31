@@ -21,7 +21,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-slate-500 font-medium leading-relaxed">
-              The operating system for field compliance teams. Accelerate growth through absolute trust.
+              The operating system for field compliance teams. Accelerate growth
+              through absolute trust.
             </p>
             <p className="text-xs text-slate-400">
               © {currentYear} Validiant Inc. <br /> All rights reserved.
@@ -30,34 +31,100 @@ export default function Footer() {
 
           {/* Product Column */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">Product</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">
+              Product
+            </h4>
             <nav className="flex flex-col gap-4">
-              <a href="#features" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Features</a>
-              <a href="#how-it-works" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">How it Works</a>
-              <a href="#pricing" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Pricing</a>
-              <Link href="/changelog" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Changelog</Link>
+              <a
+                href="#features"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                How it Works
+              </a>
+              <a
+                href="#pricing"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Pricing
+              </a>
+              <Link
+                href="/changelog"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Changelog
+              </Link>
             </nav>
           </div>
 
           {/* Company Column */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">Company</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">
+              Company
+            </h4>
             <nav className="flex flex-col gap-4">
-              <Link href="/about" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">About</Link>
-              <Link href="/security" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Security</Link>
-              <Link href="/privacy" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Terms of Service</Link>
+              <Link
+                href="/about"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                href="/security"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Security
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Terms of Service
+              </Link>
             </nav>
           </div>
 
           {/* Developers Column */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">Developers</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 mb-6">
+              Developers
+            </h4>
             <nav className="flex flex-col gap-4">
-              <Link href="/docs" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">API Docs</Link>
-              <Link href="/status" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Status</Link>
-              <a href="#request-demo" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">Contact Support</a>
-              <Link href="https://github.com" className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">GitHub</Link>
+              <Link
+                href="/docs"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                API Docs
+              </Link>
+              <Link
+                href="/status"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Status
+              </Link>
+              <a
+                href="#request-demo"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                Contact Support
+              </a>
+              <Link
+                href="https://github.com"
+                className="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+              >
+                GitHub
+              </Link>
             </nav>
           </div>
         </div>
@@ -67,8 +134,10 @@ export default function Footer() {
             Built with ❤️ on Cloudflare Workers · Supabase · Next.js
           </p>
           <div className="flex items-center gap-6">
-             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-             <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">System Status: Operational</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+              System Status: Operational
+            </span>
           </div>
         </div>
       </div>

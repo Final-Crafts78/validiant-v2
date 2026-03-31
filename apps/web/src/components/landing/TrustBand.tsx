@@ -1,47 +1,46 @@
 'use client';
 
-import { ShieldCheck, Lock, FileText, CheckCircle, Shield } from 'lucide-react';
-
-const TRUST_ITEMS = [
-  { icon: ShieldCheck, label: 'SOC 2 Type II' },
-  { icon: Shield, label: 'ISO 27001' },
-  { icon: FileText, label: 'GDPR Ready' },
-  { icon: Lock, label: 'WebAuthn Passkeys' },
-  { icon: CheckCircle, label: '256-bit Encryption' },
-  // Duplicate for seamless marquee
-  { icon: ShieldCheck, label: 'SOC 2 Type II' },
-  { icon: Shield, label: 'ISO 27001' },
-  { icon: FileText, label: 'GDPR Ready' },
-  { icon: Lock, label: 'WebAuthn Passkeys' },
-  { icon: CheckCircle, label: '256-bit Encryption' },
-];
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function TrustBand() {
   return (
-    <section className="bg-slate-50 border-y border-slate-200 overflow-hidden">
-      {/* Logos Marquee */}
-      <div className="py-12 relative flex">
-        <div className="flex animate-marquee whitespace-nowrap gap-12 lg:gap-24 px-12 lg:px-24 items-center">
-          {TRUST_ITEMS.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
-              <item.icon className="h-5 w-5 text-slate-900" />
-              <span className="text-sm font-bold tracking-tight text-slate-900">{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+    <section className="bg-slate-50 py-12 border-y border-slate-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        <ScrollReveal className="flex flex-col md:flex-row items-center justify-between gap-12">
+          {/* Headline for Social Proof */}
+          <div className="flex-shrink-0 text-center md:text-left">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+              Trusted by forensic teams at
+            </span>
+          </div>
 
-      {/* Quote */}
-      <div className="max-w-4xl mx-auto px-6 pb-12 text-center">
-        <div className="w-12 h-1 bg-blue-600 mx-auto mb-8 rounded-full" />
-        <blockquote className="text-xl md:text-2xl font-medium text-slate-800 italic leading-relaxed mb-6">
-          "Validiant cut our KYC processing time by 60%. It's the only tool 
-          our compliance team trusts."
-        </blockquote>
-        <cite className="not-italic">
-          <span className="block text-slate-900 font-bold">Head of Operations</span>
-          <span className="text-sm text-slate-500 font-medium">Enterprise Client</span>
-        </cite>
+          {/* Marquee/Logo Cloud area */}
+          <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-8 opacity-40 grayscale contrast-125">
+            <div className="text-xl font-black tracking-tighter text-slate-900">
+              CYBERDINE
+            </div>
+            <div className="text-xl font-black tracking-tighter text-slate-900 font-serif italic">
+              Omni Consumer
+            </div>
+            <div className="text-xl font-black tracking-tighter text-slate-900">
+              WEYLAND-YUTANI
+            </div>
+            <div className="text-xl font-black tracking-tighter text-slate-900 font-mono">
+              Tyrell_Corp
+            </div>
+          </div>
+
+          {/* Trust Quote */}
+          <div className="hidden lg:block border-l border-slate-200 pl-12 max-w-[280px]">
+            <p className="text-xs text-slate-500 italic leading-relaxed">
+              &quot;The only platform we trust for multi-jurisdictional forensic
+              identity chain of custody.&quot;
+            </p>
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-slate-900">
+              — Chief Compliance Officer
+            </p>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

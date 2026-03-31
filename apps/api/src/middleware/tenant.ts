@@ -39,11 +39,14 @@ export const tenantIsolation = async (
   const existingOrgId = c.get('orgId') || c.get('organizationId');
   if (existingOrgId) {
     // eslint-disable-next-line no-console
-    console.debug('[Tenant:MW] REDUNDANCY CHECK: orgId already set in context', {
-      existingOrgId,
-      path: c.req.path,
-      duration: `${(performance.now() - startTime).toFixed(2)}ms`,
-    });
+    console.debug(
+      '[Tenant:MW] REDUNDANCY CHECK: orgId already set in context',
+      {
+        existingOrgId,
+        path: c.req.path,
+        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
+      }
+    );
   }
 
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)

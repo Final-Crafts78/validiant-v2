@@ -47,7 +47,6 @@ async function getData(): Promise<{
   };
 }
 
-
 export default async function OrgLayout({
   children,
   params,

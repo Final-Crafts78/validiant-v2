@@ -60,7 +60,9 @@ export function OrgSwitcher() {
         ) : (
           <Building2 className="w-4 h-4 text-[var(--color-text-muted)] shrink-0" />
         )}
-        <span className="truncate text-[var(--color-text-base)]">{activeOrg?.name ?? 'Select Org'}</span>
+        <span className="truncate text-[var(--color-text-base)]">
+          {activeOrg?.name ?? 'Select Org'}
+        </span>
         <ChevronDown
           className={`w-4 h-4 text-[var(--color-text-muted)] ml-auto shrink-0 transition-transform ${
             open ? 'rotate-180' : ''
@@ -103,7 +105,9 @@ export function OrgSwitcher() {
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[var(--color-text-base)] truncate">{org.name}</p>
+                <p className="font-bold text-[var(--color-text-base)] truncate">
+                  {org.name}
+                </p>
                 {org.industry && (
                   <p className="text-xs text-[var(--color-text-muted)] truncate">
                     {org.industry}

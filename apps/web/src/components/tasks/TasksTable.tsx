@@ -127,13 +127,19 @@ export function TasksTable({
         cell: ({ row }) => {
           const val = row.original.status as TaskStatus;
           if (val === TaskStatus.COMPLETED) {
-            return <CheckCircle2 className="h-4 w-4 text-[var(--color-positive-base)]" />;
+            return (
+              <CheckCircle2 className="h-4 w-4 text-[var(--color-positive-base)]" />
+            );
           }
           if (val === TaskStatus.IN_PROGRESS) {
-            return <Clock className="h-4 w-4 text-[var(--color-accent-base)]" />;
+            return (
+              <Clock className="h-4 w-4 text-[var(--color-accent-base)]" />
+            );
           }
           if (val === TaskStatus.VERIFIED) {
-            return <Clock className="h-4 w-4 text-[var(--color-warning-base)]" />;
+            return (
+              <Clock className="h-4 w-4 text-[var(--color-warning-base)]" />
+            );
           }
           return <Circle className="h-4 w-4 text-[var(--color-text-muted)]" />;
         },

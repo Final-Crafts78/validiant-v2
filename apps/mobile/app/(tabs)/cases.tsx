@@ -10,13 +10,13 @@ import {
 } from 'react-native';
 import { theme } from '../../src/lib/theme';
 import { useBrandStore } from '../../src/store/brand';
-import { 
-  Search, 
-  Filter, 
-  ChevronRight, 
-  Clock, 
+import {
+  Search,
+  Filter,
+  ChevronRight,
+  Clock,
   MapPin,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react-native';
 
 /**
@@ -63,16 +63,36 @@ export default function CasesScreen() {
     },
   ];
 
-  const renderCaseItem = ({ item }: { item: typeof mockCases[0] }) => (
-    <TouchableOpacity 
+  const renderCaseItem = ({ item }: { item: (typeof mockCases)[0] }) => (
+    <TouchableOpacity
       style={styles.caseCard}
       onPress={() => router.push(`/(tabs)/case/${item.id}`)}
     >
       <View style={styles.cardHeader}>
         <View style={styles.idContainer}>
           <Text style={styles.caseId}>{item.id}</Text>
-          <View style={[styles.priorityBadge, { backgroundColor: item.priority === 'High' ? theme.colors.rose[50] : theme.colors.slate[50] }]}>
-            <Text style={[styles.priorityText, { color: item.priority === 'High' ? theme.colors.rose[600] : theme.colors.slate[500] }]}>
+          <View
+            style={[
+              styles.priorityBadge,
+              {
+                backgroundColor:
+                  item.priority === 'High'
+                    ? theme.colors.rose[50]
+                    : theme.colors.slate[50],
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.priorityText,
+                {
+                  color:
+                    item.priority === 'High'
+                      ? theme.colors.rose[600]
+                      : theme.colors.slate[500],
+                },
+              ]}
+            >
               {item.priority}
             </Text>
           </View>
@@ -90,8 +110,21 @@ export default function CasesScreen() {
             <Text style={styles.metaLabel}>{item.location}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Clock size={12} color={item.isAtRisk ? theme.colors.rose[500] : theme.colors.slate[400]} />
-            <Text style={[styles.metaLabel, item.isAtRisk && { color: theme.colors.rose[500], fontWeight: 'bold' }]}>
+            <Clock
+              size={12}
+              color={
+                item.isAtRisk ? theme.colors.rose[500] : theme.colors.slate[400]
+              }
+            />
+            <Text
+              style={[
+                styles.metaLabel,
+                item.isAtRisk && {
+                  color: theme.colors.rose[500],
+                  fontWeight: 'bold',
+                },
+              ]}
+            >
               {item.deadline}
             </Text>
           </View>
@@ -99,10 +132,12 @@ export default function CasesScreen() {
 
         <View style={[styles.statusBadge, { borderColor: accentColor + '20' }]}>
           <View style={[styles.statusDot, { backgroundColor: accentColor }]} />
-          <Text style={[styles.statusText, { color: accentColor }]}>{item.status}</Text>
+          <Text style={[styles.statusText, { color: accentColor }]}>
+            {item.status}
+          </Text>
         </View>
       </View>
-      
+
       {item.isAtRisk && (
         <View style={styles.atRiskIndicator}>
           <AlertCircle size={10} color={theme.colors.white} />
@@ -117,7 +152,9 @@ export default function CasesScreen() {
       <View style={styles.searchBar}>
         <View style={styles.searchInputContainer}>
           <Search size={18} color={theme.colors.slate[400]} />
-          <Text style={styles.searchPlaceholder}>Search Case ID or Client...</Text>
+          <Text style={styles.searchPlaceholder}>
+            Search Case ID or Client...
+          </Text>
         </View>
         <TouchableOpacity style={styles.filterButton}>
           <Filter size={20} color={theme.colors.slate[600]} />
@@ -133,7 +170,9 @@ export default function CasesScreen() {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>No Cases Found</Text>
-            <Text style={styles.emptySubtitle}>You have no verification tasks assigned to you.</Text>
+            <Text style={styles.emptySubtitle}>
+              You have no verification tasks assigned to you.
+            </Text>
           </View>
         }
       />

@@ -40,7 +40,8 @@ const fetchCurrentUser = async (): Promise<User | null> => {
   try {
     console.debug('[useAuth] Fetching current user...', {
       timestamp: new Date().toISOString(),
-      currentPath: typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
+      currentPath:
+        typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
     });
     const response = await get<AuthMeResponse>('/auth/me');
     console.debug('[useAuth] Fetch user SUCCESS', {

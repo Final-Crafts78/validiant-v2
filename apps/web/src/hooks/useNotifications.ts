@@ -35,9 +35,7 @@ export const useNotifications = () => {
     queryKey: queryKeys.notifications.list(activeOrgId || ''),
     queryFn: async () => {
       if (!activeOrgId || !accessToken) return [];
-      const response = await get<{ data: Notification[] }>(
-        '/notifications'
-      );
+      const response = await get<{ data: Notification[] }>('/notifications');
       return response.data.data;
     },
     enabled: !!activeOrgId && !!accessToken,

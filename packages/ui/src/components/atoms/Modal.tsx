@@ -51,9 +51,7 @@ const Modal = ({
         {(title || description) && (
           <ModalHeader>
             {title && <ModalTitle>{title}</ModalTitle>}
-            {description && (
-              <ModalDescription>{description}</ModalDescription>
-            )}
+            {description && <ModalDescription>{description}</ModalDescription>}
           </ModalHeader>
         )}
         {children}

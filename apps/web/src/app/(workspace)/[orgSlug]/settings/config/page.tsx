@@ -30,10 +30,12 @@ export default function CaseConfigPage() {
           Configuration Module Under Maintenance
         </h2>
         <p className="text-[var(--color-text-muted)] max-w-md mx-auto mb-8">
-          We are currently upgrading the Case Configuration engine to support advanced multi-layered workflows. This module will be available in the next release.
+          We are currently upgrading the Case Configuration engine to support
+          advanced multi-layered workflows. This module will be available in the
+          next release.
         </p>
         <div className="flex gap-4">
-          <button 
+          <button
             onClick={() => window.history.back()}
             className="btn btn-primary px-6 py-2.5 shadow-lg shadow-[var(--color-accent-base)]/20"
           >

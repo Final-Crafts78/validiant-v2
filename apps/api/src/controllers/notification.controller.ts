@@ -72,7 +72,10 @@ export const markAsRead = async (c: Context) => {
 
     return c.json({ data: notification });
   } catch (error) {
-    logger.error('[NotificationController] Error marking as read:', error as Error);
+    logger.error(
+      '[NotificationController] Error marking as read:',
+      error as Error
+    );
     return c.json({ error: 'Failed to update notification' }, 500);
   }
 };
@@ -94,7 +97,10 @@ export const markAllAsRead = async (c: Context) => {
 
     return c.json({ success: true });
   } catch (error) {
-    logger.error('[NotificationController] Error marking all as read:', error as Error);
+    logger.error(
+      '[NotificationController] Error marking all as read:',
+      error as Error
+    );
     return c.json({ error: 'Failed to update notifications' }, 500);
   }
 };

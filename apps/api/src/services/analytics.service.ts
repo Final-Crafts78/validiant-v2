@@ -30,7 +30,9 @@ export const getLatestSnapshot = async (organizationId: string) => {
     .limit(1);
 
   const duration = (performance.now() - startTime).toFixed(2);
-  console.info(`[Analytics:DB] getLatestSnapshot (${organizationId}) took ${duration}ms`);
+  console.info(
+    `[Analytics:DB] getLatestSnapshot (${organizationId}) took ${duration}ms`
+  );
 
   return snapshots[0] || null;
 };
@@ -55,7 +57,9 @@ export const getAnalyticsTrend = async (
     .orderBy(orgAnalyticsSnapshots.recordedAt);
 
   const duration = (performance.now() - startTime).toFixed(2);
-  console.info(`[Analytics:DB] getAnalyticsTrend (${organizationId}, ${days} days) took ${duration}ms`);
+  console.info(
+    `[Analytics:DB] getAnalyticsTrend (${organizationId}, ${days} days) took ${duration}ms`
+  );
 
   return results;
 };

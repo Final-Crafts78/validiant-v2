@@ -1,82 +1,97 @@
 'use client';
 
-import { Users, ClipboardList, BarChart, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
 const STEPS = [
   {
-    icon: Users,
-    title: 'Onboard Your Organisation',
-    description: 'Create your org, invite team members, configure roles and permissions in under 5 minutes.',
-    cta: 'View role system',
+    title: 'Deploy Digital Infrastructure',
+    description:
+      'Instantly provision a private compliance workspace. Define your specific protocols, KYC requirements, and field verification rules using our rule-builder.',
+    image: '/images/dashboard_iso.png',
   },
   {
-    icon: ClipboardList,
-    title: 'Assign & Track Field Tasks',
-    description: 'Bulk import via CSV or create tasks with GPS-tagged addresses, KYC verification, and SLA deadlines.',
-    cta: 'Explore task types',
+    title: 'Coordinate Field Executives',
+    description:
+      'Dispatch tasks directly to your mobile workforce. Our field app provides real-time GPS tracking, biometric capture, and offline-first data synchronization.',
+    image: '/images/field_app_iso.png',
   },
   {
-    icon: BarChart,
-    title: 'Monitor, Verify & Export',
-    description: 'Real-time dashboard + tamper-proof audit chain + one-click compliance report PDF export.',
-    cta: 'See report engine',
+    title: 'Immutable Audit Finality',
+    description:
+      'Every interaction is hashed and chained. Generate tamper-proof reports for stakeholders and regulators that prove absolute forensic compliance.',
+    image: '/images/dashboard_iso.png', // Reusing dashboard for audit visualization
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-slate-50 py-32 scroll-mt-20">
+    <section
+      id="how-it-works"
+      className="bg-slate-50 py-32 lg:py-48 scroll-mt-20 overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-20">
+        <ScrollReveal className="max-w-3xl mb-24">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600">
-            Implementation Workflow
+            The Validiant Workflow
           </span>
-          <h2 className="mt-4 text-4xl font-extrabold text-slate-900">
-            From zero to auditable in minutes.
+          <h2 className="mt-4 text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+            How we deliver absolute <br className="hidden md:block" /> forensic
+            certainty.
           </h2>
-        </div>
+        </ScrollReveal>
 
-        <div className="relative">
-          {/* Vertical line connector (desktop) */}
-          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-slate-200 -translate-x-1/2" />
+        <div className="space-y-40">
+          {STEPS.map((step, index) => (
+            <div
+              key={step.title}
+              className={`flex flex-col ${
+                index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'
+              } gap-20 items-center`}
+            >
+              {/* Image side */}
+              <ScrollReveal
+                delay={200}
+                className="flex-1 w-full relative group"
+              >
+                {/* Decorative blob */}
+                <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-blue-100 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
 
-          <div className="space-y-24 lg:space-y-32">
-            {STEPS.map((step, idx) => (
-              <div key={idx} className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-24 ${idx % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
-                {/* Visual side */}
-                <div className="flex-1 flex justify-center">
-                  <div className="relative">
-                    <span className="text-[120px] font-black text-slate-100 absolute -top-20 -left-10 select-none">
-                      0{idx + 1}
-                    </span>
-                    <div className="w-24 h-24 bg-white rounded-3xl shadow-xl shadow-blue-500/10 flex items-center justify-center relative z-10 border border-slate-100">
-                      <step.icon size={40} className="text-blue-600" />
-                    </div>
-                  </div>
+                <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl p-4 lg:p-8 hover:-translate-y-2 transition-transform duration-500">
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    width={800}
+                    height={600}
+                    className="w-full h-auto object-contain"
+                  />
                 </div>
+              </ScrollReveal>
 
-                {/* Content side */}
-                <div className="flex-1 text-center lg:text-left">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">{step.title}</h3>
-                  <p className="text-lg text-slate-500 leading-relaxed mb-6">
-                    {step.description}
-                  </p>
-                  <a href="#request-demo" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:gap-3 transition-all">
-                    {step.cta} <ArrowRight size={16} />
-                  </a>
+              {/* Text side */}
+              <ScrollReveal
+                delay={400}
+                className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left"
+              >
+                <div className="w-16 h-16 bg-blue-600 text-white flex items-center justify-center rounded-2xl text-2xl font-black mb-10 shadow-lg shadow-blue-600/30">
+                  0{index + 1}
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-24 text-center">
-          <a
-            href="#request-demo"
-            className="inline-flex items-center justify-center px-10 py-5 text-lg font-bold bg-blue-600 text-white rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-1 transition-all"
-          >
-            See it in action
-          </a>
+                <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8 max-w-md">
+                  {step.title}
+                </h3>
+                <p className="text-xl text-slate-500 leading-relaxed mb-10 max-w-xl">
+                  {step.description}
+                </p>
+                <a
+                  href="#request-demo"
+                  className="inline-flex items-center gap-3 text-base font-bold text-blue-600 hover:gap-4 transition-all"
+                >
+                  Explore the technology <ArrowRight size={20} />
+                </a>
+              </ScrollReveal>
+            </div>
+          ))}
         </div>
       </div>
     </section>

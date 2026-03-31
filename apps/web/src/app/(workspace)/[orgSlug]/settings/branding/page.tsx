@@ -187,7 +187,8 @@ export default function BrandingSettings() {
             {/* Display Identity */}
             <div className="space-y-4">
               <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-[var(--color-accent-base)]" /> Identity
+                <ImageIcon className="w-4 h-4 text-[var(--color-accent-base)]" />{' '}
+                Identity
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -216,8 +217,8 @@ export default function BrandingSettings() {
             {/* Logo Section */}
             <div className="space-y-4">
               <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
-                <Upload className="w-4 h-4 text-[var(--color-accent-base)]" /> Organization
-                Logo
+                <Upload className="w-4 h-4 text-[var(--color-accent-base)]" />{' '}
+                Organization Logo
               </h3>
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 bg-[var(--color-surface-muted)] rounded-2xl border-2 border-dashed border-[var(--color-border-base)] flex items-center justify-center overflow-hidden">
@@ -262,7 +263,8 @@ export default function BrandingSettings() {
             {/* Colors Section */}
             <div className="space-y-4 pt-4 border-t border-[var(--color-border-base)]">
               <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
-                <Palette className="w-4 h-4 text-[var(--color-accent-base)]" /> Color System
+                <Palette className="w-4 h-4 text-[var(--color-accent-base)]" />{' '}
+                Color System
               </h3>
               <div className="flex flex-wrap items-end gap-6">
                 <div className="space-y-2">

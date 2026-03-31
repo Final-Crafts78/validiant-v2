@@ -74,8 +74,11 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
       },
       cancel: (controller) => {
         const sessionId =
-          (controller as ReadableStreamDefaultController & { _sessionId?: string })
-            ._sessionId || 'UNKNOWN';
+          (
+            controller as ReadableStreamDefaultController & {
+              _sessionId?: string;
+            }
+          )._sessionId || 'UNKNOWN';
         this.sessions.delete(
           controller as unknown as ReadableStreamDefaultController
         );

@@ -1,13 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { theme } from '../../src/lib/theme';
 import { useAuthStore } from '../../src/store/auth';
-import { 
-  ClipboardCheck, 
-  Clock, 
-  AlertTriangle, 
+import {
+  ClipboardCheck,
+  Clock,
+  AlertTriangle,
   ChevronRight,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react-native';
 
 /**
@@ -62,7 +68,9 @@ export default function DashboardScreen() {
             <View style={styles.activityIndicator} />
             <View style={styles.activityContent}>
               <Text style={styles.activityText}>
-                Verified <Text style={styles.activityBold}>Employment Check</Text> for Case #VR-2024-{i}
+                Verified{' '}
+                <Text style={styles.activityBold}>Employment Check</Text> for
+                Case #VR-2024-{i}
               </Text>
               <Text style={styles.activityTime}>{i * 2} hours ago</Text>
             </View>

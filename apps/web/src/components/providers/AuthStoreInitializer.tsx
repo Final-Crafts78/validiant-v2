@@ -38,25 +38,31 @@ export function AuthStoreInitializer({
 
   if (!initialized.current) {
     const currentState = useAuthStore.getState();
-    console.debug('[AuthStore:Initializer] Seeding store with server-fetched data', {
-      userId: user?.id,
-      email: user?.email,
-      hasToken: !!accessToken,
-      storeStateBefore: {
-        isAuthenticated: currentState.isAuthenticated,
-        hasUser: !!currentState.user,
-        email: currentState.user?.email,
-      },
-      timestamp: new Date().toISOString(),
-    });
+    console.debug(
+      '[AuthStore:Initializer] Seeding store with server-fetched data',
+      {
+        userId: user?.id,
+        email: user?.email,
+        hasToken: !!accessToken,
+        storeStateBefore: {
+          isAuthenticated: currentState.isAuthenticated,
+          hasUser: !!currentState.user,
+          email: currentState.user?.email,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    );
     // Seed the store immediately on render so child client components don't return null
     useAuthStore.getState().setAuth({ user, accessToken });
     initialized.current = true;
   } else {
-    console.debug('[AuthStore:Initializer] Skipping - Already initialized during this render cycle', {
-      email: user?.email,
-      timestamp: new Date().toISOString(),
-    });
+    console.debug(
+      '[AuthStore:Initializer] Skipping - Already initialized during this render cycle',
+      {
+        email: user?.email,
+        timestamp: new Date().toISOString(),
+      }
+    );
   }
 
   return null;

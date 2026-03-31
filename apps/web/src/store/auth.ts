@@ -83,8 +83,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set user data only
   setUser: (user, accessToken) => {
-    console.debug('[AuthStore] setUser called', { 
-      userId: user.id, 
+    console.debug('[AuthStore] setUser called', {
+      userId: user.id,
       email: user.email,
       activeOrganizationId: user.activeOrganizationId || 'MISSING',
       hasToken: !!accessToken,
@@ -102,18 +102,25 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   updateUser: (updates) => {
     const currentUser = get().user;
     const newActiveOrgId = updates.activeOrganizationId;
-    
-    if (newActiveOrgId && newActiveOrgId !== currentUser?.activeOrganizationId) {
-      console.info(`[AuthStore:Org] CHANGING ACTIVE ORG: ${currentUser?.activeOrganizationId ?? 'NONE'} -> ${newActiveOrgId}`, {
-        userId: currentUser?.id,
-        timestamp: new Date().toISOString()
-      });
+
+    if (
+      newActiveOrgId &&
+      newActiveOrgId !== currentUser?.activeOrganizationId
+    ) {
+      console.info(
+        `[AuthStore:Org] CHANGING ACTIVE ORG: ${currentUser?.activeOrganizationId ?? 'NONE'} -> ${newActiveOrgId}`,
+        {
+          userId: currentUser?.id,
+          timestamp: new Date().toISOString(),
+        }
+      );
     }
 
-    console.debug('[AuthStore] updateUser called', { 
+    console.debug('[AuthStore] updateUser called', {
       updates,
       prevActiveOrgId: currentUser?.activeOrganizationId,
-      newActiveOrgId: updates.activeOrganizationId || currentUser?.activeOrganizationId,
+      newActiveOrgId:
+        updates.activeOrganizationId || currentUser?.activeOrganizationId,
       timestamp: new Date().toISOString(),
     });
     if (currentUser) {
@@ -149,7 +156,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     try {
       const { getCurrentUserAction } = await import('@/actions/auth.actions');
       const result = await getCurrentUserAction();
-      
+
       if (result.success && result.user) {
         get().setAuth({ user: result.user, accessToken: result.accessToken });
       }

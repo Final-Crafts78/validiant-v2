@@ -18,7 +18,11 @@ export function DocumentPickerField({ value, onChange }: Props) {
 
     if (!result.canceled && result.assets[0].uri) {
       const asset = result.assets[0];
-      onChange(asset.uri, asset.name, asset.mimeType || 'application/octet-stream');
+      onChange(
+        asset.uri,
+        asset.name,
+        asset.mimeType || 'application/octet-stream'
+      );
     }
   };
 
@@ -27,7 +31,9 @@ export function DocumentPickerField({ value, onChange }: Props) {
       {value ? (
         <View style={styles.fileCard}>
           <FileText size={18} color={theme.colors.slate[400]} />
-          <Text style={styles.fileName} numberOfLines={1}>{value.split('/').pop()}</Text>
+          <Text style={styles.fileName} numberOfLines={1}>
+            {value.split('/').pop()}
+          </Text>
           <TouchableOpacity onPress={() => onChange('', '', '')}>
             <X size={16} color={theme.colors.rose[500]} />
           </TouchableOpacity>

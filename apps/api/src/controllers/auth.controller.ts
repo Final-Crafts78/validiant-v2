@@ -136,7 +136,7 @@ export const register = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
-    
+
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
@@ -275,7 +275,7 @@ export const login = async (c: Context) => {
       organizationId: activeOrg?.id,
       permissions,
     });
-    
+
     const refreshToken = await generateRefreshToken({
       sub: user.id,
       userId: user.id,
@@ -434,10 +434,21 @@ export const getMe = async (c: Context) => {
     });
 
     if (!user || !user.userId) {
-      return c.json({ success: false, error: 'Unauthorized', message: 'Authentication required' }, 401);
+      return c.json(
+        {
+          success: false,
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        },
+        401
+      );
     }
 
-    const [dbUser] = await db.select().from(schema.users).where(eq(schema.users.id, user.userId)).limit(1);
+    const [dbUser] = await db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.id, user.userId))
+      .limit(1);
 
     console.log('[getMe] DB lookup', {
       userId: user.userId,
@@ -446,13 +457,36 @@ export const getMe = async (c: Context) => {
     });
 
     if (!dbUser) {
-      return c.json({ success: false, error: 'User not found', message: 'User account no longer exists' }, 404);
+      return c.json(
+        {
+          success: false,
+          error: 'User not found',
+          message: 'User account no longer exists',
+        },
+        404
+      );
     }
 
-    return c.json({ success: true, data: { user: { ...formatUserResponse(dbUser), activeOrganizationId: user.organizationId, permissions: user.permissions || [] } } });
+    return c.json({
+      success: true,
+      data: {
+        user: {
+          ...formatUserResponse(dbUser),
+          activeOrganizationId: user.organizationId,
+          permissions: user.permissions || [],
+        },
+      },
+    });
   } catch (error) {
     console.error('Get me error:', error);
-    return c.json({ success: false, error: 'Failed to get user', message: error instanceof Error ? error.message : 'Unknown error' }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Failed to get user',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500
+    );
   }
 };
 
@@ -557,18 +591,8 @@ export const switchOrganization = async (c: Context) => {
       timestamp: new Date().toISOString(),
     });
 
-    setCookie(
-      c,
-      'accessToken',
-      accessToken,
-      accessCookieOptions
-    );
-    setCookie(
-      c,
-      'refreshToken',
-      refreshToken || '',
-      refreshCookieOptions
-    );
+    setCookie(c, 'accessToken', accessToken, accessCookieOptions);
+    setCookie(c, 'refreshToken', refreshToken || '', refreshCookieOptions);
 
     // Sync preferences on org switch (Mini-Phase 6)
     setUserPrefsCookie(c, {

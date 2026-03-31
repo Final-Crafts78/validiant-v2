@@ -46,7 +46,9 @@ export function AssignTaskModal({
               <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-bold flex items-center justify-center">
                 {m.user.fullName.charAt(0)}
               </div>
-              <span className="text-[var(--color-text-base)]">{m.user.fullName}</span>
+              <span className="text-[var(--color-text-base)]">
+                {m.user.fullName}
+              </span>
             </button>
           </li>
         ))}

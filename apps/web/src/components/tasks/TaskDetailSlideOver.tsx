@@ -240,7 +240,9 @@ export function TaskDetailSlideOver() {
           {isLoading && (
             <div className="flex flex-col items-center justify-center py-24 gap-3">
               <Loader2 className="h-7 w-7 text-[var(--color-accent-base)] animate-spin" />
-              <p className="text-sm text-[var(--color-text-muted)]">Loading task…</p>
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Loading task…
+              </p>
             </div>
           )}
 

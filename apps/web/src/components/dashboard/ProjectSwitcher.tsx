@@ -122,7 +122,9 @@ export function ProjectSwitcher() {
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-[var(--color-text-base)] truncate">{project.name}</p>
+                  <p className="font-bold text-[var(--color-text-base)] truncate">
+                    {project.name}
+                  </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span
                       className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${

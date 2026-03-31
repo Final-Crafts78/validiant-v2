@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Animated, Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { theme } from '../lib/theme';
 import { WifiOff, RefreshCw, CheckCircle } from 'lucide-react-native';
@@ -26,16 +20,16 @@ export function OfflineBanner() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState({ current: 0, total: 0 });
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
   const slideAnim = useState(new Animated.Value(-100))[0];
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
       const wasDisconnected = isConnected === false;
       setIsConnected(state.isConnected);
-      
+
       const shouldShow = !state.isConnected || isSyncing || showSuccess;
-      
+
       Animated.timing(slideAnim, {
         toValue: shouldShow ? 0 : -100,
         duration: 300,
@@ -62,7 +56,7 @@ export function OfflineBanner() {
       await syncQueue.processQueue((current, total) => {
         setSyncProgress({ current, total });
       });
-      
+
       // Show success briefly
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
@@ -78,19 +72,25 @@ export function OfflineBanner() {
   let borderColor = theme.colors.amber[500];
   let textColor = theme.colors.amber[900];
   let icon = <WifiOff size={14} color={textColor} />;
-  let label = "You are currently offline. Actions queued.";
+  let label = 'You are currently offline. Actions queued.';
 
   if (showSuccess) {
     backgroundColor = theme.colors.emerald[500];
     borderColor = theme.colors.emerald[600];
     textColor = theme.colors.white;
     icon = <CheckCircle size={14} color={textColor} />;
-    label = "All data synced successfully!";
+    label = 'All data synced successfully!';
   } else if (isSyncing) {
     backgroundColor = theme.colors.primary;
     borderColor = theme.colors.primary;
     textColor = theme.colors.white;
-    icon = <RefreshCw size={14} color={textColor} style={{ transform: [{ rotate: '0deg' }] }} />; // Simple rotation logic could be added
+    icon = (
+      <RefreshCw
+        size={14}
+        color={textColor}
+        style={{ transform: [{ rotate: '0deg' }] }}
+      />
+    ); // Simple rotation logic could be added
     label = `Syncing ${syncProgress.current}/${syncProgress.total} items...`;
   } else if (isConnected) {
     // If connected and not syncing/success, hide
@@ -98,14 +98,14 @@ export function OfflineBanner() {
   }
 
   return (
-    <Animated.View 
+    <Animated.View
       style={[
-        styles.banner, 
-        { 
+        styles.banner,
+        {
           transform: [{ translateY: slideAnim }],
           backgroundColor,
           borderBottomColor: borderColor,
-        }
+        },
       ]}
     >
       <View style={styles.content}>

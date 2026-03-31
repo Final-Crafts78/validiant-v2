@@ -50,9 +50,7 @@ export const getHistory = async (c: Context) => {
     const days = Number(c.req.query('days')) || 7;
 
     if (!orgId) {
-      logger.warn(
-        '[Analytics Controller] getHistory - Missing orgId context'
-      );
+      logger.warn('[Analytics Controller] getHistory - Missing orgId context');
       return c.json({ error: 'Organization ID required' }, 400);
     }
 

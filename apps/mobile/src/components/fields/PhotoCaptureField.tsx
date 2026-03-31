@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  Image, 
-  StyleSheet, 
-  ActivityIndicator, 
-  Alert 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { theme } from '../../lib/theme';
-import { Camera, MapPin, AlertTriangle, CheckCircle } from 'lucide-react-native';
+import {
+  Camera,
+  MapPin,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react-native';
 
 interface Props {
   value?: string;
@@ -27,16 +32,25 @@ interface Props {
  * - Restricts background library access if requireLiveCapture is true
  * - Compliance warnings for poor accuracy (>100m)
  */
-export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props) {
+export function PhotoCaptureField({
+  value,
+  onChange,
+  requireLiveCapture,
+}: Props) {
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'GPS access is required for field capture.');
+        Alert.alert(
+          'Permission Denied',
+          'GPS access is required for field capture.'
+        );
         return;
       }
 
@@ -55,7 +69,10 @@ export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props
 
   const handleCapture = async () => {
     if (!accuracy || accuracy > 100) {
-      Alert.alert('Low Accuracy', `GPS accuracy must be < 100m to capture proof (current: ${accuracy?.toFixed(1) || 'N/A'}m).`);
+      Alert.alert(
+        'Low Accuracy',
+        `GPS accuracy must be < 100m to capture proof (current: ${accuracy?.toFixed(1) || 'N/A'}m).`
+      );
       return;
     }
 
@@ -84,8 +101,24 @@ export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props
     <View style={styles.container}>
       <View style={styles.accuracyBar}>
         <View style={styles.accuracyIconLabel}>
-          <MapPin size={12} color={isAccuracyGood ? theme.colors.emerald[600] : theme.colors.rose[600]} />
-          <Text style={[styles.accuracyText, { color: isAccuracyGood ? theme.colors.emerald[600] : theme.colors.rose[600] }]}>
+          <MapPin
+            size={12}
+            color={
+              isAccuracyGood
+                ? theme.colors.emerald[600]
+                : theme.colors.rose[600]
+            }
+          />
+          <Text
+            style={[
+              styles.accuracyText,
+              {
+                color: isAccuracyGood
+                  ? theme.colors.emerald[600]
+                  : theme.colors.rose[600],
+              },
+            ]}
+          >
             📍 Accuracy: {accuracy ? `${accuracy.toFixed(1)}m` : 'Detecting...'}
           </Text>
         </View>
@@ -106,8 +139,11 @@ export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props
           </TouchableOpacity>
         </View>
       ) : (
-        <TouchableOpacity 
-          style={[styles.captureBox, !isAccuracyGood && styles.captureBoxDisabled]} 
+        <TouchableOpacity
+          style={[
+            styles.captureBox,
+            !isAccuracyGood && styles.captureBoxDisabled,
+          ]}
           onPress={handleCapture}
           disabled={!isAccuracyGood || isLoading}
         >
@@ -115,9 +151,23 @@ export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props
             <ActivityIndicator color={theme.colors.primary} />
           ) : (
             <>
-              <Camera size={32} color={isAccuracyGood ? theme.colors.primary : theme.colors.slate[300]} />
-              <Text style={[styles.captureLabel, !isAccuracyGood && { color: theme.colors.slate[400] }]}>
-                {requireLiveCapture ? 'Take Live Photo (Required)' : 'Tap to Capture Proof'}
+              <Camera
+                size={32}
+                color={
+                  isAccuracyGood
+                    ? theme.colors.primary
+                    : theme.colors.slate[300]
+                }
+              />
+              <Text
+                style={[
+                  styles.captureLabel,
+                  !isAccuracyGood && { color: theme.colors.slate[400] },
+                ]}
+              >
+                {requireLiveCapture
+                  ? 'Take Live Photo (Required)'
+                  : 'Tap to Capture Proof'}
               </Text>
             </>
           )}
@@ -127,7 +177,9 @@ export function PhotoCaptureField({ value, onChange, requireLiveCapture }: Props
       {requireLiveCapture && (
         <View style={styles.complianceNote}>
           <Shield size={10} color={theme.colors.slate[400]} />
-          <Text style={styles.complianceText}>Live capture mandated by organization policy.</Text>
+          <Text style={styles.complianceText}>
+            Live capture mandated by organization policy.
+          </Text>
         </View>
       )}
     </View>

@@ -174,7 +174,7 @@ export const rollupAnalytics = async () => {
         const chunk = snapshotsToInsert.slice(i, i + 50);
         batchCommands.push(db.insert(orgAnalyticsSnapshots).values(chunk));
       }
-      
+
       if (batchCommands.length > 0) {
         await db.batch(batchCommands as any);
       }
@@ -187,4 +187,3 @@ export const rollupAnalytics = async () => {
     logger.error('[Analytics Rollup] CRITICAL FAILURE:', error as Error);
   }
 };
-

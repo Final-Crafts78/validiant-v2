@@ -203,7 +203,8 @@ export default function MembersSettings() {
           {/* Invite Form */}
           <div className="card-surface p-6 space-y-4">
             <h3 className="text-sm font-bold text-[var(--color-text-base)] uppercase tracking-widest flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-[var(--color-accent-base)]" /> Invite Teammate
+              <UserPlus className="w-4 h-4 text-[var(--color-accent-base)]" />{' '}
+              Invite Teammate
             </h3>
             <form onSubmit={handleInvite} className="space-y-4">
               <div className="space-y-1.5">

@@ -145,7 +145,9 @@ export async function middleware(request: NextRequest) {
     const nodeEnv = process.env.NODE_ENV || 'MISSING';
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1.0.2: ENV - jwt=${jwtPresent}, api=${apiUrl}, app=${appUrl}, env=${nodeEnv}`);
+    console.log(
+      `[MW:Edge] [${requestId}] EP-1.0.2: ENV - jwt=${jwtPresent}, api=${apiUrl}, app=${appUrl}, env=${nodeEnv}`
+    );
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-1.0.3: Fingerprint calc start`);
@@ -167,7 +169,9 @@ export async function middleware(request: NextRequest) {
 
       const headerLength = rawCookieHeader?.length || 0;
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-0.1.1: Header length: ${headerLength}`);
+      console.log(
+        `[MW:Edge] [${requestId}] EP-0.1.1: Header length: ${headerLength}`
+      );
 
       if (rawCookieHeader) {
         // eslint-disable-next-line no-console
@@ -178,7 +182,9 @@ export async function middleware(request: NextRequest) {
         cookieScan = parts.map((c) => c.split('=')[0]?.trim() || 'MALFORMED');
 
         // eslint-disable-next-line no-console
-        console.log(`[MW:Edge] [${requestId}] EP-0.1.3: Names: ${cookieScan.join(', ')}`);
+        console.log(
+          `[MW:Edge] [${requestId}] EP-0.1.3: Names: ${cookieScan.join(', ')}`
+        );
       }
     } catch (auditErr: unknown) {
       // eslint-disable-next-line no-console
@@ -193,7 +199,9 @@ export async function middleware(request: NextRequest) {
     const userId = getSafeCookie(request, 'user_id', requestId);
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-2: Single cookies: access=${!!accessToken}, refresh=${!!refreshToken}, user=${!!userId}`);
+    console.log(
+      `[MW:Edge] [${requestId}] EP-2: Single cookies: access=${!!accessToken}, refresh=${!!refreshToken}, user=${!!userId}`
+    );
 
     // Route matching
     const isProtectedRoute = matchesRoute(pathname, PROTECTED_ROUTES);
@@ -201,7 +209,9 @@ export async function middleware(request: NextRequest) {
     const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
     // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-3: Logic Match - protected=${isProtectedRoute}, auth=${isAuthRoute}, semi=${isSemiPublic}`);
+    console.log(
+      `[MW:Edge] [${requestId}] EP-3: Logic Match - protected=${isProtectedRoute}, auth=${isAuthRoute}, semi=${isSemiPublic}`
+    );
 
     // 2. COOKIE SCAN SUMMARY
     let cookieScanSummary: CookieSummary[] = [];
@@ -221,7 +231,9 @@ export async function middleware(request: NextRequest) {
       }));
 
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-5: getAll() end, count=${cookieCount}`);
+      console.log(
+        `[MW:Edge] [${requestId}] EP-5: getAll() end, count=${cookieCount}`
+      );
     } catch (cookieErr: unknown) {
       // eslint-disable-next-line no-console
       console.error(`[MW:Edge] [${requestId}] EP-5.ERROR: getAll() Crash`, {
@@ -354,9 +366,15 @@ export async function middleware(request: NextRequest) {
     // Redirect authenticated users from auth pages to dashboard
     // CRITICAL: We MUST NOT redirect if forceLogout or reason=expired is present,
     // as that indicates a session cleanup is in progress (Finding 48 Loop Prevention)
-    if (isAuthRoute && isAuthenticated && !forceLogout && reason !== 'expired') {
-      const destParam = request.nextUrl.searchParams.get('redirect') || 
-                        request.nextUrl.searchParams.get('from'); // Standard query param
+    if (
+      isAuthRoute &&
+      isAuthenticated &&
+      !forceLogout &&
+      reason !== 'expired'
+    ) {
+      const destParam =
+        request.nextUrl.searchParams.get('redirect') ||
+        request.nextUrl.searchParams.get('from'); // Standard query param
       const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
 
       // eslint-disable-next-line no-console

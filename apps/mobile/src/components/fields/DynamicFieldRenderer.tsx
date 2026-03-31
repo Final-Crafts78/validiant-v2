@@ -8,7 +8,14 @@ import { TextInputField } from './TextInputField'; // Basic wrapper
 
 interface FieldSchema {
   id: string;
-  type: 'text' | 'number' | 'date' | 'boolean' | 'select' | 'photo' | 'document';
+  type:
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'boolean'
+    | 'select'
+    | 'photo'
+    | 'document';
   label: string;
   required?: boolean;
   placeholder?: string;
@@ -30,9 +37,14 @@ interface Props {
  * Renders the field list based on organization specific schemas.
  * Enforces role-based visibility and conditional logic.
  */
-export function DynamicFieldRenderer({ fields, values, onChange, userRole }: Props) {
-  const visibleFields = fields.filter(f => 
-    !f.visibleTo || f.visibleTo.includes(userRole)
+export function DynamicFieldRenderer({
+  fields,
+  values,
+  onChange,
+  userRole,
+}: Props) {
+  const visibleFields = fields.filter(
+    (f) => !f.visibleTo || f.visibleTo.includes(userRole)
   );
 
   return (
@@ -40,7 +52,8 @@ export function DynamicFieldRenderer({ fields, values, onChange, userRole }: Pro
       {visibleFields.map((field) => (
         <View key={field.id} style={styles.fieldWrapper}>
           <Text style={styles.label}>
-            {field.label} {field.required && <Text style={styles.required}>*</Text>}
+            {field.label}{' '}
+            {field.required && <Text style={styles.required}>*</Text>}
           </Text>
 
           {field.type === 'photo' && (
@@ -73,7 +86,7 @@ export function DynamicFieldRenderer({ fields, values, onChange, userRole }: Pro
               placeholder={field.placeholder}
             />
           )}
-          
+
           {/* Boolean/Select implementation omitted for brevity, manageable similarly */}
         </View>
       ))}

@@ -67,7 +67,9 @@ function AcceptInviteContent() {
       setStatus('error');
       setErrorHeader('Invitation Error');
       setErrorMessage(
-        err instanceof Error ? err.message : 'The invitation is invalid, expired, or already used.'
+        err instanceof Error
+          ? err.message
+          : 'The invitation is invalid, expired, or already used.'
       );
     }
   };
@@ -155,9 +157,7 @@ function AcceptInviteContent() {
             <XCircle className="w-16 h-16 text-red-500" />
           </div>
           <div className="space-y-2">
-            <p className="text-lg font-bold text-slate-900">
-              {errorHeader}
-            </p>
+            <p className="text-lg font-bold text-slate-900">{errorHeader}</p>
             <p className="text-slate-500 text-sm">{errorMessage}</p>
           </div>
 

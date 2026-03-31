@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  ActivityIndicator, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { theme } from '../../../src/lib/theme';
@@ -31,7 +31,7 @@ export default function CaseDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { user } = useAuthStore();
-  
+
   const [values, setValues] = useState<Record<string, any>>({});
   const [files, setFiles] = useState<Array<any>>([]); // Track file metadata for sync queue
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,40 +39,59 @@ export default function CaseDetailScreen() {
   // Mock field schema - in production this comes from context or API
   const mockSchema: any[] = [
     { id: 'employee_id', type: 'text', label: 'Employee ID', required: true },
-    { id: 'check_date', type: 'date', label: 'Verification Date', required: true },
-    { id: 'proof_photo', type: 'photo', label: 'Front Office Proof', required: true, requireLiveCapture: true },
-    { id: 'id_document', type: 'document', label: 'ID Card Scan', required: true },
+    {
+      id: 'check_date',
+      type: 'date',
+      label: 'Verification Date',
+      required: true,
+    },
+    {
+      id: 'proof_photo',
+      type: 'photo',
+      label: 'Front Office Proof',
+      required: true,
+      requireLiveCapture: true,
+    },
+    {
+      id: 'id_document',
+      type: 'document',
+      label: 'ID Card Scan',
+      required: true,
+    },
   ];
 
   const handleFieldChange = (fieldId: string, value: any) => {
-    setValues(prev => ({ ...prev, [fieldId]: value }));
-    
+    setValues((prev) => ({ ...prev, [fieldId]: value }));
+
     // If it's a file value (uri), update the files metadata list
     if (typeof value === 'string' && value.startsWith('file://')) {
-      const existing = files.findIndex(f => f.fieldId === fieldId);
-      const newFile = { 
-        fieldId, 
-        uri: value, 
+      const existing = files.findIndex((f) => f.fieldId === fieldId);
+      const newFile = {
+        fieldId,
+        uri: value,
         name: `capture_${fieldId}.jpg`, // Simple naming
         type: 'image/jpeg',
-        hash: 'sha256_mock' // Real hash would be calculated here
+        hash: 'sha256_mock', // Real hash would be calculated here
       };
-      
+
       if (existing >= 0) {
         const next = [...files];
         next[existing] = newFile;
         setFiles(next);
       } else {
-        setFiles(prev => [...prev, newFile]);
+        setFiles((prev) => [...prev, newFile]);
       }
     }
   };
 
   const handleSubmit = async () => {
     // Basic validation
-    const missing = mockSchema.filter(f => f.required && !values[f.id]);
+    const missing = mockSchema.filter((f) => f.required && !values[f.id]);
     if (missing.length > 0) {
-      Alert.alert('Incomplete', `Please fill required fields: ${missing.map(m => m.label).join(', ')}`);
+      Alert.alert(
+        'Incomplete',
+        `Please fill required fields: ${missing.map((m) => m.label).join(', ')}`
+      );
       return;
     }
 
@@ -89,11 +108,13 @@ export default function CaseDetailScreen() {
         files: files,
         timestamp: Date.now(),
       });
-      
+
       setIsSubmitting(false);
-      Alert.alert('Offline', 'Data saved locally. Submission will sync when network returns.', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
+      Alert.alert(
+        'Offline',
+        'Data saved locally. Submission will sync when network returns.',
+        [{ text: 'OK', onPress: () => router.back() }]
+      );
       return;
     }
 
@@ -102,25 +123,31 @@ export default function CaseDetailScreen() {
       // 1. Upload files first (simplified online logic for this demo)
       // In production, this would call processQueue or a similar parallel logic
       await api.post(`/cases/${id}/submit`, values);
-      
+
       setIsSubmitting(false);
       Alert.alert('Success', 'Verification submitted successfully.', [
-        { text: 'OK', onPress: () => router.back() }
+        { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (e: any) {
       setIsSubmitting(false);
-      Alert.alert('Upload Failed', e.message || 'System error. Try again later.');
+      Alert.alert(
+        'Upload Failed',
+        e.message || 'System error. Try again later.'
+      );
     }
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <ChevronLeft size={24} color={theme.colors.slate[900]} />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
@@ -133,7 +160,8 @@ export default function CaseDetailScreen() {
         <View style={styles.infoBox}>
           <Info size={16} color={theme.colors.primary} />
           <Text style={styles.infoText}>
-            Ensure high GPS accuracy before capturing proof markers. Evidence is forensic-locked.
+            Ensure high GPS accuracy before capturing proof markers. Evidence is
+            forensic-locked.
           </Text>
         </View>
 
@@ -146,7 +174,7 @@ export default function CaseDetailScreen() {
 
         <View style={styles.spacer} />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.submitButton, isSubmitting && styles.disabledButton]}
           onPress={handleSubmit}
           disabled={isSubmitting}

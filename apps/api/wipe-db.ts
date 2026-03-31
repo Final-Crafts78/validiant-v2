@@ -39,7 +39,7 @@ async function main() {
     'case_document_uploads',
     'bgv_partners',
     'outbound_delivery_logs',
-    'org_analytics_snapshots'
+    'org_analytics_snapshots',
   ];
 
   try {
@@ -47,7 +47,9 @@ async function main() {
     // We use a single query to truncate all to handle dependencies
     await sql(`TRUNCATE TABLE ${tables.join(', ')} CASCADE;`);
     console.log('✅ Database wiped successfully!');
-    console.log('Now you can run "pnpm db:push" and it will work perfectly on the clean database.');
+    console.log(
+      'Now you can run "pnpm db:push" and it will work perfectly on the clean database.'
+    );
   } catch (error) {
     console.error('❌ Failed to wipe database:', error);
     process.exit(1);

@@ -107,7 +107,9 @@ apiClient.interceptors.request.use(
   (config) => {
     // 0. INITIATION LOG (Finding 61 - Trace context)
     const stack = new Error().stack?.split('\n').slice(2, 6).join('\n');
-    console.groupCollapsed(`[API:Initiate] ${config.method?.toUpperCase()} ${config.url}`);
+    console.groupCollapsed(
+      `[API:Initiate] ${config.method?.toUpperCase()} ${config.url}`
+    );
     console.log('Context:', {
       url: config.url,
       method: config.method?.toUpperCase(),
@@ -137,14 +139,14 @@ apiClient.interceptors.request.use(
 
     // 2. LOGGING (ALWAYS log in production for now for maximum visibility)
     const finalOrgId = config.headers?.['X-Org-Id'];
-    
+
     // URL CONSTRUCTION TRACE
     // getBaseUrl() ends with /api/v1
     const baseURL = config.baseURL?.replace(/\/+$/, '') || '';
 
     // 🔒 SAFETY FILTER: Strip redundant prefixes from the relative URL
     let relativePart = config.url || '';
-    
+
     // Remove leading /api/v1 or api/v1 multiple times if they exist
     relativePart = relativePart.replace(/^(\/api\/v1)+/g, '');
 
@@ -166,42 +168,49 @@ apiClient.interceptors.request.use(
 
     const authStoreState = useAuthStore.getState();
 
-    logger.debug(`[API:Request] ${config.method?.toUpperCase()} ${config.url}`, {
-      finalFullURL,
-      method: config.method?.toUpperCase(),
-      potentialDoublePrefix: isDoublePrefixed,
-      baseURL: config.baseURL,
-      urlPath: config.url,
-      hasOrgId: !!finalOrgId,
-      orgId: finalOrgId || 'MISSING',
-      orgIdSource: existingOrgId
-        ? 'explicit-header'
-        : fromWorkspaceStore
-          ? 'workspace-store'
-          : fromAuthStore
-            ? 'auth-store'
-            : 'none',
-      storeValues: {
-        fromWorkspace: fromWorkspaceStore || 'null',
-        fromAuth: fromAuthStore || 'null',
-      },
-      authStore: {
-        isAuthenticated: authStoreState.isAuthenticated,
-        hasUser: !!authStoreState.user,
-        userActiveOrgId: authStoreState.user?.activeOrganizationId || 'MISSING',
-      },
-      workspaceStore: {
-        activeOrgId: fromWorkspaceStore || 'MISSING',
-      },
-      timestamp: new Date().toISOString(),
-      headers: {
-        ...config.headers,
-        'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
-        'User-Agent':
-          typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
-        Referer: typeof window !== 'undefined' ? window.location.href : 'NONE',
-      },
-    });
+    logger.debug(
+      `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
+      {
+        finalFullURL,
+        method: config.method?.toUpperCase(),
+        potentialDoublePrefix: isDoublePrefixed,
+        baseURL: config.baseURL,
+        urlPath: config.url,
+        hasOrgId: !!finalOrgId,
+        orgId: finalOrgId || 'MISSING',
+        orgIdSource: existingOrgId
+          ? 'explicit-header'
+          : fromWorkspaceStore
+            ? 'workspace-store'
+            : fromAuthStore
+              ? 'auth-store'
+              : 'none',
+        storeValues: {
+          fromWorkspace: fromWorkspaceStore || 'null',
+          fromAuth: fromAuthStore || 'null',
+        },
+        authStore: {
+          isAuthenticated: authStoreState.isAuthenticated,
+          hasUser: !!authStoreState.user,
+          userActiveOrgId:
+            authStoreState.user?.activeOrganizationId || 'MISSING',
+        },
+        workspaceStore: {
+          activeOrgId: fromWorkspaceStore || 'MISSING',
+        },
+        timestamp: new Date().toISOString(),
+        headers: {
+          ...config.headers,
+          'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
+          'User-Agent':
+            typeof window !== 'undefined'
+              ? window.navigator.userAgent
+              : 'SERVER',
+          Referer:
+            typeof window !== 'undefined' ? window.location.href : 'NONE',
+        },
+      }
+    );
 
     // 🚩 DOUBLE PREFIX ALERT
     if (isDoublePrefixed) {
@@ -242,15 +251,21 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // 2. SUCCESS LOGGING
-    logger.debug(`[API:Success] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`, {
-      status: response.status,
-      statusText: response.statusText,
-      url: response.config.url,
-      method: response.config.method?.toUpperCase(),
-      hasData: !!response.data,
-      dataSummary: typeof response.data === 'object' ? Object.keys(response.data || {}) : 'primitive',
-      timestamp: new Date().toISOString(),
-    });
+    logger.debug(
+      `[API:Success] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`,
+      {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.config.url,
+        method: response.config.method?.toUpperCase(),
+        hasData: !!response.data,
+        dataSummary:
+          typeof response.data === 'object'
+            ? Object.keys(response.data || {})
+            : 'primitive',
+        timestamp: new Date().toISOString(),
+      }
+    );
     return response;
   },
   (error: AxiosError<APIError>) => {
@@ -270,18 +285,21 @@ apiClient.interceptors.response.use(
     const statusCode = response.status;
 
     // ELITE: Response Error Detail
-    logger.error(`[API:Error] ${statusCode} ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
-      status: statusCode,
-      data: response.data,
-      headers: response.headers,
-      config: {
-        url: error.config?.url,
-        baseURL: error.config?.baseURL,
-        method: error.config?.method,
-        headers: error.config?.headers,
-      },
-      timestamp: new Date().toISOString(),
-    });
+    logger.error(
+      `[API:Error] ${statusCode} ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
+      {
+        status: statusCode,
+        data: response.data,
+        headers: response.headers,
+        config: {
+          url: error.config?.url,
+          baseURL: error.config?.baseURL,
+          method: error.config?.method,
+          headers: error.config?.headers,
+        },
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // Handle authentication errors (401)
     if (statusCode === 401) {
@@ -290,7 +308,11 @@ apiClient.interceptors.response.use(
         (window.location.pathname.includes('/auth/') ||
           window.location.pathname.includes('/api/auth/session-expired'));
 
-      const fullUrl = error.config?.url ? (error.config.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config.url) : 'UNKNOWN';
+      const fullUrl = error.config?.url
+        ? error.config.baseURL
+          ? `${error.config.baseURL}${error.config.url}`
+          : error.config.url
+        : 'UNKNOWN';
 
       logger.warn('[Axios:401] FULL CONTEXT', {
         url: error.config?.url,
@@ -371,18 +393,20 @@ apiClient.interceptors.response.use(
             after: authStateAfter,
           });
 
-          const targetUrl =
-            `/api/auth/session-expired?reason=expired&forceLogout=true&redirect=${encodeURIComponent(
-              window.location.pathname
-            )}`;
+          const targetUrl = `/api/auth/session-expired?reason=expired&forceLogout=true&redirect=${encodeURIComponent(
+            window.location.pathname
+          )}`;
 
-          logger.info('[Axios:401] [EP-AUTH-FAIL] Redirecting to session-expired', {
-            href: targetUrl,
-            isCritical: isCriticalRequest,
-            authStateBefore,
-            authStateAfter,
-            timestamp: new Date().toISOString(),
-          });
+          logger.info(
+            '[Axios:401] [EP-AUTH-FAIL] Redirecting to session-expired',
+            {
+              href: targetUrl,
+              isCritical: isCriticalRequest,
+              authStateBefore,
+              authStateAfter,
+              timestamp: new Date().toISOString(),
+            }
+          );
 
           // Redirect to session-expired handler to clear HttpOnly cookies
           window.location.href = targetUrl;
@@ -423,7 +447,11 @@ apiClient.interceptors.response.use(
     if (statusCode === 400) {
       logger.error('[API:400] Bad Request / Validation Failure', {
         url: error.config?.url,
-        fullUrl: error.config?.url ? (error.config.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config.url) : 'UNKNOWN',
+        fullUrl: error.config?.url
+          ? error.config.baseURL
+            ? `${error.config.baseURL}${error.config.url}`
+            : error.config.url
+          : 'UNKNOWN',
         status: statusCode,
         message: response.data?.message,
         errorBody: response.data,
@@ -438,7 +466,8 @@ apiClient.interceptors.response.use(
       console.warn('[API:404] GHOST ROUTE DETECTED', {
         url: error.config?.url,
         method: error.config?.method?.toUpperCase(),
-        referer: typeof window !== 'undefined' ? window.location.href : 'SERVER',
+        referer:
+          typeof window !== 'undefined' ? window.location.href : 'SERVER',
         headers: error.config?.headers,
         timestamp: new Date().toISOString(),
       });
@@ -681,7 +710,9 @@ export const usersApi = {
     put<APIResponse<unknown>>('/users/me', data),
 
   /** Upload a profile picture */
-  uploadAvatar: (file: File): Promise<AxiosResponse<APIResponse<{ avatarUrl: string }>>> => {
+  uploadAvatar: (
+    file: File
+  ): Promise<AxiosResponse<APIResponse<{ avatarUrl: string }>>> => {
     const formData = new FormData();
     formData.append('avatar', file);
     return post<APIResponse<{ avatarUrl: string }>>('/users/avatar', formData, {
@@ -811,19 +842,22 @@ export const activityApi = {
   getExportUrl: (): string => {
     // getBaseUrl() returns '.../api/v1'
     const baseUrl = getBaseUrl().replace(/\/+$/, '');
-    
+
     // 🔒 CRITICAL: Prevent double /api/v1 prefix
-    // If we're appending a path that is already relative to the API root, 
+    // If we're appending a path that is already relative to the API root,
     // we should just append it.
-    const finalUrl = `${baseUrl}/activity/export`.replace(/\/api\/v1\/api\/v1/, '/api/v1');
-    
+    const finalUrl = `${baseUrl}/activity/export`.replace(
+      /\/api\/v1\/api\/v1/,
+      '/api/v1'
+    );
+
     console.debug('[API:getExportUrl] Generated URL', {
       baseUrl,
       finalUrl,
       isDoublePrefixed: finalUrl.includes('/api/v1/api/v1'),
       timestamp: new Date().toISOString(),
     });
-    
+
     return finalUrl;
   },
 };

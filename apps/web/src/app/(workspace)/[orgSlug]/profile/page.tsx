@@ -142,11 +142,14 @@ export default function ProfilePage() {
             : cleanBio;
 
         // eslint-disable-next-line no-console
-        console.log('[ProfilePage] Submitting profile update (Extreme Trace):', {
-          fullName,
-          bio: bioToSubmit,
-          originalBio: bio,
-        });
+        console.log(
+          '[ProfilePage] Submitting profile update (Extreme Trace):',
+          {
+            fullName,
+            bio: bioToSubmit,
+            originalBio: bio,
+          }
+        );
 
         const result = await updateProfileAction({
           fullName,
