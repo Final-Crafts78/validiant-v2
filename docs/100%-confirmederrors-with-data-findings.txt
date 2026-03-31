@@ -297,3 +297,23 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `cloudflarelogs.txt` (Lines 104, 141, 538) shows `Canceled` labels for both the public `/api/v1/realtime/stream` and the internal `/stream` subrequest to Durable Objects.
 - **Root Cause**: Potentially caused by rapid component remounting in the frontend OR by the internal path rewriting in `realtime.routes.ts` appearing as a separate "canceled" subrequest in Wrangler logs.
 - **Impact**: Potential instability in real-time notification delivery.
+
+#### 61. [Backend] Project Status Update 404 (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 152) shows `PATCH /api/v1/projects/eb1729a4-9f23-4b76-b3e5-26ba3d4f1644 404`.
+- **Root Cause**: `project.routes.ts` defines `PUT /:id` but is missing a `PATCH /:id` handler for partial updates (e.g., status changes).
+- **Impact**: Users cannot update project status from the UI; the action silently fails or shows a 404 error.
+
+#### 62. [Backend/Frontend] Bulk Assign Route/Method Mismatch (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 162) and HAR logs (Line 73) show a `POST` to `/api/v1/projects/:id/tasks/bulk-assign` failing with 401/404.
+- **Root Cause**: 1) URL mismatch: Backend expects `/api/v1/tasks/bulk-assign`. 2) Method mismatch: Backend expects `PATCH`, frontend sends `POST`. 3) Auth: Token verification failed for this specific endpoint.
+- **Impact**: Bulk task assignment feature is completely broken.
+
+#### 63. [Frontend] Profile Data Serialization $undefined Bug (100% Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 22) shows a request body containing `phoneNumber: "$undefined"` and `bio: "$undefined"`.
+- **Root Cause**: Frontend `ProfilePage` state initialization or submission logic is converting `undefined` values to literal string "$undefined".
+- **Impact**: Data corruption in the database; user profile fields are overwritten with "undefined" strings.
+
+#### 64. [Backend] Authentication Detailed Failure Obscurity
+- **Data Evidence**: `cloudflarelogs.txt` (Line 162) shows `verifyToken FAILED` without specifying the reason (expiry vs. signature vs. malformed).
+- **Root Cause**: Generic error logging in the `authenticate` middleware.
+- **Impact**: Extremely difficult to debug why specific requests like `bulk-assign` fail with 401 while others succeed.

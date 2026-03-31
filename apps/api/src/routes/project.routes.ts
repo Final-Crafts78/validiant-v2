@@ -30,7 +30,9 @@ app.post(
   zValidator('json', createProjectSchema, async (result, c) => {
     if (!result.success) {
       const flattenedErrors = result.error.flatten();
-      const rawBody = await c.req.json().catch(() => ({ error: 'Could not parse body' }));
+      const rawBody = await c.req
+        .json()
+        .catch(() => ({ error: 'Could not parse body' }));
       
       console.error('[Project:Routes] Validation FAILED (POST /)', {
         errors: flattenedErrors.fieldErrors,
@@ -59,15 +61,32 @@ app.put(
   projectController.updateProject
 );
 app.patch(
-  '/:id/settings',
-  zValidator('json', updateProjectSettingsSchema, (result, c) => {
+  '/:id',
+  zValidator('json', updateProjectSchema, (result, c) => {
     if (!result.success) {
       const flattenedErrors = result.error.flatten();
-      console.error('[Project:Routes] Validation FAILED (PATCH /:id/settings)', {
+      console.error('[Project:Routes] Validation FAILED (PATCH /:id)', {
         errors: flattenedErrors.fieldErrors,
         projectId: c.req.param('id'),
         timestamp: new Date().toISOString(),
       });
+    }
+  }),
+  projectController.updateProject
+);
+app.patch(
+  '/:id/settings',
+  zValidator('json', updateProjectSettingsSchema, (result, c) => {
+    if (!result.success) {
+      const flattenedErrors = result.error.flatten();
+      console.error(
+        '[Project:Routes] Validation FAILED (PATCH /:id/settings)',
+        {
+          errors: flattenedErrors.fieldErrors,
+          projectId: c.req.param('id'),
+          timestamp: new Date().toISOString(),
+        }
+      );
     }
   }),
   projectController.updateProjectSettings
@@ -106,11 +125,14 @@ app.post(
   zValidator('json', createTaskSchema, (result, c) => {
     if (!result.success) {
       const flattenedErrors = result.error.flatten();
-      console.error('[Project:Routes] Validation FAILED (POST /:projectId/tasks)', {
-        errors: flattenedErrors.fieldErrors,
-        projectId: c.req.param('projectId'),
-        timestamp: new Date().toISOString(),
-      });
+      console.error(
+        '[Project:Routes] Validation FAILED (POST /:projectId/tasks)',
+        {
+          errors: flattenedErrors.fieldErrors,
+          projectId: c.req.param('projectId'),
+          timestamp: new Date().toISOString(),
+        }
+      );
     }
   }),
   taskController.createTask

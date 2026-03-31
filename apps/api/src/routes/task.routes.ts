@@ -52,6 +52,16 @@ app.patch(
   zValidator('json', bulkAssignTasksSchema),
   taskController.bulkAssignTasks
 );
+app.post(
+  '/bulk-assign',
+  zValidator('json', bulkAssignTasksSchema),
+  taskController.bulkAssignTasks
+);
+app.post(
+  '/projects/:projectId/tasks/bulk-assign',
+  zValidator('json', bulkAssignTasksSchema),
+  taskController.bulkAssignTasks
+);
 app.patch(
   '/bulk-status',
   zValidator('json', bulkUpdateTaskStatusSchema),

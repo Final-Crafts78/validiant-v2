@@ -58,7 +58,9 @@ export const authenticate = async (
       referer: c.req.header('referer') || 'NONE',
       hasBearerToken: !!token,
       hasCookieToken: !!cookieToken,
-      rawCookieHeader: c.req.header('cookie') ? 'PRESENT (Names masked)' : 'NONE',
+      rawCookieHeader: c.req.header('cookie')
+        ? 'PRESENT (Names masked)'
+        : 'NONE',
     });
 
     if (!token) token = cookieToken;
@@ -90,7 +92,8 @@ export const authenticate = async (
 
     let payload: TokenPayload;
     try {
-      payload = await verifyToken(token);
+      const decoded = await verifyToken(token);
+      payload = decoded;
       logger.info('[Auth:MW] Success', {
         userId: payload.userId,
         email: payload.email,
@@ -100,13 +103,26 @@ export const authenticate = async (
         expiresInSec: payload.exp
           ? payload.exp - Math.floor(Date.now() / 1000)
           : 'no-exp',
-        path: c.req.path
+        path: c.req.path,
       });
     } catch (verifyError) {
+      const errorDetail =
+        verifyError instanceof Error
+          ? {
+              name: verifyError.name,
+              message: verifyError.message,
+              stack: verifyError.stack?.split('\n').slice(0, 2).join(' '), // Short stack for edge
+            }
+          : { message: String(verifyError) };
+
       logger.error('[Auth Middleware] verifyToken FAILED', {
-        tokenPrefix: token.substring(0, 30) + '...',
+        tokenPrefix: token.substring(0, 20) + '...',
+        tokenSuffix: token.substring(token.length - 10),
         tokenLength: token.length,
-        error: verifyError instanceof Error ? verifyError.message : verifyError,
+        ...errorDetail,
+        path: c.req.path,
+        method: c.req.method,
+        requestId: c.req.header('cf-ray') || 'NONE',
       });
       return c.json(
         {
@@ -166,7 +182,7 @@ export const optionalAuth = async (c: Context, next: Next): Promise<void> => {
       const payload: TokenPayload = await verifyToken(token);
       logger.debug('[Auth:MW] Optional Success', {
         userId: payload.userId,
-        orgId: payload.organizationId
+        orgId: payload.organizationId,
       });
       c.set('user', {
         userId: payload.userId,

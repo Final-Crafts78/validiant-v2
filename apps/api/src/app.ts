@@ -27,6 +27,7 @@ import { logger } from 'hono/logger';
 import { logger as appLogger } from './utils/logger';
 import { prettyJSON } from 'hono/pretty-json';
 import { UserContext } from './middleware/auth';
+import { formatErrorResponse, ApiError } from './utils/errors';
 
 // Import all routes
 import authRoutes from './routes/auth.routes';
@@ -358,9 +359,14 @@ export const createHonoApp = () => {
       }
     });
 
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const errorResponse = formatErrorResponse(err, isDevelopment);
+    const statusCode = err instanceof ApiError ? err.statusCode : 500;
+
     console.error('[API:Error] Unhandled Exception Detail', {
-      error: err.name || 'Internal Server Error',
-      message: err.message || 'An unexpected error occurred',
+      error: errorResponse.error.code,
+      message: errorResponse.error.message,
+      statusCode,
       path: c.req.path,
       method: c.req.method,
       query: c.req.query(),
@@ -375,20 +381,10 @@ export const createHonoApp = () => {
       userId: user?.userId || 'ANONYMOUS',
       requestId: c.req.header('x-request-id') || 'NONE',
       timestamp: new Date().toISOString(),
-      stack: err.stack,
+      stack: isDevelopment ? err.stack : undefined,
     });
 
-    const isDevelopment = process.env.NODE_ENV === 'development';
-
-    return c.json(
-      {
-        success: false,
-        error: err.name || 'Internal Server Error',
-        message: err.message || 'An unexpected error occurred',
-        ...(isDevelopment && { stack: err.stack }),
-      },
-      500
-    );
+    return c.json(errorResponse, statusCode as Parameters<typeof c.json>[1]);
   });
 
   return app;

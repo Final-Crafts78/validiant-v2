@@ -78,10 +78,23 @@ export default function ProfilePage() {
 
   // Update form state when user data changes (e.g., after refresh)
   useEffect(() => {
-    setFirstName(nameComponents.firstName);
-    setLastName(nameComponents.lastName);
-    setPhoneNumber(user?.phoneNumber || '');
-    setBio(user?.bio || '');
+    // ELITE PERFORMANCE: Strip literal "$undefined" or "null" strings that might have leaked from DB/BFF
+    const sanitize = (val: unknown): string => {
+      if (
+        val === '$undefined' ||
+        val === 'null' ||
+        val === null ||
+        val === undefined
+      ) {
+        return '';
+      }
+      return String(val);
+    };
+
+    setFirstName(sanitize(nameComponents.firstName));
+    setLastName(sanitize(nameComponents.lastName));
+    setPhoneNumber(sanitize(user?.phoneNumber));
+    setBio(sanitize(user?.bio));
   }, [
     user?.fullName,
     user?.bio,
@@ -121,24 +134,43 @@ export default function ProfilePage() {
       try {
         const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
 
+        // ELITE DEFENSE: Final check to ensure we never send "$undefined" strings
+        const cleanBio = bio.trim();
+        const bioToSubmit =
+          cleanBio === '$undefined' || cleanBio === 'null' || !cleanBio
+            ? undefined
+            : cleanBio;
+
+        // eslint-disable-next-line no-console
         console.log('[ProfilePage] Submitting profile update:', {
           fullName,
-          bio: bio.trim(),
+          bio: bioToSubmit,
         });
 
         const result = await updateProfileAction({
           fullName,
-          bio: bio.trim() || undefined,
+          bio: bioToSubmit,
         });
 
         // Also call the API client for phoneNumber
-        if (phoneNumber.trim()) {
+        const cleanPhone = phoneNumber.trim();
+        const phoneToSubmit =
+          cleanPhone === '$undefined' || cleanPhone === 'null' || !cleanPhone
+            ? undefined
+            : cleanPhone;
+
+        if (phoneToSubmit) {
           try {
             await usersApi.updateProfile({
               fullName,
-              phoneNumber: phoneNumber.trim(),
+              phoneNumber: phoneToSubmit,
             });
-          } catch {
+          } catch (apiError) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              '[ProfilePage] usersApi.updateProfile failed:',
+              apiError
+            );
             // Non-blocking: phone number is best-effort
           }
         }
