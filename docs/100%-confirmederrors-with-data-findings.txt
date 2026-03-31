@@ -287,3 +287,13 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: User reports and navigation logs showed users stranded on the "Organization Dashboard" without an easy path back to the global Workspace Selector.
 - **Resolution**: Implemented a global "Workspace Overview" link in the Command Rail (Sidebar Footer) to provide a consistent "escape hatch" back to the root `/dashboard`.
 - **Impact**: Significantly improved navigation UX between org-specific and global contexts.
+
+#### 59. [Backend] Redundant Tenant Isolation Execution (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 289) shows `[Tenant:MW] REDUNDANCY CHECK: orgId already set in context` for numerous requests (e.g., `/api/v1/analytics/latest`).
+- **Root Cause**: The `tenantIsolation` middleware is applied globally in `app.ts` and also individually within sub-routers (e.g., `analytics.routes.ts`, `task.routes.ts`).
+- **Impact**: Unnecessary processing overhead and log noise; redundant execution of isolation logic.
+
+#### 60. [Backend/Frontend] Transient Real-time (SSE) Cancellations (Data Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Lines 104, 141, 538) shows `Canceled` labels for both the public `/api/v1/realtime/stream` and the internal `/stream` subrequest to Durable Objects.
+- **Root Cause**: Potentially caused by rapid component remounting in the frontend OR by the internal path rewriting in `realtime.routes.ts` appearing as a separate "canceled" subrequest in Wrangler logs.
+- **Impact**: Potential instability in real-time notification delivery.

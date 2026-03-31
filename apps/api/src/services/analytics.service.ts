@@ -21,12 +21,16 @@ export const getOrganizationAnalytics = async (
 };
 
 export const getLatestSnapshot = async (organizationId: string) => {
+  const startTime = performance.now();
   const snapshots = await db
     .select()
     .from(orgAnalyticsSnapshots)
     .where(eq(orgAnalyticsSnapshots.organizationId, organizationId))
     .orderBy(desc(orgAnalyticsSnapshots.recordedAt))
     .limit(1);
+
+  const duration = (performance.now() - startTime).toFixed(2);
+  console.info(`[Analytics:DB] getLatestSnapshot (${organizationId}) took ${duration}ms`);
 
   return snapshots[0] || null;
 };
@@ -38,7 +42,8 @@ export const getAnalyticsTrend = async (
   const ago = new Date();
   ago.setDate(ago.getDate() - days);
 
-  return await db
+  const startTime = performance.now();
+  const results = await db
     .select()
     .from(orgAnalyticsSnapshots)
     .where(
@@ -48,4 +53,9 @@ export const getAnalyticsTrend = async (
       )
     )
     .orderBy(orgAnalyticsSnapshots.recordedAt);
+
+  const duration = (performance.now() - startTime).toFixed(2);
+  console.info(`[Analytics:DB] getAnalyticsTrend (${organizationId}, ${days} days) took ${duration}ms`);
+
+  return results;
 };

@@ -105,6 +105,19 @@ const apiClient: AxiosInstance = axios.create({
  */
 apiClient.interceptors.request.use(
   (config) => {
+    // 0. INITIATION LOG (Finding 61 - Trace context)
+    const stack = new Error().stack?.split('\n').slice(2, 6).join('\n');
+    console.groupCollapsed(`[API:Initiate] ${config.method?.toUpperCase()} ${config.url}`);
+    console.log('Context:', {
+      url: config.url,
+      method: config.method?.toUpperCase(),
+      workspaceOrgId: useWorkspaceStore.getState().activeOrgId,
+      authOrgId: useAuthStore.getState().user?.activeOrganizationId,
+      timestamp: new Date().toISOString(),
+    });
+    console.log('Call Stack:\n', stack);
+    console.groupEnd();
+
     // 1. INJECT ORGANIZATION CONTEXT (X-Org-Id)
     // We check both the AuthStore and the WorkspaceStore.
     // useWorkspaceStore is the primary 'Context' for the active UI view.
@@ -143,54 +156,52 @@ apiClient.interceptors.request.use(
     // Update config URL to the relative part
     config.url = relativePart;
 
-    const finalFullURL = `${baseURL}${relativePart}`.replace(/\/api\/v1\/api\/v1/g, '/api/v1');
+    const finalFullURL = `${baseURL}${relativePart}`.replace(
+      /\/api\/v1\/api\/v1/g,
+      '/api/v1'
+    );
 
     // 🚩 DOUBLE PREFIX DETECTION (Sanity Check)
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
     const authStoreState = useAuthStore.getState();
 
-    logger.debug(
-      `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
-      {
-        finalFullURL,
-        method: config.method?.toUpperCase(),
-        potentialDoublePrefix: isDoublePrefixed,
-        baseURL: config.baseURL,
-        urlPath: config.url,
-        hasOrgId: !!finalOrgId,
-        orgId: finalOrgId || 'MISSING',
-        orgIdSource: existingOrgId
-          ? 'explicit-header'
-          : fromWorkspaceStore
-            ? 'workspace-store'
-            : fromAuthStore
-              ? 'auth-store'
-              : 'none',
-        storeValues: {
-          fromWorkspace: fromWorkspaceStore || 'null',
-          fromAuth: fromAuthStore || 'null',
-        },
-        authStore: {
-          isAuthenticated: authStoreState.isAuthenticated,
-          hasUser: !!authStoreState.user,
-          userActiveOrgId: authStoreState.user?.activeOrganizationId || 'MISSING',
-        },
-        workspaceStore: {
-          activeOrgId: fromWorkspaceStore || 'MISSING',
-        },
-        timestamp: new Date().toISOString(),
-        headers: {
-          ...config.headers,
-          'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
-          'User-Agent':
-            typeof window !== 'undefined'
-              ? window.navigator.userAgent
-              : 'SERVER',
-          Referer: typeof window !== 'undefined' ? window.location.href : 'NONE',
-        },
-      }
-    );
+    logger.debug(`[API:Request] ${config.method?.toUpperCase()} ${config.url}`, {
+      finalFullURL,
+      method: config.method?.toUpperCase(),
+      potentialDoublePrefix: isDoublePrefixed,
+      baseURL: config.baseURL,
+      urlPath: config.url,
+      hasOrgId: !!finalOrgId,
+      orgId: finalOrgId || 'MISSING',
+      orgIdSource: existingOrgId
+        ? 'explicit-header'
+        : fromWorkspaceStore
+          ? 'workspace-store'
+          : fromAuthStore
+            ? 'auth-store'
+            : 'none',
+      storeValues: {
+        fromWorkspace: fromWorkspaceStore || 'null',
+        fromAuth: fromAuthStore || 'null',
+      },
+      authStore: {
+        isAuthenticated: authStoreState.isAuthenticated,
+        hasUser: !!authStoreState.user,
+        userActiveOrgId: authStoreState.user?.activeOrganizationId || 'MISSING',
+      },
+      workspaceStore: {
+        activeOrgId: fromWorkspaceStore || 'MISSING',
+      },
+      timestamp: new Date().toISOString(),
+      headers: {
+        ...config.headers,
+        'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
+        'User-Agent':
+          typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
+        Referer: typeof window !== 'undefined' ? window.location.href : 'NONE',
+      },
+    });
 
     // 🚩 DOUBLE PREFIX ALERT
     if (isDoublePrefixed) {

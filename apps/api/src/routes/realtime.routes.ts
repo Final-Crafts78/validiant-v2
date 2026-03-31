@@ -28,8 +28,11 @@ router.get('/stream', async (c) => {
   });
 
   const rawUrl = new URL(c.req.url);
-  const searchOrgId = rawUrl.searchParams.get('orgId') || rawUrl.searchParams.get('organizationId');
-  const queryOrgId = c.req.query('orgId') || c.req.query('organizationId') || searchOrgId;
+  const searchOrgId =
+    rawUrl.searchParams.get('orgId') ||
+    rawUrl.searchParams.get('organizationId');
+  const queryOrgId =
+    c.req.query('orgId') || c.req.query('organizationId') || searchOrgId;
   const headerOrgId = c.req.header('X-Org-Id');
   const userOrgId = user?.organizationId;
   const cookieOrgId = getCookie(c, 'orgId');
@@ -37,7 +40,15 @@ router.get('/stream', async (c) => {
   // ELITE: For SSE, query parameter is the most reliable source as headers are complex for EventSource
   const orgId = queryOrgId || headerOrgId || userOrgId || cookieOrgId;
 
-  const resolutionMarker = queryOrgId ? 'FROM_QUERY' : headerOrgId ? 'FROM_HEADER' : userOrgId ? 'FROM_USER_CONTEXT' : cookieOrgId ? 'FROM_COOKIE' : 'NOT_RESOLVED';
+  const resolutionMarker = queryOrgId
+    ? 'FROM_QUERY'
+    : headerOrgId
+      ? 'FROM_HEADER'
+      : userOrgId
+        ? 'FROM_USER_CONTEXT'
+        : cookieOrgId
+          ? 'FROM_COOKIE'
+          : 'NOT_RESOLVED';
 
   logger.info('[Realtime:MW] Stream Isolation Decision', {
     url: c.req.url,
@@ -56,15 +67,18 @@ router.get('/stream', async (c) => {
   });
 
   if (!orgId) {
-    logger.error('[Realtime] TERMINAL FAILURE - No organization context found', {
-      userId: user?.userId,
-      path: c.req.path,
-      attemptedDecision: resolutionMarker,
-      headers: c.req.header(),
-      query: c.req.queries(),
-      timestamp: new Date().toISOString(),
-      suggestion: 'Client must pass orgId in query string for SSE.',
-    });
+    logger.error(
+      '[Realtime] TERMINAL FAILURE - No organization context found',
+      {
+        userId: user?.userId,
+        path: c.req.path,
+        attemptedDecision: resolutionMarker,
+        headers: c.req.header(),
+        query: c.req.queries(),
+        timestamp: new Date().toISOString(),
+        suggestion: 'Client must pass orgId in query string for SSE.',
+      }
+    );
     throw new BadRequestError(
       'Active organization context required for real-time stream. Ensure orgId query param is present.'
     );
@@ -84,7 +98,9 @@ router.get('/stream', async (c) => {
 
   // Proxy the request to the Durable Object
   // We explicitly call the '/stream' path inside the DO
+  // ELITE: Use internal host to disambiguate from public API requests in wrangler tail
   const doUrl = new URL(c.req.url);
+  doUrl.hostname = 'durable-object-internal';
   doUrl.pathname = '/stream';
 
   return room.fetch(doUrl.toString(), {

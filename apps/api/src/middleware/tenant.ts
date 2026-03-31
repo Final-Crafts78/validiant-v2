@@ -28,6 +28,7 @@ export const tenantIsolation = async (
   c: Context,
   next: Next
 ): Promise<Response | void> => {
+  const startTime = performance.now();
   // Path exclusions are now handled globally in app.ts for consistency
   const user = c.get('user') as UserContext | undefined;
 
@@ -37,15 +38,19 @@ export const tenantIsolation = async (
 
   const existingOrgId = c.get('orgId') || c.get('organizationId');
   if (existingOrgId) {
-    console.debug('[Tenant:MW] REDUNDANCY CHECK: orgId already set in context', {
-      existingOrgId,
-      path: c.req.path,
-    });
+    console.debug(
+      '[Tenant:MW] REDUNDANCY CHECK: orgId already set in context',
+      {
+        existingOrgId,
+        path: c.req.path,
+        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
+      }
+    );
   }
 
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)
   const headerOrgId = c.req.header('X-Org-Id');
-  
+
   // 2. Fallback: Parse from route params or query
   const paramOrgId = c.req.param('orgId');
   const queryOrgId = c.req.query('organizationId') || c.req.query('orgId');
@@ -83,6 +88,7 @@ export const tenantIsolation = async (
     userId: user.userId,
     userAgent: c.req.header('User-Agent') || 'UNKNOWN',
     referer: c.req.header('Referer') || 'NONE',
+    duration: `${(performance.now() - startTime).toFixed(2)}ms`,
     timestamp: new Date().toISOString(),
   });
 
@@ -95,6 +101,7 @@ export const tenantIsolation = async (
         method: c.req.method,
         resolvedOrgId: orgId,
         userId: user.userId,
+        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
         timestamp: new Date().toISOString(),
       }
     );
@@ -108,21 +115,28 @@ export const tenantIsolation = async (
   }
 
   if (!orgId) {
-    console.error('[Tenant:MW] TERMINAL FAILURE - No organization context found', {
-      path: c.req.path,
-      method: c.req.method,
-      userId: user.userId,
-      headers: c.req.header(),
-      query: c.req.queries(),
-      timestamp: new Date().toISOString(),
-      suggestion: 'Ensure X-Org-Id header or orgId query parameter is provided.',
-    });
+    console.error(
+      '[Tenant:MW] TERMINAL FAILURE - No organization context found',
+      {
+        path: c.req.path,
+        method: c.req.method,
+        userId: user.userId,
+        headers: c.req.header(),
+        query: c.req.queries(),
+        duration: `${(performance.now() - startTime).toFixed(2)}ms`,
+        timestamp: new Date().toISOString(),
+        suggestion:
+          'Ensure X-Org-Id header or orgId query parameter is provided.',
+      }
+    );
     // For non-scoped routes, we allow it to pass, but log the warning
     await next();
     return;
   }
 
-  console.log(`[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY'}' }`);
+  console.log(
+    `[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY'}', duration: ${(performance.now() - startTime).toFixed(2)}ms }`
+  );
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers
 
@@ -131,6 +145,7 @@ export const tenantIsolation = async (
     orgId,
     resolvedFrom: headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : 'QUERY',
     path: c.req.path,
+    duration: `${(performance.now() - startTime).toFixed(2)}ms`,
     timestamp: new Date().toISOString(),
   });
 

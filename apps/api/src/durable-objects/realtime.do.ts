@@ -42,20 +42,34 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
 
     const stream = new ReadableStream({
       start: (controller) => {
+        const sessionId = crypto.randomUUID().substring(0, 8);
+        (controller as any)._sessionId = sessionId;
         this.sessions.add(controller);
+
+        console.info(`[Realtime:DO] Session ADDED`, {
+          sessionId,
+          activeSessions: this.sessions.size,
+          timestamp: new Date().toISOString(),
+        });
 
         // Send initial heartbeat/keep-alive
         controller.enqueue(encoder.encode('retry: 10000\n\n'));
         controller.enqueue(
           encoder.encode(
-            `event: connected\ndata: ${JSON.stringify({ timestamp: Date.now() })}\n\n`
+            `event: connected\ndata: ${JSON.stringify({ sessionId, timestamp: Date.now() })}\n\n`
           )
         );
       },
       cancel: (controller) => {
+        const sessionId = (controller as any)._sessionId || 'UNKNOWN';
         this.sessions.delete(
           controller as unknown as ReadableStreamDefaultController
         );
+        console.info(`[Realtime:DO] Session REMOVED (Client Cancel)`, {
+          sessionId,
+          activeSessions: this.sessions.size,
+          timestamp: new Date().toISOString(),
+        });
       },
     });
 
