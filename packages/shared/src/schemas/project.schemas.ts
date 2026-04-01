@@ -136,6 +136,12 @@ export const updateProjectSchema = z
       .regex(/^#[0-9A-Fa-f]{6}$/)
       .optional(),
     iconUrl: z.string().url().optional().nullable(),
+    themeColor: z
+      .string()
+      .regex(/^#[0-9A-Fa-f]{6}$/)
+      .optional(),
+    logoUrl: z.string().url().optional().nullable(),
+    autoDispatchVerified: z.boolean().optional(),
   })
   .refine(
     (data) => {

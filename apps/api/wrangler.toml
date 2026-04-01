@@ -33,3 +33,14 @@ new_sqlite_classes = ["RealtimeRoom"]
 
 [triggers]
 crons = ["*/5 * * * *"]
+
+# 3. Webhook Dispatcher Queue (Phase 13.5 - Command Center)
+[[queues.producers]]
+binding = "WEBHOOK_DISPATCHER"
+queue = "webhook-dispatch-queue"
+
+[[queues.consumers]]
+queue = "webhook-dispatch-queue"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 3

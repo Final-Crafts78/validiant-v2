@@ -75,6 +75,61 @@ export function useDeleteProject() {
   });
 }
 
+export function useArchiveProject(id: string) {
+  const qc = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  return useMutation({
+    mutationFn: () => projectService.archiveProject(id),
+    onSuccess: (updated) => {
+      qc.setQueryData(queryKeys.projects.detail(id), updated);
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
+    },
+  });
+}
+
+export function useUnarchiveProject(id: string) {
+  const qc = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  return useMutation({
+    mutationFn: () => projectService.unarchiveProject(id),
+    onSuccess: (updated) => {
+      qc.setQueryData(queryKeys.projects.detail(id), updated);
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
+    },
+  });
+}
+
+export function useCompleteProject(id: string) {
+  const qc = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  return useMutation({
+    mutationFn: () => projectService.completeProject(id),
+    onSuccess: (updated) => {
+      qc.setQueryData(queryKeys.projects.detail(id), updated);
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
+    },
+  });
+}
+
+export function useLeaveProject(id: string) {
+  const qc = useQueryClient();
+  const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
+  return useMutation({
+    mutationFn: () => projectService.leaveProject(id),
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.org(activeOrgId ?? ''),
+      });
+    },
+  });
+}
+
 export function useProjectMembers(projectId: string) {
   return useQuery<ProjectMember[]>({
     queryKey: queryKeys.projects.members(projectId),

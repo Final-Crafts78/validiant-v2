@@ -5,7 +5,7 @@
  */
 
 import { Context } from 'hono';
-import { eq, desc } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import { db, schema } from '../db';
 
 /**
@@ -24,12 +24,22 @@ export const getOrganizationAuditLogs = async (c: Context) => {
 
     const page = parseInt(c.req.query('page') || '1');
     const limit = parseInt(c.req.query('limit') || '50');
+    const entityId = c.req.query('entityId');
+    const entityType = c.req.query('entityType');
     const offset = (page - 1) * limit;
+
+    const conditions = [eq(schema.activityLogs.organizationId, orgId)];
+    if (entityId) {
+      conditions.push(eq(schema.activityLogs.entityId, entityId));
+    }
+    if (entityType) {
+      conditions.push(eq(schema.activityLogs.entityType, entityType));
+    }
 
     const logs = await db
       .select()
       .from(schema.activityLogs)
-      .where(eq(schema.activityLogs.organizationId, orgId))
+      .where(and(...conditions))
       .orderBy(desc(schema.activityLogs.createdAt))
       .limit(limit)
       .offset(offset);

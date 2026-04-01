@@ -342,3 +342,29 @@ export function useBulkUpdateTaskStatus() {
     },
   });
 }
+
+/**
+ * useBulkDeleteTasks Hook
+ */
+export function useBulkDeleteTasks() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      taskIds,
+    }: {
+      projectId: string;
+      taskIds: string[];
+    }) => {
+      return await post(`/projects/${projectId}/tasks/bulk-delete`, {
+        taskIds,
+      });
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({
+        queryKey: queryKeys.projects.tasks(variables.projectId),
+      });
+    },
+  });
+}

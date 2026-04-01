@@ -61,6 +61,12 @@ export const PermissionKey = [
   'project:create',
   'project:update',
   'project:delete',
+
+  // App & Infrastructure Access
+  'app:login',
+  'infra:backup',
+  'csv:import',
+  'field:access',
 ] as const;
 
 export type PermissionKey = (typeof PermissionKey)[number];
@@ -90,6 +96,10 @@ export const PLATFORM_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'project:read',
     'project:create',
     'project:update',
+    'app:login',
+    'csv:import',
+    'infra:backup',
+    'field:access',
   ],
   user: ['org:read', 'user:read', 'task:read', 'task:update', 'project:read'],
 };
@@ -124,6 +134,10 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'project:create',
     'project:update',
     'project:delete',
+    'app:login',
+    'csv:import',
+    'infra:backup',
+    'field:access',
   ],
   manager: [
     'org:read',
@@ -139,6 +153,7 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'project:read',
     'project:create',
     'project:update',
+    'csv:import',
   ],
   executive: [
     'org:read',
@@ -149,6 +164,8 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'audit:export',
     'project:read',
     'billing:read',
+    'app:login',
+    'field:access',
   ],
   viewer: ['org:read', 'user:read', 'task:read', 'project:read'],
 };

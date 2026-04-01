@@ -41,6 +41,33 @@ export const updateProject = async (
 export const deleteProject = async (id: string): Promise<void> =>
   del(`/projects/${id}`).then(() => undefined);
 
+export const archiveProject = async (id: string): Promise<Project> =>
+  post<APIResponse<{ project: Project }>>(`/projects/${id}/archive`).then(
+    (res) => {
+      if (!res.data.data?.project) throw new Error('Archive failed');
+      return res.data.data.project;
+    }
+  );
+
+export const unarchiveProject = async (id: string): Promise<Project> =>
+  post<APIResponse<{ project: Project }>>(`/projects/${id}/unarchive`).then(
+    (res) => {
+      if (!res.data.data?.project) throw new Error('Unarchive failed');
+      return res.data.data.project;
+    }
+  );
+
+export const completeProject = async (id: string): Promise<Project> =>
+  post<APIResponse<{ project: Project }>>(`/projects/${id}/complete`).then(
+    (res) => {
+      if (!res.data.data?.project) throw new Error('Complete action failed');
+      return res.data.data.project;
+    }
+  );
+
+export const leaveProject = async (id: string): Promise<void> =>
+  post<APIResponse<void>>(`/projects/${id}/leave`).then(() => undefined);
+
 export const addProjectMember = async (
   projectId: string,
   payload: { userId: string; role: 'admin' | 'member' | 'viewer' }

@@ -1105,6 +1105,40 @@ export const getTaskSubtasks = async (c: Context) => {
     );
   }
 };
+/**
+ * Get project statistics
+ * GET /api/v1/projects/:projectId/stats
+ */
+export const getProjectStats = async (c: Context) => {
+  try {
+    const user = c.get('user');
+    const projectId = c.req.param('projectId');
+
+    if (!user || !user.userId) {
+      return c.json({ success: false, error: 'Unauthorized' }, 401);
+    }
+
+    if (!projectId) {
+      return c.json({ success: false, error: 'Project ID is required' }, 400);
+    }
+
+    // Check project access
+    const hasAccess = await checkProjectAccess(projectId, user.userId);
+    if (!hasAccess) {
+      return c.json({ success: false, error: 'Forbidden' }, 403);
+    }
+
+    const stats = await taskService.getProjectStats(projectId);
+
+    return c.json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    console.error('Get project stats error:', error);
+    return c.json({ success: false, error: 'Failed to get stats' }, 500);
+  }
+};
 
 /**
  * Bulk update tasks

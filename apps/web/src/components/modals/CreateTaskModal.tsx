@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { tasksApi, projectsApi } from '@/lib/api';
-import { CheckSquare, Plus, X } from 'lucide-react';
-import type { Project, TaskPriority } from '@validiant/shared';
+import { CheckSquare, Plus, X, ShieldAlert } from 'lucide-react';
+import type { Project } from '@validiant/shared';
+import { TaskPriority } from '@validiant/shared';
+import { useVerificationTypes } from '@/hooks/useVerificationTypes';
+import { useWorkspaceStore } from '@/store/workspace';
 
 interface CreateTaskModalProps {
   open: boolean;
@@ -20,13 +23,13 @@ export function CreateTaskModal({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [projectId, setProjectId] = useState(defaultProjectId || '');
-  const [priority, setPriority] = useState<TaskPriority>(
-    'medium' as TaskPriority
-  );
+  const [priority, setPriority] = useState<TaskPriority>(TaskPriority.MEDIUM);
+  const [customData, setCustomData] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const queryClient = useQueryClient();
+  const { activeOrgId } = useWorkspaceStore();
 
   // Fetch projects to populate the dropdown
   const { data: projectsResponse } = useQuery({
@@ -36,6 +39,16 @@ export function CreateTaskModal({
   });
 
   const projects = (projectsResponse?.data?.data?.projects || []) as Project[];
+
+  // Fetch Verification Types (Field Schemas)
+  const { data: vTypes } = useVerificationTypes(activeOrgId || '');
+
+  // Extract relevant schema for the selected project
+  const projectSchema = useMemo(() => {
+    if (!vTypes || !projectId) return [];
+    const workflow = vTypes.find((v: any) => v.code === `PRJ_${projectId}_CUSTOM`);
+    return workflow?.fieldSchema || [];
+  }, [vTypes, projectId]);
 
   if (!open) return null;
 
@@ -55,6 +68,8 @@ export function CreateTaskModal({
         description,
         projectId,
         priority,
+        // @ts-ignore - customData exists on the backend but might be missing from shared types temporarily
+        customData,
       });
       // Invalidate the tasks query to trigger a refetch
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -62,7 +77,8 @@ export function CreateTaskModal({
       // Reset form
       setTitle('');
       setDescription('');
-      setPriority('medium' as TaskPriority);
+      setPriority(TaskPriority.MEDIUM);
+      setCustomData({});
       if (!defaultProjectId) setProjectId('');
       onClose();
     } catch (err: unknown) {
@@ -78,16 +94,20 @@ export function CreateTaskModal({
     }
   };
 
+  const handleCustomFieldChange = (key: string, value: any) => {
+    setCustomData((prev) => ({ ...prev, [key]: value }));
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="modal-surface w-full max-w-md">
-        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface-subtle/50">
+      <div className="modal-surface w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface-subtle/50 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
               <CheckSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
             <h2 className="text-lg font-semibold text-text-base">
-              Create Task
+              Create New Task
             </h2>
           </div>
           <button
@@ -98,7 +118,7 @@ export function CreateTaskModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6">
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
               {error}
@@ -106,30 +126,52 @@ export function CreateTaskModal({
           )}
 
           <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="projectId"
-                className="block text-sm font-medium text-text-subtle mb-1"
-              >
-                Project <span className="text-danger-500">*</span>
-              </label>
-              <select
-                id="projectId"
-                value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
-                required
-                disabled={!!defaultProjectId}
-                className="input w-full"
-              >
-                <option value="" disabled>
-                  Select a project
-                </option>
-                {projects.map((proj) => (
-                  <option key={proj.id} value={proj.id}>
-                    {proj.name}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="projectId"
+                  className="block text-sm font-medium text-text-subtle mb-1"
+                >
+                  Project <span className="text-danger-500">*</span>
+                </label>
+                <select
+                  id="projectId"
+                  value={projectId}
+                  onChange={(e) => setProjectId(e.target.value)}
+                  required
+                  disabled={!!defaultProjectId}
+                  className="input w-full"
+                >
+                  <option value="" disabled>
+                    Select a project
                   </option>
-                ))}
-              </select>
+                  {projects.map((proj) => (
+                    <option key={proj.id} value={proj.id}>
+                      {proj.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="priority"
+                  className="block text-sm font-medium text-text-subtle mb-1"
+                >
+                  Priority
+                </label>
+                <select
+                  id="priority"
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                  className="input w-full"
+                >
+                  <option value={TaskPriority.LOW}>Low</option>
+                  <option value={TaskPriority.MEDIUM}>Medium</option>
+                  <option value={TaskPriority.HIGH}>High</option>
+                  <option value={TaskPriority.URGENT}>Urgent</option>
+                </select>
+              </div>
             </div>
 
             <div>
@@ -146,7 +188,7 @@ export function CreateTaskModal({
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg text-sm text-[var(--color-text-base)] p-2 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-base)] focus:border-transparent transition"
-                placeholder="e.g. Update user authentication"
+                placeholder="e.g. ID Verification for John Doe"
               />
             </div>
 
@@ -155,40 +197,66 @@ export function CreateTaskModal({
                 htmlFor="description"
                 className="block text-sm font-medium text-text-subtle mb-1"
               >
-                Description
+                Internal Description
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg text-sm text-[var(--color-text-base)] p-2 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-base)] focus:border-transparent transition min-h-[80px]"
-                placeholder="Details about this task..."
+                className="w-full bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-lg text-sm text-[var(--color-text-base)] p-2 placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-base)] focus:border-transparent transition min-h-[60px]"
+                placeholder="Additional notes for the field executive..."
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="priority"
-                className="block text-sm font-medium text-text-subtle mb-1"
-              >
-                Priority
-              </label>
-              <select
-                id="priority"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="input w-full"
-              >
-                <option value="none">None</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
-              </select>
-            </div>
+            {/* Dynamic Custom Fields (EAV) */}
+            {projectSchema.length > 0 && (
+              <div className="pt-4 border-t border-slate-100">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <ShieldAlert className="w-3 h-3" /> Project Custom Fields
+                </h3>
+                <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                  {projectSchema.map((field: any) => (
+                    <div key={field.fieldKey}>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">
+                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                      </label>
+                      {field.type === 'boolean' ? (
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={field.fieldKey}
+                              onChange={() => handleCustomFieldChange(field.fieldKey, true)}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-sm">Yes</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={field.fieldKey}
+                              onChange={() => handleCustomFieldChange(field.fieldKey, false)}
+                              className="text-indigo-600 focus:ring-indigo-500"
+                            />
+                            <span className="text-sm">No</span>
+                          </label>
+                        </div>
+                      ) : (
+                        <input
+                          type={field.type === 'number' ? 'number' : 'text'}
+                          className="input w-full bg-white"
+                          placeholder={`Enter ${field.label}...`}
+                          onChange={(e) => handleCustomFieldChange(field.fieldKey, e.target.value)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="mt-6 flex justify-end gap-3">
+          <div className="mt-8 flex justify-end gap-3 sticky bottom-0 bg-white pt-4 border-t border-slate-50">
             <button
               type="button"
               onClick={onClose}
@@ -199,7 +267,7 @@ export function CreateTaskModal({
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100"
               disabled={isSubmitting || !title.trim() || !projectId}
             >
               {isSubmitting ? (
@@ -207,7 +275,7 @@ export function CreateTaskModal({
               ) : (
                 <Plus className="w-4 h-4" />
               )}
-              <span>Create Task</span>
+              <span>Initialize Task</span>
             </button>
           </div>
         </form>
@@ -215,17 +283,16 @@ export function CreateTaskModal({
     </div>
   );
 }
-interface CreateTaskModalTriggerProps {
-  defaultProjectId?: string;
-  className?: string;
-  label?: string;
-}
 
 export function CreateTaskModalTrigger({
   defaultProjectId,
   className,
   label = 'New Task',
-}: CreateTaskModalTriggerProps) {
+}: {
+  defaultProjectId?: string;
+  className?: string;
+  label?: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -235,7 +302,7 @@ export function CreateTaskModalTrigger({
         onClick={() => setOpen(true)}
         className={
           className ||
-          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0'
+          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shrink-0 shadow-sm'
         }
       >
         <Plus className="h-4 w-4" />

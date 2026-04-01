@@ -1103,5 +1103,91 @@ export const reopenTask = async (taskId: string): Promise<Task> => {
   return await updateTask(taskId, { status: TaskStatus.IN_PROGRESS });
 };
 
+/**
+ * Get project-level statistics for analytics dashboard
+ */
+export const getProjectStats = async (projectId: string) => {
+  interface StatsTask {
+    id: string;
+    status: TaskStatus;
+    priority: TaskPriority;
+    createdAt: Date;
+    completedAt: Date | null;
+  }
+
+  const allTasks = (await db
+    .select({
+      id: tasks.id,
+      status: tasks.statusKey,
+      priority: tasks.priority,
+      createdAt: tasks.createdAt,
+      completedAt: tasks.completedAt,
+    })
+    .from(tasks)
+    .where(
+      and(eq(tasks.projectId, projectId), isNull(tasks.deletedAt))
+    )) as unknown as StatsTask[];
+
+  const total = allTasks.length;
+  const completed = allTasks.filter(
+    (t: StatsTask) => t.status === TaskStatus.COMPLETED
+  ).length;
+  const pendingCount = allTasks.filter(
+    (t: StatsTask) => t.status === TaskStatus.PENDING
+  ).length;
+  const inProgressCount = allTasks.filter(
+    (t: StatsTask) => t.status === TaskStatus.IN_PROGRESS
+  ).length;
+
+  // Simple SLA logic (tasks older than 3 days without completion are flagged)
+  const now = new Date();
+  const slaThreshold = 3 * 24 * 60 * 60 * 1000;
+  const breachedCount = allTasks.filter((t: StatsTask) => {
+    if (t.status === TaskStatus.COMPLETED) return false;
+    return now.getTime() - t.createdAt.getTime() > slaThreshold;
+  }).length;
+
+  // Weekly trend (last 7 days)
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }).reverse();
+
+  const trend = last7Days.map((day) => {
+    const dayStr = day.toISOString().split('T')[0];
+    const createdOnDay = allTasks.filter(
+      (t: StatsTask) => t.createdAt.toISOString().split('T')[0] === dayStr
+    ).length;
+    const completedOnDay = allTasks.filter(
+      (t: StatsTask) =>
+        t.completedAt && t.completedAt.toISOString().split('T')[0] === dayStr
+    ).length;
+    return {
+      date: dayStr,
+      created: createdOnDay,
+      completed: completedOnDay,
+    };
+  });
+
+  return {
+    summary: {
+      total,
+      completed,
+      pending: pendingCount,
+      inProgress: inProgressCount,
+      completionRate: total > 0 ? (completed / total) * 100 : 0,
+      slaFulfillment: total > 0 ? ((total - breachedCount) / total) * 100 : 100,
+    },
+    distribution: {
+      pending: pendingCount,
+      inProgress: inProgressCount,
+      completed,
+    },
+    trend,
+  };
+};
+
 // ✅ Export TaskStatus and TaskPriority for backward compatibility with controllers
 export { TaskStatus, TaskPriority };

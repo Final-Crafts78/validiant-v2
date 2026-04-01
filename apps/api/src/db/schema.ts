@@ -449,6 +449,12 @@ export const projects = pgTable(
     color: text('color'),
     icon: text('icon'),
 
+    // Project customizations (Client Command Center)
+    themeColor: varchar('theme_color', { length: 7 }).default('#4F46E5'),
+    logoUrl: text('logo_url'),
+    isApiEnabled: boolean('is_api_enabled').notNull().default(false),
+    autoDispatchVerified: boolean('auto_dispatch_verified').notNull().default(false),
+
     // Financial tracking
     budget: integer('budget'),
 
@@ -1004,12 +1010,12 @@ export const verificationTypes = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     organizationId: uuid('organization_id')
-      .notNull()
-      .references(() => organizations.id, { onDelete: 'cascade' }),
+      .references(() => organizations.id, { onDelete: 'cascade' }), // Nullable for system templates
     code: varchar('code', { length: 50 }).notNull(), // e.g. 'ID_VERIFY', 'CRIMINAL_CHECK'
     name: text('name').notNull(),
     slaOverrideHours: integer('sla_override_hours'),
     isActive: boolean('is_active').notNull().default(true),
+    isSystemTemplate: boolean('is_system_template').notNull().default(false),
     fieldSchema: jsonb('field_schema').notNull().default([]), // Array of FieldDefinition
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
@@ -1346,3 +1352,31 @@ export type NewNotification = typeof notifications.$inferInsert;
 
 export type OrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferSelect;
 export type NewOrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferInsert;
+
+
+// ============================================================================
+// CLIENT API KEYS (Phase 13.5 - Client Command Center)
+// ============================================================================
+
+export const clientApiKeys = pgTable('client_api_keys', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id')
+    .notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  keyHash: varchar('key_hash').notNull(),
+  name: varchar('name').notNull(),
+  lastUsedAt: timestamp('last_used_at', { mode: 'date', withTimezone: true }),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const clientApiKeysRelations = relations(clientApiKeys, ({ one }) => ({
+  project: one(projects, {
+    fields: [clientApiKeys.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export type ClientApiKey = typeof clientApiKeys.$inferSelect;
+export type NewClientApiKey = typeof clientApiKeys.$inferInsert;

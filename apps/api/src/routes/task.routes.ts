@@ -62,4 +62,6 @@ app.post(
   caseDataController.confirmUpload
 );
 
+app.get('/projects/:projectId/stats', taskController.getProjectStats);
+
 export default app;

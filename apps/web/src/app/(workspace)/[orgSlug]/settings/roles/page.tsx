@@ -74,6 +74,11 @@ const PERMISSION_GROUPS = [
         label: 'Manage Roles',
         description: 'Can create and edit custom roles.',
       },
+      {
+        key: 'app:login',
+        label: 'Mobile App Access',
+        description: 'Allows login to the dedicated Field Executive app.',
+      },
     ],
   },
   {
@@ -94,6 +99,16 @@ const PERMISSION_GROUPS = [
         key: 'audit.read',
         label: 'View Audit Logs',
         description: 'Can access security and activity logs.',
+      },
+      {
+        key: 'infra:backup',
+        label: 'Infrastructure Backups',
+        description: 'Can trigger and manage R2 system backups.',
+      },
+      {
+        key: 'csv:import',
+        label: 'Bulk CSV Import',
+        description: 'Can perform large-scale data ingestion via CSV.',
       },
     ],
   },

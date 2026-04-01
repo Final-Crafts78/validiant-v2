@@ -10,6 +10,8 @@ import {
   ShieldCheck,
   Layers,
   History,
+  Unplug,
+  Server,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -46,6 +48,16 @@ export default function SettingsLayout({
       name: 'Case Config',
       href: `/${orgSlug}/settings/config`,
       icon: Layers,
+    },
+    {
+      name: 'Integrations',
+      href: `/${orgSlug}/settings/integrations`,
+      icon: Unplug,
+    },
+    {
+      name: 'Infrastructure',
+      href: `/${orgSlug}/settings/infra`,
+      icon: Server,
     },
     {
       name: 'Audit Log',

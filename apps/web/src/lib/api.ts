@@ -637,6 +637,16 @@ export const tasksApi = {
     tasks: Record<string, unknown>[]
   ): Promise<AxiosResponse<APIResponse<{ created: number }>>> =>
     post<APIResponse<{ created: number }>>('/tasks/bulk', { projectId, tasks }),
+
+  /** Bulk update tasks (reassign, status change, delete) */
+  bulkUpdate: (
+    taskIds: string[],
+    data: Partial<UpdateTaskData>
+  ): Promise<AxiosResponse<APIResponse<{ updated: number }>>> =>
+    patch<APIResponse<{ updated: number }>>('/tasks/bulk', {
+      taskIds,
+      ...data,
+    }),
 };
 
 // ---------------------------------------------------------------------------
@@ -797,6 +807,22 @@ export const organizationsApi = {
     token: string
   ): Promise<AxiosResponse<APIResponse<Organization>>> =>
     post<APIResponse<Organization>>('/organizations/accept-invite', { token }),
+};
+
+// ---------------------------------------------------------------------------
+// Verification API Service
+// ---------------------------------------------------------------------------
+
+export const verificationApi = {
+  getAll: (orgId: string): Promise<AxiosResponse<APIResponse<{ types: any[] }>>> =>
+    get<APIResponse<{ types: any[] }>>(`/verifications/${orgId}`),
+
+  create: (orgId: string, data: any): Promise<AxiosResponse<APIResponse<any>>> =>
+    post<APIResponse<any>>(`/verifications/${orgId}`, data),
+
+  update: (orgId: string, id: string, data: any): Promise<AxiosResponse<APIResponse<any>>> =>
+    put<APIResponse<any>>(`/verifications/${orgId}/${id}`, data),
+};
 
   leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
     post<APIResponse<null>>(`/organizations/${id}/leave`),

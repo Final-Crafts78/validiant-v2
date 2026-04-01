@@ -42,6 +42,9 @@ interface Project {
   budget?: number;
   color?: string;
   icon?: string;
+  themeColor?: string;
+  logoUrl?: string;
+  autoDispatchVerified?: boolean;
   settings: Record<string, unknown>;
   createdBy: string;
   createdAt: Date;
@@ -97,6 +100,9 @@ export const createProject = async (
     budget?: number;
     color?: string;
     icon?: string;
+    themeColor?: string;
+    logoUrl?: string;
+    autoDispatchVerified?: boolean;
   }
 ): Promise<Project> => {
   // Proceed without db.transaction() because neon-http does not support interactive transactions
@@ -116,6 +122,9 @@ export const createProject = async (
       budget: data.budget,
       color: data.color,
       icon: data.icon,
+      themeColor: data.themeColor || '#4F46E5',
+      logoUrl: data.logoUrl,
+      autoDispatchVerified: data.autoDispatchVerified || false,
       settings: {},
       createdBy: userId,
     })
@@ -133,6 +142,9 @@ export const createProject = async (
       budget: projects.budget,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       settings: projects.settings,
       createdBy: projects.createdBy,
       createdAt: projects.createdAt,
@@ -197,6 +209,9 @@ export const getProjectById = async (
       budget: projects.budget,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       settings: projects.settings,
       createdBy: projects.createdBy,
       createdAt: projects.createdAt,
@@ -256,6 +271,9 @@ export const updateProject = async (
     budget?: number;
     color?: string;
     icon?: string;
+    themeColor?: string;
+    logoUrl?: string;
+    autoDispatchVerified?: boolean;
   }
 ): Promise<Project> => {
   // Build update object with only provided fields
@@ -275,6 +293,11 @@ export const updateProject = async (
     ...(data.budget !== undefined && { budget: data.budget }),
     ...(data.color !== undefined && { color: data.color }),
     ...(data.icon !== undefined && { icon: data.icon }),
+    ...(data.themeColor !== undefined && { themeColor: data.themeColor }),
+    ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+    ...(data.autoDispatchVerified !== undefined && {
+      autoDispatchVerified: data.autoDispatchVerified,
+    }),
   };
 
   if (Object.keys(updateData).length === 1) {
@@ -300,6 +323,9 @@ export const updateProject = async (
       budget: projects.budget,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       settings: projects.settings,
       createdBy: projects.createdBy,
       createdAt: projects.createdAt,
@@ -343,6 +369,9 @@ export const updateProjectSettings = async (
       budget: projects.budget,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       settings: projects.settings,
       createdBy: projects.createdBy,
       createdAt: projects.createdAt,
@@ -444,6 +473,9 @@ export const listOrganizationProjects = async (
       actualHours: projects.actualHours,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       createdAt: projects.createdAt,
       updatedAt: projects.updatedAt,
       // Subquery for member count
@@ -504,6 +536,9 @@ export const getUserProjects = async (
       priority: projects.priority,
       color: projects.color,
       icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
       createdAt: projects.createdAt,
       updatedAt: projects.updatedAt,
       // Subquery for member count

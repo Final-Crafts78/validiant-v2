@@ -113,6 +113,9 @@ export interface Project {
   currency?: string;
   progress: number; // 0-100
   coverImageUrl?: string;
+  themeColor?: string;
+  logoUrl?: string;
+  autoDispatchVerified?: boolean;
   ownerId: string;
   createdBy: string;
   createdAt: Date;
@@ -384,6 +387,9 @@ export interface UpdateProjectData {
   budget?: number;
   progress?: number;
   settings?: Partial<ProjectSettings>;
+  themeColor?: string;
+  logoUrl?: string;
+  autoDispatchVerified?: boolean;
 }
 
 /**

@@ -348,3 +348,5 @@ export const extractGoogleMapsCoordinates = (
 
   return null;
 };
+
+export * from './geocoding.utils';
