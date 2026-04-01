@@ -2,8 +2,6 @@
 
 import { useProjectStats } from '@/hooks/useProjectStats';
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -18,9 +16,7 @@ import {
 import {
   TrendingUp,
   CheckCircle2,
-  AlertCircle,
   Clock,
-  Activity,
   Layers,
   ArrowUpRight,
   Loader2,
@@ -177,8 +173,11 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {pieData.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
