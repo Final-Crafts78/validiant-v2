@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { 
-  Navigation, 
-  MapPin, 
-  ChevronRight, 
-  Navigation2, 
-  ExternalLink,
+import {
+  Navigation,
+  MapPin,
+  ChevronRight,
+  Navigation2,
   Zap,
-  Info
+  Info,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
@@ -18,15 +17,14 @@ import { TaskStatus } from '@validiant/shared';
 export default function FieldRoutePage() {
   const { user } = useAuth();
   const { activeProjectId } = useWorkspaceStore();
-  
-  const { data: tasksData, isLoading } = useTasks(
-    activeProjectId || '', 
-    { assignedTo: user?.id }
-  );
+
+  const { data: tasksData, isLoading } = useTasks(activeProjectId || '', {
+    assignedTo: user?.id,
+  });
 
   const pendingTasks = useMemo(() => {
-    const all = tasksData?.pages.flatMap(p => p.tasks) || [];
-    return all.filter(t => t.status !== TaskStatus.COMPLETED);
+    const all = tasksData?.pages.flatMap((p) => p.tasks) || [];
+    return all.filter((t) => t.status !== TaskStatus.COMPLETED);
   }, [tasksData]);
 
   if (isLoading) {
@@ -47,9 +45,13 @@ export default function FieldRoutePage() {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-indigo-200 fill-current" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-100">AI Routing Engine</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-100">
+              AI Routing Engine
+            </span>
           </div>
-          <h2 className="text-2xl font-black tracking-tight leading-none mb-2">Today's Route</h2>
+          <h2 className="text-2xl font-black tracking-tight leading-none mb-2">
+            Today's Route
+          </h2>
           <p className="text-sm text-indigo-100 font-medium opacity-80">
             We've sequenced {pendingTasks.length} stops for maximum efficiency.
           </p>
@@ -61,8 +63,12 @@ export default function FieldRoutePage() {
           <div className="w-16 h-16 bg-[var(--color-surface-muted)] rounded-full flex items-center justify-center mb-4 text-[var(--color-text-muted)]">
             <Navigation2 className="w-10 h-10" />
           </div>
-          <p className="text-sm font-black text-[var(--color-text-base)]">Clear Road Ahead</p>
-          <p className="text-xs text-[var(--color-text-muted)] mt-1">No pending stops found in your queue.</p>
+          <p className="text-sm font-black text-[var(--color-text-base)]">
+            Clear Road Ahead
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)] mt-1">
+            No pending stops found in your queue.
+          </p>
         </div>
       ) : (
         <div className="relative">
@@ -71,10 +77,15 @@ export default function FieldRoutePage() {
 
           <div className="space-y-6">
             {pendingTasks.map((task, idx) => (
-              <div key={task.id} className="relative flex items-start gap-5 pl-1.5">
+              <div
+                key={task.id}
+                className="relative flex items-start gap-5 pl-1.5"
+              >
                 {/* Stop Marker */}
                 <div className="relative z-10 w-12 h-12 rounded-2xl bg-[var(--color-surface-base)] border-2 border-[var(--color-border-base)] flex items-center justify-center shadow-sm shrink-0">
-                  <span className="text-sm font-black text-[var(--color-text-base)]">{idx + 1}</span>
+                  <span className="text-sm font-black text-[var(--color-text-base)]">
+                    {idx + 1}
+                  </span>
                 </div>
 
                 {/* Card */}
@@ -91,27 +102,36 @@ export default function FieldRoutePage() {
                   <div className="flex items-start gap-2 text-xs text-[var(--color-text-muted)] mb-4">
                     <MapPin className="w-3.5 h-3.5 text-[var(--color-text-muted)] mt-0.5 opacity-60" />
                     <span className="font-medium">
-                      {(task.customFields as any)?.address || 'Address not specified'}
+                      {(task.customFields as any)?.address ||
+                        'Address not specified'}
                     </span>
                   </div>
 
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       className="flex-1 bg-slate-900 dark:bg-indigo-600 text-white py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2"
                       onClick={() => {
-                        const mapLink = (task.customFields as any)?.googleMapsLink;
+                        const mapLink = (task.customFields as any)
+                          ?.googleMapsLink;
                         const addr = (task.customFields as any)?.address;
                         if (mapLink) {
                           window.open(mapLink, '_blank');
                         } else if (addr) {
-                          window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`, '_blank');
+                          window.open(
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              addr
+                            )}`,
+                            '_blank'
+                          );
                         }
                       }}
                     >
                       <Navigation2 className="w-3.5 h-3.5" />
-                      {(task.customFields as any)?.googleMapsLink ? 'OPEN LINK' : 'NAVIGATE'}
+                      {(task.customFields as any)?.googleMapsLink
+                        ? 'OPEN LINK'
+                        : 'NAVIGATE'}
                     </button>
-                    <button 
+                    <button
                       className="w-12 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 py-3 rounded-2xl flex items-center justify-center"
                       title="View Details"
                     >
