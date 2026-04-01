@@ -807,6 +807,9 @@ export const organizationsApi = {
     token: string
   ): Promise<AxiosResponse<APIResponse<Organization>>> =>
     post<APIResponse<Organization>>('/organizations/accept-invite', { token }),
+
+  leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
+    post<APIResponse<null>>(`/organizations/${id}/leave`),
 };
 
 // ---------------------------------------------------------------------------
@@ -814,19 +817,25 @@ export const organizationsApi = {
 // ---------------------------------------------------------------------------
 
 export const verificationApi = {
-  getAll: (orgId: string): Promise<AxiosResponse<APIResponse<{ types: any[] }>>> =>
+  getAll: (
+    orgId: string
+  ): Promise<AxiosResponse<APIResponse<{ types: any[] }>>> =>
     get<APIResponse<{ types: any[] }>>(`/verifications/${orgId}`),
 
-  create: (orgId: string, data: any): Promise<AxiosResponse<APIResponse<any>>> =>
+  create: (
+    orgId: string,
+    data: any
+  ): Promise<AxiosResponse<APIResponse<any>>> =>
     post<APIResponse<any>>(`/verifications/${orgId}`, data),
 
-  update: (orgId: string, id: string, data: any): Promise<AxiosResponse<APIResponse<any>>> =>
+  update: (
+    orgId: string,
+    id: string,
+    data: any
+  ): Promise<AxiosResponse<APIResponse<any>>> =>
     put<APIResponse<any>>(`/verifications/${orgId}/${id}`, data),
 };
 
-  leave: (id: string): Promise<AxiosResponse<APIResponse<null>>> =>
-    post<APIResponse<null>>(`/organizations/${id}/leave`),
-};
 
 // ---------------------------------------------------------------------------
 // Analytics API Service
