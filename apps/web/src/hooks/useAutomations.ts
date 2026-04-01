@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as automationService from '@/services/automation.service';
-import { queryKeys } from '@/lib/query-keys';
 
 export function useAutomations(orgId: string) {
   return useQuery({
