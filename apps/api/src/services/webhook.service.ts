@@ -71,7 +71,7 @@ export async function queueWebhookDispatch(
     .from(caseFieldValues)
     .where(eq(caseFieldValues.taskId, taskId));
 
-  const customDataStringified = eavFields.reduce((acc, field) => {
+  const customDataStringified = eavFields.reduce((acc: Record<string, any>, field: any) => {
     // Basic hydration strategy
     let val: any = field.valueText;
     if (field.valueBoolean !== null) val = field.valueBoolean;
@@ -137,7 +137,6 @@ async function getOrgByProject(projectId: string) {
 export async function processWebhookQueue(batch: any) {
   for (const msg of batch.messages) {
     const job = msg.body as WebhookDispatchJob;
-    let attempt = 1;
     let status = 0;
     let responseBody = '';
 

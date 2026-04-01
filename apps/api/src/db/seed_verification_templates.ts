@@ -1,7 +1,6 @@
 import { db } from './index';
 import { verificationTypes } from './schema';
-import { eq, isNull } from 'drizzle-orm';
-import * as crypto from 'crypto';
+import { eq } from 'drizzle-orm';
 
 /**
  * Executes a one-time seeding of system default Verification Templates.
@@ -123,7 +122,7 @@ async function seedSystemTemplates() {
           eq(verificationTypes.code, tpl.code)
         );
       
-      const isGlobalExists = existing.some(e => e.isSystemTemplate === true && e.organizationId === null);
+      const isGlobalExists = existing.some((e: any) => e.isSystemTemplate === true && e.organizationId === null);
       
       if (!isGlobalExists) {
         // @ts-ignore - organizationId is marked nullable in schema
@@ -132,7 +131,7 @@ async function seedSystemTemplates() {
       } else {
         console.log(`ℹ️ System template ${tpl.name} already exists. Skipping.`);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(`Failed to seed ${tpl.name}:`, e);
     }
   }

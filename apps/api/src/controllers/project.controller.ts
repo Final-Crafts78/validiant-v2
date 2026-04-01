@@ -295,6 +295,7 @@ export const updateProject = async (c: Context) => {
         ? new Date(validatedData.endDate)
         : undefined,
       budget: validatedData.budget ?? undefined,
+      logoUrl: validatedData.logoUrl ?? undefined,
     });
 
     return c.json({

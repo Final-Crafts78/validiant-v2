@@ -104,7 +104,7 @@ export type FieldDefinition = z.infer<typeof fieldDefinitionSchema>;
  */
 export const fieldSchemaObject = z.array(fieldDefinitionSchema);
 
-export type FieldSchema = z.infer<typeof fieldSchemaObject>;
+export type VerificationFieldSchema = z.infer<typeof fieldSchemaObject>;
 
 /**
  * Create verification type schema
