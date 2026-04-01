@@ -453,7 +453,9 @@ export const projects = pgTable(
     themeColor: varchar('theme_color', { length: 7 }).default('#4F46E5'),
     logoUrl: text('logo_url'),
     isApiEnabled: boolean('is_api_enabled').notNull().default(false),
-    autoDispatchVerified: boolean('auto_dispatch_verified').notNull().default(false),
+    autoDispatchVerified: boolean('auto_dispatch_verified')
+      .notNull()
+      .default(false),
 
     // Financial tracking
     budget: integer('budget'),
@@ -1009,8 +1011,9 @@ export const verificationTypes = pgTable(
   'verification_types',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
-      .references(() => organizations.id, { onDelete: 'cascade' }), // Nullable for system templates
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }), // Nullable for system templates
     code: varchar('code', { length: 50 }).notNull(), // e.g. 'ID_VERIFY', 'CRIMINAL_CHECK'
     name: text('name').notNull(),
     slaOverrideHours: integer('sla_override_hours'),
@@ -1295,6 +1298,53 @@ export const outboundDeliveryLogsRelations = relations(
 // ANALYTICS SNAPSHOTS (Phase 27)
 // ============================================================================
 
+// ============================================================================
+// WEBHOOK SUBSCRIPTIONS (Phase 13.6 - Unified Hub)
+// ============================================================================
+
+export const webhookSubscriptions = pgTable(
+  'webhook_subscriptions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    
+    name: text('name').notNull(),
+    endpointUrl: text('endpoint_url').notNull(),
+    secretKey: text('secret_key'), // Used for signing
+    isActive: boolean('is_active').notNull().default(true),
+    
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    projectIdx: index('webhook_sub_project_idx').on(table.projectId),
+    orgIdx: index('webhook_sub_org_idx').on(table.organizationId),
+  })
+);
+
+export const webhookSubscriptionsRelations = relations(
+  webhookSubscriptions,
+  ({ one }) => ({
+    organization: one(organizations, {
+      fields: [webhookSubscriptions.organizationId],
+      references: [organizations.id],
+    }),
+    project: one(projects, {
+      fields: [webhookSubscriptions.projectId],
+      references: [projects.id],
+    }),
+  })
+);
+
 export const orgAnalyticsSnapshots = pgTable(
   'org_analytics_snapshots',
   {
@@ -1352,6 +1402,9 @@ export type NewNotification = typeof notifications.$inferInsert;
 
 export type OrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferSelect;
 export type NewOrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferInsert;
+
+export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect;
+export type NewWebhookSubscription = typeof webhookSubscriptions.$inferInsert;
 
 
 // ============================================================================
