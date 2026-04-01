@@ -22,6 +22,7 @@ import {
   useInviteMember,
   useOrgInvitations,
   useDeleteInvitation,
+  useOrgRoles,
 } from '@/hooks/useOrganizations';
 
 export default function MembersSettings() {
@@ -30,15 +31,28 @@ export default function MembersSettings() {
     useOrgMembers(activeOrgId);
   const { data: invitations, isLoading: isLoadingInvites } =
     useOrgInvitations(activeOrgId);
+  const { data: roles, isLoading: isLoadingRoles } = useOrgRoles(activeOrgId);
   const inviteMutation = useInviteMember(activeOrgId || '');
   const deleteInviteMutation = useDeleteInvitation(activeOrgId || '');
 
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'admin' | 'member' | 'guest'>(
-    'member'
-  );
+  const [inviteRole, setInviteRole] = useState<string>('member');
   const [copyToken, setCopyToken] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Handle initialization of default role
+  React.useEffect(() => {
+    const rolesList = roles;
+    if (rolesList && rolesList.length > 0 && inviteRole === 'member') {
+      const hasMember = rolesList.some((r) => r.key === 'member');
+      if (!hasMember) {
+        const firstRole = rolesList[0];
+        if (firstRole) {
+          setInviteRole(firstRole.key);
+        }
+      }
+    }
+  }, [roles, inviteRole]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +80,7 @@ export default function MembersSettings() {
       m.user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (isLoadingMembers || isLoadingInvites) {
+  if (isLoadingMembers || isLoadingInvites || isLoadingRoles) {
     return (
       <div className="flex items-center justify-center p-12">
         <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
@@ -228,12 +242,14 @@ export default function MembersSettings() {
                 </label>
                 <select
                   value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value as any)}
+                  onChange={(e) => setInviteRole(e.target.value)}
                   className="w-full px-4 py-2.5 bg-[var(--color-surface-muted)] border border-[var(--color-border-base)] rounded-xl text-sm outline-none text-[var(--color-text-base)]"
                 >
-                  <option value="member">Member</option>
-                  <option value="admin">Admin</option>
-                  <option value="guest">Guest</option>
+                  {roles?.map((role) => (
+                    <option key={role.id} value={role.key}>
+                      {role.name} {role.isDefault ? '(System)' : '(Custom)'}
+                    </option>
+                  ))}
                 </select>
               </div>
               <button

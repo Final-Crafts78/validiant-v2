@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * TasksTable Component
  *
@@ -38,6 +40,17 @@ export function TasksTable({
   rowSelection = {},
   onRowSelectionChange,
 }: TasksTableProps) {
+  // 🔍 DATA-DRIVEN TRACE (Serializability Issue Debugging)
+  if (typeof window === 'undefined') {
+    console.warn(
+      '[TasksTable:PreRender] Executing on Server. Prop onTaskClick exists?',
+      {
+        isPresent: !!onTaskClick,
+        type: typeof onTaskClick,
+      }
+    );
+  }
+
   const [showColumnPicker, setShowColumnPicker] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const { preferences, updatePreferences } = useUserPreferences();
@@ -258,15 +271,13 @@ export function TasksTable({
           onRowSelectionChange={onRowSelectionChange}
           onColumnOrderChange={(updater) => {
             const newOrder =
-              typeof updater === 'function'
-                ? (updater as any)(columnOrder)
-                : updater;
+              typeof updater === 'function' ? updater(columnOrder) : updater;
             handleOrderChange(newOrder);
           }}
           onColumnVisibilityChange={(updater) => {
             const newVisibility =
               typeof updater === 'function'
-                ? (updater as any)(columnVisibility)
+                ? updater(columnVisibility)
                 : updater;
             updatePreferences({
               tableSettings: {

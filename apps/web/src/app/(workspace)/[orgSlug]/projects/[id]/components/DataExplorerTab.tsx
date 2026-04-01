@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, useState } from 'react';
 import { useTasks, useBulkDeleteTasks } from '@/hooks/useTasks';
 import { useVerificationTypes } from '@/hooks/useVerificationTypes';
@@ -5,27 +7,29 @@ import { useWorkspaceStore } from '@/store/workspace';
 import { logger } from '@/lib/logger';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import {
-  Search,
   Loader2,
   FileDigit,
   Upload,
   LayoutDashboard,
   Columns,
   Plus,
+  Search,
 } from 'lucide-react';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
+import { type VerificationField } from '@/types/tasks';
 import { TaskStatus } from '@validiant/shared';
 import { TasksBoard } from '@/components/tasks/TasksBoard';
 import { BulkActionBar } from '@/components/tasks/BulkActionBar';
 import { BulkAssignModal } from '@/components/modals/BulkAssignModal';
 import { BulkStatusModal } from '@/components/modals/BulkStatusModal';
 import { CreateTaskModal } from '@/components/modals/CreateTaskModal';
+import { type Task } from '@/hooks/useTasks';
 
 interface VerificationType {
   id: string;
   code: string;
   name: string;
-  fieldSchema?: any[];
+  fieldSchema?: VerificationField[];
 }
 
 export function DataExplorerTab({ projectId }: { projectId: string }) {
@@ -60,7 +64,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
   }, [vTypes, projectId]);
 
   // Aggregate tasks flat array
-  const tasks = useMemo(() => {
+  const tasks = useMemo<Task[]>(() => {
     const raw = tasksData?.pages.flatMap((page) => page.tasks) ?? [];
     if (!searchTerm) return raw;
     return raw.filter((t) =>
@@ -219,7 +223,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
                 <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   Created
                 </th>
-                {customSchemaFields.map((field: any) => (
+                {customSchemaFields.map((field: VerificationField) => (
                   <th
                     key={field.fieldKey}
                     className="p-4 text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-50/30"
@@ -235,7 +239,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {tasks.map((task) => (
+              {tasks.map((task: Task) => (
                 <tr
                   key={task.id}
                   onClick={() => {
@@ -272,7 +276,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                       <span
+                      <span
                         className={`w-2 h-2 rounded-full ${
                           task.status === TaskStatus.COMPLETED
                             ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
@@ -288,18 +292,16 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
                   </td>
                   <td className="p-4">
                     <div className="flex -space-x-2">
-                      {(task as any).assignees?.length > 0 ? (
-                        (task as any).assignees
-                          .slice(0, 3)
-                          .map((a: any) => (
-                            <div
-                              key={a.id}
-                              className="w-7 h-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-600 shadow-sm"
-                              title={a.fullName}
-                            >
-                              {a.fullName.charAt(0).toUpperCase()}
-                            </div>
-                          ))
+                      {task.assignees && task.assignees.length > 0 ? (
+                        task.assignees.slice(0, 3).map((a) => (
+                          <div
+                            key={a.id}
+                            className="w-7 h-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-600 shadow-sm"
+                            title={a.fullName}
+                          >
+                            {a.fullName.charAt(0).toUpperCase()}
+                          </div>
+                        ))
                       ) : (
                         <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
                           None
@@ -312,12 +314,13 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
                       {new Date(task.createdAt).toLocaleDateString()}
                     </span>
                   </td>
-                  {customSchemaFields.map((field: any) => (
-                    <td key={field.fieldKey} className="p-4 border-l border-slate-50/50">
+                  {customSchemaFields.map((field: VerificationField) => (
+                    <td
+                      key={field.fieldKey}
+                      className="p-4 border-l border-slate-50/50"
+                    >
                       <span className="text-xs text-slate-600 font-medium">
-                        {String(
-                          (task.customFields as any)?.[field.fieldKey] || '-'
-                        )}
+                        {String(task.customFields?.[field.fieldKey] || '-')}
                       </span>
                     </td>
                   ))}
@@ -329,7 +332,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
       ) : (
         <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4">
           <TasksBoard
-            tasks={tasks as any}
+            tasks={tasks}
             onTaskClick={(id: string) => {
               const params = new URLSearchParams(searchParams.toString());
               params.set('taskId', id);

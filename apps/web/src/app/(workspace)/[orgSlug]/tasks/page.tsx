@@ -17,6 +17,7 @@ import { useAuthStore } from '@/store/auth';
 import { canFeature } from '@validiant/shared';
 import { TaskDetailSlideOver } from '@/components/tasks/TaskDetailSlideOver';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
+import { useVerificationTypes } from '@/hooks/useVerificationTypes';
 import { TasksBoard } from '@/components/tasks/TasksBoard';
 import { CreateTaskModalTrigger } from '@/components/modals/CreateTaskModal';
 import { BulkActionBar } from '@/components/tasks/BulkActionBar';
@@ -100,6 +101,27 @@ function TasksPageContent() {
   const { orgRole } = useRBAC(activeOrgId ?? '', activeProjectId ?? '');
   const user = useAuthStore((s) => s.user);
 
+  // Fetch Verification Types (Field Schemas) for Bulk Upload
+  const { data: vTypes } = useVerificationTypes(activeOrgId || '');
+
+  // Extract relevant schema for the selected project
+  const projectSchema = useMemo(() => {
+    if (!vTypes || !activeProjectId) return [];
+    interface VerificationType {
+      code: string;
+      fieldSchema: Array<{
+        fieldKey: string;
+        label: string;
+        type: string;
+        required?: boolean;
+      }>;
+    }
+    const workflow = (vTypes as VerificationType[]).find(
+      (v) => v.code === `PRJ_${activeProjectId}_CUSTOM`
+    );
+    return workflow?.fieldSchema || [];
+  }, [vTypes, activeProjectId]);
+
   const liveTasks = useMemo(() => {
     return data?.pages.flatMap((page) => page.tasks) ?? [];
   }, [data]);
@@ -125,6 +147,12 @@ function TasksPageContent() {
   };
 
   const openTask = (taskId: string) => {
+    // 🔍 DATA-DRIVEN TRACE (Serializability Issue Debugging)
+    if (typeof window === 'undefined') {
+      console.warn('[TasksPage:PreRender] openTask called on server', {
+        taskId,
+      });
+    }
     updateQuery({ taskId });
   };
 
@@ -203,8 +231,14 @@ function TasksPageContent() {
         projectId: activeProjectId || '',
       });
 
-      const resultData = (result as any)?.data?.data;
-      if (resultData?.failed?.length > 0) {
+      interface BulkResult {
+        failed: string[];
+        updated: string[];
+      }
+      const response = result as { data: { data: BulkResult } };
+      const resultData = response.data.data;
+
+      if (resultData.failed.length > 0) {
         toast.error(
           `${resultData.failed.length} tasks failed to update status (logic violation)`
         );
@@ -421,6 +455,7 @@ function TasksPageContent() {
       <BulkUploadWizard
         open={bulkUploadOpen}
         onClose={() => setBulkUploadOpen(false)}
+        fieldSchema={projectSchema}
       />
 
       {/* Bulk Operations Modals */}

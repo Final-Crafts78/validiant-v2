@@ -36,10 +36,8 @@ export function useOrgMembers(orgId: string | null) {
 export function useInviteMember(orgId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (payload: {
-      email: string;
-      role: 'admin' | 'member' | 'guest';
-    }) => orgService.inviteMember(orgId, payload),
+    mutationFn: (payload: { email: string; role: string }) =>
+      orgService.inviteMember(orgId, payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ORG_KEYS.members(orgId) });
       qc.invalidateQueries({ queryKey: ORG_KEYS.invitations(orgId) });

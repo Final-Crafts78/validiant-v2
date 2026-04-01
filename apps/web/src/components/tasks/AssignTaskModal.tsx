@@ -1,9 +1,9 @@
-'use client';
 import { useState } from 'react';
 import { useOrgMembers } from '@/hooks/useOrganizations';
 import { useWorkspaceStore } from '@/store/workspace';
 import { post } from '@/lib/api';
 import { useQueryClient } from '@tanstack/react-query';
+import { logger } from '@/lib/logger';
 
 export function AssignTaskModal({
   taskId,
@@ -19,11 +19,19 @@ export function AssignTaskModal({
   const qc = useQueryClient();
 
   const handleAssign = async (userId: string) => {
+    // 🔍 DATA-DRIVEN TRACE (Phase 48)
+    logger.info('[AssignTask:Initiate]', {
+      taskId,
+      userId,
+      projectId: activeProjectId,
+    });
     setAssigning(true);
     try {
       await post(`/tasks/${taskId}/assign`, { userId });
       qc.invalidateQueries({ queryKey: ['tasks', 'project', activeProjectId] });
       onClose();
+    } catch (err) {
+      logger.error('[AssignTask:Failure]', { taskId, userId, error: err });
     } finally {
       setAssigning(false);
     }
@@ -35,23 +43,31 @@ export function AssignTaskModal({
         Assign to
       </p>
       <ul>
-        {members.map((m) => (
-          <li key={m.userId}>
-            <button
-              type="button"
-              onClick={() => handleAssign(m.userId)}
-              disabled={assigning}
-              className="w-full text-left px-2 py-2 text-sm hover:bg-[var(--color-surface-muted)] rounded-lg flex items-center gap-2"
-            >
-              <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-bold flex items-center justify-center">
-                {m.user.fullName.charAt(0)}
-              </div>
-              <span className="text-[var(--color-text-base)]">
-                {m.user.fullName}
-              </span>
-            </button>
-          </li>
-        ))}
+        {members.map((m) => {
+          // 🔍 DATA-DRIVEN TRACE (Phase 48)
+          logger.debug('[AssignTask:MemberMap]', {
+            memberId: m.id,
+            userId: m.user.id,
+            fullName: m.user.fullName,
+          });
+          return (
+            <li key={m.user.id}>
+              <button
+                type="button"
+                onClick={() => handleAssign(m.user.id)}
+                disabled={assigning}
+                className="w-full text-left px-2 py-2 text-sm hover:bg-[var(--color-surface-muted)] rounded-lg flex items-center gap-2"
+              >
+                <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-bold flex items-center justify-center">
+                  {m.user.fullName.charAt(0)}
+                </div>
+                <span className="text-[var(--color-text-base)]">
+                  {m.user.fullName}
+                </span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

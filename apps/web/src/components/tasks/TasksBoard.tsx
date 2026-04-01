@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * TasksBoard Component (Kanban View)
  *
@@ -122,7 +124,7 @@ export function TasksBoard({ tasks, onTaskClick }: TasksBoardProps) {
 
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--color-border-base)]/30">
                       <div className="flex -space-x-1.5 overflow-hidden">
-                        {task.assignees?.map((a: any) => (
+                        {task.assignees?.map((a) => (
                           <div
                             key={a.id}
                             className="flex h-6 w-6 rounded-full ring-2 ring-[var(--color-surface-base)] bg-[var(--color-surface-muted)] items-center justify-center text-[10px] font-bold text-[var(--color-text-subtle)] uppercase"

@@ -9,6 +9,7 @@ import { Modal, Button, Select } from '@validiant/ui';
 import { useWorkspaceStore } from '@/store/workspace';
 import { useOrgMembers } from '@/hooks/useOrganizations';
 import { Loader2, Users } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface BulkAssignModalProps {
   open: boolean;
@@ -35,10 +36,18 @@ export function BulkAssignModal({
 
   // Map org members to select options
   const memberOptions =
-    members?.map((m) => ({
-      label: m.user.fullName || m.user.email,
-      value: m.userId,
-    })) || [];
+    members?.map((m) => {
+      // 🔍 DATA-DRIVEN TRACE (Phase 48)
+      logger.debug('[BulkAssign:MemberMap]', {
+        memberId: m.id,
+        userId: m.user.id,
+        fullName: m.user.fullName,
+      });
+      return {
+        label: m.user.fullName || m.user.email,
+        value: m.user.id,
+      };
+    }) || [];
 
   return (
     <Modal

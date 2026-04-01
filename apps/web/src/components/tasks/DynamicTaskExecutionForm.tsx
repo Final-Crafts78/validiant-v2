@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import {
   Camera,
@@ -13,26 +15,8 @@ import toast from 'react-hot-toast';
 import { useGeoTelemetry } from '@/hooks/useGeoTelemetry';
 import { useTimeTracker } from '@/hooks/useTimeTracker';
 import { logger } from '@/lib/logger';
+import { FieldSchema } from '@validiant/shared';
 import { GeoTelemetryStatusBar } from './GeoTelemetryStatusBar';
-
-export interface FieldSchema {
-  fieldKey: string;
-  label: string;
-  type:
-    | 'text'
-    | 'textarea'
-    | 'boolean'
-    | 'photo-request'
-    | 'signature'
-    | 'pdf-upload';
-  required?: boolean;
-  validationRules?: {
-    requireGeoTag?: boolean;
-    [key: string]: any;
-  };
-  prompt?: string;
-  [key: string]: any;
-}
 
 export function DynamicTaskExecutionForm({
   schema,
@@ -42,12 +26,12 @@ export function DynamicTaskExecutionForm({
   targetLocation,
 }: {
   schema: FieldSchema[];
-  initialData?: Record<string, any>;
-  onSave: (data: any) => Promise<void>;
+  initialData?: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>) => Promise<void>;
   taskId?: string;
   targetLocation?: { latitude: number; longitude: number };
 }) {
-  const [formData, setFormData] = useState<Record<string, any>>(
+  const [formData, setFormData] = useState<Record<string, unknown>>(
     initialData || {}
   );
   const [isSaving, setIsSaving] = useState(false);
@@ -78,23 +62,23 @@ export function DynamicTaskExecutionForm({
     };
   }, [startTracking, startTimer, stopTracking]);
 
-  const updateField = (key: string, value: any) => {
+  const updateField = (key: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleCapture = (key: string, file: File) => {
     // Collect specific coordinate for this capture if GPS is active
     if (currentLocation) {
-        logger.info('[GpsEngine:EvidenceCapture]', { 
-            key, 
-            lat: currentLocation.latitude, 
-            lng: currentLocation.longitude, 
-            accuracy: currentLocation.accuracy 
-        });
-        updateField(`${key}_lat`, currentLocation.latitude);
-        updateField(`${key}_lng`, currentLocation.longitude);
+      logger.info('[GpsEngine:EvidenceCapture]', {
+        key,
+        lat: currentLocation.latitude,
+        lng: currentLocation.longitude,
+        accuracy: currentLocation.accuracy,
+      });
+      updateField(`${key}_lat`, currentLocation.latitude);
+      updateField(`${key}_lng`, currentLocation.longitude);
     }
-    
+
     const url = URL.createObjectURL(file);
     updateField(key, url);
     toast.success('Photo captured with geo-tag info');
@@ -176,7 +160,8 @@ export function DynamicTaskExecutionForm({
       <p className="font-bold text-slate-800 text-lg mb-1">No tasks found</p>
       <p className="text-sm text-slate-500 mb-6">
         This session is being monitored via <b>Encrypted Geo-Telemetry</b>.
-        Distance to site and execution duration are recorded for quality assurance.
+        Distance to site and execution duration are recorded for quality
+        assurance.
       </p>
 
       <div className="space-y-6">
@@ -184,9 +169,9 @@ export function DynamicTaskExecutionForm({
           <div
             key={field.fieldKey}
             className={`bg-slate-50 p-4 rounded-xl border transition-all ${
-                field.validationRules?.requireGeoTag && !isWithinRange 
-                    ? 'border-amber-200 bg-amber-50/20' 
-                    : 'border-slate-200'
+              field.validationRules?.requireGeoTag && !isWithinRange
+                ? 'border-amber-200 bg-amber-50/20'
+                : 'border-slate-200'
             }`}
           >
             <label className="flex items-center justify-between mb-2">
@@ -195,11 +180,15 @@ export function DynamicTaskExecutionForm({
                 {field.required && <span className="text-red-500">*</span>}
               </span>
               {field.validationRules?.requireGeoTag && (
-                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                    isWithinRange ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200'
-                }`}>
-                    <MapPin className="w-3 h-3" />
-                    {isWithinRange ? 'Geo-Linked' : 'Out of Bounds'}
+                <div
+                  className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                    isWithinRange
+                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-100 text-amber-700 border-amber-200'
+                  }`}
+                >
+                  <MapPin className="w-3 h-3" />
+                  {isWithinRange ? 'Geo-Linked' : 'Out of Bounds'}
                 </div>
               )}
             </label>
@@ -208,7 +197,7 @@ export function DynamicTaskExecutionForm({
             {(field.type === 'text' || field.type === 'textarea') && (
               <input
                 type={field.type === 'text' ? 'text' : 'textarea'}
-                value={formData[field.fieldKey] || ''}
+                value={(formData[field.fieldKey] as string) || ''}
                 onChange={(e) => updateField(field.fieldKey, e.target.value)}
                 className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-indigo-500"
                 placeholder={`Enter ${field.label.toLowerCase()}...`}
@@ -239,13 +228,13 @@ export function DynamicTaskExecutionForm({
                 {formData[field.fieldKey] ? (
                   <div className="relative rounded-lg overflow-hidden border border-slate-200">
                     <img
-                      src={formData[field.fieldKey]}
+                      src={formData[field.fieldKey] as string}
                       alt="Captured"
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-md flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-emerald-400" />
-                        GEO-TAGGED
+                      <MapPin className="w-3 h-3 text-emerald-400" />
+                      GEO-TAGGED
                     </div>
                     <button
                       onClick={() => updateField(field.fieldKey, null)}
@@ -255,11 +244,13 @@ export function DynamicTaskExecutionForm({
                     </button>
                   </div>
                 ) : (
-                  <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                      field.validationRules?.requireGeoTag && !isWithinRange 
-                        ? 'border-amber-300 bg-amber-50 cursor-not-allowed opacity-60' 
+                  <label
+                    className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                      field.validationRules?.requireGeoTag && !isWithinRange
+                        ? 'border-amber-300 bg-amber-50 cursor-not-allowed opacity-60'
                         : 'border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50'
-                  }`}>
+                    }`}
+                  >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <Camera
                         className={`w-8 h-8 mb-2 ${
@@ -332,14 +323,17 @@ export function DynamicTaskExecutionForm({
       </div>
 
       <div className="mt-8 p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-start gap-3">
-          <ShieldCheck className="w-5 h-5 text-indigo-600 mt-0.5" />
-          <div>
-              <p className="text-xs font-bold text-indigo-900 uppercase tracking-tight">Final Protocol Verification</p>
-              <p className="text-[10px] text-indigo-700 leading-normal">
-                  Saving this protocol will permanently record your current GPS coordinates, site proximity, 
-                  and a high-accuracy duration timestamp. This metadata is immutable once committed to the ledger.
-              </p>
-          </div>
+        <ShieldCheck className="w-5 h-5 text-indigo-600 mt-0.5" />
+        <div>
+          <p className="text-xs font-bold text-indigo-900 uppercase tracking-tight">
+            Final Protocol Verification
+          </p>
+          <p className="text-[10px] text-indigo-700 leading-normal">
+            Saving this protocol will permanently record your current GPS
+            coordinates, site proximity, and a high-accuracy duration timestamp.
+            This metadata is immutable once committed to the ledger.
+          </p>
+        </div>
       </div>
 
       <button

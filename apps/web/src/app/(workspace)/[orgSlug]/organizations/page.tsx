@@ -11,7 +11,7 @@ import { Users, Mail } from 'lucide-react';
 
 export default function OrganizationsPage() {
   const router = useRouter();
-  const { orgSlug: _orgSlug } = useParams() as { orgSlug: string };
+  useParams();
   const { activeOrgId, setActiveOrg } = useWorkspaceStore();
   const { data: orgs = [], isLoading: orgsLoading } = useOrganizations();
   const { data: members = [], isLoading: membersLoading } =

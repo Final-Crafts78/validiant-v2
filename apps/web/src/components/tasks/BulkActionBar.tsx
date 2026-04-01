@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * BulkActionBar Component
  *
@@ -22,6 +24,17 @@ export function BulkActionBar({
   onStatusChange,
   onDelete,
 }: BulkActionBarProps) {
+  // 🔍 DATA-DRIVEN TRACE (Serializability Issue Debugging)
+  if (typeof window === 'undefined') {
+    console.warn(
+      '[BulkActionBar:PreRender] Executing on Server. Prop onStatusChange exists?',
+      {
+        isPresent: !!onStatusChange,
+        type: typeof onStatusChange,
+      }
+    );
+  }
+
   if (selectedCount === 0) return null;
 
   return (

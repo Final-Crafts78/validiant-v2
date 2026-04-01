@@ -425,6 +425,7 @@ export interface UpdateTaskData {
   estimatedHours?: number;
   progress?: number;
   customFields?: CustomFieldValue[];
+  customData?: Record<string, any>;
 }
 
 /**

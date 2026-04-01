@@ -38,6 +38,7 @@ import type {
   CreateOrganizationData,
   UpdateOrganizationData,
   OrganizationMemberWithUser,
+  VerificationType,
 } from '@validiant/shared';
 import { useAuthStore } from '../store/auth';
 import { useWorkspaceStore } from '../store/workspace';
@@ -819,8 +820,8 @@ export const organizationsApi = {
 export const verificationApi = {
   getAll: (
     orgId: string
-  ): Promise<AxiosResponse<APIResponse<{ types: any[] }>>> =>
-    get<APIResponse<{ types: any[] }>>(`/verifications/${orgId}`),
+  ): Promise<AxiosResponse<APIResponse<{ types: VerificationType[] }>>> =>
+    get<APIResponse<{ types: VerificationType[] }>>(`/verifications/${orgId}`),
 
   create: (
     orgId: string,

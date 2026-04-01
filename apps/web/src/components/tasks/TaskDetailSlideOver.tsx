@@ -4,11 +4,17 @@ import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksApi } from '@/lib/api';
+import { tasksApi, type APIResponse } from '@/lib/api';
+import type { AxiosResponse } from 'axios';
 import { useWorkspaceStore } from '@/store/workspace';
 import { useVerificationTypes } from '@/hooks/useVerificationTypes';
 import { DynamicTaskExecutionForm } from './DynamicTaskExecutionForm';
-import { Task, TaskStatus } from '@validiant/shared';
+import {
+  Task,
+  TaskStatus,
+  VerificationType,
+  VerificationTask,
+} from '@validiant/shared';
 import { logger } from '@/lib/logger';
 import toast from 'react-hot-toast';
 import {
@@ -96,11 +102,16 @@ export function TaskDetailSlideOver() {
     isError,
   } = useQuery({
     queryKey: ['tasks', taskId],
-    queryFn: () => tasksApi.getById(taskId!),
+    queryFn: () => {
+      if (!taskId) throw new Error('Task ID is required');
+      return tasksApi.getById(taskId);
+    },
     enabled: !!taskId,
   });
 
-  const task: Task | undefined = response?.data?.data as Task | undefined;
+  const task: VerificationTask | undefined = response?.data?.data as
+    | VerificationTask
+    | undefined;
 
   const handleSummarize = async () => {
     if (!task) return;
@@ -154,32 +165,38 @@ export function TaskDetailSlideOver() {
       const previousTask = queryClient.getQueryData(['tasks', id]);
       const previousAll = queryClient.getQueryData(['tasks', 'all']);
 
-      queryClient.setQueryData(['tasks', id], (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            data: { ...old.data.data, status },
-          },
-        };
-      });
-
-      queryClient.setQueryData(['tasks', 'all'], (old: any) => {
-        if (!old?.data?.data?.tasks) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
+      queryClient.setQueryData(
+        ['tasks', id],
+        (old: AxiosResponse<APIResponse<Task>> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
             data: {
-              ...old.data.data,
-              tasks: old.data.data.tasks.map((t: Task) =>
-                t.id === id ? { ...t, status } : t
-              ),
+              ...old.data,
+              data: { ...old.data.data, status },
             },
-          },
-        };
-      });
+          };
+        }
+      );
+
+      queryClient.setQueryData(
+        ['tasks', 'all'],
+        (old: AxiosResponse<APIResponse<{ tasks: Task[] }>> | undefined) => {
+          if (!old?.data?.data?.tasks) return old;
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              data: {
+                ...old.data.data,
+                tasks: old.data.data.tasks.map((t: Task) =>
+                  t.id === id ? { ...t, status } : t
+                ),
+              },
+            },
+          };
+        }
+      );
 
       return { previousTask, previousAll };
     },
@@ -219,8 +236,9 @@ export function TaskDetailSlideOver() {
 
   const customSchema =
     task?.projectId && vTypes
-      ? vTypes.find((v: any) => v.code === `PRJ_${task.projectId}_CUSTOM`)
-          ?.fieldSchema
+      ? vTypes.find(
+          (v: VerificationType) => v.code === `PRJ_${task.projectId}_CUSTOM`
+        )?.fieldSchema
       : null;
 
   return (
@@ -306,7 +324,8 @@ export function TaskDetailSlideOver() {
                   </div>
                 ) : (
                   <p className="text-[10px] text-slate-400 italic">
-                    Generate a concise, LLM-powered briefing of this case&apos;s status and recent activity.
+                    Generate a concise, LLM-powered briefing of this case&apos;s
+                    status and recent activity.
                   </p>
                 )}
               </section>
@@ -363,7 +382,7 @@ export function TaskDetailSlideOver() {
                   )}
                 </div>
 
-                {(task as any).customFields?.caseId && (
+                {task.customFields?.caseId && (
                   <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-3">
                     <div className="flex items-center gap-2">
                       <Search className="w-4 h-4 text-primary" />
@@ -379,7 +398,7 @@ export function TaskDetailSlideOver() {
                     <button
                       onClick={() =>
                         router.push(
-                          `/${activeOrgSlug}/cases/${(task as any).customFields?.caseId}`
+                          `/${activeOrgSlug}/cases/${task.customFields?.caseId}`
                         )
                       }
                       className="w-full py-2 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
@@ -455,7 +474,7 @@ export function TaskDetailSlideOver() {
                   <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                     <Activity className="w-3 h-3" /> Professional Operations
                   </h3>
-                  
+
                   <div className="grid grid-cols-1 gap-3">
                     <div className="flex items-center justify-between p-4 bg-slate-900 rounded-2xl shadow-xl shadow-slate-100 group overflow-hidden relative">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700" />
@@ -464,66 +483,94 @@ export function TaskDetailSlideOver() {
                           <Timer className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Active Timer</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                            Active Timer
+                          </p>
                           <p className="text-xl font-mono font-black text-white leading-none">
-                            {task.status === TaskStatus.IN_PROGRESS ? '04:12:45' : '00:00:00'}
+                            {task.status === TaskStatus.IN_PROGRESS
+                              ? '04:12:45'
+                              : '00:00:00'}
                           </p>
                         </div>
                       </div>
-                      <button 
+                      <button
                         className={cn(
                           'px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all relative z-10',
-                          task.status === TaskStatus.IN_PROGRESS ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-white text-slate-900 hover:bg-slate-50'
+                          task.status === TaskStatus.IN_PROGRESS
+                            ? 'bg-red-500 text-white hover:bg-red-600'
+                            : 'bg-white text-slate-900 hover:bg-slate-50'
                         )}
                         onClick={() => {
-                          const next = task.status === TaskStatus.IN_PROGRESS ? TaskStatus.VERIFIED : TaskStatus.IN_PROGRESS;
+                          const next =
+                            task.status === TaskStatus.IN_PROGRESS
+                              ? TaskStatus.VERIFIED
+                              : TaskStatus.IN_PROGRESS;
                           statusMutation.mutate({ id: task.id, status: next });
                         }}
                       >
-                        {task.status === TaskStatus.IN_PROGRESS ? 'Stop Clock' : 'Start Clock'}
+                        {task.status === TaskStatus.IN_PROGRESS
+                          ? 'Stop Clock'
+                          : 'Start Clock'}
                       </button>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       {/* Geocoding Trigger */}
-                      <button 
+                      <button
                         onClick={() => {
-                          if ((task as any).customFields?.googleMapsLink) {
-                            window.open((task as any).customFields.googleMapsLink, '_blank');
+                          if (task.customFields?.googleMapsLink) {
+                            window.open(
+                              task.customFields.googleMapsLink,
+                              '_blank'
+                            );
                           } else {
                             toast.success('Geocoding coordinates triggered...');
                           }
                         }}
                         className={cn(
-                          "flex flex-col items-center gap-3 p-5 rounded-3xl transition-all group border",
-                          (task as any).customFields?.googleMapsLink 
-                            ? "bg-indigo-600 text-white border-transparent" 
-                            : "bg-surface-base border-border-base hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-50/20"
+                          'flex flex-col items-center gap-3 p-5 rounded-3xl transition-all group border',
+                          task.customFields?.googleMapsLink
+                            ? 'bg-indigo-600 text-white border-transparent'
+                            : 'bg-surface-base border-border-base hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-50/20'
                         )}
                       >
-                        <div className={cn(
-                          "w-10 h-10 rounded-2xl flex items-center justify-center transition-all",
-                          (task as any).customFields?.googleMapsLink ? "bg-white/20 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white"
-                        )}>
+                        <div
+                          className={cn(
+                            'w-10 h-10 rounded-2xl flex items-center justify-center transition-all',
+                            task.customFields?.googleMapsLink
+                              ? 'bg-white/20 text-white'
+                              : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white'
+                          )}
+                        >
                           <Navigation2 className="w-5 h-5" />
                         </div>
-                        <span className={cn(
-                          "text-[10px] font-black uppercase tracking-tighter",
-                          (task as any).customFields?.googleMapsLink ? "text-white" : "text-text-muted group-hover:text-indigo-600"
-                        )}>
-                          {(task as any).customFields?.googleMapsLink ? 'Open Map' : 'Locate Case'}
+                        <span
+                          className={cn(
+                            'text-[10px] font-black uppercase tracking-tighter',
+                            task.customFields?.googleMapsLink
+                              ? 'text-white'
+                              : 'text-text-muted group-hover:text-indigo-600'
+                          )}
+                        >
+                          {task.customFields?.googleMapsLink
+                            ? 'Open Map'
+                            : 'Locate Case'}
                         </span>
                       </button>
 
                       {/* KYC Trigger (Didit) */}
-                      <button 
-                        onClick={() => toast.success('Initializing Didit ID Verification...')}
+                      <button
+                        onClick={() =>
+                          toast.success('Initializing Didit ID Verification...')
+                        }
                         className="flex flex-col items-center gap-3 p-5 bg-surface-base border border-border-base rounded-3xl hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-50/20 transition-all group"
                       >
                         <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                           <Fingerprint className="w-5 h-5" />
                         </div>
-                        <span className="text-[10px] font-black text-text-muted uppercase tracking-tighter group-hover:text-emerald-600">Verify Identity</span>
+                        <span className="text-[10px] font-black text-text-muted uppercase tracking-tighter group-hover:text-emerald-600">
+                          Verify Identity
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -551,14 +598,25 @@ export function TaskDetailSlideOver() {
                   <DynamicTaskExecutionForm
                     taskId={task.id}
                     schema={customSchema}
-                    initialData={(task as any)?.customData}
-                    targetLocation={(task as any).customFields?.targetLatitude && (task as any).customFields?.targetLongitude ? {
-                      latitude: Number((task as any).customFields.targetLatitude),
-                      longitude: Number((task as any).customFields.targetLongitude)
-                    } : undefined}
+                    initialData={task?.customData}
+                    targetLocation={
+                      task.customFields?.targetLatitude &&
+                      task.customFields?.targetLongitude
+                        ? {
+                            latitude: Number(task.customFields.targetLatitude),
+                            longitude: Number(
+                              task.customFields.targetLongitude
+                            ),
+                          }
+                        : undefined
+                    }
                     onSave={async (data) => {
-                      await tasksApi.update(task.id, { customData: data } as any);
-                      queryClient.invalidateQueries({ queryKey: ['tasks', task.id] });
+                      await tasksApi.update(task.id, {
+                        customData: data,
+                      });
+                      queryClient.invalidateQueries({
+                        queryKey: ['tasks', task.id],
+                      });
                     }}
                   />
                 )}
