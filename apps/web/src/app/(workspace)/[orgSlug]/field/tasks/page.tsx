@@ -1,15 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   CheckCircle2, 
   MapPin, 
   Clock, 
   Loader2,
   ChevronRight,
-  Filter
+  Filter,
 } from 'lucide-react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
 import { useWorkspaceStore } from '@/store/workspace';
@@ -23,18 +23,14 @@ export function FieldTasksPage() {
   const { user } = useAuth();
   const { activeProjectId } = useWorkspaceStore();
   
-  // Fetch tasks assigned to the current user
-  // For field view, we might want to fetch from all projects in the org, 
-  // but for now we follow the activeProjectId context or fetch widely.
-  // The useTasks hook requires a projectId. In a real field app, we might need a useMyTasks hook.
-  // I'll use a placeholder projectId if none is active to avoid errors, or handle the 'no project' state.
-  
-  const { data: tasksData, isLoading } = useTasks(
-    activeProjectId || '', 
-    { assignedTo: user?.id }
-  );
+  const { data: tasksData, isLoading } = useTasks(activeProjectId || '', {
+    assignedTo: user?.id,
+  });
 
-  const tasks = tasksData?.pages.flatMap(p => p.tasks) || [];
+  const tasks = useMemo(() => {
+    const all = tasksData?.pages.flatMap((p) => p.tasks) || [];
+    return all.filter((t) => t.status !== TaskStatus.COMPLETED);
+  }, [tasksData]);
 
   if (isLoading) {
     return (
@@ -88,19 +84,25 @@ export function FieldTasksPage() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className={cn(
-                    "w-2.5 h-2.5 rounded-full",
-                    task.status === TaskStatus.IN_PROGRESS ? "bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" :
-                    task.status === TaskStatus.COMPLETED ? "bg-emerald-500" :
-                    "bg-[var(--color-border-base)]"
-                  )} />
+                  <span
+                    className={cn(
+                      'w-2.5 h-2.5 rounded-full',
+                      task.status === TaskStatus.IN_PROGRESS
+                        ? 'bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]'
+                        : task.status === TaskStatus.COMPLETED
+                          ? 'bg-emerald-500'
+                          : 'bg-[var(--color-border-base)]'
+                    )}
+                  />
                   <span className="text-[10px] font-black uppercase text-[var(--color-text-muted)] tracking-tighter">
                     {task.status}
                   </span>
                 </div>
                 <div className="text-[10px] font-bold text-[var(--color-text-muted)] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(task.createdAt), {
+                    addSuffix: true,
+                  })}
                 </div>
               </div>
 
@@ -108,10 +110,12 @@ export function FieldTasksPage() {
                 {task.title}
               </h3>
               
-              {task.customFields?.address && (
+              {(task.customFields as any)?.address && (
                 <div className="flex items-start gap-1.5 text-xs text-[var(--color-text-muted)] mb-4">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[var(--color-text-muted)] opacity-60" />
-                  <span className="line-clamp-1">{task.customFields.address as string}</span>
+                  <span className="line-clamp-1">
+                    {(task.customFields as any)?.address || 'Remote Task'}
+                  </span>
                 </div>
               )}
 
@@ -139,15 +143,18 @@ export function FieldTasksPage() {
             Total Done
           </p>
           <p className="text-3xl font-black">
-            {tasks.filter(t => t.status === TaskStatus.COMPLETED).length}
+            {tasksData?.pages
+              .flatMap((p) => p.tasks)
+              .filter((t) => t.status === TaskStatus.COMPLETED).length || 0}
           </p>
         </div>
-        <div className="bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-[2rem] p-5 shadow-sm">
-          <p className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest mb-1">
-            Pending
+        <div className="bg-[var(--color-surface-muted)] border border-[var(--color-border-base)] rounded-[2rem] p-6 text-center">
+          <p className="text-[10px] uppercase font-black text-[var(--color-text-muted)] tracking-widest mb-1.5">
+            Duty of Care
           </p>
-          <p className="text-3xl font-black text-[var(--color-text-base)]">
-            {tasks.filter(t => t.status !== TaskStatus.COMPLETED).length}
+          <p className="text-[11px] font-medium text-[var(--color-text-subtle)] leading-relaxed max-w-[240px] mx-auto">
+            Assignment lifecycle is monitored in real-time. Please maintain
+            active GPS signal for verification accuracy.
           </p>
         </div>
       </div>
