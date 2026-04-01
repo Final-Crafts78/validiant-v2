@@ -1,20 +1,19 @@
 'use client';
 
 import React from 'react';
-import { 
-  CheckCircle2, 
-  Clock, 
+import {
+  CheckCircle2,
+  Clock,
   Navigation,
   LayoutDashboard,
   Lock,
   Loader2,
   Moon,
-  Sun
+  Sun,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useWorkspaceStore } from '@/store/workspace';
 import { usePermission } from '@/hooks/usePermission';
 import { useTheme } from '@/components/providers/ThemeProvider';
 
@@ -26,9 +25,8 @@ export default function FieldAppLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { orgSlug } = useParams() as { orgSlug: string };
-  const { activeOrgId } = useWorkspaceStore();
   const { theme, toggleTheme } = useTheme();
-  
+
   const hasPermission = usePermission('field:access' as any);
   const [isCheckPending, setIsCheckPending] = React.useState(true);
 
@@ -54,16 +52,15 @@ export default function FieldAppLayout({
   if (!hasPermission) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
-        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6 border border-red-100 shadow-xl shadow-red-50">
-          <Lock className="w-10 h-10 text-red-500" />
+        <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center text-red-500 mb-6">
+          <Lock className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Access Restricted</h2>
-        <p className="text-slate-500 max-w-xs mx-auto mb-8 font-medium">
-          Your current role does not have the 
-          <code className="mx-1 bg-slate-100 px-1.5 py-0.5 rounded text-red-600 text-[10px] font-black uppercase">
-            field:access
-          </code> 
-          permission required for mobile operations.
+        <h1 className="text-2xl font-black text-slate-900 mb-2">
+          Access Restricted
+        </h1>
+        <p className="text-slate-500 text-sm max-w-[240px] mb-8">
+          You do not have the required permissions to access the Field Executive
+          console.
         </p>
         <button 
           onClick={() => router.push(`/${orgSlug}/dashboard`)}
@@ -94,12 +91,18 @@ export default function FieldAppLayout({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <button 
+          <button
             onClick={toggleTheme}
-            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-xl transition-all"
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+            title={
+              theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'
+            }
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {theme === 'dark' ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
           </button>
           <button 
             onClick={() => router.push(`/${orgSlug}/projects`)}
@@ -123,31 +126,39 @@ export default function FieldAppLayout({
 
       {/* Bottom Navigation (Sticky) */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 px-6 py-3 flex items-center justify-around z-40 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'group flex flex-col items-center gap-1 transition-all relative py-1',
-                isActive ? 'text-indigo-600' : 'text-slate-400'
-              )}
-            >
-              {isActive && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-indigo-600 rounded-full shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
-              )}
-              <Icon className={cn(
-                'w-6 h-6 transition-transform',
-                isActive ? 'scale-110' : 'scale-100 group-active:scale-95'
-              )} />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">
-                {item.name}
-              </span>
-            </Link>
-          );
-        })}
+        <div className="flex items-center justify-around w-full">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex flex-col items-center gap-1 p-2 transition-all',
+                  isActive ? 'text-indigo-600' : 'text-slate-400'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-12 h-8 rounded-2xl flex items-center justify-center transition-all',
+                    isActive ? 'bg-indigo-50' : 'bg-transparent'
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      'w-5 h-5',
+                      isActive ? 'fill-indigo-600/10' : ''
+                    )}
+                  />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-tighter">
+                  {item.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </nav>
     </div>
   );
