@@ -94,15 +94,29 @@ export function optimizeRoute(
     let nearestIdx = 0;
     let minDist = Infinity;
 
+    console.debug( // eslint-disable-line no-console
+      `[OptimizeRoute] Step ${route.length + 1}: ${unvisited.length} points remaining`
+    );
+
     for (let i = 0; i < unvisited.length; i++) {
-      const d = getDistance(current, unvisited[i]);
+      const point = unvisited[i];
+      if (!point) continue; // Safe indexing under strict mode
+
+      const d = getDistance(current, point);
       if (d < minDist) {
         minDist = d;
         nearestIdx = i;
       }
     }
 
-    const next = unvisited.splice(nearestIdx, 1)[0];
+    const [next] = unvisited.splice(nearestIdx, 1);
+    if (!next) {
+      console.warn( // eslint-disable-line no-console
+        '[OptimizeRoute] Failed to retrieve next point. Terminating optimization.'
+      );
+      break;
+    }
+
     route.push(next);
     current = next;
   }
