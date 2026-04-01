@@ -9,7 +9,7 @@ import {
   ChevronRight,
   Filter
 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
 import { useWorkspaceStore } from '@/store/workspace';
@@ -108,7 +108,7 @@ export function FieldTasksPage() {
                 {task.title}
               </h3>
               
-              {!!task.customFields?.address && (
+              {task.customFields?.address && (
                 <div className="flex items-start gap-1.5 text-xs text-[var(--color-text-muted)] mb-4">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[var(--color-text-muted)] opacity-60" />
                   <span className="line-clamp-1">{task.customFields.address as string}</span>
