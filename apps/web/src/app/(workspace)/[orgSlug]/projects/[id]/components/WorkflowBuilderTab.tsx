@@ -8,7 +8,6 @@ import {
 } from '@/hooks/useVerificationTypes';
 import {
   Plus,
-  Settings2,
   Trash2,
   ArrowUp,
   ArrowDown,
@@ -32,8 +31,8 @@ const ROLES = ['manager', 'executive', 'client'];
 
 export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
   const { activeOrgId } = useWorkspaceStore();
-  const { data: vTypes, isLoading } = useVerificationTypes(activeOrgId);
-  const saveMutation = useSaveVerificationType(activeOrgId);
+  const { data: vTypes, isLoading } = useVerificationTypes(activeOrgId || '');
+  const saveMutation = useSaveVerificationType(activeOrgId || '');
 
   const [schemaId, setSchemaId] = useState<string | null>(null);
   const [fields, setFields] = useState<any[]>([]);
@@ -44,7 +43,11 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
       const projectWorkflow = vTypes.find(
         (v: any) => v.code === `PRJ_${projectId}_CUSTOM`
       );
-      logger.debug('[WorkflowBuilderTab:Init]', { projectId, hasWorkflow: !!projectWorkflow, id: projectWorkflow?.id });
+      logger.debug('[WorkflowBuilderTab:Init]', {
+        projectId,
+        hasWorkflow: !!projectWorkflow,
+        id: projectWorkflow?.id,
+      });
       if (projectWorkflow) {
         setSchemaId(projectWorkflow.id);
         setFields(projectWorkflow.fieldSchema || []);
@@ -99,7 +102,11 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
       }
     }
 
-    logger.debug('[WorkflowBuilderTab:Save]', { projectId, schemaId, fieldsCount: fields.length });
+    logger.debug('[WorkflowBuilderTab:Save]', {
+      projectId,
+      schemaId,
+      fieldsCount: fields.length,
+    });
 
     saveMutation.mutate({
       id: schemaId || undefined,

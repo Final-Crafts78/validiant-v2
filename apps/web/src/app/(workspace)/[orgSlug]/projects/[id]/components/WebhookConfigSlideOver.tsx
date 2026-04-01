@@ -8,7 +8,6 @@ import {
   Save,
   Loader2,
   Trash2,
-  Plus,
   Settings,
   ChevronRight,
   Code,
@@ -181,14 +180,21 @@ export function WebhookConfigSlideOver({
                     <select
                       value={formData.triggerEvent}
                       onChange={(e) =>
-                        setFormData({ ...formData, triggerEvent: e.target.value })
+                        setFormData({
+                          ...formData,
+                          triggerEvent: e.target.value,
+                        })
                       }
                       className="w-full bg-transparent border-none text-sm font-bold text-slate-700 focus:ring-0 p-0"
                     >
                       <option value="TASK_CREATED">Task Created</option>
                       <option value="TASK_COMPLETED">Task Completed</option>
-                      <option value="DOCUMENT_UPLOADED">Document Uploaded</option>
-                      <option value="VERIFICATION_FAILED">Verification Failed</option>
+                      <option value="DOCUMENT_UPLOADED">
+                        Document Uploaded
+                      </option>
+                      <option value="VERIFICATION_FAILED">
+                        Verification Failed
+                      </option>
                     </select>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-300" />
@@ -226,7 +232,10 @@ export function WebhookConfigSlideOver({
                         type="url"
                         value={formData.webhookUrl}
                         onChange={(e) =>
-                          setFormData({ ...formData, webhookUrl: e.target.value })
+                          setFormData({
+                            ...formData,
+                            webhookUrl: e.target.value,
+                          })
                         }
                         className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
                         placeholder="https://api.example.com/webhook"
@@ -240,7 +249,10 @@ export function WebhookConfigSlideOver({
                         type="password"
                         value={formData.webhookSecret}
                         onChange={(e) =>
-                          setFormData({ ...formData, webhookSecret: e.target.value })
+                          setFormData({
+                            ...formData,
+                            webhookSecret: e.target.value,
+                          })
                         }
                         className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
                         placeholder="••••••••••••••••"
