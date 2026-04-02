@@ -385,3 +385,33 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `cloudflarelogs.txt` shows `getLatestSnapshot` taking 1002ms (Line 258) and `getAnalyticsTrend` taking 1212ms (Line 310).
 - **Root Cause**: Unoptimized database queries in `analytics.service.ts` or missing composite indexes on `orgId` and `timestamp`.
 - **Impact**: Slow dashboard loading times, fetching metrics takes >1 second in production.
+
+#### 78. [Frontend/Backend] Verification Schema Save Failure (400 Bad Request) (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1081) shows `POST /api/v1/verifications/:orgId 400`.
+- **Root Cause**: Complete structural mismatch between the `WorkflowBuilderTab.tsx` payload and the backend `createVerificationTypeSchema`. Frontend sends `fieldKey` instead of `key`, `required` instead of `isRequired`, and uses roles like `client` which are not in the backend's allowed `ORG_ROLE_KEYS`.
+- **Impact**: Database schemas for custom workflows cannot be saved, blocking project customization.
+
+#### 79. [Frontend/Backend] Automations List Fetch Failure (400 Bad Request) (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1120) and `HARlogs.txt` (Line 146) show `GET /api/v1/automations?orgId=... 400`.
+- **Root Cause**: `automation.controller.ts` (Line 20) strictly looks for `organizationId` in the query string, but the frontend `useAutomations` hook sends it as `orgId`.
+- **Impact**: The Automations tab appears empty or shows an error, preventing users from managing workflows.
+
+#### 80. [Frontend] "Add Partner" Button Inactivity (100% Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 203) note: "Add Partner button isn't working".
+- **Root Cause**: `AutomationsTab.tsx` (Line 118) contains the button element but is missing an `onClick` handler.
+- **Impact**: Secondary enterprise integrations cannot be initiated from the UI.
+
+#### 81. [Frontend] Icon Manifest Download Warning (Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 76) shows `Error while trying to use the following icon from the Manifest: https://www.validiant.in/icon-192x192.png`.
+- **Root Cause**: The icon file is either missing from the `/public` directory or the server is returning an incorrect MIME type.
+- **Impact**: Inconsistent branding in browser bookmarks and mobile homescreens.
+
+#### 82. [Backend] Real-time (SSE) Component Unmount Noise (Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 121) shows `[Realtime] Cleaning up SSE connection {reason: 'UNMOUNT', ...}`.
+- **Root Cause**: React strict mode or rapid navigation causes the `useRealtime` hook to clean up and re-establish connections faster than the Edge can report "Success", leading to many "Canceled" labels in Wrangler logs.
+- **Impact**: High log volume and potential socket exhaustion if connection leaks occur.
+
+#### 83. [Frontend] TypeError: r is not a function (Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 79) shows `TypeError: r is not a function` in a production chunk immediately after fetching project tasks.
+- **Root Cause**: Likely a missing or malformed callback prop passed to a task listing or map component during a state transition.
+- **Impact**: UI crash in the project detail view.

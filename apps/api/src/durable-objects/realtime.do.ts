@@ -40,15 +40,12 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
    */
   private handleSSE(): Response {
     const encoder = new TextEncoder();
+    let currentController: ReadableStreamDefaultController | null = null;
+    const sessionId = crypto.randomUUID().substring(0, 8);
 
     const stream = new ReadableStream({
       start: (controller) => {
-        const sessionId = crypto.randomUUID().substring(0, 8);
-        (
-          controller as ReadableStreamDefaultController & {
-            _sessionId?: string;
-          }
-        )._sessionId = sessionId;
+        currentController = controller;
         this.sessions.add(controller);
 
         // eslint-disable-next-line no-console
@@ -72,19 +69,14 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           )
         );
       },
-      cancel: (controller) => {
-        const sessionId =
-          (
-            controller as ReadableStreamDefaultController & {
-              _sessionId?: string;
-            }
-          )._sessionId || 'UNKNOWN';
-        this.sessions.delete(
-          controller as unknown as ReadableStreamDefaultController
-        );
+      cancel: (reason) => {
+        if (currentController) {
+          this.sessions.delete(currentController);
+        }
         // eslint-disable-next-line no-console
-        console.info('[Realtime:DO] Session REMOVED (Client Cancel)', {
+        console.info('[Realtime:DO] Session REMOVED', {
           sessionId,
+          reason: reason || 'CLIENT_DISCONNECT',
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
         });

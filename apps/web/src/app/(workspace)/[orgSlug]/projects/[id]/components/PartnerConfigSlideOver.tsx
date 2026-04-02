@@ -16,7 +16,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { BgvPartner } from '@/services/partner.service';
-import { useUpdatePartner, useRegenerateToken } from '@/hooks/usePartners';
+import { useUpdatePartner, useRegenerateToken, useCreatePartner } from '@/hooks/usePartners';
 import toast from 'react-hot-toast';
 import { logger } from '@/lib/logger';
 
@@ -35,6 +35,7 @@ export function PartnerConfigSlideOver({
 }: PartnerConfigSlideOverProps) {
   const updatePartner = useUpdatePartner(orgId);
   const regenerateToken = useRegenerateToken(orgId);
+  const createPartner = useCreatePartner(orgId);
   const [formData, setFormData] = useState({
     name: '',
     outboundApiKey: '',
@@ -56,45 +57,60 @@ export function PartnerConfigSlideOver({
         allowedIps: partner.allowedIps?.join(', ') || '',
         rateLimit: partner.rateLimit || 60,
       });
+    } else {
+      setFormData({
+        name: '',
+        outboundApiKey: '',
+        webhookSigningSecret: '',
+        allowedIps: '',
+        rateLimit: 60,
+      });
     }
   }, [partner]);
 
   const handleSave = () => {
-    if (!partner) return;
+    const data = {
+      name: formData.name,
+      outboundApiKey: formData.outboundApiKey,
+      webhookSigningSecret: formData.webhookSigningSecret,
+      allowedIps: formData.allowedIps
+        .split(',')
+        .map((ip) => ip.trim())
+        .filter(Boolean),
+      rateLimit: formData.rateLimit,
+    };
 
-    logger.info('[Partner:Config:Save:Start]', { partnerId: partner.id });
-
-    updatePartner.mutate(
-      {
-        id: partner.id,
-        data: {
-          name: formData.name,
-          outboundApiKey: formData.outboundApiKey,
-          webhookSigningSecret: formData.webhookSigningSecret,
-          allowedIps: formData.allowedIps
-            .split(',')
-            .map((ip) => ip.trim())
-            .filter(Boolean),
-          rateLimit: formData.rateLimit,
-        },
-      },
-      {
+    if (partner) {
+      logger.info('[Partner:Config:Save:Update]', { partnerId: partner.id });
+      updatePartner.mutate(
+        { id: partner.id, data },
+        {
+          onSuccess: () => {
+            toast.success('Partner configuration updated');
+            onClose();
+          },
+          onError: (err) => {
+            toast.error('Failed to update configuration');
+            logger.error('[Partner:Config:Save:Error]', {
+              partnerId: partner.id,
+              error: err,
+            });
+          },
+        }
+      );
+    } else {
+      logger.info('[Partner:Config:Save:Create]', { name: data.name });
+      createPartner.mutate(data, {
         onSuccess: () => {
-          toast.success('Partner configuration updated');
-          logger.info('[Partner:Config:Save:Success]', {
-            partnerId: partner.id,
-          });
+          toast.success('New Partner created');
           onClose();
         },
         onError: (err) => {
-          toast.error('Failed to update configuration');
-          logger.error('[Partner:Config:Save:Error]', {
-            partnerId: partner.id,
-            error: err,
-          });
+          toast.error('Failed to create partner');
+          logger.error('[Partner:Config:Create:Error]', { error: err });
         },
-      }
-    );
+      });
+    }
   };
 
   const handleRegenerateToken = () => {
@@ -117,7 +133,7 @@ export function PartnerConfigSlideOver({
     }
   };
 
-  if (!isOpen || !partner) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -136,9 +152,11 @@ export function PartnerConfigSlideOver({
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-slate-800">
-                    Partner Secrets
+                    {partner ? 'Partner Secrets' : 'Connect New Partner'}
                   </h2>
-                  <p className="text-xs text-slate-500">{partner.name}</p>
+                  <p className="text-xs text-slate-500">
+                    {partner ? partner.name : 'Enterprise BGV Integration'}
+                  </p>
                 </div>
               </div>
               <button
@@ -161,46 +179,71 @@ export function PartnerConfigSlideOver({
                 </p>
               </div>
 
-              {/* Inbound Connectivity */}
-              <section className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" /> Inbound Connectivity
-                  (Validiant)
-                </h3>
-                <div className="space-y-3">
+              {/* Basic Info */}
+              {!partner && (
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Shield className="w-3.5 h-3.5" /> Partner Information
+                  </h3>
                   <label className="block">
                     <span className="text-xs font-semibold text-slate-600 mb-1.5 block">
-                      Inbound API Token
+                      Partner Name
                     </span>
-                    <div className="flex gap-2">
-                      <div className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-mono text-xs text-slate-600 overflow-hidden truncate">
-                        {partner.inboundApiToken ||
-                          '********************************'}
-                      </div>
-                      <button
-                        onClick={copyInboundToken}
-                        className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                      >
-                        {copiedToken ? (
-                          <Check className="w-4 h-4 text-emerald-500" />
-                        ) : (
-                          <Copy className="w-4 h-4 text-slate-400" />
-                        )}
-                      </button>
-                    </div>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g. First Advantage"
+                    />
                   </label>
-                  <p className="text-[10px] text-slate-400 italic">
-                    Use this token in your BGV partner's webhook configuration
-                    to push data to Validiant.
-                  </p>
-                </div>
-              </section>
+                </section>
+              )}
+
+              {/* Inbound Connectivity */}
+              {partner && (
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Globe className="w-3.5 h-3.5" /> Inbound Connectivity
+                    (Validiant)
+                  </h3>
+                  <div className="space-y-3">
+                    <label className="block">
+                      <span className="text-xs font-semibold text-slate-600 mb-1.5 block">
+                        Inbound API Token
+                      </span>
+                      <div className="flex gap-2">
+                        <div className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-mono text-xs text-slate-600 overflow-hidden truncate">
+                          {partner.inboundApiToken ||
+                            '********************************'}
+                        </div>
+                        <button
+                          onClick={copyInboundToken}
+                          className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                          {copiedToken ? (
+                            <Check className="w-4 h-4 text-emerald-500" />
+                          ) : (
+                            <Copy className="w-4 h-4 text-slate-400" />
+                          )}
+                        </button>
+                      </div>
+                    </label>
+                    <p className="text-[10px] text-slate-400 italic">
+                      Use this token in your BGV partner's webhook configuration
+                      to push data to Validiant.
+                    </p>
+                  </div>
+                </section>
+              )}
 
               {/* Outbound Connectivity */}
               <section className="space-y-4 pt-4 border-t border-slate-100">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                   <Globe className="w-3.5 h-3.5" /> Outbound Integration (
-                  {partner.name})
+                  {partner ? partner.name : 'Settings'})
                 </h3>
                 <div className="space-y-4">
                   <label className="block">
@@ -335,15 +378,19 @@ export function PartnerConfigSlideOver({
               </button>
               <button
                 onClick={handleSave}
-                disabled={updatePartner.isPending}
+                disabled={
+                  updatePartner.isPending ||
+                  createPartner.isPending ||
+                  (!partner && !formData.name)
+                }
                 className="flex-[2] px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {updatePartner.isPending ? (
+                {updatePartner.isPending || createPartner.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                Save Configuration
+                {partner ? 'Save Configuration' : 'Create Partner'}
               </button>
             </div>
           </div>

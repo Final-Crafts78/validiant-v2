@@ -15,11 +15,19 @@ const nextConfig = {
 
   // Image optimization
   images: {
-    domains: [
-      'localhost',
-      'www.validiant.in',
-      'validiant.in',
-      'api.validiant.in',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.validiant.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'validiant.in',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },

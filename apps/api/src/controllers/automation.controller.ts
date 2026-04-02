@@ -17,7 +17,10 @@ import type { UserContext } from '../middleware/auth';
 export const listAutomations = async (c: Context) => {
   try {
     const user = c.get('user') as UserContext;
-    const orgId = c.req.query('organizationId') || user.organizationId;
+    const orgId =
+      c.req.query('organizationId') ||
+      c.req.query('orgId') ||
+      user.organizationId;
 
     if (!orgId) {
       return c.json(
@@ -195,7 +198,10 @@ export const deleteAutomation = async (c: Context) => {
 export const getAutomationStats = async (c: Context) => {
   try {
     const user = c.get('user') as UserContext;
-    const orgId = c.req.query('organizationId') || user.organizationId;
+    const orgId =
+      c.req.query('organizationId') ||
+      c.req.query('orgId') ||
+      user.organizationId;
 
     if (!orgId) {
       return c.json(

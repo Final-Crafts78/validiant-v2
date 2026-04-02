@@ -182,15 +182,18 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
 
   return (
     <>
-      <header className="bg-[var(--color-surface-base)] border-b border-[var(--color-border-base)] sticky top-0 z-40">
+      <header className="bg-glass sticky top-0 z-40">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <Link href={dashboardHref} className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[var(--color-accent-base)] rounded-lg flex items-center justify-center">
+              <Link
+                href={dashboardHref}
+                className="flex items-center gap-2 group"
+              >
+                <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/20 group-hover:scale-105 transition-transform duration-200">
                   <LayoutDashboard className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-[var(--color-text-base)] hidden lg:inline">
+                <span className="text-xl font-black text-[var(--color-text-base)] hidden lg:inline tracking-tight group-hover:text-primary-600 transition-colors">
                   Validiant
                 </span>
               </Link>
@@ -212,46 +215,52 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
             </nav>
 
             <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <NotificationBell />
-              <div className="hidden md:flex items-center gap-3">
-                <div className="text-right">
-                  <p className="text-sm font-bold text-[var(--color-text-base)]">
+              <div className="flex items-center gap-2 pr-4 border-r border-[var(--color-border-base)]">
+                <ThemeToggle />
+                <NotificationBell />
+              </div>
+              
+              <div className="hidden md:flex items-center gap-3 pl-2">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-black text-[var(--color-text-base)] leading-none mb-1">
                     {user.fullName}
                   </p>
-                  <p className="text-xs text-[var(--color-text-muted)]">
+                  <p className="text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">
                     {user.email}
                   </p>
                 </div>
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.fullName}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 bg-[var(--color-accent-base)] rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-white">
-                      {initials}
-                    </span>
-                  </div>
-                )}
+                <div className="relative group cursor-pointer">
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.fullName}
+                      className="w-10 h-10 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-primary-500/30 transition-all shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                      <span className="text-sm font-black text-white">
+                        {initials}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[var(--color-surface-base)] rounded-full shadow-sm"></div>
+                </div>
               </div>
 
               <button
                 onClick={handleLogout}
                 disabled={isPending}
-                className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-text-subtle)] hover:text-[var(--color-critical-base)] hover:bg-danger-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="hidden md:flex items-center justify-center w-10 h-10 rounded-xl text-[var(--color-text-muted)] hover:text-rose-600 hover:bg-rose-500/10 transition-all disabled:opacity-50"
+                title="Logout"
               >
-                <LogOut className="h-4 w-4" />
-                <span>{isPending ? 'Logging out...' : 'Logout'}</span>
+                <LogOut className="h-5 w-5" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--color-surface-base)]/90 backdrop-blur-md border-t border-[var(--color-border-base)] z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-glass border-t border-[var(--color-border-base)] z-50">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.slice(0, 5).map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -260,14 +269,20 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
+                className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-all ${
                   isActive
-                    ? 'text-[var(--color-accent-base)]'
+                    ? 'text-primary-600'
                     : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-base)]'
                 }`}
               >
-                <Icon className="h-5 w-5" />
-                <span className="text-[10px] font-medium">{item.name}</span>
+                <div
+                  className={`p-1.5 rounded-lg transition-colors ${isActive ? 'bg-primary-600/10' : ''}`}
+                >
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-tighter">
+                  {item.name}
+                </span>
               </Link>
             );
           })}

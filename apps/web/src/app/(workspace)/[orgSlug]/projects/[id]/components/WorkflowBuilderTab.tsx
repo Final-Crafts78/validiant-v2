@@ -19,15 +19,19 @@ import toast from 'react-hot-toast';
 import { logger } from '@/lib/logger';
 
 const FIELD_TYPES = [
-  { value: 'text', label: 'Short Text' },
-  { value: 'textarea', label: 'Long Text' },
-  { value: 'boolean', label: 'Yes/No Toggle' },
-  { value: 'photo-request', label: 'Camera / Photo Upload' },
-  { value: 'signature', label: 'E-Signature' },
-  { value: 'pdf-upload', label: 'Document Upload (PDF)' },
+  { value: 'text', label: 'Short Text', backendType: 'text' },
+  { value: 'textarea', label: 'Long Text', backendType: 'text' },
+  { value: 'boolean', label: 'Yes/No Toggle', backendType: 'boolean' },
+  { value: 'photo-request', label: 'Camera / Photo Upload', backendType: 'photo' },
+  { value: 'signature', label: 'E-Signature', backendType: 'photo' },
+  { value: 'pdf-upload', label: 'Document Upload (PDF)', backendType: 'document' },
 ];
 
-const ROLES = ['manager', 'executive', 'client'];
+const ROLES = [
+  { value: 'manager', label: 'Manager' },
+  { value: 'executive', label: 'Executive' },
+  { value: 'viewer', label: 'Viewer/Client' },
+];
 
 export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
   const { activeOrgId } = useWorkspaceStore();
@@ -59,13 +63,12 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
     setFields([
       ...fields,
       {
-        fieldKey: `custom_field_${Date.now()}`,
+        key: `field_${Date.now()}`,
         type: 'text',
         label: 'New Field',
-        prompt: '',
-        required: false,
-        readRoles: ['manager', 'executive', 'client'],
-        writeRoles: ['executive'],
+        isRequired: false,
+        visibleTo: ['owner', 'admin', 'manager', 'executive', 'viewer'],
+        editableBy: ['owner', 'admin', 'manager', 'executive'],
       },
     ]);
   };
@@ -96,7 +99,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
   const handleSave = () => {
     // Validate schema
     for (const f of fields) {
-      if (!f.fieldKey || !f.label) {
+      if (!f.key || !f.label) {
         toast.error('All fields must have a Key and Label');
         return;
       }
@@ -113,8 +116,13 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
       data: {
         code: `PRJ_${projectId}_CUSTOM`,
         name: `Custom Workflow for Project ${projectId.slice(0, 8)}`,
-        isActive: true,
-        fieldSchema: fields,
+        fieldSchema: fields.map((f) => ({
+          ...f,
+          // Map to backend backendType if exists
+          type: FIELD_TYPES.find((t) => t.value === f.type)?.backendType || f.type,
+          // Ensure prompt is removed (not in backend schema)
+          prompt: undefined,
+        })),
       },
     });
   };
@@ -208,9 +216,9 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                     </label>
                     <input
                       type="text"
-                      value={field.fieldKey}
+                      value={field.key || field.fieldKey}
                       onChange={(e) =>
-                        updateField(idx, 'fieldKey', e.target.value)
+                        updateField(idx, 'key', e.target.value)
                       }
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 font-mono text-indigo-700 focus:ring-2 focus:ring-indigo-500"
                       placeholder="e.g. id_front"
@@ -239,9 +247,9 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={field.required}
+                        checked={field.isRequired || field.required}
                         onChange={(e) =>
-                          updateField(idx, 'required', e.target.checked)
+                          updateField(idx, 'isRequired', e.target.checked)
                         }
                         className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
                       />
@@ -269,24 +277,34 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                       <div className="flex gap-2 flex-wrap">
                         {ROLES.map((role) => (
                           <label
-                            key={role}
+                            key={role.value}
                             className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer transition-colors
-                                  ${field.readRoles?.includes(role) ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
+                                  ${(field.visibleTo || field.readRoles)?.includes(role.value) ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
                                `}
                           >
                             <input
                               type="checkbox"
                               className="hidden"
-                              checked={field.readRoles?.includes(role) || false}
+                              checked={
+                                (field.visibleTo || field.readRoles)?.includes(
+                                  role.value
+                                ) || false
+                              }
                               onChange={(e) => {
-                                const cur = new Set(field.readRoles || []);
+                                const cur = new Set(
+                                  field.visibleTo || field.readRoles || []
+                                );
                                 e.target.checked
-                                  ? cur.add(role)
-                                  : cur.delete(role);
-                                updateField(idx, 'readRoles', Array.from(cur));
+                                  ? cur.add(role.value)
+                                  : cur.delete(role.value);
+                                updateField(
+                                  idx,
+                                  'visibleTo',
+                                  Array.from(cur)
+                                );
                               }}
                             />
-                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                            {role.label}
                           </label>
                         ))}
                       </div>
@@ -296,30 +314,40 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                         Write Access (Who can fill this?)
                       </label>
                       <div className="flex gap-2 flex-wrap">
-                        {ROLES.map((role) => (
-                          <label
-                            key={role}
-                            className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer transition-colors
-                                  ${field.writeRoles?.includes(role) ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
+                        {ROLES.filter((r) => r.value !== 'viewer').map(
+                          (role) => (
+                            <label
+                              key={role.value}
+                              className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer transition-colors
+                                  ${(field.editableBy || field.writeRoles)?.includes(role.value) ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
                                `}
-                          >
-                            <input
-                              type="checkbox"
-                              className="hidden"
-                              checked={
-                                field.writeRoles?.includes(role) || false
-                              }
-                              onChange={(e) => {
-                                const cur = new Set(field.writeRoles || []);
-                                e.target.checked
-                                  ? cur.add(role)
-                                  : cur.delete(role);
-                                updateField(idx, 'writeRoles', Array.from(cur));
-                              }}
-                            />
-                            {role.charAt(0).toUpperCase() + role.slice(1)}
-                          </label>
-                        ))}
+                            >
+                              <input
+                                type="checkbox"
+                                className="hidden"
+                                checked={
+                                  (
+                                    field.editableBy || field.writeRoles
+                                  )?.includes(role.value) || false
+                                }
+                                onChange={(e) => {
+                                  const cur = new Set(
+                                    field.editableBy || field.writeRoles || []
+                                  );
+                                  e.target.checked
+                                    ? cur.add(role.value)
+                                    : cur.delete(role.value);
+                                  updateField(
+                                    idx,
+                                    'editableBy',
+                                    Array.from(cur)
+                                  );
+                                }}
+                              />
+                              {role.label}
+                            </label>
+                          )
+                        )}
                       </div>
                     </div>
                   </div>

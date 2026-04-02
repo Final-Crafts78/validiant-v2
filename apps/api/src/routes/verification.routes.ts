@@ -17,6 +17,7 @@ import {
   updateVerificationTypeSchema,
 } from '@validiant/shared';
 import * as verificationController from '../controllers/verification.controller';
+import { logger } from '../utils/logger';
 
 const app = new Hono();
 
@@ -32,7 +33,24 @@ app.get('/:orgId', verificationController.listVerificationTypes);
  */
 app.post(
   '/:orgId',
-  zValidator('json', createVerificationTypeSchema),
+  zValidator('json', createVerificationTypeSchema, (result, c) => {
+    if (!result.success) {
+      logger.error('[Verification:Routes] Validation FAILED (POST /)', {
+        errors: result.error.format(),
+        path: c.req.path,
+        requestId: c.req.header('x-request-id'),
+      });
+      return c.json(
+        {
+          success: false,
+          error: 'Validation Error',
+          message: 'The provided verification schema is invalid',
+          details: result.error.format(),
+        },
+        400
+      );
+    }
+  }),
   verificationController.createVerificationType
 );
 
@@ -42,7 +60,25 @@ app.post(
  */
 app.put(
   '/:orgId/:id',
-  zValidator('json', updateVerificationTypeSchema),
+  zValidator('json', updateVerificationTypeSchema, (result, c) => {
+    if (!result.success) {
+      logger.error('[Verification:Routes] Validation FAILED (PUT /)', {
+        id: c.req.param('id'),
+        errors: result.error.format(),
+        path: c.req.path,
+        requestId: c.req.header('x-request-id'),
+      });
+      return c.json(
+        {
+          success: false,
+          error: 'Validation Error',
+          message: 'The provided updates are invalid',
+          details: result.error.format(),
+        },
+        400
+      );
+    }
+  }),
   verificationController.updateVerificationType
 );
 

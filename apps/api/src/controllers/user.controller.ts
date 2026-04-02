@@ -26,6 +26,21 @@ import {
 } from '@validiant/shared';
 
 /**
+ * Sanitize data coming from frontend to filter out literal "$undefined" strings.
+ * This is a safety layer for a known serialization bug in some frontend versions.
+ */
+const sanitizePayload = (data: any) => {
+  if (!data || typeof data !== 'object') return data;
+  const sanitized = { ...data };
+  for (const key in sanitized) {
+    if (sanitized[key] === '$undefined') {
+      sanitized[key] = null;
+    }
+  }
+  return sanitized;
+};
+
+/**
  * Get current user profile
  * GET /api/v1/users/me
  */
@@ -89,9 +104,11 @@ export const updateCurrentUserProfile = async (c: Context) => {
       typeof updateUserProfileSchema
     >;
 
+    const sanitizedData = sanitizePayload(validatedData);
+
     const updatedUser = await userService.updateProfile(
       user.userId,
-      validatedData
+      sanitizedData
     );
 
     return c.json({
@@ -540,7 +557,9 @@ export const updateUserById = async (c: Context) => {
       typeof updateUserProfileSchema
     >;
 
-    const user = await userService.updateProfile(id, validatedData);
+    const sanitizedData = sanitizePayload(validatedData);
+
+    const user = await userService.updateProfile(id, sanitizedData);
 
     return c.json({
       success: true,

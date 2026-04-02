@@ -115,7 +115,13 @@ export function AutomationsTab({ projectId }: { projectId: string }) {
               Connect external BGV services directly to this project's workflow.
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-200 transition-all border border-slate-200">
+          <button
+            onClick={() => {
+              setSelectedPartner(null);
+              setIsPartnerSlideOverOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-200 transition-all border border-slate-200"
+          >
             <Plus className="w-4 h-4" /> Add Partner
           </button>
         </div>

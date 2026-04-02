@@ -5,22 +5,30 @@ import { useRouter, useParams } from 'next/navigation';
 import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { useWorkspaceStore } from '@/store/workspace';
 import { ProjectStatus, ProjectPriority } from '@validiant/shared';
-import { FolderOpen, Plus, Loader2, AlertCircle, Calendar } from 'lucide-react';
+import {
+  FolderOpen,
+  Plus,
+  Loader2,
+  AlertCircle,
+  Calendar,
+  LayoutGrid,
+} from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_STYLES: Record<string, string> = {
   [ProjectStatus.ACTIVE]:
-    'bg-success-500/10 text-success-600 border-success-500/20',
+    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
   [ProjectStatus.PLANNING]:
-    'bg-primary-500/10  text-[var(--color-accent-base)] border-[var(--color-accent-base)]/20',
+    'bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-500/20',
   [ProjectStatus.ON_HOLD]:
-    'bg-warning-500/10   text-warning-600   border-warning-500/20',
+    'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
   [ProjectStatus.COMPLETED]:
-    'bg-[var(--color-surface-soft)]  text-[var(--color-text-muted)]   border-[var(--color-border-base)]',
+    'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700',
   [ProjectStatus.ARCHIVED]:
-    'bg-[var(--color-surface-soft)]  text-[var(--color-text-muted)]/70   border-[var(--color-border-base)]',
+    'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700',
   [ProjectStatus.CANCELLED]:
-    'bg-critical-500/10     text-[var(--color-critical-base)]     border-critical-500/20',
+    'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -31,16 +39,15 @@ const STATUS_LABELS: Record<string, string> = {
   [ProjectStatus.ARCHIVED]: 'Archived',
   [ProjectStatus.CANCELLED]: 'Cancelled',
 };
-
 // ── Priority badge ────────────────────────────────────────────────────────────
 const PRIORITY_STYLES: Record<string, string> = {
   [ProjectPriority.LOW]:
-    'bg-[var(--color-surface-soft)] text-[var(--color-text-muted)]',
+    'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
   [ProjectPriority.MEDIUM]:
-    'bg-primary-500/10   text-[var(--color-accent-base)]',
-  [ProjectPriority.HIGH]: 'bg-warning-500/10  text-warning-600',
+    'bg-primary-500/10 text-primary-600 dark:text-primary-400',
+  [ProjectPriority.HIGH]: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
   [ProjectPriority.URGENT]:
-    'bg-critical-500/10    text-[var(--color-critical-base)]',
+    'bg-rose-500/10 text-rose-600 dark:text-rose-400',
 };
 
 // ── Create modal ──────────────────────────────────────────────────────────────
@@ -80,64 +87,73 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="modal-surface w-full max-w-md p-6 space-y-5">
-        <h2 className="text-lg font-bold text-text-base">New Project</h2>
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="modal-surface w-full max-w-md p-8 space-y-6 shadow-2xl scale-in-center">
+        <div>
+          <h2 className="text-xl font-black text-[var(--color-text-base)] tracking-tight">
+            New Project
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1">
+            Start tracking your next workspace initiative
+          </p>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
-              Name *
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">
+              Project Name *
             </label>
             <input
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Q3 Field Audit"
-              className="input w-full"
+              placeholder="e.g. Q4 Infrastructure Audit"
+              className="input-themed w-full h-11"
               required
             />
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDesc(e.target.value)}
               rows={3}
-              placeholder="What is this project about?"
-              className="input w-full resize-none"
+              placeholder="What is the objective of this project?"
+              className="input-themed w-full resize-none py-3"
             />
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-text-muted mb-1 uppercase tracking-wide">
-              Priority
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest pl-1">
+              Priority Ranking
             </label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as ProjectPriority)}
-              className="input w-full"
+              className="input-themed w-full h-11"
             >
-              <option value={ProjectPriority.LOW}>Low</option>
-              <option value={ProjectPriority.MEDIUM}>Medium</option>
-              <option value={ProjectPriority.HIGH}>High</option>
-              <option value={ProjectPriority.URGENT}>Urgent</option>
+              <option value={ProjectPriority.LOW}>Low Intensity</option>
+              <option value={ProjectPriority.MEDIUM}>Standard Priority</option>
+              <option value={ProjectPriority.HIGH}>High Priority</option>
+              <option value={ProjectPriority.URGENT}>
+                Urgent Action Required
+              </option>
             </select>
           </div>
-          <div className="flex gap-2 pt-2">
-            <button
-              type="submit"
-              disabled={createMutation.isPending || !name.trim()}
-              className="flex-1 btn-primary py-2 text-sm font-semibold disabled:opacity-50 transition-colors"
-            >
-              {createMutation.isPending ? 'Creating…' : 'Create Project'}
-            </button>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
             <button
               type="button"
               onClick={() => onClose()}
-              className="btn btn-outline px-4"
+              className="flex-1 px-4 py-3 text-sm font-black text-[var(--color-text-subtle)] hover:bg-[var(--color-surface-muted)] rounded-xl transition-all"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={createMutation.isPending || !name.trim()}
+              className="flex-1 btn-primary py-3 text-sm font-black disabled:opacity-50 shadow-lg shadow-primary-600/20 active:scale-95"
+            >
+              {createMutation.isPending ? 'Deploying…' : 'Create Project'}
             </button>
           </div>
         </form>
@@ -183,39 +199,40 @@ export default function ProjectsPage() {
     );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-extrabold text-text-base">Projects</h1>
-          <p className="text-sm text-text-muted mt-0.5">
-            {projects.length} project{projects.length !== 1 ? 's' : ''} in this
-            workspace
+          <h1 className="text-3xl font-black text-[var(--color-text-base)] tracking-tight">
+            Projects
+          </h1>
+          <p className="text-sm text-[var(--color-text-muted)] mt-1 font-medium">
+            Manage and track your active initiatives across {orgSlug}
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold btn-primary transition-colors"
+          className="flex items-center justify-center gap-2 px-6 py-3 text-sm font-black btn-primary rounded-xl shadow-lg shadow-primary-600/20 active:scale-95 transition-all"
         >
-          <Plus className="w-4 h-4" /> New Project
+          <Plus className="w-5 h-5" /> New Project
         </button>
       </div>
 
       {/* Empty state */}
       {projects.length === 0 && (
-        <div className="text-center py-20 card-surface border-dashed">
-          <FolderOpen className="w-10 h-10 text-text-muted mx-auto mb-3" />
-          <p className="text-text-subtle text-sm font-medium">
-            No projects yet.
-          </p>
-          <p className="text-text-muted text-xs mt-1">
-            Create your first project to start tracking work.
-          </p>
-        </div>
+        <EmptyState
+          icon={FolderOpen}
+          title="No projects found"
+          description="It looks like you haven't created any projects in this workspace yet. Start by creating one to track your team's progress."
+          action={{
+            label: 'Create First Project',
+            onClick: () => setShowCreate(true),
+          }}
+        />
       )}
 
       {/* Project cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         {projects.map((p) => (
           <button
             key={p.id}
@@ -223,15 +240,22 @@ export default function ProjectsPage() {
               setActiveProject(p.id);
               router.push(`/${orgSlug}/projects/${p.id}`);
             }}
-            className="card-surface p-5 text-left hover:border-[var(--color-accent-base)] hover:shadow-md transition-all group"
+            className="group relative flex flex-col bg-glass border border-[var(--color-border-base)] rounded-3xl p-6 text-left hover-lift shadow-sm hover:border-primary-500/30 overflow-hidden"
           >
+            {/* Background highlight */}
+            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="w-8 h-8 rounded-full bg-primary-500/10 flex items-center justify-center">
+                <LayoutGrid className="w-4 h-4 text-primary-600" />
+              </div>
+            </div>
+
             {/* Top row: name + status */}
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-text-base leading-snug group-hover:text-[var(--color-accent-base)] transition-colors line-clamp-1">
+            <div className="mb-4 pr-8">
+              <h3 className="text-lg font-black text-[var(--color-text-base)] leading-tight group-hover:text-primary-600 transition-colors mb-2 line-clamp-2">
                 {p.name}
               </h3>
               <span
-                className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                className={`inline-flex shrink-0 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg border shadow-sm ${
                   STATUS_STYLES[p.status] ??
                   STATUS_STYLES[ProjectStatus.PLANNING]
                 }`}
@@ -241,35 +265,38 @@ export default function ProjectsPage() {
             </div>
 
             {/* Description */}
-            {p.description && (
-              <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 mb-3">
+            {p.description ? (
+              <p className="text-xs text-[var(--color-text-muted)] line-clamp-3 mb-6 leading-relaxed font-medium">
                 {p.description}
               </p>
+            ) : (
+              <div className="flex-1 mb-6 italic text-[var(--color-text-muted)]/40 text-xs">
+                No description provided for this initiative.
+              </div>
             )}
 
             {/* Progress bar */}
-            <div className="mb-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] text-[var(--color-text-muted)]/60 font-medium">
-                  Progress
+            <div className="mt-auto pt-4 border-t border-[var(--color-border-base)]/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)]/70">
+                  Mission Progress
                 </span>
-                <span className="text-[11px] text-[var(--color-text-subtle)] font-semibold">
+                <span className="text-xs font-black text-primary-600">
                   {p.progress ?? 0}%
                 </span>
               </div>
-              <div className="h-1.5 bg-[var(--color-surface-soft)] rounded-full overflow-hidden">
+              <div className="h-2 bg-[var(--color-surface-soft)] rounded-full overflow-hidden shadow-inner">
                 <div
-                  className="h-full bg-[var(--color-accent-base)] rounded-full transition-all"
+                  className="h-full bg-gradient-to-r from-primary-500 to-primary-700 rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(37,99,235,0.4)]"
                   style={{ width: `${p.progress ?? 0}%` }}
                 />
               </div>
             </div>
 
             {/* Footer meta */}
-            <div className="flex items-center gap-3 flex-wrap">
-              {/* Priority */}
+            <div className="flex items-center justify-between mt-4">
               <span
-                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${
                   PRIORITY_STYLES[p.priority] ??
                   PRIORITY_STYLES[ProjectPriority.MEDIUM]
                 }`}
@@ -277,16 +304,14 @@ export default function ProjectsPage() {
                 {p.priority}
               </span>
 
-              {/* Due date */}
               {p.endDate && (
-                <span className="flex items-center gap-1 text-[11px] text-[var(--color-text-muted)]">
-                  <Calendar className="w-3 h-3" />
+                <div className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-tight">
+                  <Calendar className="w-3.5 h-3.5" />
                   {new Date(p.endDate).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
-                    year: 'numeric',
                   })}
-                </span>
+                </div>
               )}
             </div>
           </button>

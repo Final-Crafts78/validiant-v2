@@ -153,13 +153,18 @@
 
   /* Input styles */
   .input {
-    @apply w-full px-4 py-2 rounded-lg transition-all duration-200;
-    @apply border border-border-base;
-    background-color: var(--color-surface-subtle);
-    color: var(--color-text-base);
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:bg-surface-base;
-    @apply hover:bg-surface-base;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full px-4 py-2.5 rounded-xl border transition-all duration-200 outline-none;
+    background-color: var(--color-surface-input);
+    border-color: var(--color-border-input);
+    color: var(--color-text-input);
+  }
+
+  .input:focus {
+    @apply ring-2 ring-[var(--color-accent-base)]/20 border-[var(--color-accent-base)];
+  }
+
+  .input:disabled {
+    @apply opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-900;
   }
 
   .input-error {
@@ -193,27 +198,27 @@
 
   /* Badge styles */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-semibold uppercase tracking-wider;
   }
 
   .badge-primary {
-    @apply bg-primary-100 text-primary-800;
+    @apply bg-primary-50 text-primary-700 dark:bg-primary-950/30 dark:text-primary-400;
   }
 
   .badge-success {
-    @apply bg-success-100 text-success-800;
+    @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400;
   }
 
   .badge-warning {
-    @apply bg-warning-100 text-warning-800;
+    @apply bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400;
   }
 
   .badge-danger {
-    @apply bg-danger-100 text-danger-800;
+    @apply bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400;
   }
 
   .badge-secondary {
-    @apply bg-secondary-100 text-secondary-800;
+    @apply bg-slate-50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-400;
   }
 
   /* Loading spinner */
@@ -366,40 +371,66 @@
 /* Base Theme Variables */
 :root {
   --ease-spring: cubic-bezier(0.4, 0, 0.2, 1.4);
-  --color-text-input: #334155; /* Slate 700 (Dark grey) for light mode */
 }
 
-[data-theme='dark'] {
-  --color-surface-base: #0f172a;
-  --color-surface-soft: #1e293b;
-  --color-surface-subtle: #334155;
-  --color-border-base: #1e293b;
-  --color-text-base: #f8fafc;
-  --color-text-muted: #94a3b8;
+/* Premium UI Utilities */
+@layer utilities {
+  .bg-glass {
+    @apply backdrop-blur-md border-white/20;
+    background-color: color-mix(in srgb, var(--color-surface-base), transparent 15%);
+  }
 
-  /* Input specific tokens */
-  --color-text-input: #f8fafc;
+  [data-theme='dark'] .bg-glass {
+    @apply border-white/5;
+    background-color: color-mix(in srgb, var(--color-surface-base), transparent 25%);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .shadow-premium {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  }
+
+  .transition-premium {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .hover-lift {
+    @apply transition-premium hover:-translate-y-0.5 hover:shadow-premium;
+  }
 }
 
-/* Premium Surface Utilities */
+/* Theme-Aware Surfaces */
 .modal-surface {
-  @apply bg-[var(--color-surface-base)] border border-[var(--color-border-base)] shadow-2xl overflow-hidden;
+  @apply bg-[var(--color-surface-overlay)] border border-[var(--color-border-base)] shadow-2xl overflow-hidden rounded-2xl;
 }
 
 .card-surface {
-  @apply bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-xl shadow-sm hover:shadow-md transition-shadow;
+  @apply bg-[var(--color-surface-raised)] border border-[var(--color-border-base)] rounded-2xl shadow-sm hover:shadow-md transition-all duration-200;
 }
 
-/* Theme-Aware Input Visibility Fix */
-.input,
-.textarea {
-  @apply bg-[var(--color-surface-soft)] border-[var(--color-border-base)] placeholder:text-[var(--color-text-muted)] p-2 rounded-md transition-all duration-200;
-  color: var(--color-text-input) !important;
+/* Robust Form Styling */
+.input-themed {
+  @apply w-full px-4 py-2.5 rounded-xl border transition-all duration-200 outline-none;
+  background-color: var(--color-surface-input);
+  border-color: var(--color-border-input);
+  color: var(--color-text-input);
 }
 
-.input:focus,
-.textarea:focus {
-  @apply outline-none ring-2 ring-[var(--color-accent-base)] border-transparent;
+.input-themed:focus {
+  @apply ring-2 ring-[var(--color-accent-base)]/20 border-[var(--color-accent-base)];
+}
+
+/* Select Reset */
+select.input-themed {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='Length19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
 }
 
 .ease-spring {
