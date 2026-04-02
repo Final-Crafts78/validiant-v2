@@ -11,12 +11,31 @@ import { queryKeys } from '@/lib/query-keys';
 
 export function useProjects() {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
-  return useQuery({
+
+  // 🔍 EXTREME VISIBILITY: Track organization context for project fetching
+  // eslint-disable-next-line no-console
+  console.debug('[Hook:useProjects] Active Organization ID', {
+    activeOrgId,
+    timestamp: new Date().toISOString(),
+  });
+
+  const query = useQuery({
     queryKey: queryKeys.projects.org(activeOrgId ?? ''),
-    queryFn: () => projectService.getOrgProjects(activeOrgId ?? ''),
+    queryFn: async () => {
+      const projects = await projectService.getOrgProjects(activeOrgId ?? '');
+      // eslint-disable-next-line no-console
+      console.debug('[Hook:useProjects] API Result Received', {
+        orgId: activeOrgId,
+        projectCount: projects.length,
+        timestamp: new Date().toISOString(),
+      });
+      return projects;
+    },
     enabled: !!activeOrgId,
     staleTime: 2 * 60 * 1000,
   });
+
+  return query;
 }
 
 export function useProject(id: string) {

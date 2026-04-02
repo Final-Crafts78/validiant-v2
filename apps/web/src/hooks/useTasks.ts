@@ -128,7 +128,10 @@ const fetchTasks = async ({
   if (filters?.perPage) params.append('perPage', String(filters.perPage));
   if (cursor) params.append('cursor', cursor);
 
-  const url = `/projects/${projectId}/tasks?${params.toString()}`;
+  const paramsString = params.toString();
+  const url = `/projects/${projectId}/tasks${paramsString ? `?${paramsString}` : ''}`;
+
+  console.debug('[Tasks:FetchInitiated]', { url, projectId, hasFilters: !!filters });
   const response = await get<TasksCursorResponse>(url);
   return response.data.data;
 };

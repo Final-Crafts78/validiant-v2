@@ -5,7 +5,10 @@ import { Env } from '../app';
 import { getCookie } from 'hono/cookie';
 import { logger } from '../utils/logger';
 
-const router = new Hono<{ Bindings: Env; Variables: { user: UserContext } }>();
+const router = new Hono<{
+  Bindings: Env;
+  Variables: { user: UserContext; requestId?: string };
+}>();
 
 /**
  * GET /api/v1/realtime/stream
@@ -105,7 +108,7 @@ router.get('/stream', async (c) => {
 
   const subrequestStartTime = performance.now();
   const requestId =
-    c.get('requestId') ||
+    (c.get('requestId') as string) ||
     c.req.header('cf-ray') ||
     `internal-${Math.random().toString(36).substring(7)}`;
 
@@ -166,7 +169,18 @@ router.get('/stream', async (c) => {
 
     // Pipe the DO response through our tracker
     if (response.body) {
-      response.body.pipeTo(writable);
+      // ELITE: We don't await pipeTo here because we need to return the Response immediately
+      // but we catch any async errors in the background.
+      response.body.pipeTo(writable).catch((err) => {
+        logger.error('[Realtime:Stream] Pipeline FAILED', {
+          orgId,
+          userId: user?.userId,
+          requestId,
+          error: err instanceof Error ? err.message : 'Pipe error',
+          timestamp: new Date().toISOString(),
+        });
+      });
+
       return new Response(readable, {
         status: response.status,
         statusText: response.statusText,

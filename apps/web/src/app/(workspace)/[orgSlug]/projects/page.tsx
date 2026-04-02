@@ -150,9 +150,20 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
 export default function ProjectsPage() {
   const router = useRouter();
   const { orgSlug } = useParams() as { orgSlug: string };
-  const { setActiveProject } = useWorkspaceStore();
+  const { setActiveProject, activeOrgId } = useWorkspaceStore();
   const { data: projects = [], isLoading, isError } = useProjects();
   const [showCreate, setShowCreate] = useState(false);
+
+  // 🔍 EXTREME VISIBILITY: Track project list state in the UI
+  // eslint-disable-next-line no-console
+  console.debug('[Page:Projects] State Update', {
+    orgSlug,
+    activeOrgId,
+    projectCount: projects.length,
+    isLoading,
+    isError,
+    timestamp: new Date().toISOString(),
+  });
 
   if (isLoading)
     return (

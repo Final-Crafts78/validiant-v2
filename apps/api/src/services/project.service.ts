@@ -506,10 +506,13 @@ export const listOrganizationProjects = async (
       },
     };
 
-    logger.debug('Organization projects retrieved', {
+    // 🔍 EXTREME VISIBILITY: Track database results for project list
+    // eslint-disable-next-line no-console
+    console.debug('[Service:Project:List] Database results retrieved', {
       organizationId,
       count: result.projects.length,
       total,
+      hasParams: !!params,
       timestamp: new Date().toISOString(),
     });
 

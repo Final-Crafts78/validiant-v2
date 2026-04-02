@@ -38,7 +38,12 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
   const searchParams = useSearchParams();
   const { activeOrgId } = useWorkspaceStore();
   const { data: vTypes } = useVerificationTypes(activeOrgId || '');
-  const { data: tasksData, isLoading } = useTasks(projectId);
+  const { data: tasksData, isLoading, isError, error } = useTasks(projectId);
+
+  if (isError) {
+    console.error('[DataExplorer:FetchError]', { projectId, error });
+  }
+
   const bulkDeleteMutation = useBulkDeleteTasks();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,11 +71,24 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
   // Aggregate tasks flat array
   const tasks = useMemo<Task[]>(() => {
     const raw = tasksData?.pages.flatMap((page) => page.tasks) ?? [];
+    console.debug('[DataExplorer:TasksComputed]', {
+      rawCount: raw.length,
+      hasSearch: !!searchTerm,
+    });
     if (!searchTerm) return raw;
     return raw.filter((t) =>
       t.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [tasksData, searchTerm]);
+
+  console.debug('[DataExplorer:RenderPhase]', {
+    projectId,
+    taskCount: tasks.length,
+    viewMode,
+    selectedCount: selectedTaskIds.length,
+    isUploadOpen,
+    isCreateOpen,
+  });
 
   const toggleSelectAll = () => {
     if (selectedTaskIds.length === tasks.length) {

@@ -256,6 +256,9 @@ export const organizations = pgTable(
     industryType: text('industry_type').notNull().default('bgv'), // Spec: default 'bgv'
     size: text('size'),
     logoUrl: text('logo_url'),
+    autoDispatchVerified: boolean('auto_dispatch_verified')
+      .notNull()
+      .default(false),
     auditLogRetentionDays: integer('audit_log_retention_days')
       .default(90)
       .notNull(),

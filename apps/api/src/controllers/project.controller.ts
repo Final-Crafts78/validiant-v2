@@ -514,6 +514,16 @@ export const listOrganizationProjects = async (c: Context) => {
       organizationId,
       user.userId
     );
+
+    // 🔍 EXTREME VISIBILITY: Track project list permission resolution
+    // eslint-disable-next-line no-console
+    console.debug('[Controller:Project:List] Permission check', {
+      organizationId,
+      userId: user.userId,
+      hasAccess,
+      timestamp: new Date().toISOString(),
+    });
+
     if (!hasAccess) {
       return c.json(
         {

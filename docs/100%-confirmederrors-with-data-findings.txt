@@ -365,3 +365,23 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `HARlogs.txt` (Line 69) shows `Error while trying to use the following icon from the Manifest: https://www.validiant.in/icon-192x192.png (Download error or resource isn't a valid image)`.
 - **Root Cause**: The icon file listed in `manifest.webmanifest` is either missing from the public directory or returning an invalid content type.
 - **Impact**: Browser tab and PWA icons fail to load correctly.
+
+#### 74. [Frontend] TypeError: r is not a function (CRITICAL - Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 52) shows `TypeError: r is not a function` at `iZ` in the production JS bundle. This happens immediately after `GET /projects/:id/tasks?` returns.
+- **Root Cause**: Likely a missing or undefined callback prop in `DataExplorerTab` or one of its child modals (`BulkActionBar`, `CreateTaskModal`, etc.).
+- **Impact**: The Project detail view crashes or fails to render tasks, leaving the user with a broken UI.
+
+#### 75. [Frontend] Recharts ResponsiveContainer Negative Dimensions (Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 16) shows `The width(-1) and height(-1) of chart should be greater than 0`.
+- **Root Cause**: `ResponsiveContainer` is rendered in a container that has not yet been sized by the browser, likely during initial layout or hydration.
+- **Impact**: Charts in the Analytics tab may fail to appear or look distorted until a window resize.
+
+#### 76. [Backend] SSE "Canceled" label in Wrangler Tail (Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 101, 398) shows `Canceled @ 2/4/2026, 2:51:59 pm` for real-time stream requests.
+- **Root Cause**: This often happens when the client-side `EventSource` unmounts (confirmed by `HARlogs.txt` Line 11 `reason: 'UNMOUNT'`), but can also indicate the Cloudflare Edge terminating the connection prematurely.
+- **Impact**: Potential loss of real-time notifications if not carefully handled with automatic reconnection.
+
+#### 77. [Backend] Analytics Controller Database Performance (Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` shows `getLatestSnapshot` taking 1002ms (Line 258) and `getAnalyticsTrend` taking 1212ms (Line 310).
+- **Root Cause**: Unoptimized database queries in `analytics.service.ts` or missing composite indexes on `orgId` and `timestamp`.
+- **Impact**: Slow dashboard loading times, fetching metrics takes >1 second in production.
