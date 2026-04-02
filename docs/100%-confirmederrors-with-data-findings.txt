@@ -321,11 +321,13 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 #### 65. [Backend] Database Schema Mismatch - Missing theme_color (100% Confirmed)
 - **Data Evidence**: `cloudflarelogs.txt` (Line 1585) explicitly shows `NeonDbError: column projects.theme_color does not exist`. 
 - **Root Cause**: The Drizzle schema in `schema.ts` defines `theme_color`, but the physical table in the Neon production database has not been updated (migration missing or failed).
+- **Exact Fix (SQL)**: `ALTER TABLE projects ADD COLUMN IF NOT EXISTS theme_color VARCHAR(7) DEFAULT '#4F46E5';`
 - **Impact**: All project-related API calls return 500, breaking the Projects dashboard and detail views.
 
-#### 66. [Backend] Verification Type Route 500 Failure (100% Confirmed)
+#### 66. [Backend] Verification Type Route 500 Failure (100% Confirmed - Schema Mismatch)
 - **Data Evidence**: Cloudflare logs show consistent 500 errors for `GET /api/v1/verifications/:orgId`.
-- **Root Cause**: Undetected runtime exception in `verification.service.ts` or `verification.controller.ts`. Lack of granular try/catch logging in this specific service masks the underlying Neon error.
+- **Root Cause**: `NeonDbError: column verification_types.is_system_template does not exist`. The Drizzle schema expects this column for system templates, but the physical Neon database is out of sync.
+- **Exact Fix (SQL)**: `ALTER TABLE verification_types ADD COLUMN IF NOT EXISTS is_system_template BOOLEAN DEFAULT FALSE NOT NULL;`
 - **Impact**: Users cannot load verification schemas for tasks or configuration.
 
 #### 67. [Backend] Real-time (SSE) Durable Object "Canceled" Status (100% Confirmed)
@@ -337,3 +339,8 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `HARlogs.txt` shows `$undefined` strings being sent in the `PATCH` body despite existing sanitization logic in `ProfilePage.tsx`.
 - **Root Cause**: The sanitization only runs in `useEffect` for local state. If the user submits before the side-effect completes or if the `updateProfileAction` (Server Action) doesn't perform its own server-side sanitization, the literal string is sent/persisted.
 - **Impact**: Persistent data corruption in user profiles.
+
+#### 69. [Frontend] Missing Static Public Routes (404s) (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` and `vercellogs.txt` show 404 errors for `/about`, `/security`, `/docs`, `/terms`, `/privacy`, `/status`, and `/changelog`.
+- **Root Cause**: The physical files for these routes do not exist in the `apps/web/src/app` directory. PWA or external links may be pointing to these "ghost" routes.
+- **Impact**: Log noise and broken user experience for legal/informational links.

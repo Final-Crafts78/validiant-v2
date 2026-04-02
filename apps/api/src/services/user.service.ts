@@ -30,8 +30,8 @@ interface User {
   status: UserStatus;
   emailVerified: boolean;
   twoFactorEnabled: boolean;
-  preferences: any;
-  notificationPreferences: any;
+  preferences: Record<string, unknown>;
+  notificationPreferences: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   lastLoginAt?: Date;
@@ -153,28 +153,40 @@ export const updateProfile = async (
   }
 ): Promise<User> => {
   // Build update object with only provided fields
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     updatedAt: new Date(),
   };
 
+  /**
+   * ELITE SANITIZATION: Prevent persistence of poison markers used in FE/BFF layers
+   */
+  const sanitize = (val: unknown): any => {
+    if (val === '$undefined' || val === 'null' || val === 'undefined')
+      return undefined;
+    return val;
+  };
+
   if (data.fullName !== undefined) {
-    updateData.fullName = data.fullName;
+    updateData.fullName = sanitize(data.fullName);
   }
 
   if (data.displayName !== undefined) {
-    updateData.displayName = data.displayName;
+    updateData.displayName = sanitize(data.displayName);
   }
 
   if (data.bio !== undefined) {
-    updateData.bio = data.bio;
+    const val = sanitize(data.bio);
+    // Convert empty string or markers to null for database optionality
+    updateData.bio = val === '' ? null : val;
   }
 
   if (data.phoneNumber !== undefined) {
-    updateData.phoneNumber = data.phoneNumber;
+    const val = sanitize(data.phoneNumber);
+    updateData.phoneNumber = val === '' ? null : val;
   }
 
   if (data.avatarUrl !== undefined) {
-    updateData.avatarUrl = data.avatarUrl;
+    updateData.avatarUrl = sanitize(data.avatarUrl);
   }
 
   if (Object.keys(updateData).length === 1) {
@@ -219,7 +231,7 @@ export const updateProfile = async (
  */
 export const updatePreferences = async (
   userId: string,
-  newPreferences: any
+  newPreferences: Record<string, unknown>
 ): Promise<User> => {
   const existingUser = await getUserById(userId);
   const preferences = {
@@ -267,7 +279,7 @@ export const updatePreferences = async (
  */
 export const updateNotificationPreferences = async (
   userId: string,
-  notificationPreferences: any
+  notificationPreferences: Record<string, unknown>
 ): Promise<User> => {
   const userResult = await db
     .update(users)
@@ -323,7 +335,9 @@ export const listUsers = async (params: {
   const sortOrder = params.sortOrder || 'desc';
 
   // Build WHERE conditions
-  const conditions: any[] = [isNull(users.deletedAt)];
+  const conditions: Array<import('drizzle-orm').SQL | undefined> = [
+    isNull(users.deletedAt),
+  ];
 
   if (params.search) {
     conditions.push(

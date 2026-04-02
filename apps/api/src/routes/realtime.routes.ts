@@ -115,6 +115,27 @@ router.get('/stream', async (c) => {
       headers: c.req.raw.headers,
     });
 
+    // ELITE: Extreme Visibility for SSE Lifecycles
+    const { readable, writable } = new TransformStream({
+      start() {
+        logger.info('[Realtime:Stream] Connection ESTABLISHED', {
+          orgId,
+          userId: user?.userId,
+          timestamp: new Date().toISOString(),
+        });
+      },
+      flush() {
+        logger.info(
+          '[Realtime:Stream] Connection CLOSED (Client Disconnected)',
+          {
+            orgId,
+            userId: user?.userId,
+            timestamp: new Date().toISOString(),
+          }
+        );
+      },
+    });
+
     const duration = (performance.now() - subrequestStartTime).toFixed(2);
     logger.debug('[Realtime:Proxy] DO subrequest COMPLETED', {
       orgId,
@@ -124,12 +145,23 @@ router.get('/stream', async (c) => {
       contentType: response.headers.get('Content-Type'),
     });
 
+    // Pipe the DO response through our tracker
+    if (response.body) {
+      response.body.pipeTo(writable);
+      return new Response(readable, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
+    }
+
     return response;
   } catch (error) {
     const duration = (performance.now() - subrequestStartTime).toFixed(2);
-    logger.error('[Realtime:Proxy] DO subrequest FAILED', {
+    logger.error('[Realtime:Proxy] DO subrequest FAILED (Canceled/Error)', {
       orgId,
       error: error instanceof Error ? error.message : 'Unknown error',
+      isAbort: error instanceof Error && error.name === 'AbortError',
       duration: `${duration}ms`,
       timestamp: new Date().toISOString(),
     });

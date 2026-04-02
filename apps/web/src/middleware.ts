@@ -266,18 +266,25 @@ export async function middleware(request: NextRequest) {
     const requiredLength = secretFP !== 'MISSING' ? 100 : 10;
 
     const isLengthValid = accessTokenValue.length >= requiredLength;
-    const isNotEmpty =
+    const isNotMarker =
       accessTokenValue !== 'deleted' &&
       accessTokenValue !== 'null' &&
+      accessTokenValue !== 'undefined' &&
       accessTokenValue !== '';
 
-    const isAuthenticated = isLengthValid && isNotEmpty;
+    // ELITE: Structure validation - A JWT must have 3 parts separated by dots
+    // This prevents "ghost" tokens that are just random strings from triggering loops
+    const hasJwtStructure = accessTokenValue.split('.').length === 3;
 
-    const authFailureReason = !isNotEmpty
-      ? 'EMPTY_OR_DELETED_STRING'
-      : !isLengthValid
-        ? `LENGTH_INVALID_${accessTokenValue.length}`
-        : 'NONE';
+    const isAuthenticated = isLengthValid && isNotMarker && hasJwtStructure;
+
+    const authFailureReason = !isNotMarker
+      ? 'EMPTY_OR_DELETED_MARKER'
+      : !hasJwtStructure
+        ? 'INVALID_JWT_STRUCTURE'
+        : !isLengthValid
+          ? `LENGTH_INVALID_${accessTokenValue.length}`
+          : 'NONE';
 
     // eslint-disable-next-line no-console
     console.debug(

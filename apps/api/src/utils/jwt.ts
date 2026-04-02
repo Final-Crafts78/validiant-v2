@@ -7,6 +7,7 @@
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { env } from '../config/env.config';
+import { logger } from '../utils/logger';
 
 /**
  * JWT payload structure
@@ -79,10 +80,35 @@ export const verifyToken = async (token: string): Promise<TokenPayload> => {
   try {
     const { payload } = await jwtVerify(token, secret);
     return payload as TokenPayload;
-  } catch (error: any) {
+  } catch (error: unknown) {
     const fingerprint = await getSecretFingerprint();
-    // We append the fingerprint to the error message so the middleware logger captures it
-    throw new Error(`Invalid or expired token [FP:${fingerprint}]`);
+
+    // ELITE: Discriminate between failure types for data-driven debugging
+    let reason = 'Invalid or expired token';
+    const errorCode =
+      error && typeof error === 'object' && 'code' in error
+        ? (error as { code: string }).code
+        : undefined;
+
+    if (errorCode === 'ERR_JWT_EXPIRED') reason = 'EXPIRED';
+    if (errorCode === 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED')
+      reason = 'SIGNATURE_MISMATCH';
+    if (errorCode === 'ERR_JWT_CLAIM_VALIDATION_FAILED')
+      reason = 'CLAIM_INVALID';
+
+    logger.error('[JWT:Verify] Detailed Failure', {
+      reason,
+      code: errorCode,
+      fingerprint,
+      tokenPreview: `${token.substring(0, 10)}...${token.substring(
+        token.length - 10
+      )}`,
+    });
+
+    // We append the fingerprint and reason to the error message so the middleware logger captures it
+    throw new Error(
+      `${reason} [FP:${fingerprint}|CODE:${errorCode || 'UNKNOWN'}]`
+    );
   }
 };
 
