@@ -17,7 +17,9 @@ const nextConfig = {
   images: {
     domains: [
       'localhost',
-      // Add production domains here
+      'www.validiant.in',
+      'validiant.in',
+      'api.validiant.in',
     ],
     formats: ['image/avif', 'image/webp'],
   },

@@ -350,3 +350,18 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Root Cause**: The Drizzle schema in `schema.ts` defines `logo_url` for the `projects` table, but the physical Neon production database is missing this column (migration missing or failed).
 - **Exact Fix (SQL)**: `ALTER TABLE projects ADD COLUMN IF NOT EXISTS logo_url TEXT;`
 - **Impact**: All project-related API calls return 500, breaking the Projects dashboard and detail views for all users.
+#### 71. [Backend] Database Schema Mismatch - Missing auto_dispatch_verified (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Lines 605, 659, 686, 714, 756, 783) explicitly shows `NeonDbError: column projects.auto_dispatch_verified does not exist`.
+- **Root Cause**: The Drizzle schema defines `auto_dispatch_verified` for the `projects` table, but the physical Neon production database is missing this column.
+- **Exact Fix (SQL)**: `ALTER TABLE projects ADD COLUMN IF NOT EXISTS auto_dispatch_verified BOOLEAN DEFAULT FALSE NOT NULL;`
+- **Impact**: All project-related API calls return 500, breaking the Projects dashboard and detail views for all users.
+
+#### 72. [Frontend] Image Optimization 400 Errors (100% Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Lines 70, 85, 100, 115) shows `GET /_next/image?url=... 400 (Bad Request)` for assets like `dashboard_iso.png`, `field_app_iso.png`, etc.
+- **Root Cause**: `apps/web/next.config.js` only lists `localhost` in `images.domains`. Production domains like `www.validiant.in` are missing.
+- **Impact**: Dashboard images and hero sections are broken (visual degradation).
+
+#### 73. [Frontend] Manifest Icon Download Error (Confirmed)
+- **Data Evidence**: `HARlogs.txt` (Line 69) shows `Error while trying to use the following icon from the Manifest: https://www.validiant.in/icon-192x192.png (Download error or resource isn't a valid image)`.
+- **Root Cause**: The icon file listed in `manifest.webmanifest` is either missing from the public directory or returning an invalid content type.
+- **Impact**: Browser tab and PWA icons fail to load correctly.

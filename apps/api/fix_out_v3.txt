@@ -1,0 +1,11 @@
+﻿Connecting to Neon database...
+Applying 4 schema fixes...
+Executing: ALTER TABLE projects ADD COLUMN IF NOT EXISTS auto_dispatch_verified BOOLEAN DEFAULT FALSE NOT NULL
+Γ£à Success
+Executing: ALTER TABLE projects ADD COLUMN IF NOT EXISTS theme_color VARCHAR(7) DEFAULT '#4F46E5'
+Γ£à Success
+Executing: ALTER TABLE projects ADD COLUMN IF NOT EXISTS logo_url TEXT
+Γ£à Success
+Executing: ALTER TABLE verification_types ADD COLUMN IF NOT EXISTS is_system_template BOOLEAN DEFAULT FALSE NOT NULL
+Γ£à Success
+≡ƒÄë All schema fixes applied successfully!

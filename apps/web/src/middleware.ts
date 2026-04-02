@@ -408,7 +408,7 @@ export async function middleware(request: NextRequest) {
       // eslint-disable-next-line no-console
       console.info(
         `
-        [MW:Edge] [${requestId}] [EP-LOOP-PREVENTION] Staying on auth route despite cookie - Loop Prevention Active
+        [MW:Edge] [${requestId}] [EP-W.1] [EP-LOOP-PREVENTION] Staying on auth route despite cookie - Loop Prevention Active
       `,
         {
           pathname,
@@ -416,6 +416,7 @@ export async function middleware(request: NextRequest) {
           reason,
           isAuthenticated,
           timestamp: new Date().toISOString(),
+          requestId
         }
       );
     }

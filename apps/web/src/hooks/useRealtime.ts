@@ -56,6 +56,16 @@ export function useRealtime() {
   const userId = useAuthStore((s) => s.user?.id);
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  // Helper for state logging
+  const logStateTransition = (state: string, url?: string) => {
+    console.log(`[Realtime:State] ${state}`, {
+      url: url?.replace(/token=[^&]+/, 'token=REDACTED'),
+      timestamp: new Date().toISOString(),
+      orgId: activeOrgId,
+      userId
+    });
+  };
+
   useEffect(() => {
     // Guards: Don't connect if not in an org or not authenticated
     if (!activeOrgId || !userId) {
@@ -104,6 +114,7 @@ export function useRealtime() {
         isOnline: typeof window !== 'undefined' ? window.navigator.onLine : 'N/A'
       });
 
+      logStateTransition('CONNECTING', sseUrl);
       const es = new EventSource(sseUrl, { withCredentials: true });
       eventSourceRef.current = es;
 
@@ -141,9 +152,11 @@ export function useRealtime() {
           readyStateDesc:
             es.readyState === 0
               ? 'CONNECTING'
-              : es.readyState === 2
-                ? 'CLOSED'
-                : 'UNKNOWN',
+              : es.readyState === 1
+                ? 'OPEN'
+                : es.readyState === 2
+                  ? 'CLOSED'
+                  : 'UNKNOWN',
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
           errorType: error.type,
           errorIsTrusted: error.isTrusted,
