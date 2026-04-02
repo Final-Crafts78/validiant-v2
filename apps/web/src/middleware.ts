@@ -266,6 +266,12 @@ export async function middleware(request: NextRequest) {
     const requiredLength = secretFP !== 'MISSING' ? 100 : 10;
 
     const isLengthValid = accessTokenValue.length >= requiredLength;
+    if (!isLengthValid && accessTokenValue.length > 0) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[MW:Edge] [${requestId}] EP-1.1: SHORT TOKEN AUDIT - length: ${accessTokenValue.length}, value: ${accessTokenValue.substring(0, 5)}...${accessTokenValue.substring(accessTokenValue.length - 5)}`
+      );
+    }
     const isNotMarker =
       accessTokenValue !== 'deleted' &&
       accessTokenValue !== 'null' &&

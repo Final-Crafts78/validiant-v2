@@ -107,30 +107,19 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // 0. INITIATION LOG (Finding 61 - Trace context)
+    const requestId =
+      config.headers?.['X-Request-Id'] ||
+      `req-${Math.random().toString(36).substring(7)}`;
+    const startTime = performance.now();
+    (config as any)._startTime = startTime;
+    (config as any)._requestId = requestId;
+
     const stack = new Error().stack?.split('\n').slice(2, 6).join('\n');
-    console.groupCollapsed(
-      `[API:Initiate] ${config.method?.toUpperCase()} ${config.url}`
-    );
-    console.log('Context:', {
-      url: config.url,
-      method: config.method?.toUpperCase(),
-      workspaceOrgId: useWorkspaceStore.getState().activeOrgId,
-      authOrgId: useAuthStore.getState().user?.activeOrganizationId,
-      timestamp: new Date().toISOString(),
-    });
-    console.log('Call Stack:\n', stack);
-    console.groupEnd();
 
     // 1. INJECT ORGANIZATION CONTEXT (X-Org-Id)
-    // We check both the AuthStore and the WorkspaceStore.
-    // useWorkspaceStore is the primary 'Context' for the active UI view.
-    // useAuthStore.user.activeOrganizationId is the default from the user profile.
     const fromAuthStore = useAuthStore.getState().user?.activeOrganizationId;
     const fromWorkspaceStore = useWorkspaceStore.getState().activeOrgId;
-
     const activeOrgId = fromWorkspaceStore || fromAuthStore;
-
-    // Also check if it's already explicitly set in the request (don't override)
     const existingOrgId = config.headers?.['X-Org-Id'];
 
     if (activeOrgId && !existingOrgId) {
@@ -138,112 +127,53 @@ apiClient.interceptors.request.use(
       config.headers['X-Org-Id'] = activeOrgId;
     }
 
-    // 2. LOGGING (ALWAYS log in production for now for maximum visibility)
-    const finalOrgId = config.headers?.['X-Org-Id'];
-
-    // URL CONSTRUCTION TRACE
-    // getBaseUrl() ends with /api/v1
+    // 2. URL NORMALIZATION & DOUBLE PREFIX PROTECTION
     const baseURL = config.baseURL?.replace(/\/+$/, '') || '';
-
-    // 🔒 SAFETY FILTER: Strip redundant prefixes from the relative URL
     let relativePart = config.url || '';
-
-    // Remove leading /api/v1 or api/v1 multiple times if they exist
+    
+    // Finding 62 Hardening: Strip redundant prefixes
     relativePart = relativePart.replace(/^(\/api\/v1)+/g, '');
-
-    // Ensure it starts with a slash
-    if (!relativePart.startsWith('/')) {
-      relativePart = '/' + relativePart;
-    }
-
-    // Update config URL to the relative part
+    if (!relativePart.startsWith('/')) relativePart = '/' + relativePart;
+    
     config.url = relativePart;
-
-    const finalFullURL = `${baseURL}${relativePart}`.replace(
-      /\/api\/v1\/api\/v1/g,
-      '/api/v1'
-    );
-
-    // 🚩 DOUBLE PREFIX DETECTION (Sanity Check)
+    const finalFullURL = `${baseURL}${relativePart}`.replace(/\/api\/v1\/api\/v1/g, '/api/v1');
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
-    const authStoreState = useAuthStore.getState();
-
-    logger.debug(
-      `[API:Request] ${config.method?.toUpperCase()} ${config.url}`,
-      {
-        finalFullURL,
-        method: config.method?.toUpperCase(),
-        potentialDoublePrefix: isDoublePrefixed,
-        baseURL: config.baseURL,
-        urlPath: config.url,
-        hasOrgId: !!finalOrgId,
-        orgId: finalOrgId || 'MISSING',
-        orgIdSource: existingOrgId
-          ? 'explicit-header'
-          : fromWorkspaceStore
-            ? 'workspace-store'
-            : fromAuthStore
-              ? 'auth-store'
-              : 'none',
-        storeValues: {
-          fromWorkspace: fromWorkspaceStore || 'null',
-          fromAuth: fromAuthStore || 'null',
-        },
-        authStore: {
-          isAuthenticated: authStoreState.isAuthenticated,
-          hasUser: !!authStoreState.user,
-          userActiveOrgId:
-            authStoreState.user?.activeOrganizationId || 'MISSING',
-        },
-        workspaceStore: {
-          activeOrgId: fromWorkspaceStore || 'MISSING',
-        },
-        timestamp: new Date().toISOString(),
-        headers: {
-          ...config.headers,
-          'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
-          'User-Agent':
-            typeof window !== 'undefined'
-              ? window.navigator.userAgent
-              : 'SERVER',
-          Referer:
-            typeof window !== 'undefined' ? window.location.href : 'NONE',
-        },
-      }
-    );
-
-    // 🚩 DOUBLE PREFIX ALERT
-    if (isDoublePrefixed) {
-      console.error('[API:CRITICAL] Double /api/v1 detected in request!', {
-        url: config.url,
-        finalFullURL,
-        baseURL: config.baseURL,
-        stack: new Error().stack?.split('\n').slice(1, 4),
-      });
-    }
-
-    // ELITE: Request Snapshot
-    logger.debug(`[API:Snapshot] ${config.method?.toUpperCase()} Outgoing`, {
-      url: config.url,
+    // 3. EXTREME VISIBILITY LOGGING
+    console.groupCollapsed(`[API:Request] [${requestId}] ${config.method?.toUpperCase()} ${relativePart}`);
+    console.log('Context:', {
+      requestId,
       finalFullURL,
-      headers: { 
-        ...config.headers,
-        'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
-        'X-Request-Id': config.headers?.['X-Request-Id'] || 'NONE',
-      },
-      params: config.params,
-      hasData: !!config.data,
-      dataKeys: config.data ? Object.keys(config.data) : [],
+      method: config.method?.toUpperCase(),
+      orgId: config.headers?.['X-Org-Id'] || 'MISSING',
+      orgIdSource: existingOrgId ? 'explicit' : fromWorkspaceStore ? 'workspace' : fromAuthStore ? 'auth' : 'none',
+      hasAuth: !!document.cookie.includes('accessToken'),
+      isDoublePrefixed,
       timestamp: new Date().toISOString(),
+    });
+    console.log('Stores:', {
+      workspace: fromWorkspaceStore || 'null',
+      auth: fromAuthStore || 'null',
+      isAuthenticated: useAuthStore.getState().isAuthenticated
+    });
+    console.log('Call Stack:\n', stack);
+    console.groupEnd();
+
+    logger.debug(`[API:Req] [${requestId}] ${config.method?.toUpperCase()} ${config.url}`, {
+      requestId,
+      finalFullURL,
+      isDoublePrefixed,
+      orgId: config.headers?.['X-Org-Id'],
+      headers: { ...config.headers },
+      timestamp: new Date().toISOString()
     });
 
     // 🚩 OUTGOING SIGNATURE (Finding 62/63 - Double Prefix & $undefined Trace)
     console.log(
-      `%c[API:Signature] ${config.method?.toUpperCase()} → ${finalFullURL}`,
+      `%c[API:Signature] [${requestId}] ${config.method?.toUpperCase()} → ${finalFullURL}`,
       'color: #2563eb; font-weight: bold;',
       {
-        requestId: config.headers?.['X-Request-Id'] || 'NONE',
+        requestId,
         orgId: config.headers?.['X-Org-Id'] || 'MISSING',
         payload: config.data ? { ...config.data } : 'EMPTY',
         stack: stack?.split('\n')[0] || 'UNKNOWN',
@@ -269,18 +199,18 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // 2. SUCCESS LOGGING
+    const requestId = (response.config as any)._requestId || 'NONE';
+    const startTime = (response.config as any)._startTime;
+    const duration = startTime ? `${(performance.now() - startTime).toFixed(2)}ms` : 'N/A';
+
     logger.debug(
-      `[API:Success] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`,
+      `[API:Success] [${requestId}] ${response.status} ${duration} ${response.config.method?.toUpperCase()} ${response.config.url}`,
       {
+        requestId,
+        duration,
         status: response.status,
-        statusText: response.statusText,
         url: response.config.url,
         method: response.config.method?.toUpperCase(),
-        hasData: !!response.data,
-        dataSummary:
-          typeof response.data === 'object'
-            ? Object.keys(response.data || {})
-            : 'primitive',
         timestamp: new Date().toISOString(),
       }
     );

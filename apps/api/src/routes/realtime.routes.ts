@@ -104,35 +104,54 @@ router.get('/stream', async (c) => {
   doUrl.pathname = '/stream';
 
   const subrequestStartTime = performance.now();
+  const requestId =
+    c.get('requestId') ||
+    c.req.header('cf-ray') ||
+    `internal-${Math.random().toString(36).substring(7)}`;
+
   logger.debug('[Realtime:Proxy] Initiating DO subrequest', {
     orgId,
     doUrl: doUrl.toString(),
-    requestId: c.req.header('x-request-id') || 'NONE',
+    requestId,
+    method: c.req.method,
+    hasUser: !!user,
+    rawHeaders: JSON.stringify(c.req.header()),
+    timestamp: new Date().toISOString(),
   });
 
   try {
     const response = await room.fetch(doUrl.toString(), {
-      headers: c.req.raw.headers,
+      headers: {
+        ...c.req.raw.headers,
+        'x-request-id': requestId,
+        'x-internal-proxy': 'true',
+      },
     });
 
     // ELITE: Extreme Visibility for SSE Lifecycles
     const { readable, writable } = new TransformStream({
       start() {
-        logger.info('[Realtime:Stream] Connection ESTABLISHED', {
-          orgId,
-          userId: user?.userId,
-          timestamp: new Date().toISOString(),
-        });
-      },
-      flush() {
         logger.info(
-          '[Realtime:Stream] Connection CLOSED (Client Disconnected)',
+          '[Realtime:Stream] Connection ESTABLISHED (Handoff Success)',
           {
             orgId,
             userId: user?.userId,
+            requestId,
             timestamp: new Date().toISOString(),
           }
         );
+      },
+      transform(chunk, controller) {
+        // Pass through
+        controller.enqueue(chunk);
+      },
+      flush() {
+        logger.info('[Realtime:Stream] Connection CLOSED (Pipeline Flushed)', {
+          orgId,
+          userId: user?.userId,
+          requestId,
+          timestamp: new Date().toISOString(),
+        });
       },
     });
 

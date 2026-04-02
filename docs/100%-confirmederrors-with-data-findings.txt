@@ -344,3 +344,9 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `cloudflarelogs.txt` and `vercellogs.txt` show 404 errors for `/about`, `/security`, `/docs`, `/terms`, `/privacy`, `/status`, and `/changelog`.
 - **Root Cause**: The physical files for these routes do not exist in the `apps/web/src/app` directory. PWA or external links may be pointing to these "ghost" routes.
 - **Impact**: Log noise and broken user experience for legal/informational links.
+
+#### 70. [Backend] Database Schema Mismatch - Missing logo_url (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 279, 410, 437, 465) explicitly shows `NeonDbError: column projects.logo_url does not exist` for `GET /api/v1/projects/my` and `GET /api/v1/organizations/:id/projects`.
+- **Root Cause**: The Drizzle schema in `schema.ts` defines `logo_url` for the `projects` table, but the physical Neon production database is missing this column (migration missing or failed).
+- **Exact Fix (SQL)**: `ALTER TABLE projects ADD COLUMN IF NOT EXISTS logo_url TEXT;`
+- **Impact**: All project-related API calls return 500, breaking the Projects dashboard and detail views for all users.

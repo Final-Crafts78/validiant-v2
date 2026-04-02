@@ -100,6 +100,8 @@ export function useRealtime() {
         timestamp: new Date().toISOString(),
         windowLocation:
           typeof window !== 'undefined' ? window.location.href : 'NONE',
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'SERVER',
+        isOnline: typeof window !== 'undefined' ? window.navigator.onLine : 'N/A'
       });
 
       const es = new EventSource(sseUrl, { withCredentials: true });
@@ -110,6 +112,7 @@ export function useRealtime() {
         console.log('[Realtime] SSE Connection OPEN (Success)', {
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
           readyState: es.readyState,
+          readyStateDesc: 'OPEN',
           timestamp: new Date().toISOString(),
         });
       };
@@ -161,9 +164,15 @@ export function useRealtime() {
     }, 500);
 
     return () => {
+      const cleanupReason = !activeOrgId ? 'ORG_CHANGE' : !userId ? 'AUTH_CHANGE' : 'UNMOUNT';
       clearTimeout(connectionTimeout);
       if (eventSourceRef.current) {
-        console.log('[Realtime] Cleaning up SSE connection');
+        console.log('[Realtime] Cleaning up SSE connection', {
+          reason: cleanupReason,
+          orgId: activeOrgId,
+          readyState: eventSourceRef.current.readyState,
+          timestamp: new Date().toISOString()
+        });
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }

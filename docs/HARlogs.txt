@@ -1,231 +1,3 @@
-fetch("https://www.validiant.in/_next/image?url=%2Fimages%2Fdashboard_iso.png&w=1920&q=75", {
-  "headers": {
-    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "image",
-    "sec-fetch-mode": "no-cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/_next/image?url=%2Fimages%2Ffield_app_iso.png&w=1920&q=75", {
-  "headers": {
-    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "image",
-    "sec-fetch-mode": "no-cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/_next/image?url=%2Fimages%2Fdashboard_iso.png&w=1920&q=75", {
-  "headers": {
-    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "image",
-    "sec-fetch-mode": "no-cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/about?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/security?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/docs?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/status?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/changelog?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/privacy?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/terms?_rsc=19zvn", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6Ijg0MWYwZmY5LTNiOTYtNGQ2ZS1hOGVkLWEyYjMwMTRjOWZmMSIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1MTA3NzExfQ.uUnQ5TiwUcoaBD9T8qqlxBn-uGidS9wyfG536uj7noY; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI4NDFmMGZmOS0zYjk2LTRkNmUtYThlZC1hMmIzMDE0YzlmZjEiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwNjgxMSwiZXhwIjoxNzc1NzExNjExfQ.Fj_uckC5qhHVx7XeKC2pmiSsFMJZLBMDZPWaxEirpBU",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-
-fetch("https://api.validiant.in/api/v1/verifications/d1c1319e-bf90-4703-9a6e-161f792ada2b", {
-  "headers": {
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
 fetch("https://api.validiant.in/api/v1/tasks/my", {
   "headers": {
     "accept": "application/json, text/plain, */*",
@@ -238,131 +10,7 @@ fetch("https://api.validiant.in/api/v1/tasks/my", {
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-site",
     "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-
-fetch("https://api.validiant.in/api/v1/projects/my", {
-  "headers": {
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://api.validiant.in/api/v1/analytics/latest", {
-  "headers": {
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://api.validiant.in/api/v1/analytics/history?days=7", {
-  "headers": {
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/validiant/tasks?_rsc=12bma", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(workspace)%22%2C%7B%22children%22%3A%5B%5B%22orgSlug%22%2C%22validiant%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22dashboard%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/validiant/dashboard",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-
-
-
-fetch("https://www.validiant.in/validiant/settings?_rsc=12bma", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-prefetch": "1",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(workspace)%22%2C%7B%22children%22%3A%5B%5B%22orgSlug%22%2C%22validiant%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22dashboard%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/validiant/dashboard",
-    "priority": "u=1, i",
-    "rsc": "1",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://api.validiant.in/api/v1/verifications/d1c1319e-bf90-4703-9a6e-161f792ada2b", {
-  "headers": {
-    "accept": "application/json, text/plain, */*",
-    "accept-language": "en-US,en;q=0.9",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-site",
-    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
+    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjY5MWQ5MDIzLTAxMGItNGU3YS04NGVlLWQ0M2VmNGU1NDBhYyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1MTEzODA4fQ.6adVh-2-u3m0rOKVExRhXtEAE2GhtDEOqMnNE7Wc1x8; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI2OTFkOTAyMy0wMTBiLTRlN2EtODRlZS1kNDNlZjRlNTQwYWMiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1NzE3NzA4fQ.TsxeZrylfowzcYH84COtW26nI2huAId2_XdJDdxEuGg",
     "Referer": "https://www.validiant.in/"
   },
   "body": null,
@@ -381,79 +29,27 @@ fetch("https://api.validiant.in/api/v1/projects/my", {
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-site",
     "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
+    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjY5MWQ5MDIzLTAxMGItNGU3YS04NGVlLWQ0M2VmNGU1NDBhYyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1MTEzODA4fQ.6adVh-2-u3m0rOKVExRhXtEAE2GhtDEOqMnNE7Wc1x8; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI2OTFkOTAyMy0wMTBiLTRlN2EtODRlZS1kNDNlZjRlNTQwYWMiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1NzE3NzA4fQ.TsxeZrylfowzcYH84COtW26nI2huAId2_XdJDdxEuGg",
     "Referer": "https://www.validiant.in/"
   },
   "body": null,
   "method": "GET"
 });
 
-fetch("https://www.validiant.in/manifest.webmanifest", {
+fetch("https://api.validiant.in/api/v1/projects/my", {
   "headers": {
-    "accept": "*/*",
+    "accept": "application/json, text/plain, */*",
     "accept-language": "en-US,en;q=0.9",
-    "if-none-match": "\"4c1c4c5ed75149ee1803d019bc5641ce\"",
-    "priority": "u=2",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "manifest",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/icon-192x192.png", {
-  "headers": {
-    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "accept-language": "en-US,en;q=0.9",
-    "if-modified-since": "Tue, 31 Mar 2026 07:41:51 GMT",
-    "if-none-match": "\"b636b65ee9d086ecd908d0ff2269187d\"",
     "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "image",
-    "sec-fetch-mode": "no-cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/validiant/projects?_rsc=1gzjz", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22(workspace)%22%2C%7B%22children%22%3A%5B%5B%22orgSlug%22%2C%22validiant%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22dashboard%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
-    "next-url": "/validiant/dashboard",
-    "priority": "u=1, i",
-    "rsc": "1",
     "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"Windows\"",
     "sec-fetch-dest": "empty",
     "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/_next/static/chunks/app/(workspace)/%5BorgSlug%5D/projects/page-548f8a36a00e7892.js", {
-  "headers": {
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "Referer": "https://www.validiant.in/validiant/dashboard"
+    "sec-fetch-site": "same-site",
+    "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
+    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjY5MWQ5MDIzLTAxMGItNGU3YS04NGVlLWQ0M2VmNGU1NDBhYyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1MTEzODA4fQ.6adVh-2-u3m0rOKVExRhXtEAE2GhtDEOqMnNE7Wc1x8; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI2OTFkOTAyMy0wMTBiLTRlN2EtODRlZS1kNDNlZjRlNTQwYWMiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1NzE3NzA4fQ.TsxeZrylfowzcYH84COtW26nI2huAId2_XdJDdxEuGg",
+    "Referer": "https://www.validiant.in/"
   },
   "body": null,
   "method": "GET"
@@ -471,47 +67,8 @@ fetch("https://api.validiant.in/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-site",
     "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
+    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjY5MWQ5MDIzLTAxMGItNGU3YS04NGVlLWQ0M2VmNGU1NDBhYyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1MTEzODA4fQ.6adVh-2-u3m0rOKVExRhXtEAE2GhtDEOqMnNE7Wc1x8; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI2OTFkOTAyMy0wMTBiLTRlN2EtODRlZS1kNDNlZjRlNTQwYWMiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1NzE3NzA4fQ.TsxeZrylfowzcYH84COtW26nI2huAId2_XdJDdxEuGg",
     "Referer": "https://www.validiant.in/"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/manifest.webmanifest", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "if-none-match": "\"4c1c4c5ed75149ee1803d019bc5641ce\"",
-    "priority": "u=2",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "manifest",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/projects"
-  },
-  "body": null,
-  "method": "GET"
-});
-
-fetch("https://www.validiant.in/icon-192x192.png", {
-  "headers": {
-    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "accept-language": "en-US,en;q=0.9",
-    "if-modified-since": "Tue, 31 Mar 2026 07:41:51 GMT",
-    "if-none-match": "\"b636b65ee9d086ecd908d0ff2269187d\"",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "image",
-    "sec-fetch-mode": "no-cors",
-    "sec-fetch-site": "same-origin",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; userPrefs=%7B%7D; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
-    "Referer": "https://www.validiant.in/validiant/projects"
   },
   "body": null,
   "method": "GET"
@@ -529,7 +86,7 @@ fetch("https://api.validiant.in/api/v1/organizations/d1c1319e-bf90-4703-9a6e-161
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-site",
     "x-org-id": "d1c1319e-bf90-4703-9a6e-161f792ada2b",
-    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6ImFkNTJjODJjLTQ3YTAtNDk1Yy1iM2Q5LTU1ZWI3MGQwZjk3OCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1MTEwMjUxfQ.wzhJbKC68zNGQPklbRv20hGWcIrX68w0KTKW-Etfpq0; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiJhZDUyYzgyYy00N2EwLTQ5NWMtYjNkOS01NWViNzBkMGY5NzgiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTEwOTM1MSwiZXhwIjoxNzc1NzE0MTUxfQ.l7lkbetuX_1bADNZAes8m76pZmuPKfn415-S2ed5XNM",
+    "cookie": "user_id=049577df-4b28-409b-81e7-1f9a51c4a2ca; accessToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJlbWFpbCI6Im1hbnNvb3JhaGFtZWRzYWFob0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsInNlc3Npb25JZCI6IjY5MWQ5MDIzLTAxMGItNGU3YS04NGVlLWQ0M2VmNGU1NDBhYyIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1MTEzODA4fQ.6adVh-2-u3m0rOKVExRhXtEAE2GhtDEOqMnNE7Wc1x8; refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIwNDk1NzdkZi00YjI4LTQwOWItODFlNy0xZjlhNTFjNGEyY2EiLCJzZXNzaW9uSWQiOiI2OTFkOTAyMy0wMTBiLTRlN2EtODRlZS1kNDNlZjRlNTQwYWMiLCJ0eXBlIjoicmVmcmVzaCIsInN1YiI6IjA0OTU3N2RmLTRiMjgtNDA5Yi04MWU3LTFmOWE1MWM0YTJjYSIsImlhdCI6MTc3NTExMjkwOCwiZXhwIjoxNzc1NzE3NzA4fQ.TsxeZrylfowzcYH84COtW26nI2huAId2_XdJDdxEuGg",
     "Referer": "https://www.validiant.in/"
   },
   "body": null,

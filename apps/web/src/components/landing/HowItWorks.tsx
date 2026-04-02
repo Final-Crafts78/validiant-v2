@@ -65,6 +65,14 @@ export default function HowItWorks() {
                     width={800}
                     height={600}
                     className="w-full h-auto object-contain"
+                    onLoadingComplete={() =>
+                      console.log(`[ASSET:DEBUG] Success loading ${step.image}`)
+                    }
+                    onError={() =>
+                      console.error(
+                        `[ASSET:ERROR] Failed loading ${step.image}`
+                      )
+                    }
                   />
                 </div>
               </ScrollReveal>

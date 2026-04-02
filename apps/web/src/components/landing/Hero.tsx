@@ -105,7 +105,17 @@ export default function Hero() {
                   alt="Field Compliance Professional"
                   width={800}
                   height={600}
-                  className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-700"
+                  className="w-full h-auto transform object-cover transition-transform duration-700 hover:scale-105"
+                  onLoadingComplete={() =>
+                    console.log(
+                      '[ASSET:DEBUG] Hero image loaded successfully: /images/hero_field_compliance.png'
+                    )
+                  }
+                  onError={() =>
+                    console.error(
+                      '[ASSET:ERROR] Hero image failed to load: /images/hero_field_compliance.png'
+                    )
+                  }
                 />
                 {/* Visual Accent */}
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none" />
