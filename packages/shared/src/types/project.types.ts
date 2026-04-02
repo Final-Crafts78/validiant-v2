@@ -408,6 +408,7 @@ export interface CreateTaskData {
   startDate?: Date;
   estimatedHours?: number;
   customFields?: CustomFieldValue[];
+  customData?: Record<string, unknown>;
 }
 
 /**
@@ -425,7 +426,7 @@ export interface UpdateTaskData {
   estimatedHours?: number;
   progress?: number;
   customFields?: CustomFieldValue[];
-  customData?: Record<string, any>;
+  customData?: Record<string, unknown>;
 }
 
 /**

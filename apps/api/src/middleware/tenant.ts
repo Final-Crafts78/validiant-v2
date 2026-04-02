@@ -49,6 +49,10 @@ export const tenantIsolation = async (
     );
   }
 
+  const requestId =
+    c.req.header('x-request-id') ||
+    'REQ-' + Math.random().toString(36).substring(2, 9);
+
   // 1. Check for X-Org-Id header (Standard for API clients/Mobile)
   const headerOrgId = c.req.header('X-Org-Id');
 
@@ -67,6 +71,7 @@ export const tenantIsolation = async (
   // ELITE: Deep Trace for isolation debugging
   // eslint-disable-next-line no-console
   console.debug('[Tenant:MW] Isolation Trace Entry', {
+    requestId,
     path: c.req.path,
     method: c.req.method,
     resolvedOrgId: orgId || 'NONE',
@@ -98,6 +103,7 @@ export const tenantIsolation = async (
     console.error(
       '[Tenant:MW] CRITICAL FAILURE - Literal "undefined" or "null" ID detected',
       {
+        requestId,
         path: c.req.path,
         method: c.req.method,
         resolvedOrgId: orgId,
@@ -109,6 +115,7 @@ export const tenantIsolation = async (
       {
         success: false,
         error: `Invalid Organization ID: ${orgId}. Check frontend client for missing state.`,
+        requestId,
       },
       400
     );
@@ -118,6 +125,7 @@ export const tenantIsolation = async (
     console.warn(
       '[Tenant:MW] WARNING - No organization context found for scoped route',
       {
+        requestId,
         path: c.req.path,
         method: c.req.method,
         userId: user.userId,
@@ -131,7 +139,7 @@ export const tenantIsolation = async (
 
   // eslint-disable-next-line no-console
   console.debug(
-    `[Tenant:MW] RESOLUTION SUCCESS { orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : queryOrgId ? 'QUERY' : 'JWT_FALLBACK'}', isSSE: ${c.req.path.includes('stream')} }`
+    `[Tenant:MW] RESOLUTION SUCCESS { rid: '${requestId}', orgId: '${orgId}', source: '${headerOrgId ? 'HEADER' : paramOrgId ? 'PARAM' : queryOrgId ? 'QUERY' : 'JWT_FALLBACK'}', isSSE: ${c.req.path.includes('stream')} }`
   );
   c.set('orgId', orgId);
   c.set('organizationId', orgId); // Legacy support for some controllers

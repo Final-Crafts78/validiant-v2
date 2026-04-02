@@ -131,7 +131,9 @@ export function AutomationsTab({ projectId }: { projectId: string }) {
                   <ShieldCheck className="w-6 h-6 text-indigo-500" />
                 </div>
                 <button
-                  onClick={() => handleTogglePartner(partner.id, partner.status)}
+                  onClick={() =>
+                    handleTogglePartner(partner.id, partner.status)
+                  }
                   className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${partner.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-50 text-slate-400 border border-slate-200'}`}
                 >
                   <div
@@ -239,7 +241,9 @@ export function AutomationsTab({ projectId }: { projectId: string }) {
                   </div>
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => handleToggleAutomation(rule.id, rule.isActive)}
+                      onClick={() =>
+                        handleToggleAutomation(rule.id, rule.isActive)
+                      }
                       className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                     >
                       {rule.isActive ? (
@@ -286,10 +290,10 @@ export function AutomationsTab({ projectId }: { projectId: string }) {
             Partner-Level Event Ingestion
           </h4>
           <p className="text-xs text-blue-700 mt-1 leading-relaxed">
-            Inbound case ingestion mappings (Data.txt Item #14) are automatically
-            synchronized when a partner protocol is activated. Verification schemas
-            defined in the Workflow Builder will be pushed to the connected partner
-            as verification requirements.
+            Inbound case ingestion mappings (Data.txt Item #14) are
+            automatically synchronized when a partner protocol is activated.
+            Verification schemas defined in the Workflow Builder will be pushed
+            to the connected partner as verification requirements.
           </p>
         </div>
       </div>

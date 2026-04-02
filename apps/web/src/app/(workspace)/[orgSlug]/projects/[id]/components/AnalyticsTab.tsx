@@ -89,16 +89,22 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
               <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                 Case Ingestion Trend
               </h3>
-              <p className="text-xs text-slate-500">Daily volume (Last 7 Days)</p>
+              <p className="text-xs text-slate-500">
+                Daily volume (Last 7 Days)
+              </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                <span className="text-[10px] font-bold text-slate-400">CREATED</span>
+                <span className="text-[10px] font-bold text-slate-400">
+                  CREATED
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-bold text-slate-400">COMPLETED</span>
+                <span className="text-[10px] font-bold text-slate-400">
+                  COMPLETED
+                </span>
               </div>
             </div>
           </div>
@@ -110,12 +116,22 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                     <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1} />
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="colorCompleted"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f1f5f9"
+                />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
@@ -195,12 +211,17 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
               {pieData.map((d, i) => (
                 <div key={d.name} className="flex flex-col items-center">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: COLORS[i] }}
+                    />
                     <span className="text-[8px] font-bold text-slate-400 uppercase">
                       {d.name}
                     </span>
                   </div>
-                  <span className="text-xs font-bold text-slate-800">{d.value}</span>
+                  <span className="text-xs font-bold text-slate-800">
+                    {d.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -238,7 +259,9 @@ function StatsCard({
           }`}
         >
           {trend}
-          <ArrowUpRight className={`w-2.5 h-2.5 ${trendType === 'negative' ? 'rotate-90' : ''}`} />
+          <ArrowUpRight
+            className={`w-2.5 h-2.5 ${trendType === 'negative' ? 'rotate-90' : ''}`}
+          />
         </div>
       </div>
       <h4 className="text-2xl font-black text-slate-800">{value}</h4>

@@ -81,7 +81,9 @@ export function PartnerConfigSlideOver({
       {
         onSuccess: () => {
           toast.success('Partner configuration updated');
-          logger.info('[Partner:Config:Save:Success]', { partnerId: partner.id });
+          logger.info('[Partner:Config:Save:Success]', {
+            partnerId: partner.id,
+          });
           onClose();
         },
         onError: (err) => {
@@ -97,7 +99,11 @@ export function PartnerConfigSlideOver({
 
   const handleRegenerateToken = () => {
     if (!partner) return;
-    if (confirm('Are you sure? This will immediately invalidate the current token and may break active integrations.')) {
+    if (
+      confirm(
+        'Are you sure? This will immediately invalidate the current token and may break active integrations.'
+      )
+    ) {
       regenerateToken.mutate(partner.id);
     }
   };
@@ -149,14 +155,17 @@ export function PartnerConfigSlideOver({
               <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
                 <p className="text-xs text-amber-800 leading-relaxed">
-                  Credentials provided here are **encrypted at rest** and only decrypted when making outbound requests. Never share your BGV API keys in plaintext logs or support tickets.
+                  Credentials provided here are **encrypted at rest** and only
+                  decrypted when making outbound requests. Never share your BGV
+                  API keys in plaintext logs or support tickets.
                 </p>
               </div>
 
               {/* Inbound Connectivity */}
               <section className="space-y-4">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" /> Inbound Connectivity (Validiant)
+                  <Globe className="w-3.5 h-3.5" /> Inbound Connectivity
+                  (Validiant)
                 </h3>
                 <div className="space-y-3">
                   <label className="block">
@@ -165,7 +174,8 @@ export function PartnerConfigSlideOver({
                     </span>
                     <div className="flex gap-2">
                       <div className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-mono text-xs text-slate-600 overflow-hidden truncate">
-                        {partner.inboundApiToken || '********************************'}
+                        {partner.inboundApiToken ||
+                          '********************************'}
                       </div>
                       <button
                         onClick={copyInboundToken}
@@ -180,7 +190,8 @@ export function PartnerConfigSlideOver({
                     </div>
                   </label>
                   <p className="text-[10px] text-slate-400 italic">
-                    Use this token in your BGV partner's webhook configuration to push data to Validiant.
+                    Use this token in your BGV partner's webhook configuration
+                    to push data to Validiant.
                   </p>
                 </div>
               </section>
@@ -188,7 +199,8 @@ export function PartnerConfigSlideOver({
               {/* Outbound Connectivity */}
               <section className="space-y-4 pt-4 border-t border-slate-100">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5" /> Outbound Integration ({partner.name})
+                  <Globe className="w-3.5 h-3.5" /> Outbound Integration (
+                  {partner.name})
                 </h3>
                 <div className="space-y-4">
                   <label className="block">
@@ -203,7 +215,10 @@ export function PartnerConfigSlideOver({
                         type={showApiKey ? 'text' : 'password'}
                         value={formData.outboundApiKey}
                         onChange={(e) =>
-                          setFormData({ ...formData, outboundApiKey: e.target.value })
+                          setFormData({
+                            ...formData,
+                            outboundApiKey: e.target.value,
+                          })
                         }
                         className="block w-full pl-10 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         placeholder="Enter partner API key"

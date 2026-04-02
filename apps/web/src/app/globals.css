@@ -286,8 +286,12 @@
 
   /* Custom Animations */
   @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
 
   .animate-marquee {
@@ -310,9 +314,15 @@
   }
 
   @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   .animate-gradient {
@@ -324,7 +334,9 @@
   .reveal-on-scroll {
     opacity: 0;
     transform: translateY(40px);
-    transition: opacity 0.8s cubic-bezier(0.21, 0.45, 0.32, 0.9), transform 0.8s cubic-bezier(0.21, 0.45, 0.32, 0.9);
+    transition:
+      opacity 0.8s cubic-bezier(0.21, 0.45, 0.32, 0.9),
+      transform 0.8s cubic-bezier(0.21, 0.45, 0.32, 0.9);
     will-change: opacity, transform;
   }
 
@@ -334,11 +346,21 @@
   }
 
   /* Staggered Delays */
-  .reveal-delay-100 { transition-delay: 100ms; }
-  .reveal-delay-200 { transition-delay: 200ms; }
-  .reveal-delay-300 { transition-delay: 300ms; }
-  .reveal-delay-400 { transition-delay: 400ms; }
-  .reveal-delay-500 { transition-delay: 500ms; }
+  .reveal-delay-100 {
+    transition-delay: 100ms;
+  }
+  .reveal-delay-200 {
+    transition-delay: 200ms;
+  }
+  .reveal-delay-300 {
+    transition-delay: 300ms;
+  }
+  .reveal-delay-400 {
+    transition-delay: 400ms;
+  }
+  .reveal-delay-500 {
+    transition-delay: 500ms;
+  }
 }
 
 /* Base Theme Variables */
@@ -354,7 +376,7 @@
   --color-border-base: #1e293b;
   --color-text-base: #f8fafc;
   --color-text-muted: #94a3b8;
-  
+
   /* Input specific tokens */
   --color-text-input: #f8fafc;
 }
@@ -369,12 +391,14 @@
 }
 
 /* Theme-Aware Input Visibility Fix */
-.input, .textarea {
+.input,
+.textarea {
   @apply bg-[var(--color-surface-soft)] border-[var(--color-border-base)] placeholder:text-[var(--color-text-muted)] p-2 rounded-md transition-all duration-200;
   color: var(--color-text-input) !important;
 }
 
-.input:focus, .textarea:focus {
+.input:focus,
+.textarea:focus {
   @apply outline-none ring-2 ring-[var(--color-accent-base)] border-transparent;
 }
 

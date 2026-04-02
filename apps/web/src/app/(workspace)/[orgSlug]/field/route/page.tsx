@@ -155,7 +155,8 @@ export default function FieldRoutePage() {
             Fleet Optimization
           </p>
           <p className="text-[11px] font-medium text-slate-400 leading-relaxed">
-            Routes are recalibrated every 15 minutes based on live traffic and priority updates from the Command Center.
+            Routes are recalibrated every 15 minutes based on live traffic and
+            priority updates from the Command Center.
           </p>
         </div>
       </div>

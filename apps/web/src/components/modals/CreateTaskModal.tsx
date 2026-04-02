@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { tasksApi, projectsApi } from '@/lib/api';
 import { CheckSquare, Plus, X, ShieldAlert } from 'lucide-react';
-import type { Project } from '@validiant/shared';
+import type { Project, VerificationType, FieldSchema } from '@validiant/shared';
 import { TaskPriority } from '@validiant/shared';
 import { useVerificationTypes } from '@/hooks/useVerificationTypes';
 import { useWorkspaceStore } from '@/store/workspace';
@@ -24,7 +24,7 @@ export function CreateTaskModal({
   const [description, setDescription] = useState('');
   const [projectId, setProjectId] = useState(defaultProjectId || '');
   const [priority, setPriority] = useState<TaskPriority>(TaskPriority.MEDIUM);
-  const [customData, setCustomData] = useState<Record<string, any>>({});
+  const [customData, setCustomData] = useState<Record<string, unknown>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,7 +46,9 @@ export function CreateTaskModal({
   // Extract relevant schema for the selected project
   const projectSchema = useMemo(() => {
     if (!vTypes || !projectId) return [];
-    const workflow = vTypes.find((v: any) => v.code === `PRJ_${projectId}_CUSTOM`);
+    const workflow = vTypes.find(
+      (v: VerificationType) => v.code === `PRJ_${projectId}_CUSTOM`
+    );
     return workflow?.fieldSchema || [];
   }, [vTypes, projectId]);
 
@@ -68,7 +70,6 @@ export function CreateTaskModal({
         description,
         projectId,
         priority,
-        // @ts-ignore - customData exists on the backend but might be missing from shared types temporarily
         customData,
       });
       // Invalidate the tasks query to trigger a refetch
@@ -94,7 +95,7 @@ export function CreateTaskModal({
     }
   };
 
-  const handleCustomFieldChange = (key: string, value: any) => {
+  const handleCustomFieldChange = (key: string, value: unknown) => {
     setCustomData((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -215,10 +216,13 @@ export function CreateTaskModal({
                   <ShieldAlert className="w-3 h-3" /> Project Custom Fields
                 </h3>
                 <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
-                  {projectSchema.map((field: any) => (
+                  {projectSchema.map((field: FieldSchema) => (
                     <div key={field.fieldKey}>
                       <label className="block text-xs font-semibold text-slate-600 mb-1">
-                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                        {field.label}{' '}
+                        {field.required && (
+                          <span className="text-red-500">*</span>
+                        )}
                       </label>
                       {field.type === 'boolean' ? (
                         <div className="flex gap-4">
@@ -226,7 +230,9 @@ export function CreateTaskModal({
                             <input
                               type="radio"
                               name={field.fieldKey}
-                              onChange={() => handleCustomFieldChange(field.fieldKey, true)}
+                              onChange={() =>
+                                handleCustomFieldChange(field.fieldKey, true)
+                              }
                               className="text-indigo-600 focus:ring-indigo-500"
                             />
                             <span className="text-sm">Yes</span>
@@ -235,7 +241,9 @@ export function CreateTaskModal({
                             <input
                               type="radio"
                               name={field.fieldKey}
-                              onChange={() => handleCustomFieldChange(field.fieldKey, false)}
+                              onChange={() =>
+                                handleCustomFieldChange(field.fieldKey, false)
+                              }
                               className="text-indigo-600 focus:ring-indigo-500"
                             />
                             <span className="text-sm">No</span>
@@ -246,7 +254,12 @@ export function CreateTaskModal({
                           type={field.type === 'number' ? 'number' : 'text'}
                           className="input w-full bg-white"
                           placeholder={`Enter ${field.label}...`}
-                          onChange={(e) => handleCustomFieldChange(field.fieldKey, e.target.value)}
+                          onChange={(e) =>
+                            handleCustomFieldChange(
+                              field.fieldKey,
+                              e.target.value
+                            )
+                          }
                         />
                       )}
                     </div>

@@ -421,98 +421,110 @@ export const listOrganizationProjects = async (
     timestamp: new Date().toISOString(),
   });
 
-  const page = params?.page || 1;
-  const perPage = Math.min(params?.perPage || 20, 100);
-  const offset = (page - 1) * perPage;
+  try {
+    const page = params?.page || 1;
+    const perPage = Math.min(params?.perPage || 20, 100);
+    const offset = (page - 1) * perPage;
 
-  // Build WHERE conditions
-  const conditions: Array<SQL<unknown> | undefined> = [
-    eq(projects.organizationId, organizationId),
-    isNull(projects.deletedAt),
-  ];
+    // Build WHERE conditions
+    const conditions: Array<SQL<unknown> | undefined> = [
+      eq(projects.organizationId, organizationId),
+      isNull(projects.deletedAt),
+    ];
 
-  if (params?.status) {
-    conditions.push(eq(projects.status, params.status));
-  }
+    if (params?.status) {
+      conditions.push(eq(projects.status, params.status));
+    }
 
-  if (params?.priority) {
-    conditions.push(eq(projects.priority, params.priority));
-  }
+    if (params?.priority) {
+      conditions.push(eq(projects.priority, params.priority));
+    }
 
-  if (params?.search) {
-    conditions.push(
-      or(
-        sql`LOWER(${projects.name}) LIKE LOWER(${`%${params.search}%`})`,
-        sql`LOWER(${projects.description}) LIKE LOWER(${`%${params.search}%`})`
-      )
-    );
-  }
+    if (params?.search) {
+      conditions.push(
+        or(
+          sql`LOWER(${projects.name}) LIKE LOWER(${`%${params.search}%`})`,
+          sql`LOWER(${projects.description}) LIKE LOWER(${`%${params.search}%`})`
+        )
+      );
+    }
 
-  const whereClause = and(...conditions);
+    const whereClause = and(...conditions);
 
-  // Get total count
-  const countResult = await db
-    .select({ count: sql<number>`COUNT(*)` })
-    .from(projects)
-    .where(whereClause);
-  const { count } = countResult[0];
+    // Get total count
+    const countResult = await db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(projects)
+      .where(whereClause);
+    const { count } = countResult[0];
 
-  const total = Number(count);
+    const total = Number(count);
 
-  // Get projects
-  const projectList = await db
-    .select({
-      id: projects.id,
-      name: projects.name,
-      description: projects.description,
-      status: projects.status,
-      priority: projects.priority,
-      startDate: projects.startDate,
-      endDate: projects.endDate,
-      estimatedHours: projects.estimatedHours,
-      actualHours: projects.actualHours,
-      color: projects.color,
-      icon: projects.icon,
-      themeColor: projects.themeColor,
-      logoUrl: projects.logoUrl,
-      autoDispatchVerified: projects.autoDispatchVerified,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
-      // Subquery for member count
-      memberCount: sql<number>`(
-        SELECT COUNT(*)
-        FROM ${projectMembers}
-        WHERE ${projectMembers.projectId} = ${projects.id}
-        AND ${projectMembers.deletedAt} IS NULL
-      )`,
-    })
-    .from(projects)
-    .where(whereClause)
-    .orderBy(desc(projects.updatedAt))
-    .limit(perPage)
-    .offset(offset);
+    // Get projects
+    const projectList = await db
+      .select({
+        id: projects.id,
+        name: projects.name,
+        description: projects.description,
+        status: projects.status,
+        priority: projects.priority,
+        startDate: projects.startDate,
+        endDate: projects.endDate,
+        estimatedHours: projects.estimatedHours,
+        actualHours: projects.actualHours,
+        color: projects.color,
+        icon: projects.icon,
+        themeColor: projects.themeColor,
+        logoUrl: projects.logoUrl,
+        autoDispatchVerified: projects.autoDispatchVerified,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+        // Subquery for member count
+        memberCount: sql<number>`(
+          SELECT COUNT(*)
+          FROM ${projectMembers}
+          WHERE ${projectMembers.projectId} = ${projects.id}
+          AND ${projectMembers.deletedAt} IS NULL
+        )`,
+      })
+      .from(projects)
+      .where(whereClause)
+      .orderBy(desc(projects.updatedAt))
+      .limit(perPage)
+      .offset(offset);
 
-  const result = {
-    projects: projectList.map((p: (typeof projectList)[number]) => ({
-      ...p,
-      memberCount: Number(p.memberCount),
-    })) as ProjectWithStats[],
-    pagination: {
+    const result = {
+      projects: projectList.map((p: (typeof projectList)[number]) => ({
+        ...p,
+        memberCount: Number(p.memberCount),
+      })) as ProjectWithStats[],
+      pagination: {
+        total,
+        page,
+        perPage,
+        totalPages: Math.ceil(total / perPage),
+      },
+    };
+
+    logger.debug('Organization projects retrieved', {
+      organizationId,
+      count: result.projects.length,
       total,
-      page,
-      perPage,
-      totalPages: Math.ceil(total / perPage),
-    },
-  };
+      timestamp: new Date().toISOString(),
+    });
 
-  logger.debug('Organization projects retrieved', {
-    organizationId,
-    count: result.projects.length,
-    total,
-    timestamp: new Date().toISOString(),
-  });
-
-  return result;
+    return result;
+  } catch (error) {
+    // ELITE DIAGNOSTIC: Confirm column presence in error message
+    logger.error('[ProjectService] listOrganizationProjects CRITICAL FAILURE', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      isSchemaError: error instanceof Error && error.message.includes('column'),
+      organizationId,
+      timestamp: new Date().toISOString(),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    throw error;
+  }
 };
 
 /**

@@ -38,19 +38,19 @@ export const updatePartner = async (
   id: string,
   data: Partial<BgvPartner>
 ): Promise<BgvPartner> =>
-  patch<APIResponse<{ partner: BgvPartner }>>(`/partners/details/${id}`, data).then(
-    (res) => {
-      if (!res.data.data?.partner) throw new Error('Update failed');
-      return res.data.data.partner;
-    }
-  );
+  patch<APIResponse<{ partner: BgvPartner }>>(
+    `/partners/details/${id}`,
+    data
+  ).then((res) => {
+    if (!res.data.data?.partner) throw new Error('Update failed');
+    return res.data.data.partner;
+  });
 
-export const regenerateToken = async (
-  id: string
-): Promise<{ token: string }> =>
-  post<APIResponse<{ token: string }>>(`/partners/details/${id}/token`, {}).then(
-    (res) => {
-      if (!res.data.data?.token) throw new Error('Regeneration failed');
-      return res.data.data;
-    }
-  );
+export const regenerateToken = async (id: string): Promise<{ token: string }> =>
+  post<APIResponse<{ token: string }>>(
+    `/partners/details/${id}/token`,
+    {}
+  ).then((res) => {
+    if (!res.data.data?.token) throw new Error('Regeneration failed');
+    return res.data.data;
+  });

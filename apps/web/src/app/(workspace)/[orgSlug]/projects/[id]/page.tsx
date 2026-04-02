@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  useProject,
-  useUpdateProject,
-} from '@/hooks/useProjects';
+import { useProject, useUpdateProject } from '@/hooks/useProjects';
 import { ProjectStatus } from '@validiant/shared';
 import {
   ArrowLeft,

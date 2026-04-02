@@ -30,7 +30,8 @@ export interface FieldSchema {
     | 'boolean'
     | 'photo-request'
     | 'signature'
-    | 'pdf-upload';
+    | 'pdf-upload'
+    | 'number';
   required?: boolean;
   validationRules?: {
     requireGeoTag?: boolean;

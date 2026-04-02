@@ -90,7 +90,9 @@ export function BulkAssignModal({
           {isLoadingMembers ? (
             <div className="py-10 flex flex-col items-center justify-center text-indigo-500 gap-2">
               <Loader2 className="w-6 h-6 animate-spin" />
-              <span className="text-xs font-medium">Loading organization members...</span>
+              <span className="text-xs font-medium">
+                Loading organization members...
+              </span>
             </div>
           ) : (
             <div className="space-y-2">

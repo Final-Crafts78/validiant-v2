@@ -9,7 +9,14 @@ export function useActivityLogs(params: {
   limit?: number;
 }) {
   return useQuery({
-    queryKey: ['activity-logs', params.orgId, params.entityId, params.entityType, params.page, params.limit],
+    queryKey: [
+      'activity-logs',
+      params.orgId,
+      params.entityId,
+      params.entityType,
+      params.page,
+      params.limit,
+    ],
     queryFn: () => activityService.getAuditLogs(params),
     enabled: !!params.orgId,
   });

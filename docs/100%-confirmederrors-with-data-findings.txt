@@ -317,3 +317,23 @@ All critical "zero-log-removal" blockers identified from the initial log audit h
 - **Data Evidence**: `cloudflarelogs.txt` (Line 162) shows `verifyToken FAILED` without specifying the reason (expiry vs. signature vs. malformed).
 - **Root Cause**: Generic error logging in the `authenticate` middleware.
 - **Impact**: Extremely difficult to debug why specific requests like `bulk-assign` fail with 401 while others succeed.
+
+#### 65. [Backend] Database Schema Mismatch - Missing theme_color (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` (Line 1585) explicitly shows `NeonDbError: column projects.theme_color does not exist`. 
+- **Root Cause**: The Drizzle schema in `schema.ts` defines `theme_color`, but the physical table in the Neon production database has not been updated (migration missing or failed).
+- **Impact**: All project-related API calls return 500, breaking the Projects dashboard and detail views.
+
+#### 66. [Backend] Verification Type Route 500 Failure (100% Confirmed)
+- **Data Evidence**: Cloudflare logs show consistent 500 errors for `GET /api/v1/verifications/:orgId`.
+- **Root Cause**: Undetected runtime exception in `verification.service.ts` or `verification.controller.ts`. Lack of granular try/catch logging in this specific service masks the underlying Neon error.
+- **Impact**: Users cannot load verification schemas for tasks or configuration.
+
+#### 67. [Backend] Real-time (SSE) Durable Object "Canceled" Status (100% Confirmed)
+- **Data Evidence**: `cloudflarelogs.txt` shows status `Canceled` for internal DO subrequests to `durable-object-internal/stream`.
+- **Root Cause**: Potential disconnect between the Hono router and the Durable Object runtime, or a client-side interruption causing Cloudflare to terminate the sub-request before the DO can respond.
+- **Impact**: Intermittent notification delivery and flaky real-time updates.
+
+#### 68. [Frontend] Profile Page Serialization $undefined Persistence (100% Confirmed)
+- **Data Evidence**: `HARlogs.txt` shows `$undefined` strings being sent in the `PATCH` body despite existing sanitization logic in `ProfilePage.tsx`.
+- **Root Cause**: The sanitization only runs in `useEffect` for local state. If the user submits before the side-effect completes or if the `updateProfileAction` (Server Action) doesn't perform its own server-side sanitization, the literal string is sent/persisted.
+- **Impact**: Persistent data corruption in user profiles.

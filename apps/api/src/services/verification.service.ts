@@ -24,51 +24,63 @@ export const createVerificationType = async (
     slaOverrideHours?: number;
   }
 ) => {
-  // Check if code already exists for this org
-  const existing = await db
-    .select({ id: verificationTypes.id })
-    .from(verificationTypes)
-    .where(
-      and(
-        eq(verificationTypes.organizationId, organizationId),
-        eq(verificationTypes.code, data.code)
+  try {
+    // Check if code already exists for this org
+    const existing = await db
+      .select({ id: verificationTypes.id })
+      .from(verificationTypes)
+      .where(
+        and(
+          eq(verificationTypes.organizationId, organizationId),
+          eq(verificationTypes.code, data.code)
+        )
       )
-    )
-    .limit(1);
+      .limit(1);
 
-  if (existing.length > 0) {
-    throw new ConflictError(
-      `Verification type with code ${data.code} already exists`
-    );
-  }
+    if (existing.length > 0) {
+      throw new ConflictError(
+        `Verification type with code ${data.code} already exists`
+      );
+    }
 
-  // Create VT
-  const [newVT] = await db
-    .insert(verificationTypes)
-    .values({
+    // Create VT
+    const [newVT] = await db
+      .insert(verificationTypes)
+      .values({
+        organizationId,
+        code: data.code,
+        name: data.name,
+        fieldSchema: data.fieldSchema,
+        slaOverrideHours: data.slaOverrideHours,
+      })
+      .returning();
+
+    // Create initial version
+    await db.insert(fieldSchemaVersions).values({
+      verificationTypeId: newVT.id,
+      version: 1,
+      fieldSchema: data.fieldSchema,
+      createdById: userId,
+    });
+
+    logger.info('Verification type created', {
       organizationId,
       code: data.code,
-      name: data.name,
-      fieldSchema: data.fieldSchema,
-      slaOverrideHours: data.slaOverrideHours,
-    })
-    .returning();
+      vtId: newVT.id,
+    });
 
-  // Create initial version
-  await db.insert(fieldSchemaVersions).values({
-    verificationTypeId: newVT.id,
-    version: 1,
-    fieldSchema: data.fieldSchema,
-    createdById: userId,
-  });
-
-  logger.info('Verification type created', {
-    organizationId,
-    code: data.code,
-    vtId: newVT.id,
-  });
-
-  return newVT;
+    return newVT;
+  } catch (error) {
+    logger.error('[VerificationService] createVerificationType FAILED', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      organizationId,
+      userId,
+      code: data.code,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
 };
 
 /**
@@ -78,18 +90,29 @@ export const getVerificationTypes = async (
   organizationId: string,
   activeOnly = true
 ) => {
-  const whereClause = activeOnly
-    ? and(
-        eq(verificationTypes.organizationId, organizationId),
-        eq(verificationTypes.isActive, true)
-      )
-    : eq(verificationTypes.organizationId, organizationId);
+  try {
+    const whereClause = activeOnly
+      ? and(
+          eq(verificationTypes.organizationId, organizationId),
+          eq(verificationTypes.isActive, true)
+        )
+      : eq(verificationTypes.organizationId, organizationId);
 
-  return await db
-    .select()
-    .from(verificationTypes)
-    .where(whereClause)
-    .orderBy(verificationTypes.name);
+    return await db
+      .select()
+      .from(verificationTypes)
+      .where(whereClause)
+      .orderBy(verificationTypes.name);
+  } catch (error) {
+    logger.error('[VerificationService] getVerificationTypes FAILED', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      organizationId,
+      activeOnly,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
 };
 
 /**

@@ -6,11 +6,14 @@ export interface AISummaryResponse {
   source: string;
 }
 
-export const summarizeTask = async (taskId: string): Promise<AISummaryResponse> => {
-  return post<APIResponse<AISummaryResponse>>(`/ai/summarize/${taskId}`, {}).then(
-    (res) => {
-      if (!res.data.data) throw new Error('Summarization failed');
-      return res.data.data;
-    }
-  );
+export const summarizeTask = async (
+  taskId: string
+): Promise<AISummaryResponse> => {
+  return post<APIResponse<AISummaryResponse>>(
+    `/ai/summarize/${taskId}`,
+    {}
+  ).then((res) => {
+    if (!res.data.data) throw new Error('Summarization failed');
+    return res.data.data;
+  });
 };

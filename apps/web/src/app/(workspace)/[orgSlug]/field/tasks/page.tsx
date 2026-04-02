@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { 
-  CheckCircle2, 
-  MapPin, 
-  Clock, 
+import {
+  CheckCircle2,
+  MapPin,
+  Clock,
   Loader2,
   ChevronRight,
   Filter,
@@ -22,7 +22,7 @@ export function FieldTasksPage() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { activeProjectId } = useWorkspaceStore();
-  
+
   const { data: tasksData, isLoading } = useTasks(activeProjectId || '', {
     assignedTo: user?.id,
   });
@@ -48,9 +48,9 @@ export function FieldTasksPage() {
       {/* Search & Filter Bar */}
       <div className="flex items-center gap-2">
         <div className="flex-1 bg-[var(--color-surface-base)] border border-[var(--color-border-base)] rounded-2xl px-4 py-2.5 flex items-center shadow-sm">
-          <input 
-            type="text" 
-            placeholder="Search my tasks..." 
+          <input
+            type="text"
+            placeholder="Search my tasks..."
             className="bg-transparent border-none outline-none text-sm w-full placeholder:text-[var(--color-text-muted)] font-medium text-[var(--color-text-base)]"
           />
         </div>
@@ -68,13 +68,17 @@ export function FieldTasksPage() {
         {tasks.length === 0 ? (
           <div className="bg-[var(--color-surface-base)] border border-dashed border-[var(--color-border-base)] rounded-3xl p-12 text-center flex flex-col items-center">
             <CheckCircle2 className="w-12 h-12 text-[var(--color-text-muted)] mb-3" />
-            <p className="text-sm font-bold text-[var(--color-text-base)]">No active tasks</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">Check back later or contact your manager.</p>
+            <p className="text-sm font-bold text-[var(--color-text-base)]">
+              No active tasks
+            </p>
+            <p className="text-xs text-[var(--color-text-muted)] mt-1">
+              Check back later or contact your manager.
+            </p>
           </div>
         ) : (
           tasks.map((task) => (
-            <div 
-              key={task.id} 
+            <div
+              key={task.id}
               onClick={() => {
                 const params = new URLSearchParams();
                 params.set('taskId', task.id);
@@ -109,7 +113,7 @@ export function FieldTasksPage() {
               <h3 className="text-base font-bold text-[var(--color-text-base)] leading-tight mb-1 group-hover:text-indigo-600 transition-colors">
                 {task.title}
               </h3>
-              
+
               {(task.customFields as any)?.address && (
                 <div className="flex items-start gap-1.5 text-xs text-[var(--color-text-muted)] mb-4">
                   <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[var(--color-text-muted)] opacity-60" />
@@ -125,7 +129,7 @@ export function FieldTasksPage() {
                     {task.priority.charAt(0)}
                   </div>
                 </div>
-                
+
                 <button className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full group-hover:bg-indigo-600 group-hover:text-white transition-all">
                   Details
                   <ChevronRight className="w-3.5 h-3.5" />

@@ -103,9 +103,38 @@ router.get('/stream', async (c) => {
   doUrl.hostname = 'durable-object-internal';
   doUrl.pathname = '/stream';
 
-  return room.fetch(doUrl.toString(), {
-    headers: c.req.raw.headers,
+  const subrequestStartTime = performance.now();
+  logger.debug('[Realtime:Proxy] Initiating DO subrequest', {
+    orgId,
+    doUrl: doUrl.toString(),
+    requestId: c.req.header('x-request-id') || 'NONE',
   });
+
+  try {
+    const response = await room.fetch(doUrl.toString(), {
+      headers: c.req.raw.headers,
+    });
+
+    const duration = (performance.now() - subrequestStartTime).toFixed(2);
+    logger.debug('[Realtime:Proxy] DO subrequest COMPLETED', {
+      orgId,
+      status: response.status,
+      statusText: response.statusText,
+      duration: `${duration}ms`,
+      contentType: response.headers.get('Content-Type'),
+    });
+
+    return response;
+  } catch (error) {
+    const duration = (performance.now() - subrequestStartTime).toFixed(2);
+    logger.error('[Realtime:Proxy] DO subrequest FAILED', {
+      orgId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration: `${duration}ms`,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
 });
 
 export default router;

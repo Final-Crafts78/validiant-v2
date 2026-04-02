@@ -11,7 +11,7 @@ export interface TimeTrackerState {
 
 /**
  * useTimeTracker Hook
- * 
+ *
  * Manages an execution timer for field tasks.
  * Includes localStorage persistence to survive browser refreshes.
  */
@@ -42,15 +42,18 @@ export function useTimeTracker(taskId?: string) {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const saveToStorage = useCallback((newState: TimeTrackerState) => {
-    if (taskId) {
-      localStorage.setItem(storageKey, JSON.stringify(newState));
-    }
-  }, [taskId, storageKey]);
+  const saveToStorage = useCallback(
+    (newState: TimeTrackerState) => {
+      if (taskId) {
+        localStorage.setItem(storageKey, JSON.stringify(newState));
+      }
+    },
+    [taskId, storageKey]
+  );
 
   const start = useCallback(() => {
     if (state.isRunning) return;
-    
+
     logger.info('[TimeTracker:AutoPunch]', { action: 'START', taskId });
     const newState = {
       ...state,
@@ -84,8 +87,12 @@ export function useTimeTracker(taskId?: string) {
   }, [taskId, storageKey]);
 
   const stop = useCallback(() => {
-    const finalTime = state.elapsedTime + (state.startTime ? Date.now() - state.startTime : 0);
-    logger.info('[TimeTracker:FinalDuration]', { taskId, durationMs: finalTime });
+    const finalTime =
+      state.elapsedTime + (state.startTime ? Date.now() - state.startTime : 0);
+    logger.info('[TimeTracker:FinalDuration]', {
+      taskId,
+      durationMs: finalTime,
+    });
     pause();
     return finalTime;
   }, [state, taskId, pause]);
@@ -110,9 +117,10 @@ export function useTimeTracker(taskId?: string) {
   }, [state.isRunning]);
 
   // Derived current elapsed time
-  const currentElapsed = state.isRunning && state.startTime
-    ? state.elapsedTime + (Date.now() - state.startTime)
-    : state.elapsedTime;
+  const currentElapsed =
+    state.isRunning && state.startTime
+      ? state.elapsedTime + (Date.now() - state.startTime)
+      : state.elapsedTime;
 
   return {
     elapsedTime: currentElapsed,

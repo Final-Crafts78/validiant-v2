@@ -227,11 +227,28 @@ apiClient.interceptors.request.use(
     logger.debug(`[API:Snapshot] ${config.method?.toUpperCase()} Outgoing`, {
       url: config.url,
       finalFullURL,
-      headers: { ...config.headers },
+      headers: { 
+        ...config.headers,
+        'X-Org-Id': config.headers?.['X-Org-Id'] || 'MISSING',
+        'X-Request-Id': config.headers?.['X-Request-Id'] || 'NONE',
+      },
       params: config.params,
       hasData: !!config.data,
+      dataKeys: config.data ? Object.keys(config.data) : [],
       timestamp: new Date().toISOString(),
     });
+
+    // 🚩 OUTGOING SIGNATURE (Finding 62/63 - Double Prefix & $undefined Trace)
+    console.log(
+      `%c[API:Signature] ${config.method?.toUpperCase()} → ${finalFullURL}`,
+      'color: #2563eb; font-weight: bold;',
+      {
+        requestId: config.headers?.['X-Request-Id'] || 'NONE',
+        orgId: config.headers?.['X-Org-Id'] || 'MISSING',
+        payload: config.data ? { ...config.data } : 'EMPTY',
+        stack: stack?.split('\n')[0] || 'UNKNOWN',
+      }
+    );
 
     return config;
   },
@@ -836,7 +853,6 @@ export const verificationApi = {
   ): Promise<AxiosResponse<APIResponse<any>>> =>
     put<APIResponse<any>>(`/verifications/${orgId}/${id}`, data),
 };
-
 
 // ---------------------------------------------------------------------------
 // Analytics API Service

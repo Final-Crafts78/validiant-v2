@@ -84,7 +84,10 @@ export function ActivityLogTab({ projectId }: { projectId: string }) {
                     </span>
                     <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {format(new Date(log.createdAt), 'MMM d, yyyy · HH:mm:ss')}
+                      {format(
+                        new Date(log.createdAt),
+                        'MMM d, yyyy · HH:mm:ss'
+                      )}
                     </span>
                   </div>
 
@@ -115,7 +118,8 @@ export function ActivityLogTab({ projectId }: { projectId: string }) {
                   {log.isChainBroken && (
                     <div className="mt-2 p-2 bg-rose-50 border border-rose-100 rounded-lg text-[10px] text-rose-600 font-bold flex items-center gap-2 animate-pulse">
                       <AlertTriangle className="w-3 h-3" />
-                      INTEGRITY WARNING: Log chain continuity broken at this entry.
+                      INTEGRITY WARNING: Log chain continuity broken at this
+                      entry.
                     </div>
                   )}
                 </div>
@@ -128,7 +132,8 @@ export function ActivityLogTab({ projectId }: { projectId: string }) {
                 No recorded activity
               </p>
               <p className="text-xs text-slate-400 mt-2">
-                Operations performed on this project will appear here in real-time.
+                Operations performed on this project will appear here in
+                real-time.
               </p>
             </div>
           )}

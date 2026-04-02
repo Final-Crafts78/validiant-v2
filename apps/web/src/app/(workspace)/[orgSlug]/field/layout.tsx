@@ -62,7 +62,7 @@ export default function FieldAppLayout({
           You do not have the required permissions to access the Field Executive
           console.
         </p>
-        <button 
+        <button
           onClick={() => router.push(`/${orgSlug}/dashboard`)}
           className="w-full max-w-xs py-4 bg-slate-900 text-white rounded-[2rem] font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl"
         >
@@ -104,7 +104,7 @@ export default function FieldAppLayout({
               <Moon className="w-5 h-5" />
             )}
           </button>
-          <button 
+          <button
             onClick={() => router.push(`/${orgSlug}/projects`)}
             className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
             title="Switch to Management Console"

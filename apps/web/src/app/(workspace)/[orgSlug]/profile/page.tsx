@@ -143,11 +143,13 @@ export default function ProfilePage() {
 
         // eslint-disable-next-line no-console
         console.log(
-          '[ProfilePage] Submitting profile update (Extreme Trace):',
+          '[ProfilePage] Submitting profile update (Pre-flight Signature):',
           {
             fullName,
             bio: bioToSubmit,
             originalBio: bio,
+            phoneNumber: phoneNumber.trim() || 'EMPTY',
+            timestamp: new Date().toISOString(),
           }
         );
 
