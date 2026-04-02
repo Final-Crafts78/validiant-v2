@@ -160,7 +160,9 @@
   }
 
   .input:focus {
-    @apply ring-2 ring-[var(--color-accent-base)]/20 border-[var(--color-accent-base)];
+    @apply ring-2;
+    border-color: var(--color-accent-base);
+    --tw-ring-color: color-mix(in srgb, var(--color-accent-base), transparent 80%);
   }
 
   .input:disabled {
@@ -420,7 +422,9 @@
 }
 
 .input-themed:focus {
-  @apply ring-2 ring-[var(--color-accent-base)]/20 border-[var(--color-accent-base)];
+  @apply ring-2;
+  border-color: var(--color-accent-base);
+  --tw-ring-color: color-mix(in srgb, var(--color-accent-base), transparent 80%);
 }
 
 /* Select Reset */
