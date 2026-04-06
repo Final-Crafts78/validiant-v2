@@ -203,19 +203,6 @@ export type ProjectTypeColumn = z.infer<typeof typeColumnCreateSchema> & {
   projectId: string;
   typeId: string;
 };
-export type ProjectRecord = {
-  id: string;
-  projectId: string;
-  typeId: string;
-  number: number;
-  data: Record<string, unknown>;
-  status: string;
-  assignedTo?: string;
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 // ── Type Template Schemas ────────────────────────────────────────────────────
 
 export const typeTemplateCreateSchema = z.object({

@@ -34,16 +34,16 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
 export function AnalyticsTab({ projectId }: { projectId: string }) {
   const { data: stats, isLoading } = useProjectStats(projectId);
   const [isExporting, setIsExporting] = useState(false);
-  const { data: recordsData } = useRecords(projectId);
+  const { records: recordsData } = useRecords(projectId);
 
   const handleExport = async () => {
-    if (!recordsData?.records) return;
+    if (!recordsData || recordsData.length === 0) return;
     setIsExporting(true);
     
     try {
       // Basic CSV generation
       const headers = ['ID', 'Number', 'Type', 'Status', 'CreatedAt', 'SubmittedAt', 'ClosedAt'];
-      const rows = recordsData.records.map(r => [
+      const rows = recordsData.map((r: any) => [
         r.id,
         r.number,
         r.typeId,

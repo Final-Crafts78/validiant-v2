@@ -2,16 +2,14 @@
 
 import React from 'react';
 import { TypeColumn, ColumnType } from '@validiant/shared';
-import { 
-  Input, 
-  Textarea, 
-  Select, 
-  MultiSelect,
-  Rating,
-  PhotoCapture,
-  GPSLocation,
-  Signature
-} from '@/components/ui';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select } from '@/components/ui/select';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { Rating } from '@/components/ui/rating';
+import { PhotoCapture } from '@/components/ui/photo-capture';
+import { GPSLocation } from '@/components/ui/gps-location';
+import { Signature } from '@/components/ui/signature';
 
 interface RecordFieldFactoryProps {
   column: TypeColumn;
@@ -44,7 +42,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
         <Input
           {...commonProps}
           value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         />
       );
     }
@@ -54,7 +52,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
         <Textarea
           {...commonProps}
           value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
           rows={4}
         />
       );
@@ -66,7 +64,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
           {...commonProps}
           type="number"
           value={value ?? ''}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(parseFloat(e.target.value))}
         />
       );
     }
@@ -95,7 +93,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
       );
     }
 
-    case ColumnType.PHOTO: {
+    case ColumnType.PHOTO_CAPTURE: {
       return (
         <PhotoCapture
           {...commonProps}
@@ -106,7 +104,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
       );
     }
 
-    case ColumnType.GPS: {
+    case ColumnType.GPS_LOCATION: {
       return (
         <GPSLocation
           {...commonProps}

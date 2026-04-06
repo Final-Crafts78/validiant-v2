@@ -91,6 +91,10 @@ export interface ColumnSettings {
   showInMobile?: boolean;
   defaultValue?: unknown;
   hint?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  options?: string[];
+  maxRating?: number;
   validation?: { [rule: string]: unknown };
 }
 
@@ -116,6 +120,8 @@ export interface ProjectRecord {
   gpsLat?: number;
   gpsLng?: number;
   gpsAccuracy?: number;
+  lockedBy?: string | null;
+  lockedAt?: Date | null;
   submittedAt?: Date;
   closedAt?: Date;
   createdAt: Date;

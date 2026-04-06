@@ -1641,7 +1641,7 @@ export type NewProjectType = typeof projectTypes.$inferInsert;
 export type TypeColumn = typeof typeColumns.$inferSelect;
 export type NewTypeColumn = typeof typeColumns.$inferInsert;
 
-export type ProjectRecord = typeof records.$inferSelect;
+export type DBProjectRecord = typeof records.$inferSelect;
 export type NewProjectRecord = typeof records.$inferInsert;
 
 export type RecordHistory = typeof recordHistory.$inferSelect;

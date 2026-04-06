@@ -20,16 +20,16 @@ interface RecordMapViewProps {
 const createCustomIcon = (color: string) => {
   return new L.DivIcon({
     className: 'custom-div-icon',
-    html: \`
-      <div style=\"
-        background-color: \${color};
+    html: `
+      <div style="
+        background-color: ${color};
         width: 14px;
         height: 14px;
         border: 3px solid rgba(255,255,255,0.2);
         border-radius: 50%;
-        box-shadow: 0 0 12px \${color};
+        box-shadow: 0 0 12px ${color};
         animation: pulse-ring 2s infinite;
-      \"></div>
+      "></div>
       <style>
         @keyframes pulse-ring {
           0% { transform: scale(0.8); opacity: 0.5; }
@@ -37,7 +37,7 @@ const createCustomIcon = (color: string) => {
           100% { transform: scale(0.8); opacity: 0.5; }
         }
       </style>
-    \`,
+    `,
     iconSize: [20, 20],
     iconAnchor: [10, 10],
   });
@@ -58,7 +58,7 @@ export function RecordMapView({
 
   // Default center (India) if no records
   const center: [number, number] = recordsWithGps.length > 0 
-    ? [recordsWithGps[0].gpsLat!, recordsWithGps[0].gpsLng!]
+    ? [recordsWithGps[0]?.gpsLat ?? 20.5937, recordsWithGps[0]?.gpsLng ?? 78.9629]
     : [20.5937, 78.9629];
 
   return (
@@ -89,8 +89,8 @@ export function RecordMapView({
         {recordsWithGps.map((record) => (
           <Marker 
             key={record.id} 
-            position={[record.gpsLat!, record.gpsLng!]}
-            icon={createCustomIcon(STATUS_COLORS[record.status] || STATUS_COLORS.pending)}
+            position={[record.gpsLat || 0, record.gpsLng || 0]}
+            icon={createCustomIcon(STATUS_COLORS[record.status || 'pending'] || STATUS_COLORS.pending)}
           >
             <Popup className="obsidian-popup">
               <div className="p-2 min-w-[200px] space-y-4 bg-slate-900 border border-white/5 rounded-2xl">
@@ -100,13 +100,13 @@ export function RecordMapView({
                   </span>
                   <div 
                     className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" 
-                    style={{ color: STATUS_COLORS[record.status] || STATUS_COLORS.pending }} 
+                    style={{ color: STATUS_COLORS[record.status || 'pending'] || STATUS_COLORS.pending }} 
                   />
                 </div>
                 
                 <div>
                   <h5 className="text-[11px] font-bold text-white leading-tight">
-                    {String(record.data[Object.keys(record.data)[0]] || 'Untitled Node')}
+                    {String(record.data[Object.keys(record.data)[0] || ''] || 'Untitled Node')}
                   </h5>
                   <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">
                     Captured: {format(new Date(record.createdAt), 'MMM dd, HH:mm')}
@@ -141,7 +141,7 @@ export function RecordMapView({
         </div>
       </div>
 
-      <style jsx global>{\`
+      <style jsx global>{`
         .leaflet-container {
           background: #020617 !important;
         }
@@ -160,7 +160,7 @@ export function RecordMapView({
         .leaflet-popup-close-button {
           display: none !important;
         }
-      \`}</style>
+      `}</style>
     </div>
   );
 }
