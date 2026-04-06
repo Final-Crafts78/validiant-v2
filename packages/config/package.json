@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "build": "npm run build:tokens",
     "build:tokens": "ts-node tokens/build-tokens.ts"
   },
   "devDependencies": {

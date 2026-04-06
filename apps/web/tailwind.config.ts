@@ -10,12 +10,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'var(--color-surface-base)',
+        background: 'rgb(var(--color-surface-base) / <alpha-value>)',
         foreground: 'var(--color-text-base)',
         primary: {
-          DEFAULT: 'var(--color-accent-base)',
-          foreground: 'var(--color-accent-text)',
-          container: 'var(--color-accent-strong)',
+          DEFAULT: 'rgb(var(--color-accent-base) / <alpha-value>)',
+          foreground: 'rgb(var(--color-accent-text) / <alpha-value>)',
+          container: 'rgb(var(--color-accent-strong) / <alpha-value>)',
           glow: '#adc6ff',
         },
         secondary: {
@@ -23,7 +23,7 @@ const config: Config = {
           foreground: 'var(--color-text-base)',
         },
         tertiary: {
-          DEFAULT: 'var(--color-tertiary-base)',
+          DEFAULT: 'rgb(var(--color-tertiary-base) / <alpha-value>)',
           foreground: '#0c1324',
         },
         surface: {

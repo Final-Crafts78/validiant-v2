@@ -18,13 +18,7 @@
   --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
 
   /* Surfaces & Backgrounds (The Obsidian Verifier) */
-  --color-surface-base: #FFFFFF;
-  --color-surface-soft: #F8FAFC; 
-  --color-surface-muted: #F1F5F9;
-  --color-surface-lowest: #F8FAFC;
-  --color-surface-container-low: #F1F5F9;
-  --color-surface-container-highest: #E2E8F0;
-  --color-surface-bright: #FFFFFF;
+  --color-surface-base: 255 255 255;
   --color-surface-inverse: #0c1324;
 
   /* Text & Content */
@@ -44,7 +38,7 @@
   --color-border-input: #E2E8F0;
 
   /* Brand & Semantic (The Architectural Glow) */
-  --color-accent-base: #0058be;
+  --color-accent-base: 0 88 190;
   --color-accent-subtle: #dbeafe;
   --color-accent-strong: #172554;
   --color-accent-text: #FFFFFF;
@@ -65,12 +59,12 @@
   --color-critical-text: #FFFFFF;
 
   /* Obsidian Specific Accent */
-  --color-tertiary-base: #ffb786;
+  --color-tertiary-base: 255 183 134;
 }
 
 [data-theme="dark"] {
   /* Surfaces & Backgrounds (The Obsidian Verifier - PRIMARY EXPERIENCE) */
-  --color-surface-base: #0c1324;             /* The Void */
+  --color-surface-base: 12 19 36;             /* The Void */
   --color-surface-soft: #070d1f;             /* Lowest */
   --color-surface-muted: #151b2d;            /* Container Low */
   --color-surface-lowest: #070d1f;           /* Deep Recess */
@@ -96,7 +90,7 @@
   --color-border-input: transparent;         /* No border default */
 
   /* Brand & Semantic Overrides */
-  --color-accent-base: #adc6ff;              /* The Glow */
+  --color-accent-base: 173 198 255;              /* The Glow */
   --color-accent-subtle: #adc6ff1a;
   --color-accent-strong: #4d8eff;           /* Primary Container */
   --color-accent-text: #0c1324;
@@ -117,5 +111,5 @@
   --color-critical-text: #FFFFFF;
 
   /* Obsidian Specific Accent */
-  --color-tertiary-base: #ffb786;
+  --color-tertiary-base: 255 183 134;
 }

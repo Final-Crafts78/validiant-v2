@@ -1,61 +1,159 @@
--------------------------------------------
-Copied 50 logs from Vercel Dashboard
-- Project: validiant-portal (prj_i4EYOu0LqsB9aMh9hmePe08KkvWl)
-- Team: mansoors-projects-b0833ee8 (team_4FEwBJgnnzF8v2As2ucPatmO)
-- Search query: (no search query applied)
-- Search timestamps: 2026-04-02T10:42:00.000Z to 2026-04-02T11:12:00.000Z
-- Dashboard URL: https://vercel.com/mansoors-projects-b0833ee8/validiant-portal/3xLLPd1c4uYH6poJ2fPjN8r7YJZt/logs
-- Format: JSONL
-- Documentation: https://vercel.com/docs/logs/runtime
--------------------------------------------
-
-{"requestId":"r7prd-1775128218796-90c5a04ce71f","timestamp":1775128218796,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::r7prd-1775128218796-90c5a04ce71f] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/analytics","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"9jdmn-1775127801257-b209146bd1bf","timestamp":1775127801257,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"9jdmn-1775127800790-df905516a036","timestamp":1775127800790,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::9jdmn-1775127800790-df905516a036] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/projects/eb1729a4-9f23-4b76-b3e5-26ba3d4f1644","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"72ncm-1775127797687-bfef1ae72702","timestamp":1775127797687,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"qlmmd-1775127797342-89cab73f0917","timestamp":1775127797342,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"6jw7g-1775127797208-3b9dfe59f174","timestamp":1775127797208,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::6jw7g-1775127797208-3b9dfe59f174] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xpqzh-1775127796195-09958667e5a4","timestamp":1775127796195,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::xpqzh-1775127796195-09958667e5a4] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"w564q-1775127795831-b04cff3fd68b","timestamp":1775127795831,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::w564q-1775127795831-b04cff3fd68b] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/infra","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"qlmmd-1775127795831-8642ef8c105e","timestamp":1775127795831,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::qlmmd-1775127795831-8642ef8c105e] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/search","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"gbgw9-1775127795831-640e2f2c70ce","timestamp":1775127795831,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::gbgw9-1775127795831-640e2f2c70ce] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/notifications","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"fks75-1775127795831-d8cc66a4e6b7","timestamp":1775127795831,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::fks75-1775127795831-d8cc66a4e6b7] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/analytics","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xmwqg-1775127795778-7e4dd46dc380","timestamp":1775127795778,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::xmwqg-1775127795778-7e4dd46dc380] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"qlmmd-1775127795088-5dcc9d3034c6","timestamp":1775127795088,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::qlmmd-1775127795088-5dcc9d3034c6] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"qlmmd-1775127793627-b8ba00990377","timestamp":1775127793627,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::qlmmd-1775127793627-b8ba00990377] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/testing/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"qlmmd-1775127793228-43cc78d64a12","timestamp":1775127793228,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::qlmmd-1775127793228-43cc78d64a12] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"fhqtw-1775127793228-d0c188f64533","timestamp":1775127793228,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::fhqtw-1775127793228-d0c188f64533] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"6jw7g-1775127793228-cb92e0d66b0f","timestamp":1775127793228,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::6jw7g-1775127793228-cb92e0d66b0f] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"2bl6d-1775127793228-31f05d1b1eb3","timestamp":1775127793228,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::2bl6d-1775127793228-31f05d1b1eb3] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"89c4p-1775127793227-7fc4cf37b40b","timestamp":1775127793227,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::89c4p-1775127793227-7fc4cf37b40b] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"89c4p-1775127793103-6c8aa19e7f5c","timestamp":1775127793103,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"dz2qc-1775127791998-18ec1b108eb4","timestamp":1775127791998,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Dashboard:Layout] Fetching current user... { currentPath: '/dashboard' }","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xpqzh-1775127791807-fd207c2a3d70","timestamp":1775127791807,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"w564q-1775127791607-10774612a846","timestamp":1775127791607,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::w564q-1775127791607-10774612a846] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/testing/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xpqzh-1775127791181-4f5929b21321","timestamp":1775127791181,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::xpqzh-1775127791181-4f5929b21321] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"xmwqg-1775127791181-60500659c673","timestamp":1775127791181,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::xmwqg-1775127791181-60500659c673] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"w564q-1775127791181-d8712aae835e","timestamp":1775127791181,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::w564q-1775127791181-d8712aae835e] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/profile","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"h75mk-1775127791180-9d70ce9a3ed2","timestamp":1775127791180,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::h75mk-1775127791180-9d70ce9a3ed2] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/organizations","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"8rhxk-1775127791128-21a3e935af57","timestamp":1775127791128,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::8rhxk-1775127791128-21a3e935af57] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"fhqtw-1775127790187-bf030ed7f5c2","timestamp":1775127790187,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[Dashboard:Layout] Fetching current user... { currentPath: '/dashboard' }","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"flkhp-1775127774531-4505c48cf900","timestamp":1775127774531,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::flkhp-1775127774531-4505c48cf900] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"6jw7g-1775127774531-bc517cefbfe0","timestamp":1775127774531,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::6jw7g-1775127774531-bc517cefbfe0] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/notifications","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"q28gs-1775127774478-b9cc8232597c","timestamp":1775127774478,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::q28gs-1775127774478-b9cc8232597c] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/search","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"flkhp-1775127774110-07da1616d4ff","timestamp":1775127774110,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::flkhp-1775127774110-07da1616d4ff] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"fhqtw-1775127774110-eeefa2ffd8c9","timestamp":1775127774110,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::fhqtw-1775127774110-eeefa2ffd8c9] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/analytics","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"77hj8-1775127774110-2e72133d662e","timestamp":1775127774110,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::77hj8-1775127774110-2e72133d662e] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"6jz56-1775127774110-7f6be189823f","timestamp":1775127774110,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[BFF:Module] [1775127774334] EP-0.1: Module loading started","source":"serverless","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/infra","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"gxw7j-1775127774017-85f4e28ffbfa","timestamp":1775127774017,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::gxw7j-1775127774017-85f4e28ffbfa] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/dashboard","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"gxw7j-1775127773908-cf31c09bf5a8","timestamp":1775127773908,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"9vbgx-1775127772408-9f748ed55059","timestamp":1775127772408,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::9vbgx-1775127772408-9f748ed55059] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"tvcvq-1775127692483-abef41f4c159","timestamp":1775127692483,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"gqkzg-1775127691192-8ab7b9ea30af","timestamp":1775127691192,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::gqkzg-1775127691192-8ab7b9ea30af] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/projects/eb1729a4-9f23-4b76-b3e5-26ba3d4f1644","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"4j4dh-1775127677048-a194323bb3ee","timestamp":1775127677048,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"xmwqg-1775127675832-5ab14f92b1bf","timestamp":1775127675832,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::xmwqg-1775127675832-5ab14f92b1bf] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/projects","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"44t4l-1775127661235-04d8c957d733","timestamp":1775127661235,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"","source":"static","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/manifest.webmanifest","responseStatusCode":304,"environment":"production","branch":"main","cache":"HIT"}
-{"requestId":"p8bwp-1775127660498-211e868a8336","timestamp":1775127660498,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::p8bwp-1775127660498-211e868a8336] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/settings","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"p8bwp-1775127659786-ca9e7434a134","timestamp":1775127659786,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::p8bwp-1775127659786-ca9e7434a134] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/search","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"m4w4g-1775127659786-b60fab9f86d4","timestamp":1775127659786,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::m4w4g-1775127659786-b60fab9f86d4] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/infra","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"9jmgk-1775127659786-455d50d1c339","timestamp":1775127659786,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::9jmgk-1775127659786-455d50d1c339] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/analytics","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"5xf8p-1775127659786-51b81aed6803","timestamp":1775127659786,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::5xf8p-1775127659786-51b81aed6803] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/notifications","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
-{"requestId":"vcr6p-1775127659733-2ea267728d55","timestamp":1775127659733,"deploymentId":"dpl_3xLLPd1c4uYH6poJ2fPjN8r7YJZt","projectId":"prj_i4EYOu0LqsB9aMh9hmePe08KkvWl","level":"info","message":"[MW:Edge] [bom1::vcr6p-1775127659733-2ea267728d55] EP-1.0.1: Env Audit Starting","source":"edge-middleware","domain":"www.validiant.in","requestMethod":"GET","requestPath":"/validiant/tasks","responseStatusCode":200,"environment":"production","branch":"main","cache":"MISS"}
+21:13:02.335 Running build in Washington, D.C., USA (East) – iad1
+21:13:02.335 Build machine configuration: 2 cores, 8 GB
+21:13:02.457 Cloning github.com/Final-Crafts78/validiant-v2 (Branch: main, Commit: fddb52d)
+21:13:04.144 Cloning completed: 1.687s
+21:13:05.107 Restored build cache from previous deployment (HiiEqFhicF8x2jbdi6KrTc3B1FxU)
+21:13:05.491 Warning: Detected "engines": { "node": ">=18.0.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: https://vercel.link/node-version
+21:13:05.492 Running "vercel build"
+21:13:06.125 Vercel CLI 50.38.2
+21:13:06.240 > Detected Turbo. Adjusting default settings...
+21:13:06.407 Warning: Detected "engines": { "node": ">=18.0.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: https://vercel.link/node-version
+21:13:06.542 Detected `pnpm-lock.yaml` version 9 generated by pnpm@10.x with package.json#packageManager pnpm@10.29.3
+21:13:06.547 Running "install" command: `pnpm install --no-frozen-lockfile`...
+21:13:12.610 Scope: all 8 workspace projects
+21:13:15.394 
+21:13:15.546 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+21:13:15.547 │                                                                              │
+21:13:15.548 │   Ignored build scripts: @parcel/watcher@2.5.6, @swc/core@1.15.18.           │
+21:13:15.548 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+21:13:15.548 │   to run scripts.                                                            │
+21:13:15.548 │                                                                              │
+21:13:15.548 ╰──────────────────────────────────────────────────────────────────────────────╯
+21:13:15.553 Done in 3.3s using pnpm v10.29.3
+21:13:15.585 Detected Next.js version: 14.2.35
+21:13:15.586 Running "pnpm dlx turbo run build --filter=@validiant/web... --no-cache"
+21:13:16.099 Progress: resolved 1, reused 0, downloaded 0, added 0
+21:13:16.286 Packages: +2
+21:13:16.286 ++
+21:13:16.748 Progress: resolved 7, reused 0, downloaded 2, added 2, done
+21:13:16.872 
+21:13:16.873 Attention:
+21:13:16.873 Turborepo now collects completely anonymous telemetry regarding usage.
+21:13:16.873 This information is used to shape the Turborepo roadmap and prioritize features.
+21:13:16.873 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+21:13:16.873 https://turbo.build/repo/docs/telemetry
+21:13:16.874 
+21:13:16.966 • Packages in scope: @validiant/shared, @validiant/ui, @validiant/web
+21:13:16.966 • Running build in 3 packages
+21:13:16.966 • Remote caching enabled
+21:13:17.111 @validiant/ui:build: cache miss, executing 15e8fe426be194d9
+21:13:17.121 @validiant/shared:build: cache miss, executing 9774cdc2936c0b23
+21:13:18.206 @validiant/shared:build: 
+21:13:18.207 @validiant/shared:build: > @validiant/shared@1.0.0 build /vercel/path0/packages/shared
+21:13:18.207 @validiant/shared:build: > tsup src/index.ts --format cjs,esm --dts
+21:13:18.207 @validiant/shared:build: 
+21:13:18.227 @validiant/ui:build: 
+21:13:18.228 @validiant/ui:build: > @validiant/ui@1.0.0 build /vercel/path0/packages/ui
+21:13:18.228 @validiant/ui:build: > tsup src/index.ts --format cjs,esm --dts --minify --clean
+21:13:18.228 @validiant/ui:build: 
+21:13:19.221 @validiant/shared:build: [34mCLI[39m Building entry: src/index.ts
+21:13:19.224 @validiant/shared:build: [34mCLI[39m Using tsconfig: tsconfig.json
+21:13:19.224 @validiant/shared:build: [34mCLI[39m tsup v8.5.1
+21:13:19.228 @validiant/ui:build: [34mCLI[39m Building entry: src/index.ts
+21:13:19.230 @validiant/ui:build: [34mCLI[39m Using tsconfig: tsconfig.json
+21:13:19.236 @validiant/shared:build: [34mCLI[39m Target: es2020
+21:13:19.237 @validiant/shared:build: [34mCJS[39m Build start
+21:13:19.237 @validiant/shared:build: [34mESM[39m Build start
+21:13:19.243 @validiant/ui:build: [34mCLI[39m tsup v8.5.1
+21:13:19.262 @validiant/ui:build: [34mCLI[39m Target: es2020
+21:13:19.266 @validiant/ui:build: [34mCLI[39m Cleaning output folder
+21:13:19.277 @validiant/ui:build: [34mCJS[39m Build start
+21:13:19.278 @validiant/ui:build: [34mESM[39m Build start
+21:13:19.518 @validiant/ui:build: [32mESM[39m [1mdist/index.mjs [22m[32m26.26 KB[39m
+21:13:19.526 @validiant/ui:build: [32mESM[39m ⚡️ Build success in 239ms
+21:13:19.527 @validiant/ui:build: [32mCJS[39m [1mdist/index.js [22m[32m28.20 KB[39m
+21:13:19.527 @validiant/ui:build: [32mCJS[39m ⚡️ Build success in 241ms
+21:13:19.562 @validiant/shared:build: [32mESM[39m [1mdist/index.mjs [22m[32m110.36 KB[39m
+21:13:19.564 @validiant/shared:build: [32mESM[39m ⚡️ Build success in 331ms
+21:13:19.565 @validiant/shared:build: [32mCJS[39m [1mdist/index.js [22m[32m141.11 KB[39m
+21:13:19.565 @validiant/shared:build: [32mCJS[39m ⚡️ Build success in 332ms
+21:13:20.011 @validiant/ui:build: [34mDTS[39m Build start
+21:13:20.060 @validiant/shared:build: [34mDTS[39m Build start
+21:13:26.987 @validiant/ui:build: [32mDTS[39m ⚡️ Build success in 6976ms
+21:13:26.988 @validiant/ui:build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m13.58 KB[39m
+21:13:26.990 @validiant/ui:build: [32mDTS[39m [1mdist/index.d.mts [22m[32m13.58 KB[39m
+21:13:27.922 @validiant/shared:build: [32mDTS[39m ⚡️ Build success in 7864ms
+21:13:27.923 @validiant/shared:build: [32mDTS[39m [1mdist/index.d.ts  [22m[32m353.90 KB[39m
+21:13:27.923 @validiant/shared:build: [32mDTS[39m [1mdist/index.d.mts [22m[32m353.90 KB[39m
+21:13:28.063 @validiant/web:build: cache miss, executing 2c3147e4014b3682
+21:13:28.642 @validiant/web:build: 
+21:13:28.642 @validiant/web:build: > @validiant/web@2.0.0 build /vercel/path0/apps/web
+21:13:28.642 @validiant/web:build: > next build
+21:13:28.642 @validiant/web:build: 
+21:13:29.370 @validiant/web:build:   ▲ Next.js 14.2.35
+21:13:29.371 @validiant/web:build: 
+21:13:29.397 @validiant/web:build:    Creating an optimized production build ...
+21:14:01.009 @validiant/web:build: <w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!/vercel/path0/apps/web/src/app/globals.css': No serializer registered for PostCSSSyntaxError
+21:14:01.011 @validiant/web:build: <w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+21:14:02.193 @validiant/web:build: Failed to compile.
+21:14:02.194 @validiant/web:build: 
+21:14:02.194 @validiant/web:build: ./src/app/globals.css:7:1
+21:14:02.195 @validiant/web:build: Syntax error: /vercel/path0/apps/web/src/app/globals.css The `ring-primary/40` class does not exist. If `ring-primary/40` is a custom class, make sure it is defined within a `@layer` directive.
+21:14:02.195 @validiant/web:build: 
+21:14:02.195 @validiant/web:build:  [90m 5 | [39m[90m */[39m
+21:14:02.195 @validiant/web:build:  [90m 6 | [39m
+21:14:02.195 @validiant/web:build: [1m[31m>[39m[22m[90m 7 | [39m[36m@tailwind[39m base[33m;[39m
+21:14:02.195 @validiant/web:build:  [90m   | [39m[1m[31m^[39m[22m
+21:14:02.196 @validiant/web:build:  [90m 8 | [39m[36m@tailwind[39m components[33m;[39m
+21:14:02.196 @validiant/web:build:  [90m 9 | [39m[36m@tailwind[39m utilities[33m;[39m
+21:14:02.196 @validiant/web:build: 
+21:14:02.196 @validiant/web:build: ./src/app/globals.css
+21:14:02.196 @validiant/web:build: Syntax error: /vercel/path0/apps/web/src/app/globals.css The `ring-primary/40` class does not exist. If `ring-primary/40` is a custom class, make sure it is defined within a `@layer` directive. (7:1)
+21:14:02.196 @validiant/web:build: 
+21:14:02.196 @validiant/web:build:  [90m 5 | [39m[90m */[39m
+21:14:02.200 @validiant/web:build:  [90m 6 | [39m
+21:14:02.200 @validiant/web:build: [1m[31m>[39m[22m[90m 7 | [39m[36m@tailwind[39m base[33m;[39m
+21:14:02.201 @validiant/web:build:  [90m   | [39m[1m[31m^[39m[22m
+21:14:02.201 @validiant/web:build:  [90m 8 | [39m[36m@tailwind[39m components[33m;[39m
+21:14:02.201 @validiant/web:build:  [90m 9 | [39m[36m@tailwind[39m utilities[33m;[39m
+21:14:02.201 @validiant/web:build: 
+21:14:02.201 @validiant/web:build:     at tryRunOrWebpackError (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:312989)
+21:14:02.201 @validiant/web:build:     at __webpack_require_module__ (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:131165)
+21:14:02.202 @validiant/web:build:     at __nested_webpack_require_153728__ (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:130607)
+21:14:02.202 @validiant/web:build:     at /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:131454
+21:14:02.202 @validiant/web:build:     at symbolIterator (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/neo-async/async.js:1:14444)
+21:14:02.202 @validiant/web:build:     at done (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/neo-async/async.js:1:14824)
+21:14:02.202 @validiant/web:build:     at Hook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:13:28858), <anonymous>:15:1)
+21:14:02.203 @validiant/web:build:     at Hook.CALL_ASYNC_DELEGATE [as _callAsync] (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:13:26012)
+21:14:02.203 @validiant/web:build:     at /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:130328
+21:14:02.203 @validiant/web:build:     at symbolIterator (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/neo-async/async.js:1:14402)
+21:14:02.203 @validiant/web:build: -- inner error --
+21:14:02.203 @validiant/web:build: Syntax error: /vercel/path0/apps/web/src/app/globals.css The `ring-primary/40` class does not exist. If `ring-primary/40` is a custom class, make sure it is defined within a `@layer` directive. (7:1)
+21:14:02.203 @validiant/web:build: 
+21:14:02.203 @validiant/web:build:  [90m 5 | [39m[90m */[39m
+21:14:02.204 @validiant/web:build:  [90m 6 | [39m
+21:14:02.204 @validiant/web:build: [1m[31m>[39m[22m[90m 7 | [39m[36m@tailwind[39m base[33m;[39m
+21:14:02.204 @validiant/web:build:  [90m   | [39m[1m[31m^[39m[22m
+21:14:02.204 @validiant/web:build:  [90m 8 | [39m[36m@tailwind[39m components[33m;[39m
+21:14:02.204 @validiant/web:build:  [90m 9 | [39m[36m@tailwind[39m utilities[33m;[39m
+21:14:02.204 @validiant/web:build: 
+21:14:02.204 @validiant/web:build:     at Object.<anonymous> (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!/vercel/path0/apps/web/src/app/globals.css:1:7)
+21:14:02.207 @validiant/web:build:     at /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:922493
+21:14:02.207 @validiant/web:build:     at Hook.eval [as call] (eval at create (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:13:28636), <anonymous>:7:1)
+21:14:02.207 @validiant/web:build:     at Hook.CALL_DELEGATE [as _call] (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:13:25906)
+21:14:02.207 @validiant/web:build:     at /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:131198
+21:14:02.207 @validiant/web:build:     at tryRunOrWebpackError (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:312943)
+21:14:02.207 @validiant/web:build:     at __webpack_require_module__ (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:131165)
+21:14:02.208 @validiant/web:build:     at __nested_webpack_require_153728__ (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:130607)
+21:14:02.208 @validiant/web:build:     at /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/webpack/bundle5.js:28:131454
+21:14:02.208 @validiant/web:build:     at symbolIterator (/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/neo-async/async.js:1:14444)
+21:14:02.208 @validiant/web:build: 
+21:14:02.208 @validiant/web:build: Generated code for /vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!/vercel/path0/node_modules/.pnpm/next@14.2.35_@playwright+test@1.58.2_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!/vercel/path0/apps/web/src/app/globals.css
+21:14:02.209 @validiant/web:build: 
+21:14:02.210 @validiant/web:build: Import trace for requested module:
+21:14:02.210 @validiant/web:build: ./src/app/globals.css
+21:14:02.210 @validiant/web:build: 
+21:14:02.211 @validiant/web:build: 
+21:14:02.211 @validiant/web:build: > Build failed because of webpack errors
+21:14:02.287 @validiant/web:build:  ELIFECYCLE  Command failed with exit code 1.
+21:14:02.305 @validiant/web:build: ERROR: command finished with error: command (/vercel/path0/apps/web) /pnpm10/node_modules/.bin/pnpm run build exited (1)
+21:14:02.306 @validiant/web#build: command (/vercel/path0/apps/web) /pnpm10/node_modules/.bin/pnpm run build exited (1)
+21:14:02.307 
+21:14:02.307   Tasks:    2 successful, 3 total
+21:14:02.307  Cached:    0 cached, 3 total
+21:14:02.308    Time:    45.414s 
+21:14:02.308 Summary:    /vercel/path0/.turbo/runs/3BzS84jKknLgFofYDRHgAf5MJFi.json
+21:14:02.308  Failed:    @validiant/web#build
+21:14:02.308 
+21:14:02.313  ERROR  run failed: command  exited (1)
+21:14:02.417 Error: Command "pnpm dlx turbo run build --filter=@validiant/web... --no-cache" exited with 1

@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
+    "build": "echo 'Native app - build via EAS CLI'",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
