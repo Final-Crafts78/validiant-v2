@@ -14,6 +14,11 @@ export interface Organization {
   role?: string; // caller's role in this org
   memberCount?: number;
   projectCount?: number;
+  
+  // Phase 6: Billing
+  plan?: 'free' | 'pro' | 'enterprise';
+  subscriptionStatus?: string;
+  planExpiresAt?: string;
 }
 
 export interface OrgMember {
@@ -172,5 +177,21 @@ export const acceptInvite = async (
   >(API_CONFIG.ENDPOINTS.ORGANIZATIONS.ACCEPT_INVITE, { token });
   if (!res.data.data)
     throw new Error(res.data.message || 'Failed to accept invite');
+  return res.data.data;
+};
+
+export const createCheckoutSession = async (
+  orgId: string,
+  plan: 'pro' | 'enterprise',
+  successUrl: string,
+  cancelUrl: string
+): Promise<{ url: string }> => {
+  const res = await post<APIResponse<{ url: string }>>('/billing/checkout', {
+    orgId,
+    plan,
+    successUrl,
+    cancelUrl,
+  });
+  if (!res.data.data?.url) throw new Error('Failed to create checkout session');
   return res.data.data;
 };

@@ -1,0 +1,1953 @@
+# Validiant — Master Product Plan (Refined)
+### Grounded Against the Actual Codebase — Every Reference Verified
+
+---
+
+## How to Read This Document
+
+Every file path, table name, type definition, route pattern, and component reference
+in this document has been verified against the live `validiant-v2` monorepo. Where the
+original plan made claims about "what already exists", those claims have been corrected.
+Where it proposed changes, the exact files that need to change are named.
+
+---
+
+## Executive Summary    
+
+Validiant-v2 is a Turborepo monorepo with five workspaces:
+
+| Workspace | Path | Technology | Purpose |
+|-----------|------|------------|---------|
+| `apps/web` | Next.js 14 (App Router) | Frontend dashboard | `www.validiant.in` |
+| `apps/api` | Hono on Cloudflare Workers | REST API | `api.validiant.in` |
+| `apps/mobile` | React Native (Expo) | Field agent app | Play Store / App Store |
+| `packages/shared` | TypeScript library | Types, schemas, utils | Shared across all apps |
+| `packages/ui` | React component library | Reusable UI primitives | Shared across web + mobile |
+| `packages/config` | Config files | ESLint, TS config | Shared config |
+
+**Core insight**: The Projects system must evolve from a fixed-schema task container into a
+**configurable data universe** where each project defines its own Types, Columns, and Records.
+Everything else (field portals, client portals, inbound APIs, analytics) cascades from that.
+
+---
+
+## Part 1 — Current State Audit (Ground Truth)
+
+### 1.1 What Actually Exists Today
+
+**Database (Drizzle ORM at `apps/api/src/db/schema.ts` — 1,439 lines):**
+
+| Table | Status | Notes |
+|-------|--------|-------|
+| `users` | ✅ Exists | OAuth (Google, GitHub), passkeys, preferences |
+| `passkey_credentials` | ✅ Exists | WebAuthn/FIDO2 |
+| `password_reset_tokens` | ✅ Exists | |
+| `email_verification_tokens` | ✅ Exists | |
+| `organizations` | ✅ Exists | Has `industry_type`, `auto_dispatch_verified`, `settings` JSONB |
+| `org_roles` | ✅ Exists | Custom role definitions per org |
+| `organization_members` | ✅ Exists | Roles: owner/admin/member/manager/executive/viewer + custom_role_id |
+| `organization_invitations` | ✅ Exists | Token-based invite flow |
+| `projects` | ✅ Exists | Has `theme_color`, `logo_url`, `is_api_enabled`, `auto_dispatch_verified`, `settings` JSONB |
+| `project_members` | ✅ Exists | Roles: owner/admin/member/viewer |
+| `tasks` | ✅ Exists | Has `status_key`, GPS fields, `custom_fields` JSONB, `case_id`, `verification_type_id` |
+| `task_assignees` | ✅ Exists | Multi-assignee join table |
+| `task_comments` | ✅ Exists | With mentions and attachments |
+| `verification_types` | ✅ Exists | Schema templates with `field_schema` JSONB array |
+| `field_schema_versions` | ✅ Exists | Version history per verification type |
+| `case_field_values` | ✅ Exists | EAV pattern: typed value storage per task/field |
+| `case_document_uploads` | ✅ Exists | With geo-tag, hash integrity, tamper detection |
+| `activity_logs` | ✅ Exists | With cryptographic hash chain (prev_hash, content_hash) |
+| `time_entries` | ✅ Exists | Start/stop timer per task |
+| `automations` | ✅ Exists | Trigger/condition/action workflow engine |
+| `notifications` | ✅ Exists | In-app with grouping, priority, metadata |
+| `push_tokens` | ✅ Exists | Mobile push registration |
+| `bgv_partners` | ✅ Exists | Partner keys, HMAC signing, IP allowlists |
+| `outbound_delivery_logs` | ✅ Exists | Webhook delivery tracking with retry |
+| `webhook_subscriptions` | ✅ Exists | Per-project webhook endpoints |
+| `client_api_keys` | ✅ Exists | Per-project API key hashes |
+| `org_analytics_snapshots` | ✅ Exists | Periodic org-level metrics |
+| `project_types` | ✅ Complete | RBAC aware |
+| `type_columns` | ✅ Complete | Visibility policies integrated |
+| `records` | ✅ Complete | GIN path_ops indexed |
+| `record_history` | ✅ Complete | Atomic diffs |
+| `org_sub_accounts` | ✅ Complete | |
+| `type_templates` | ✅ Complete | |
+
+**API Routes (Hono at `apps/api/src/app.ts` — 28 route modules mounted):**
+
+| Route | Mount Path | Status |
+|-------|-----------|--------|
+| Auth | `/api/v1/auth` | ✅ |
+| OAuth | `/api/v1/oauth` | ✅ |
+| Passkey | `/api/v1/passkey` | ✅ |
+| Users | `/api/v1/users` | ✅ |
+| Organizations | `/api/v1/organizations` | ✅ |
+| Projects | `/api/v1/projects` | ✅ |
+| Tasks | `/api/v1/tasks` | ✅ |
+| Analytics | `/api/v1/analytics` | ✅ |
+| Activity | `/api/v1/activity` | ✅ |
+| Comments | `/api/v1/comments` | ✅ |
+| Webhooks | `/api/v1/webhooks` | ✅ |
+| AI | `/api/v1/ai` | ✅ |
+| KYC | `/api/v1/kyc` | ✅ |
+| Geocode | `/api/v1/geocode` | ✅ |
+| Time Tracking | `/api/v1/time-tracking` | ✅ |
+| Notifications | `/api/v1/notifications` | ✅ |
+| Invoices | `/api/v1/invoices` | ✅ |
+| Search | `/api/v1/search` | ✅ |
+| Automations | `/api/v1/automations` | ✅ |
+| Backups | `/api/v1/backups` | ✅ |
+| SSO | `/api/v1/sso` | ✅ |
+| Verifications | `/api/v1/verifications` | ✅ |
+| Partners | `/api/v1/partners` | ✅ |
+| Inbound | `/api/v1/inbound` | ✅ (HMAC + partner key auth) |
+| CSV Import | `/api/v1/import/csv` | ✅ |
+| Realtime | `/api/v1/realtime` | ✅ (Durable Objects) |
+| Types CRUD | `/api/v1/projects/:id/types` | ✅ Complete |
+| Columns CRUD | `/api/v1/projects/:id/types/:typeId/columns` | ✅ Complete |
+| Records CRUD | `/api/v1/projects/:id/records` | ✅ Complete |
+| Ingest (new) | `/api/v1/ingest/:projectKey` | ✅ Complete |
+| Sub-accounts | `/api/v1/orgs/:id/sub-accounts` | ✅ Complete |
+
+**Frontend Pages (Next.js App Router at `apps/web/src/app/(workspace)/[orgSlug]/`):**
+
+| Page | Path | Status |
+|------|------|--------|
+| Dashboard | `dashboard/page.tsx` | ✅ |
+| Projects List | `projects/page.tsx` | ✅ (Grid of project cards with status, priority, progress) |
+| Project Detail | `projects/[id]/page.tsx` | ✅ ("Command Center" with 7 tabs) |
+| Tasks | `tasks/page.tsx` | ✅ |
+| Cases | `cases/` | ✅ |
+| Settings | `settings/` | ✅ (general, members, roles, branding, integrations, audit, infra, config) |
+| Analytics | `analytics/` | ✅ |
+| Field | `field/` | ✅ (Existing field worker view) |
+| Notifications | `notifications/` | ✅ |
+| Search | `search/` | ✅ |
+| Infra | `infra/` | ✅ |
+| Profile | `profile/` | ✅ |
+
+**Project Detail Tabs (at `apps/web/src/app/(workspace)/[orgSlug]/projects/[id]/page.tsx`):**
+
+Current TABS array (line 47-55):
+```typescript
+const TABS = [
+  { id: 'data', label: 'Data Explorer', icon: Database },       // DataExplorerTab
+  { id: 'map', label: 'Live Map', icon: MapIcon },               // RoutingMapTab
+  { id: 'workflow', label: 'Workflow Builder', icon: GitMerge },  // WorkflowBuilderTab
+  { id: 'automations', label: 'Automations', icon: Puzzle },     // AutomationsTab
+  { id: 'analytics', label: 'Analytics', icon: LineChart },      // AnalyticsTab
+  { id: 'audit', label: 'Audit Log', icon: ShieldAlert },        // ActivityLogTab
+  { id: 'settings', label: 'Settings', icon: Settings },         // SettingsTab
+];
+```
+
+**Shared Types (at `packages/shared/src/types/`):**
+
+| File | Key Exports |
+|------|-------------|
+| `project.types.ts` | `Project`, `Task`, `ProjectSettings`, `CustomField`, `CustomFieldType` (TEXT/NUMBER/DATE/SELECT/MULTISELECT/CHECKBOX/URL only) |
+| `task.types.ts` | `TaskStatus`, `TaskPriority`, `FieldSchema`, `VerificationType`, `VerificationTask` |
+| `organization.types.ts` | `Organization`, `OrganizationMemberRole` (OWNER/ADMIN/MEMBER/GUEST), `OrganizationRole` (owner/admin/manager/executive/viewer), `SubscriptionTier`, `SUBSCRIPTION_LIMITS` |
+| `user.types.ts` | `User`, `UserRole` (superadmin/admin/user), `UserPreferences` |
+| `notification.types.ts` | `NotificationType` (21 event types), `NotificationChannel` (IN_APP/EMAIL/PUSH/SMS) |
+| `api.types.ts` | API response wrappers |
+| `time-tracking.types.ts` | Time entry types |
+
+**Permissions (at `packages/shared/src/permissions.ts`):**
+
+- 41 permission keys defined across org/user/task/kyc/audit/feature/billing/api/project/app/infra/csv/field scopes
+- Platform roles: superadmin (all), admin (22 perms), user (5 perms)
+- Org roles: owner (all), admin (26), manager (14), executive (10), viewer (4)
+- **Missing**: No `field_agent`, `client_viewer`, or `partner` permissions defined
+
+**What the Existing `verification_types` + `case_field_values` System Already Does:**
+
+This is critical. The codebase already HAS a proto-schema engine:
+- `verification_types` defines a named type with a `field_schema` JSONB array of `FieldSchema` objects
+- Each `FieldSchema` has: `fieldKey`, `label`, `type` (text/textarea/boolean/photo-request/signature/pdf-upload/number)
+- `case_field_values` stores actual data in an EAV pattern with typed columns: `value_text`, `value_number`, `value_date`, `value_boolean`, `value_json`
+- `case_document_uploads` handles file uploads with integrity hashing and geo-tagging
+
+**This means the new Types/Columns/Records system should EVOLVE from this existing pattern, not replace it from scratch.** The `verification_types` → `project_types` migration is a rename + enhancement, not a greenfield build.
+
+### 1.2 Key Corrections to the Original Plan
+
+| Original Claim | Reality | Impact on Plan |
+|----------------|---------|----------------|
+| "project.types.ts defines progress field" | ✅ Correct — `progress: number` on `Project` interface | None |
+| "project has autoDispatchVerified, themeColor, logoUrl" | ✅ Exists on the `projects` DB table, but NOT on the shared `Project` interface — the DB schema has them, the TS type doesn't expose all | Schema tab's project settings need to read from DB fields, not just the TS type |
+| "notification.types.ts already exists" | ✅ Correct — 21 notification types, 4 channels | Can extend, not create from scratch |
+| "customFields: CustomFieldValue[]" is an afterthought | ✅ Correct — `customFields` is `JSONB` on tasks table | The EAV `case_field_values` table is the real field engine already |
+| "No SLA engine" | ⚠️ Partially wrong — tasks already have `sla_at_risk_notified` and `sla_breached_notified` columns, and `verification_types` has `sla_override_hours` | Extend existing SLA columns, don't build from zero |
+| "Sub-accounts stored in Supabase auth.users" | ❌ Wrong — Validiant uses Neon PostgreSQL via Drizzle, not Supabase. Auth is custom JWT-based (see `auth.service.ts`, `auth.controller.ts`) | Sub-accounts stored in `users` table with metadata, or a dedicated `org_sub_accounts` table |
+| "Supabase Realtime subscriptions" | ❌ Wrong — Validiant uses Cloudflare Durable Objects for real-time (see `wrangler.toml` line 26-28, `RealtimeRoom` class) | Real-time via Durable Objects WebSocket, not Supabase channels |
+| "Supabase Storage for file upload" | ❌ Wrong — Validiant uses Cloudflare R2 (see `wrangler.toml` BACKUP_BUCKET binding, `storage.service.ts`) | File uploads via R2 or existing upload flow |
+| "SQL CREATE TABLE" syntax in plan | ❌ Misleading — schema changes are Drizzle ORM table definitions in `schema.ts`, not raw SQL | All schema changes are Drizzle `pgTable()` definitions |
+| "POST https://api.validiant.io/v1/ingest/{projectKey}" | ⚠️ Close — actual domain is `api.validiant.in` (see `wrangler.toml` route) | Use `api.validiant.in` not `api.validiant.io` |
+| "portal.validiant.io" for client portal | ❌ No such domain exists | Client portal will be a route under the main web app or a subdomain to be configured |
+
+---
+
+## Part 2 — The Schema Engine Architecture
+
+### 2.1 The Data Hierarchy (Corrected)
+
+```
+Organization (existing: `organizations` table)
+└── Project (existing: `projects` table)
+    ├── Project API Key (existing: `client_api_keys` table — rename/enhance to `project_api_keys`)
+    ├── Types  ← NEW (evolve from `verification_types`)
+    │   ├── Type: "Identity Verification"
+    │   │   └── Columns: [Applicant Name, Aadhaar, DOB, ...]  ← NEW (evolve from `field_schema` JSONB)
+    │   ├── Type: "Address Check"
+    │   │   └── Columns: [Resident Name, Address, ...]
+    │   └── Type: "Employment Check"
+    │       └── Columns: [Company Name, HR Contact, ...]
+    ├── Records  ← NEW (evolve from `tasks` + `case_field_values`)
+    ├── Members  (existing: `project_members` table)
+    └── Settings (existing: `projects.settings` JSONB)
+```
+
+### 2.2 Migration Strategy: Evolve, Don't Replace
+
+**Phase approach to avoid breaking changes:**
+
+1. **Create NEW tables** (`project_types`, `type_columns`, `records`, `record_history`) alongside existing tables
+2. **Keep existing `tasks` and `verification_types` tables** working during transition
+3. **Data migration script**: Copy `verification_types` → `project_types`, `field_schema` fields → `type_columns` rows
+4. **Dual-mode support**: Projects can use either Tasks (legacy) or Records (new) — controlled by a `dataMode: 'tasks' | 'records' | 'hybrid'` field in `projects.settings`
+5. **Deprecate** Tasks-only mode after all orgs have migrated
+
+### 2.3 New Drizzle Schema Additions
+
+Add to `apps/api/src/db/schema.ts`:
+
+```typescript
+// ============================================================================
+// PROJECT TYPES (Schema Definitions — evolves from verification_types)
+// ============================================================================
+
+export const projectTypes = pgTable('project_types', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  icon: text('icon'),          // Emoji or Lucide icon key
+  color: text('color'),
+  order: integer('order').default(0),
+  settings: jsonb('settings').default({}),
+  // Settings schema: { requiredFields: string[], slaHours?: number,
+  //   gpsRequired: boolean, allowedCreators: ('admin'|'member'|'field_agent')[] }
+  createdBy: uuid('created_by').references(() => users.id),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+}, (table) => ({
+  projectIdx: index('project_types_project_id_idx').on(table.projectId),
+  projectNameUnique: unique('project_types_project_name_unique').on(table.projectId, table.name),
+}));
+
+// ============================================================================
+// TYPE COLUMNS (Field Definitions — evolves from field_schema JSONB)
+// ============================================================================
+
+export const typeColumns = pgTable('type_columns', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  typeId: uuid('type_id').notNull()
+    .references(() => projectTypes.id, { onDelete: 'cascade' }),
+  projectId: uuid('project_id').notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),          // Display name
+  key: text('key').notNull(),            // Programmatic key (snake_case)
+  columnType: text('column_type').notNull(), // See ColumnType enum below
+  options: jsonb('options'),             // For SELECT/MULTI_SELECT: { choices: [{value, label, color}] }
+  settings: jsonb('settings').default({}),
+  // Settings schema: { required: boolean, visibleTo: string[], editableBy: string[],
+  //   showInList: boolean, showInCard: boolean, showInMobile: boolean,
+  //   defaultValue: any, hint: string, validation: {} }
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  typeIdx: index('type_columns_type_id_idx').on(table.typeId),
+  projectIdx: index('type_columns_project_id_idx').on(table.projectId),
+  typeKeyUnique: unique('type_columns_type_key_unique').on(table.typeId, table.key),
+}));
+
+// ============================================================================
+// RECORDS (Data Rows — next-gen of tasks + case_field_values)
+// ============================================================================
+
+export const records = pgTable('records', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  typeId: uuid('type_id').notNull()
+    .references(() => projectTypes.id),
+  number: integer('number').notNull(),   // Auto-incremented per project (app-level, not DB SERIAL)
+  displayId: text('display_id'),          // e.g. "BGV-0042" (computed: project.key + "-" + number)
+  data: jsonb('data').notNull().default({}), // Column key → value mapping
+  status: text('status').notNull().default('pending'),
+  assignedTo: uuid('assigned_to').references(() => users.id),
+  createdBy: uuid('created_by').references(() => users.id),
+  createdVia: text('created_via').default('web'), // 'web' | 'mobile' | 'api' | 'csv_import'
+  clientId: text('client_id'),           // For client portal filtering
+  
+  // GPS capture
+  gpsLat: real('gps_lat'),
+  gpsLng: real('gps_lng'),
+  gpsAccuracy: real('gps_accuracy'),
+  
+  // Lifecycle timestamps
+  submittedAt: timestamp('submitted_at', { mode: 'date', withTimezone: true }),
+  closedAt: timestamp('closed_at', { mode: 'date', withTimezone: true }),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
+}, (table) => ({
+  projectIdx: index('records_project_id_idx').on(table.projectId),
+  typeIdx: index('records_type_id_idx').on(table.typeId),
+  assigneeIdx: index('records_assigned_to_idx').on(table.assignedTo),
+  statusIdx: index('records_status_idx').on(table.status),
+  clientIdx: index('records_client_id_idx').on(table.clientId),
+  projectNumberUnique: unique('records_project_number_unique').on(table.projectId, table.number),
+}));
+
+// ============================================================================
+// RECORD HISTORY (Immutable Audit Trail)
+// ============================================================================
+
+export const recordHistory = pgTable('record_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  recordId: uuid('record_id').notNull()
+    .references(() => records.id, { onDelete: 'cascade' }),
+  changedBy: uuid('changed_by').references(() => users.id),
+  changeType: text('change_type').notNull(), // 'created' | 'updated' | 'status_changed' | 'assigned' | 'comment'
+  diff: jsonb('diff'),                       // { field: { old: x, new: y } }
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  recordIdx: index('record_history_record_id_idx').on(table.recordId),
+  changedByIdx: index('record_history_changed_by_idx').on(table.changedBy),
+}));
+
+// ============================================================================
+// ORG SUB-ACCOUNTS (Field Agents, Client Viewers, Partners)
+// ============================================================================
+
+export const orgSubAccounts = pgTable('org_sub_accounts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  orgId: uuid('org_id').notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' }),  // Links to actual user account
+  accountType: text('account_type').notNull(),  // 'field_agent' | 'client_viewer' | 'partner'
+  name: text('name').notNull(),
+  email: text('email'),
+  phone: text('phone'),
+  projectAccess: jsonb('project_access').default([]),  // Array of { projectId, role }
+  isActive: boolean('is_active').default(true),
+  createdBy: uuid('created_by').references(() => users.id),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+}, (table) => ({
+  orgIdx: index('org_sub_accounts_org_id_idx').on(table.orgId),
+  userIdx: index('org_sub_accounts_user_id_idx').on(table.userId),
+}));
+
+// ============================================================================
+// TYPE TEMPLATES (Reusable Schemas)
+// ============================================================================
+
+export const typeTemplates = pgTable('type_templates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  orgId: uuid('org_id').references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  industry: text('industry'),
+  typeDefinition: jsonb('type_definition').notNull(),
+  // Schema: { typeName, typeIcon, typeColor, columns: [{name, key, columnType, options, settings}] }
+  isPublic: boolean('is_public').default(false),
+  createdBy: uuid('created_by').references(() => users.id),
+  createdAt: timestamp('created_at', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
+}, (table) => ({
+  orgIdx: index('type_templates_org_id_idx').on(table.orgId),
+  industryIdx: index('type_templates_industry_idx').on(table.industry),
+}));
+```
+
+### 2.4 Column Types Enum
+
+Add to `packages/shared/src/types/project.types.ts` (or a new `record.types.ts`):
+
+```typescript
+export enum ColumnType {
+  TEXT = 'text',
+  LONG_TEXT = 'long_text',
+  NUMBER = 'number',
+  CURRENCY = 'currency',
+  DATE = 'date',
+  DATE_RANGE = 'date_range',
+  SELECT = 'select',
+  MULTI_SELECT = 'multi_select',
+  CHECKBOX = 'checkbox',
+  FILE_UPLOAD = 'file_upload',
+  PHOTO_CAPTURE = 'photo_capture',
+  GPS_LOCATION = 'gps_location',
+  SIGNATURE = 'signature',
+  BARCODE_SCAN = 'barcode_scan',
+  PHONE = 'phone',
+  EMAIL = 'email',
+  URL = 'url',
+  PERSON = 'person',
+  RELATION = 'relation',
+  FORMULA = 'formula',
+  RATING = 'rating',
+  STATUS = 'status',
+  TIMER = 'timer',
+}
+```
+
+**Phase 1 (MVP) column types**: TEXT, LONG_TEXT, NUMBER, DATE, SELECT, MULTI_SELECT, CHECKBOX, FILE_UPLOAD, PHONE, EMAIL, URL, STATUS, PERSON
+**Phase 2 additions**: PHOTO_CAPTURE, GPS_LOCATION, SIGNATURE, RATING
+**Phase 3+ additions**: CURRENCY, DATE_RANGE, BARCODE_SCAN, RELATION, FORMULA, TIMER
+
+### 2.5 Shared Type Definitions
+
+Add new file `packages/shared/src/types/record.types.ts`:
+
+```typescript
+export interface ProjectType {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  order: number;
+  settings: ProjectTypeSettings;
+  createdBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProjectTypeSettings {
+  requiredFields?: string[];
+  slaHours?: number;
+  gpsRequired?: boolean;
+  allowedCreators?: ('admin' | 'member' | 'field_agent')[];
+}
+
+export interface TypeColumn {
+  id: string;
+  typeId: string;
+  projectId: string;
+  name: string;
+  key: string;
+  columnType: ColumnType;
+  options?: ColumnOptions;
+  settings: ColumnSettings;
+  order: number;
+  createdAt: Date;
+}
+
+export interface ColumnOptions {
+  choices?: { value: string; label: string; color?: string }[];
+  // For RELATION: { targetProjectId, targetTypeId }
+  // For FORMULA: { expression: string }
+  // For CURRENCY: { currency: 'INR' | 'USD' | ... }
+  // For RATING: { max: number }
+}
+
+export interface ColumnSettings {
+  required?: boolean;
+  visibleTo?: ('admin' | 'member' | 'field_agent' | 'client_portal')[];
+  editableBy?: ('admin' | 'member')[];
+  showInList?: boolean;
+  showInCard?: boolean;
+  showInMobile?: boolean;
+  defaultValue?: unknown;
+  hint?: string;
+  validation?: { [rule: string]: unknown };
+}
+
+/**
+ * ⚠️ IMPORTANT: Named `ProjectRecord` (not `Record`) to avoid collision with
+ * the built-in TypeScript `Record<K, V>` utility type. Use `ProjectRecord`
+ * everywhere in application code — `Record` would cause subtle generic-type
+ * inference failures that are extremely hard to trace.
+ */
+export interface ProjectRecord {
+  id: string;
+  projectId: string;
+  typeId: string;
+  number: number;
+  displayId: string;
+  data: { [columnKey: string]: unknown };  // Column key → value
+  status: string;
+  assignedTo?: string;
+  createdBy?: string;
+  createdVia: 'web' | 'mobile' | 'api' | 'csv_import';
+  clientId?: string;
+  gpsLat?: number;
+  gpsLng?: number;
+  gpsAccuracy?: number;
+  submittedAt?: Date;
+  closedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface RecordHistory {
+  id: string;
+  recordId: string;
+  changedBy?: string;
+  changeType: 'created' | 'updated' | 'status_changed' | 'assigned' | 'comment';
+  diff?: { [field: string]: { old: unknown; new: unknown } };
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: Date;
+}
+
+export interface TypeTemplate {
+  id: string;
+  orgId?: string;
+  name: string;
+  description?: string;
+  industry?: string;
+  typeDefinition: {
+    typeName: string;
+    typeIcon?: string;
+    typeColor?: string;
+    columns: Omit<TypeColumn, 'id' | 'typeId' | 'projectId' | 'createdAt'>[];
+  };
+  isPublic: boolean;
+  createdBy?: string;
+  createdAt: Date;
+}
+
+export interface OrgSubAccount {
+  id: string;
+  orgId: string;
+  userId?: string;
+  accountType: 'field_agent' | 'client_viewer' | 'partner';
+  name: string;
+  email?: string;
+  phone?: string;
+  projectAccess: { projectId: string; role: string }[];
+  isActive: boolean;
+  createdBy?: string;
+  createdAt: Date;
+}
+```
+
+Update `packages/shared/src/types/index.ts` to export the new file:
+```typescript
+export * from './record.types';
+```
+
+---
+
+## Part 3 — Identity & Access Layer
+
+### 3.1 Corrected User Model
+
+The existing system already has:
+- **Platform-level roles** (UserRole): `superadmin`, `admin`, `user`
+- **Org-level roles** (OrganizationRole): `owner`, `admin`, `manager`, `executive`, `viewer`
+- **Project-level roles** (ProjectMemberRole): `admin`, `member`, `viewer`
+
+What needs to be **added**:
+
+| Role | Scope | Where to store | Access pattern |
+|------|-------|----------------|----------------|
+| `field_agent` | Per-org, per-project | `org_sub_accounts` table + linked `users` record | Sees only assigned records via field portal |
+| `client_viewer` | Per-org, per-project | `org_sub_accounts` table + optional `users` record | Token-gated read-only portal |
+| `partner` | Per-org | `org_sub_accounts` table + linked `users` record | Limited API access to specific projects |
+
+### 3.2 Permission Additions
+
+Add to `packages/shared/src/permissions.ts`:
+
+```typescript
+// Add to PermissionKey array:
+'record:read',
+'record:create',
+'record:update',
+'record:delete',
+'record:submit',        // Field agent submits a record
+'schema:read',
+'schema:create',
+'schema:update',
+'schema:delete',
+'sub_account:read',
+'sub_account:create',
+'sub_account:manage',
+'portal:access',        // Access field agent portal
+'portal:client_access', // Access client portal
+```
+
+Add new org role permission sets:
+```typescript
+field_agent: ['org:read', 'record:read', 'record:submit', 'portal:access'],
+client_viewer: ['org:read', 'record:read', 'portal:client_access'],
+```
+
+### 3.3 Auth Flow for Sub-Accounts
+
+The authentication flow routes through the existing `apps/api/src/services/auth.service.ts` and `apps/api/src/controllers/auth.controller.ts`.
+
+**Field Agent invite flow:**
+1. Admin calls `POST /api/v1/orgs/:orgId/sub-accounts` with `{ accountType: 'field_agent', name, phone, email, projectAccess }`
+2. Backend creates a `users` record with `role: 'user'` + an `org_sub_accounts` record with `accountType: 'field_agent'`
+3. Backend sends activation link via email (existing `email.service.ts`)
+4. Agent clicks link → sets password → auto-logged in
+5. Middleware checks `org_sub_accounts` on login → routes to field portal if `accountType === 'field_agent'`
+
+**Client Viewer flow:**
+1. Admin calls `POST /api/v1/orgs/:orgId/sub-accounts` with `{ accountType: 'client_viewer', clientId, name, email, projectAccess }`
+2. Backend generates a unique portal token (stored hashed in `org_sub_accounts` metadata)
+3. Client accesses `https://www.validiant.in/portal/client/:orgSlug/:token` ← **path-based, NOT a subdomain**
+4. Token maps to `org_sub_accounts` → renders read-only record view filtered by `clientId`
+
+> **Decision: Path-based portal routing (locked in)**
+>
+> The client portal is a path under the existing Vercel-hosted web app:
+> `https://www.validiant.in/portal/client/:orgSlug/:token`
+>
+> Rationale: The web app is deployed on Vercel. A subdomain (e.g. `portal.validiant.in`)
+> would require additional DNS CNAME records, a separate Vercel project or rewrite rules,
+> and complicates the deployment pipeline. A path-based approach (`/portal/...`) works
+> with the existing Next.js App Router — just add pages under `apps/web/src/app/portal/`.
+> The field agent portal follows the same pattern: `/portal/field/...`.
+>
+> If a dedicated subdomain is needed later (e.g. for white-labeling), it can be added
+> via Vercel's domain aliases feature without changing the route structure.
+
+---
+
+## Part 4 — Frontend Architecture Changes
+
+### 4.1 Project Detail Page — New Tabs
+
+**File**: `apps/web/src/app/(workspace)/[orgSlug]/projects/[id]/page.tsx`
+
+Add two new tabs to the TABS array:
+
+```typescript
+const TABS = [
+  { id: 'records', label: 'Records', icon: Table2 },         // NEW — primary data view
+  { id: 'schema', label: 'Schema', icon: Columns3 },         // NEW — type/column builder
+  { id: 'data', label: 'Data Explorer', icon: Database },     // Existing — legacy tasks view
+  { id: 'map', label: 'Live Map', icon: MapIcon },
+  { id: 'workflow', label: 'Workflow Builder', icon: GitMerge },
+  { id: 'automations', label: 'Automations', icon: Puzzle },
+  { id: 'analytics', label: 'Analytics', icon: LineChart },
+  { id: 'audit', label: 'Audit Log', icon: ShieldAlert },
+  { id: 'settings', label: 'Settings', icon: Settings },
+];
+```
+
+### 4.2 New Components to Create
+
+**Directory**: `apps/web/src/app/(workspace)/[orgSlug]/projects/[id]/components/`
+
+| Component | Description | Priority |
+|-----------|-------------|----------|
+| `RecordsTab.tsx` | Type switcher + view mode selector + data table/kanban/cards | Phase 1 |
+| `SchemaBuilderTab.tsx` | Type list panel + column editor | Phase 1 |
+| `RecordSlideOver.tsx` | Full record form with all field types, audit trail, comments | Phase 1 |
+| `ColumnEditorSlideOver.tsx` | Column type picker, settings form | Phase 1 |
+| `TypeEditorModal.tsx` | Create/edit Type name, icon, color, settings | Phase 1 |
+| `RecordKanbanView.tsx` | Drag-and-drop Kanban by STATUS column | Phase 5 |
+| `RecordMapView.tsx` | Records plotted on map (extend existing `RoutingMapTab`) | Phase 5 |
+| `RecordCardView.tsx` | Grid of card tiles showing key fields | Phase 5 |
+
+### 4.3 Projects List Page Enhancements
+
+**File**: `apps/web/src/app/(workspace)/[orgSlug]/projects/page.tsx`
+
+#### 4.3.1 Project Card Additions
+
+Add to each project card (inside the `projects.map()` at line 236):
+- Type pills showing project's defined Types (requires fetching types per project via `GET /projects/:id/types`)
+- Record count badge (instead of just task count)
+- API key indicator (green dot if `is_api_enabled` is true — this field exists on the projects table)
+- Last record timestamp
+
+#### 4.3.2 Filter Bar & View Switcher (New Component)
+
+**New file**: `apps/web/src/app/(workspace)/[orgSlug]/projects/ProjectsToolbar.tsx`
+
+Add a toolbar above the project cards grid with:
+
+| Control | Type | URL Param | Default |
+|---------|------|-----------|--------|
+| Status filter | Multi-select dropdown | `?status=active,planning` | All statuses shown |
+| Priority filter | Multi-select dropdown | `?priority=high,urgent` | All priorities shown |
+| Sort | Single-select dropdown | `?sort=name` \| `updatedAt` \| `createdAt` \| `progress` | `updatedAt` |
+| Sort direction | Toggle button | `?dir=asc` \| `desc` | `desc` |
+| View mode | Icon toggle (Grid / List) | `?view=grid` \| `list` | `grid` |
+| Search | Text input with debounce | `?q=search+term` | Empty |
+
+**URL synchronization**: All filter/sort/view state is persisted in URL search params via
+`useSearchParams()` from `next/navigation`. This means:
+- Filters survive page refresh
+- Users can share filtered views via URL
+- Browser back/forward works correctly
+
+**Implementation approach**:
+1. Create `ProjectsToolbar.tsx` with the controls above
+2. Use `useRouter().replace()` with updated `searchParams` on each filter change (no page reload)
+3. In the main `ProjectsPage` component, read `searchParams` and apply client-side filtering/sorting
+   to the `projects` array before rendering
+4. The `STATUS_STYLES` and `PRIORITY_STYLES` maps (already at lines 19-51) provide the visual tokens
+
+**List view** renders projects as horizontal rows instead of cards, showing:
+`Name | Status | Priority | Types (pills) | Records | Progress | Last Updated`
+
+### 4.4 Field Agent Portal
+
+**New route**: `apps/web/src/app/portal/field/page.tsx`
+
+This is a separate layout (NOT under the `(workspace)` group) with:
+- Mobile-first responsive design
+- Only shows assigned records for the logged-in field agent
+- Each record opens as a form with only `showInMobile: true` columns
+- GPS auto-capture on form open
+- Camera-based photo upload
+- Submit button with validation
+
+### 4.5 Client Portal
+
+**New route**: `apps/web/src/app/portal/client/[orgSlug]/[token]/page.tsx`
+
+A public/semi-public page with:
+- Token-based authentication (no login required)
+- Branded with org/project logos from `projects.logo_url` and `organizations.logo_url`
+- Read-only record list filtered by `client_id`
+- Status timeline per record
+- PDF export button
+
+---
+
+## Part 5 — Backend API Changes
+
+### 5.1 New API Route Modules
+
+Create in `apps/api/src/routes/`:
+
+| File | Routes | Auth |
+|------|--------|------|
+| `types.routes.ts` | `GET/POST /projects/:id/types`, `GET/PUT/DELETE /projects/:id/types/:typeId` | JWT + project member |
+| `columns.routes.ts` | `GET/POST /projects/:id/types/:typeId/columns`, `PUT/DELETE /projects/:id/types/:typeId/columns/:colId` | JWT + project admin |
+| `records.routes.ts` | `GET/POST /projects/:id/records`, `GET/PUT /projects/:id/records/:recordId`, `GET /projects/:id/records/:recordId/history` | JWT + project member |
+| `ingest.routes.ts` (enhance existing) | `POST /ingest/:projectKey` | API key auth (not JWT) |
+| `sub-accounts.routes.ts` | `GET/POST /orgs/:id/sub-accounts`, `PUT/DELETE /orgs/:id/sub-accounts/:subId` | JWT + org admin |
+| `templates.routes.ts` | `GET/POST /type-templates`, `GET /type-templates/:id` | JWT |
+| `portal.routes.ts` | `GET /portal/:orgSlug/:token/records` | Token auth |
+
+### 5.2 New Service Modules
+
+Create in `apps/api/src/services/`:
+
+| File | Responsibilities |
+|------|------------------|
+| `types.service.ts` | CRUD for project_types, validation, ordering |
+| `columns.service.ts` | CRUD for type_columns, type validation, migration from verification_types |
+| `records.service.ts` | CRUD for records, auto-number generation, data validation against column schema, history logging |
+| `sub-accounts.service.ts` | CRUD for org_sub_accounts, invite flow integration |
+| `templates.service.ts` | CRUD for type_templates, snapshot current type as template |
+
+### 5.3 New Controller Modules
+
+Create in `apps/api/src/controllers/`:
+
+| File |
+|------|
+| `types.controller.ts` |
+| `columns.controller.ts` |
+| `records.controller.ts` |
+| `sub-accounts.controller.ts` |
+| `templates.controller.ts` |
+| `portal.controller.ts` |
+
+### 5.4 Route Registration
+
+Add to `apps/api/src/app.ts` in the routes section (after line 322):
+
+```typescript
+import typesRoutes from './routes/types.routes';
+import columnsRoutes from './routes/columns.routes';
+import recordsRoutes from './routes/records.routes';
+import subAccountsRoutes from './routes/sub-accounts.routes';
+import templatesRoutes from './routes/templates.routes';
+import portalRoutes from './routes/portal.routes';
+
+// Mount new routes
+app.route('/api/v1/projects', typesRoutes);       // /projects/:id/types
+app.route('/api/v1/projects', columnsRoutes);      // /projects/:id/types/:typeId/columns
+app.route('/api/v1/projects', recordsRoutes);      // /projects/:id/records
+app.route('/api/v1/orgs', subAccountsRoutes);      // /orgs/:id/sub-accounts
+app.route('/api/v1/type-templates', templatesRoutes);
+app.route('/api/v1/portal', portalRoutes);         // Public portal access
+```
+
+Add `/api/v1/portal` and `/api/v1/ingest` to the `publicPaths` array (line 213).
+
+### 5.5 Inbound API Enhancement
+
+The existing inbound route at `apps/api/src/routes/inbound.routes.ts` uses `bgv_partners` for auth. The new project-level inbound API should:
+
+1. Add a NEW route: `POST /api/v1/ingest/:projectKey`
+2. Auth via `client_api_keys` (existing table) or enhanced `project_api_keys`
+3. Map incoming JSON to a `project_type`'s column schema
+4. Create a `record` with `created_via: 'api'`
+5. Fire automations (`automations` table) matching trigger `RECORD_CREATED_VIA_API`
+
+**Keep the existing `/api/v1/inbound/:partnerKey/cases` route for backward compatibility.**
+
+### 5.6 Real-time Updates
+
+Use the existing Cloudflare Durable Objects infrastructure:
+- `RealtimeRoom` class (see `apps/api/src/durable-objects/`)
+- Subscribe to: `project:{projectId}:records` channel
+- Events: `record:created`, `record:updated`, `record:status_changed`
+- Frontend subscribes via the existing realtime hook pattern
+
+### 5.7 Frontend Service Layer Specification
+
+The frontend follows a strict **3-layer pattern** established in the existing codebase:
+
+```
+lib/api.ts (Axios wrappers: get, post, patch, del)
+  └─> services/*.service.ts (domain-specific fetch functions)
+       └─> hooks/use*.ts (React Query hooks with cache invalidation)
+            └─> lib/query-keys.ts (centralized cache key factory)
+```
+
+#### 5.7.1 Query Key Factory Additions
+
+**File**: `apps/web/src/lib/query-keys.ts`
+
+Add to the `queryKeys` object:
+
+```typescript
+// Project Types (Schema)
+projectTypes: {
+  all: ['projectTypes'] as const,
+  byProject: (projectId: string) =>
+    [...queryKeys.projectTypes.all, 'list', { projectId }] as const,
+  detail: (typeId: string) =>
+    [...queryKeys.projectTypes.all, 'detail', typeId] as const,
+},
+
+// Type Columns
+typeColumns: {
+  all: ['typeColumns'] as const,
+  byType: (typeId: string) =>
+    [...queryKeys.typeColumns.all, 'list', { typeId }] as const,
+  detail: (columnId: string) =>
+    [...queryKeys.typeColumns.all, 'detail', columnId] as const,
+},
+
+// Records
+records: {
+  all: ['records'] as const,
+  byProject: (projectId: string, filters?: unknown) =>
+    filters
+      ? ([...queryKeys.records.all, 'list', { projectId }, filters] as const)
+      : ([...queryKeys.records.all, 'list', { projectId }] as const),
+  detail: (recordId: string) =>
+    [...queryKeys.records.all, 'detail', recordId] as const,
+  history: (recordId: string) =>
+    [...queryKeys.records.detail(recordId), 'history'] as const,
+},
+```
+
+#### 5.7.2 Service Files
+
+All services follow the same pattern as the existing `project.service.ts`:
+- Import `{ get, post, patch, del }` from `@/lib/api`
+- Import `type { APIResponse }` from `@/lib/api`
+- Import shared types from `@validiant/shared`
+- Return unwrapped data (not the Axios response envelope)
+
+**File: `apps/web/src/services/types.service.ts`**
+
+```typescript
+import { get, post, patch, del } from '@/lib/api';
+import type { APIResponse } from '@/lib/api';
+import type { ProjectType, CreateProjectTypeData, UpdateProjectTypeData } from '@validiant/shared';
+
+export const getProjectTypes = async (projectId: string): Promise<ProjectType[]> =>
+  get<APIResponse<{ types: ProjectType[] }>>(
+    `/projects/${projectId}/types`
+  ).then((res) => res.data.data?.types ?? []);
+
+export const getProjectTypeById = async (projectId: string, typeId: string): Promise<ProjectType> =>
+  get<APIResponse<{ type: ProjectType }>>(
+    `/projects/${projectId}/types/${typeId}`
+  ).then((res) => {
+    if (!res.data.data?.type) throw new Error('Type not found');
+    return res.data.data.type;
+  });
+
+export const createProjectType = async (
+  projectId: string, payload: CreateProjectTypeData
+): Promise<ProjectType> =>
+  post<APIResponse<{ type: ProjectType }>>(
+    `/projects/${projectId}/types`, payload
+  ).then((res) => {
+    if (!res.data.data?.type) throw new Error('Type creation failed');
+    return res.data.data.type;
+  });
+
+export const updateProjectType = async (
+  projectId: string, typeId: string, data: UpdateProjectTypeData
+): Promise<ProjectType> =>
+  patch<APIResponse<{ type: ProjectType }>>(
+    `/projects/${projectId}/types/${typeId}`, data
+  ).then((res) => {
+    if (!res.data.data?.type) throw new Error('Update failed');
+    return res.data.data.type;
+  });
+
+export const deleteProjectType = async (projectId: string, typeId: string): Promise<void> =>
+  del(`/projects/${projectId}/types/${typeId}`).then(() => undefined);
+```
+
+**File: `apps/web/src/services/columns.service.ts`**
+
+```typescript
+import { get, post, patch, del } from '@/lib/api';
+import type { APIResponse } from '@/lib/api';
+import type { TypeColumn, CreateTypeColumnData, UpdateTypeColumnData } from '@validiant/shared';
+
+export const getTypeColumns = async (projectId: string, typeId: string): Promise<TypeColumn[]> =>
+  get<APIResponse<{ columns: TypeColumn[] }>>(
+    `/projects/${projectId}/types/${typeId}/columns`
+  ).then((res) => res.data.data?.columns ?? []);
+
+export const createTypeColumn = async (
+  projectId: string, typeId: string, payload: CreateTypeColumnData
+): Promise<TypeColumn> =>
+  post<APIResponse<{ column: TypeColumn }>>(
+    `/projects/${projectId}/types/${typeId}/columns`, payload
+  ).then((res) => {
+    if (!res.data.data?.column) throw new Error('Column creation failed');
+    return res.data.data.column;
+  });
+
+export const updateTypeColumn = async (
+  projectId: string, typeId: string, columnId: string, data: UpdateTypeColumnData
+): Promise<TypeColumn> =>
+  patch<APIResponse<{ column: TypeColumn }>>(
+    `/projects/${projectId}/types/${typeId}/columns/${columnId}`, data
+  ).then((res) => {
+    if (!res.data.data?.column) throw new Error('Update failed');
+    return res.data.data.column;
+  });
+
+export const deleteTypeColumn = async (
+  projectId: string, typeId: string, columnId: string
+): Promise<void> =>
+  del(`/projects/${projectId}/types/${typeId}/columns/${columnId}`).then(() => undefined);
+
+export const reorderColumns = async (
+  projectId: string, typeId: string, columnIds: string[]
+): Promise<void> =>
+  post(`/projects/${projectId}/types/${typeId}/columns/reorder`, { columnIds })
+    .then(() => undefined);
+```
+
+**File: `apps/web/src/services/records.service.ts`**
+
+```typescript
+import { get, post, patch } from '@/lib/api';
+import type { APIResponse } from '@/lib/api';
+import type {
+  ProjectRecord, RecordHistory, CreateRecordData, UpdateRecordData
+} from '@validiant/shared';
+
+export interface RecordListResponse {
+  records: ProjectRecord[];
+  total: number;
+  page: number;
+  perPage: number;
+}
+
+export interface RecordFilters {
+  typeId?: string;
+  status?: string;
+  assignedTo?: string;
+  clientId?: string;
+  page?: number;
+  perPage?: number;
+  sortBy?: string;
+  sortDir?: 'asc' | 'desc';
+}
+
+export const getProjectRecords = async (
+  projectId: string, filters?: RecordFilters
+): Promise<RecordListResponse> =>
+  get<APIResponse<RecordListResponse>>(
+    `/projects/${projectId}/records`,
+    { params: filters }
+  ).then((res) => res.data.data ?? { records: [], total: 0, page: 1, perPage: 50 });
+
+export const getRecordById = async (
+  projectId: string, recordId: string
+): Promise<ProjectRecord> =>
+  get<APIResponse<{ record: ProjectRecord }>>(
+    `/projects/${projectId}/records/${recordId}`
+  ).then((res) => {
+    if (!res.data.data?.record) throw new Error('Record not found');
+    return res.data.data.record;
+  });
+
+export const createRecord = async (
+  projectId: string, payload: CreateRecordData
+): Promise<ProjectRecord> =>
+  post<APIResponse<{ record: ProjectRecord }>>(
+    `/projects/${projectId}/records`, payload
+  ).then((res) => {
+    if (!res.data.data?.record) throw new Error('Record creation failed');
+    return res.data.data.record;
+  });
+
+export const updateRecord = async (
+  projectId: string, recordId: string, data: UpdateRecordData
+): Promise<ProjectRecord> =>
+  patch<APIResponse<{ record: ProjectRecord }>>(
+    `/projects/${projectId}/records/${recordId}`, data
+  ).then((res) => {
+    if (!res.data.data?.record) throw new Error('Update failed');
+    return res.data.data.record;
+  });
+
+export const getRecordHistory = async (
+  projectId: string, recordId: string
+): Promise<RecordHistory[]> =>
+  get<APIResponse<{ history: RecordHistory[] }>>(
+    `/projects/${projectId}/records/${recordId}/history`
+  ).then((res) => res.data.data?.history ?? []);
+```
+
+#### 5.7.3 Hook Files
+
+Each hook file mirrors the existing `useProjects.ts` pattern:
+- `useQuery` for reads with `queryKey` from the factory
+- `useMutation` for writes with `onSuccess` cache invalidation
+- Workspace context from `useWorkspaceStore`
+
+**File: `apps/web/src/hooks/useTypes.ts`** — exports:
+- `useProjectTypes(projectId)` — list types for a project
+- `useCreateType(projectId)` — mutation
+- `useUpdateType(projectId, typeId)` — mutation
+- `useDeleteType(projectId)` — mutation
+
+**File: `apps/web/src/hooks/useColumns.ts`** — exports:
+- `useTypeColumns(projectId, typeId)` — list columns
+- `useCreateColumn(projectId, typeId)` — mutation
+- `useUpdateColumn(projectId, typeId, columnId)` — mutation
+- `useDeleteColumn(projectId, typeId)` — mutation
+- `useReorderColumns(projectId, typeId)` — mutation
+
+**File: `apps/web/src/hooks/useRecords.ts`** — exports:
+- `useProjectRecords(projectId, filters?)` — paginated list with filters
+- `useRecord(projectId, recordId)` — single record detail
+- `useCreateRecord(projectId)` — mutation
+- `useUpdateRecord(projectId, recordId)` — mutation with optimistic update
+- `useRecordHistory(projectId, recordId)` — audit trail
+
+### 5.8 Ingest API Rate Limiting (Critical — must ship with the endpoint)
+
+`POST /api/v1/ingest/:projectKey` is a public endpoint authenticated only by an API key,
+not by JWT session. This makes it the highest-abuse-risk surface in the platform. Rate
+limiting **must** be implemented before the endpoint goes live, not after.
+
+**Two-layer defense:**
+
+#### Layer 1: Cloudflare Rate Limiting Rules (infrastructure-level)
+
+Applied *before* the Worker executes — blocks abusive IPs at the edge with zero CPU cost.
+
+**Add to Cloudflare Dashboard** (or via Terraform/Pulumi if infra-as-code):
+
+| Rule | Matching Expression | Threshold | Action | Window |
+|------|--------------------|-----------|----|--------|
+| Ingest IP Limit | `http.request.uri.path matches "^/api/v1/ingest/"` | 100 requests | Challenge | 60 seconds |
+| Ingest IP Hard Limit | `http.request.uri.path matches "^/api/v1/ingest/"` | 500 requests | Block | 60 seconds |
+
+#### Layer 2: Per-API-Key Rate Limiting (application-level)
+
+Applied inside the Worker using the existing Upstash Redis integration (already configured
+in `wrangler.toml` secrets via `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`).
+
+**Implementation in `ingest.routes.ts` middleware:**
+
+```typescript
+import { rateLimit } from '../middleware/rateLimit';
+
+// Apply per-key rate limit: 60 requests per 60 seconds per API key
+// Uses the existing rateLimit middleware pattern from apps/api/src/middleware/rateLimit.ts
+// but with the API key hash as the identifier instead of IP/userId
+
+ingestRouter.use('/:projectKey', async (c, next) => {
+  const apiKeyHeader = c.req.header('Authorization')?.replace('Bearer ', '');
+  if (!apiKeyHeader) {
+    return c.json({ error: 'Missing API key' }, 401);
+  }
+  // Hash the key for the rate limit bucket (don't use raw key as Redis key)
+  const keyHash = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(apiKeyHeader)
+  ).then(buf =>
+    Array.from(new Uint8Array(buf))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+      .slice(0, 16)
+  );
+  
+  return rateLimit(60, 60, `rl:ingest:${keyHash}`)(c, next);
+});
+```
+
+**Rate limit tiers by subscription plan** (Phase 6 enhancement):
+
+| Plan | Requests/minute | Requests/day | Burst |
+|------|----------------|-------------|-------|
+| Free | 10 | 500 | 20 |
+| Starter | 60 | 10,000 | 100 |
+| Pro | 300 | 100,000 | 500 |
+| Enterprise | Custom | Custom | Custom |
+
+**Response headers** (follow standard `RateLimit-*` headers):
+```
+RateLimit-Limit: 60
+RateLimit-Remaining: 42
+RateLimit-Reset: 1717500000
+Retry-After: 18   (only on 429 responses)
+```
+
+**429 response body:**
+```json
+{
+  "error": "rate_limit_exceeded",
+  "message": "Too many requests. Limit: 60/minute per API key.",
+  "retryAfter": 18
+}
+```
+
+---
+
+## Part 6 — Validation Schemas
+
+### 6.1 Full Zod Schemas for CRUD Operations
+
+Add new file `packages/shared/src/schemas/record.schemas.ts`.
+Every schema below is the **validation contract** between the frontend forms, the
+API controllers, and the database layer. The API controllers will call `.parse()` on
+incoming request bodies before passing data to services.
+
+```typescript
+import { z } from 'zod';
+
+// ── Column Type enum (must mirror ColumnType in record.types.ts) ────────────
+export const columnTypeEnum = z.enum([
+  'text', 'long_text', 'number', 'currency', 'date', 'date_range',
+  'select', 'multi_select', 'checkbox', 'file_upload', 'photo_capture',
+  'gps_location', 'signature', 'barcode_scan', 'phone', 'email',
+  'url', 'person', 'relation', 'formula', 'rating', 'status', 'timer',
+]);
+
+// ── Project Type ────────────────────────────────────────────────────────────
+
+export const projectTypeCreateSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().max(500).optional(),
+  icon: z.string().max(50).optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  order: z.number().int().min(0).optional(),
+  settings: z.object({
+    requiredFields: z.array(z.string()).optional(),
+    slaHours: z.number().positive().optional(),
+    gpsRequired: z.boolean().optional(),
+    allowedCreators: z.array(z.enum(['admin', 'member', 'field_agent'])).optional(),
+  }).optional(),
+});
+
+export const projectTypeUpdateSchema = projectTypeCreateSchema.partial();
+
+export type CreateProjectTypeData = z.infer<typeof projectTypeCreateSchema>;
+export type UpdateProjectTypeData = z.infer<typeof projectTypeUpdateSchema>;
+
+// ── Type Column ─────────────────────────────────────────────────────────────
+
+export const columnChoiceSchema = z.object({
+  value: z.string().min(1),
+  label: z.string().min(1),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+});
+
+export const typeColumnCreateSchema = z.object({
+  name: z.string().min(1).max(100),
+  key: z.string().min(1).max(60).regex(/^[a-z][a-z0-9_]*$/,
+    'Key must be lowercase snake_case starting with a letter'),
+  columnType: columnTypeEnum,
+  options: z.object({
+    choices: z.array(columnChoiceSchema).optional(),
+    // Extensible for RELATION, FORMULA, CURRENCY, RATING options
+  }).optional(),
+  settings: z.object({
+    required: z.boolean().optional(),
+    visibleTo: z.array(z.enum(['admin', 'member', 'field_agent', 'client_portal'])).optional(),
+    editableBy: z.array(z.enum(['admin', 'member'])).optional(),
+    showInList: z.boolean().optional(),
+    showInCard: z.boolean().optional(),
+    showInMobile: z.boolean().optional(),
+    defaultValue: z.unknown().optional(),
+    hint: z.string().max(200).optional(),
+  }).optional(),
+  order: z.number().int().min(0).optional(),
+});
+
+export const typeColumnUpdateSchema = typeColumnCreateSchema.partial()
+  .omit({ key: true }); // Key is immutable after creation
+
+export type CreateTypeColumnData = z.infer<typeof typeColumnCreateSchema>;
+export type UpdateTypeColumnData = z.infer<typeof typeColumnUpdateSchema>;
+
+// ── Record ──────────────────────────────────────────────────────────────────
+
+export const recordCreateSchema = z.object({
+  typeId: z.string().uuid(),
+  data: z.record(z.string(), z.unknown()),  // Validated against column schema at service level
+  status: z.string().max(50).optional(),
+  assignedTo: z.string().uuid().optional(),
+  clientId: z.string().max(200).optional(),
+  gpsLat: z.number().min(-90).max(90).optional(),
+  gpsLng: z.number().min(-180).max(180).optional(),
+  gpsAccuracy: z.number().min(0).optional(),
+});
+
+export const recordUpdateSchema = z.object({
+  data: z.record(z.string(), z.unknown()).optional(),
+  status: z.string().max(50).optional(),
+  assignedTo: z.string().uuid().nullable().optional(),
+  gpsLat: z.number().min(-90).max(90).optional(),
+  gpsLng: z.number().min(-180).max(180).optional(),
+  gpsAccuracy: z.number().min(0).optional(),
+});
+
+export type CreateRecordData = z.infer<typeof recordCreateSchema>;
+export type UpdateRecordData = z.infer<typeof recordUpdateSchema>;
+
+// ── Sub-Account ─────────────────────────────────────────────────────────────
+
+export const subAccountCreateSchema = z.object({
+  accountType: z.enum(['field_agent', 'client_viewer', 'partner']),
+  name: z.string().min(1).max(200),
+  email: z.string().email().optional(),
+  phone: z.string().max(20).optional(),
+  projectAccess: z.array(z.object({
+    projectId: z.string().uuid(),
+    role: z.string().max(50),
+  })).optional(),
+});
+
+export type CreateSubAccountData = z.infer<typeof subAccountCreateSchema>;
+
+// ── Type Template ───────────────────────────────────────────────────────────
+
+export const typeTemplateCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  description: z.string().max(500).optional(),
+  industry: z.string().max(100).optional(),
+  typeDefinition: z.object({
+    typeName: z.string().min(1),
+    typeIcon: z.string().max(50).optional(),
+    typeColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+    columns: z.array(typeColumnCreateSchema),
+  }),
+  isPublic: z.boolean().optional(),
+});
+
+export type CreateTypeTemplateData = z.infer<typeof typeTemplateCreateSchema>;
+
+// ── Portal Token ────────────────────────────────────────────────────────────
+
+export const portalTokenSchema = z.object({
+  token: z.string().min(32).max(128),
+});
+```
+
+Update `packages/shared/src/schemas/index.ts` to export the new schemas:
+```typescript
+export * from './record.schemas';
+```
+
+### 6.2 Ingest API Payload Schema (Critical — needed before Phase 3)
+
+The ingest endpoint (`POST /api/v1/ingest/:projectKey`) accepts this payload:
+
+```typescript
+import { z } from 'zod';
+
+/**
+ * The shape of a JSON body that an external system POSTs to
+ * POST https://api.validiant.in/api/v1/ingest/:projectKey
+ *
+ * The `data` object maps column keys to values. Required columns are
+ * enforced server-side by validating against the target Type's column schema.
+ */
+export const ingestPayloadSchema = z.object({
+  /** Type name OR Type ID — at least one must be provided */
+  type: z.string().optional(),              // e.g. "Identity Verification"
+  typeId: z.string().uuid().optional(),     // e.g. "550e8400-e29b-..."
+
+  /** The actual field data — keys MUST match column keys defined in the Type */
+  data: z.record(z.string(), z.unknown()),  // e.g. { "applicant_name": "Raj", "aadhaar": "1234..." }
+
+  /** Optional: pre-assign to a specific user */
+  assignTo: z.string().uuid().optional(),   // User ID of the assigned field agent
+
+  /** Optional: client reference for portal filtering */
+  clientId: z.string().max(200).optional(), // e.g. "acme-corp" or "client-uuid"
+
+  /** Optional: external system reference ID for deduplication */
+  externalId: z.string().max(200).optional(),
+
+  /** Optional: initial status (defaults to 'pending' if omitted) */
+  status: z.string().max(50).optional(),
+
+  /** Optional: metadata not stored in columns (for webhook passthrough) */
+  metadata: z.record(z.string(), z.unknown()).optional(),
+}).refine(
+  (d) => d.type || d.typeId,
+  { message: 'Either `type` (name) or `typeId` (UUID) must be provided' }
+);
+
+export type IngestPayload = z.infer<typeof ingestPayloadSchema>;
+```
+
+**Server-side validation flow (in `ingest.service.ts`):**
+1. Resolve `typeId` — if `type` (name) is given, look up `project_types` by `name + projectId`
+2. Fetch all `type_columns` for the resolved `typeId`
+3. Validate that all columns with `settings.required = true` are present in `data`
+4. Type-coerce values: e.g. if column is `NUMBER`, verify `data[key]` is numeric
+5. Strip unknown keys not in the Type's column list (security)
+6. Create `ProjectRecord` with `createdVia: 'api'`
+7. Log to `record_history` with `changeType: 'created'`
+8. Fire automations matching trigger `RECORD_CREATED_VIA_API`
+9. Return `{ recordId, displayId, status: 'accepted' }` — target: < 100ms response
+
+**Example curl:**
+```bash
+curl -X POST https://api.validiant.in/api/v1/ingest/vld_proj_abc123 \
+  -H "Authorization: Bearer vld_key_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "Identity Verification",
+    "data": {
+      "applicant_name": "Rajesh Kumar",
+      "aadhaar_number": "1234-5678-9012",
+      "dob": "1990-05-15",
+      "address": "42 MG Road, Bangalore 560001"
+    },
+    "clientId": "acme-hr-dept",
+    "externalId": "ACME-BGV-2026-0042"
+  }'
+```
+
+---
+
+## Part 7 — Phased Roadmap (Corrected & Concrete)
+
+### Timeline Overview
+
+| Phase | Name | Weeks | Duration | Dependencies | Deliverable |
+|-------|------|-------|----------|-------------|-------------|
+| 1 | Schema Engine | 1–3 | 3 weeks | None | Types + Columns + Records CRUD, Schema Builder UI, Records Table |
+| 2 | Sub-Accounts & Field Portal | 4–6 | 3 weeks | Phase 1 | Invite field agents, mobile-first record submission |
+| 3 | Project-Level Inbound API | 7–8 | 2 weeks | Phase 1 | External systems push records via API key |
+| 4 | Client Portal | 9–10 | 2 weeks | Phase 1, 2 | White-labeled read-only portal for clients |
+| 5 | Advanced Views & Analytics | 11–12 | 2 weeks | Phase 1 | Kanban, Map, Card views + Report Builder |
+| 6 | Platform & Monetization | 13+ | Ongoing | All above | Billing, onboarding, SDK, marketplace |
+
+**Total minimum timeline**: 13 weeks (3 months) to reach monetizable state.
+**Critical path**: Phase 1 → Phase 2 → Phase 4 (field ops end-to-end).
+Phases 3 and 5 can be parallelized with Phase 2 by different developers.
+
+---
+
+### Phase 1 — Schema Engine (Weeks 1–3)
+**Goal**: Projects can define Types and Columns. Records can be created manually.
+
+**Database (apps/api/src/db/schema.ts):**
+- [ ] Add `projectTypes` table definition
+- [ ] Add `typeColumns` table definition
+- [ ] Add `records` table definition
+- [ ] Add `recordHistory` table definition
+- [ ] Add `typeTemplates` table definition
+- [ ] Add Drizzle relations for all new tables
+- [ ] Add type exports for all new tables
+- [ ] Run `pnpm db:push` or generate migration via `pnpm db:generate`
+
+**Shared Types (packages/shared/src/types/):**
+- [ ] Create `record.types.ts` with: `ProjectType`, `TypeColumn`, `ColumnType`, `ColumnSettings`, `ProjectRecord`, `RecordHistory`, `TypeTemplate`
+- [ ] Update `index.ts` barrel export
+
+**Shared Schemas (packages/shared/src/schemas/):**
+- [ ] Create `record.schemas.ts` with Zod schemas for all CRUD operations
+- [ ] Update `index.ts` barrel export
+
+**API Backend (apps/api/src/):**
+- [ ] Create `services/types.service.ts` — Types CRUD
+- [ ] Create `services/columns.service.ts` — Columns CRUD
+- [ ] Create `services/records.service.ts` — Records CRUD + auto-numbering + history
+- [ ] Create `services/templates.service.ts` — Templates CRUD
+- [ ] Create `controllers/types.controller.ts`
+- [ ] Create `controllers/columns.controller.ts`
+- [ ] Create `controllers/records.controller.ts`
+- [ ] Create `controllers/templates.controller.ts`
+- [ ] Create `routes/types.routes.ts`
+- [ ] Create `routes/columns.routes.ts`
+- [ ] Create `routes/records.routes.ts`
+- [ ] Create `routes/templates.routes.ts`
+- [ ] Register all new routes in `app.ts`
+
+**Frontend (apps/web/src/):**
+- [ ] Create `hooks/useTypes.ts` — React Query hooks for Types API
+- [ ] Create `hooks/useColumns.ts` — React Query hooks for Columns API
+- [ ] Create `hooks/useRecords.ts` — React Query hooks for Records API
+- [ ] Create `services/types.service.ts` — API client for Types
+- [ ] Create `services/columns.service.ts` — API client for Columns
+- [ ] Create `services/records.service.ts` — API client for Records
+- [ ] Create `SchemaBuilderTab.tsx` component (Type list + Column editor)
+- [ ] Create `RecordsTab.tsx` component (Table view with Type switcher)
+- [ ] Create `RecordSlideOver.tsx` component (Full record form)
+- [ ] Create `ColumnEditorSlideOver.tsx` component
+- [ ] Create `TypeEditorModal.tsx` component
+- [ ] Add 'records' and 'schema' tabs to project detail page (`page.tsx` TABS array)
+
+**Starter Templates:**
+- [ ] Seed `type_templates` with: "BGV - Identity Verification", "Delivery Task", "Site Audit"
+
+**Data Migration: `verification_types` → `project_types` (Critical for Go-Live):**
+
+Validiant's own org has live data in the `verification_types` table (seeded via
+`apps/api/src/db/seed_verification_templates.ts`). Before switching any project to
+`dataMode: 'records'`, this data must be migrated.
+
+- [ ] Create migration script at `apps/api/src/db/migrate-verification-to-types.ts`
+
+```typescript
+/**
+ * One-time data migration: verification_types → project_types + type_columns
+ *
+ * For each verification_type linked to an org:
+ *   1. Create a project_type row (name, settings, org context)
+ *   2. For each entry in field_schema JSONB array → create a type_column row
+ *   3. Mapping: fieldKey → column.key, type → column.columnType, required → settings.required
+ *
+ * Run: npx tsx apps/api/src/db/migrate-verification-to-types.ts
+ */
+import { db } from './index';
+import { verificationTypes, projectTypes, typeColumns } from './schema';
+import { eq, isNotNull } from 'drizzle-orm';
+
+const FIELD_TYPE_MAP: Record<string, string> = {
+  'text':           'text',
+  'textarea':       'long_text',
+  'boolean':        'checkbox',
+  'photo-request':  'photo_capture',
+  'signature':      'signature',
+  'pdf-upload':     'file_upload',
+  'number':         'number',
+};
+
+async function migrateVerificationTypes() {
+  console.log('Starting verification_types → project_types migration...');
+  
+  // 1. Fetch all org-scoped verification types (skip system templates)
+  const orgTypes = await db
+    .select()
+    .from(verificationTypes)
+    .where(isNotNull(verificationTypes.organizationId));
+  
+  console.log(`Found ${orgTypes.length} org-scoped verification types to migrate.`);
+
+  for (const vt of orgTypes) {
+    // 2. Find project(s) linked to this org.
+    //    Since verification_types are org-scoped but project_types are project-scoped,
+    //    we need to associate each type with a target project.
+    //    Strategy: create type in ALL active projects for this org,
+    //    or create in a designated "default" project.
+    //    This decision should be confirmed with the user before running.
+    
+    // For safety, create a project_type per verification_type per project:
+    // (In practice, filter to projects that actually use this verification type)
+    const projectsForOrg = await db.query.projects.findMany({
+      where: (p, { eq: _eq }) => _eq(p.organizationId, vt.organizationId!),
+    });
+
+    for (const project of projectsForOrg) {
+      // 3. Insert project_type
+      const [newType] = await db.insert(projectTypes).values({
+        projectId: project.id,
+        name: vt.name,
+        description: `Migrated from verification type: ${vt.code}`,
+        settings: {
+          slaHours: vt.slaOverrideHours ?? undefined,
+          gpsRequired: false,
+        },
+      }).returning();
+
+      console.log(`  Created type "${vt.name}" in project "${project.name}" → ${newType.id}`);
+
+      // 4. Convert field_schema array → type_columns rows
+      const fields = (vt.fieldSchema as any[]) || [];
+      for (let i = 0; i < fields.length; i++) {
+        const f = fields[i];
+        const mappedType = FIELD_TYPE_MAP[f.type] || 'text';
+
+        await db.insert(typeColumns).values({
+          typeId: newType.id,
+          projectId: project.id,
+          name: f.label || f.fieldKey,
+          key: f.fieldKey,
+          columnType: mappedType,
+          options: f.options ? { choices: f.options } : undefined,
+          settings: {
+            required: f.required ?? false,
+            showInList: true,
+            showInCard: true,
+            showInMobile: true,
+            hint: f.prompt || undefined,
+            visibleTo: f.readRoles?.map((r: string) =>
+              r === 'executive' ? 'member' : r === 'client' ? 'client_portal' : r
+            ) || ['admin', 'member'],
+          },
+          order: i,
+        });
+      }
+      console.log(`  Migrated ${fields.length} columns for type "${vt.name}"`);
+    }
+  }
+
+  console.log('✅ Migration complete.');
+}
+
+if (require.main === module) {
+  migrateVerificationTypes()
+    .then(() => process.exit(0))
+    .catch((err) => { console.error('Migration failed:', err); process.exit(1); });
+}
+
+export { migrateVerificationTypes };
+```
+
+**Migration execution order:**
+1. Deploy the new `project_types` + `type_columns` tables (via `pnpm db:push`)
+2. Run the migration script: `npx tsx apps/api/src/db/migrate-verification-to-types.ts`
+3. Verify data in Drizzle Studio: `pnpm db:studio`
+4. Flip `dataMode` to `'hybrid'` for test projects, then `'records'` once validated
+5. The `verification_types` table is **NOT dropped** — it stays for backward compatibility
+   until all existing `tasks` with `verification_type_id` references have been closed
+
+**Deliverable**: Create a project → Define Types matching your workflow → Define Columns per Type → Create records manually → See data in table view.
+
+---
+
+### Phase 2 — Sub-Accounts & Field Portal (Weeks 4–6)
+**Goal**: Field agents can be invited and submit records from a mobile-optimized portal.
+
+**Database:**
+- [ ] Add `orgSubAccounts` table definition to `schema.ts`
+- [ ] Run migration
+
+**Shared:**
+- [ ] Add `OrgSubAccount` type definition
+- [ ] Add sub-account Zod schemas
+- [ ] Add `field_agent`, `client_viewer` permission keys to `permissions.ts`
+
+**API Backend:**
+- [ ] Create `services/sub-accounts.service.ts`
+- [ ] Create `controllers/sub-accounts.controller.ts`
+- [ ] Create `routes/sub-accounts.routes.ts`
+- [ ] Register route in `app.ts`
+- [ ] Add middleware logic: detect field agent on login → set redirect flag
+
+**Frontend — Settings:**
+- [ ] Add "Field Agents" tab to `apps/web/src/app/(workspace)/[orgSlug]/settings/members/` page
+- [ ] Create invite modal for field agents (name, phone, email, project assignment)
+
+**Frontend — Field Agent Portal:**
+- [ ] Create `apps/web/src/app/portal/layout.tsx` (stripped-down layout, no sidebar)
+- [ ] Create `apps/web/src/app/portal/field/page.tsx` (assigned records card list)
+- [ ] Create `apps/web/src/app/portal/field/[recordId]/page.tsx` (record form)
+- [ ] Implement GPS auto-capture on form open
+- [ ] Implement camera photo upload
+- [ ] Add `showInMobile` toggle to column editor (from Phase 1)
+
+**Deliverable**: Invite a field agent → They log in → See only their assigned records → Fill the form with GPS + photo → Submit.
+
+---
+
+### Phase 3 — Project-Level Inbound API (Weeks 7–8)
+**Goal**: External systems push Records into a project via API key.
+
+**Database:**
+- [ ] Enhance `client_api_keys` table: add `key_prefix`, `scopes`, `allowed_type_ids`, `ip_whitelist`, `expires_at`, `revoked_at` columns
+  - OR create new `project_api_keys` table if the migration is cleaner
+
+**API Backend:**
+- [ ] Create `routes/ingest.routes.ts` — `POST /ingest/:projectKey` (API key auth, no JWT)
+- [ ] Create `services/ingest.service.ts` — key lookup, payload validation, record creation
+- [ ] Add `/api/v1/ingest` to public paths in `app.ts`
+- [ ] Implement two-layer rate limiting per §5.8 (Cloudflare rules + per-key Upstash Redis)
+- [ ] Create `routes/api-keys.routes.ts` — `GET/POST/DELETE /projects/:id/api-keys`
+
+**Frontend:**
+- [ ] Add "API Keys" section to `SettingsTab.tsx` component (or create dedicated tab)
+- [ ] Generate key UI with copy-to-clipboard
+- [ ] Revoke key UI
+- [ ] Show scoping options (restrict to specific Types)
+- [ ] Show curl/Postman example snippet
+
+**Deliverable**: Generate API key → curl POST with JSON → Record appears in project table.
+
+---
+
+### Phase 4 — Client Portal (Weeks 9–10)
+**Goal**: External clients track their records without logging into Validiant.
+
+**API Backend:**
+- [ ] Create `controllers/portal.controller.ts` — token-gated record fetching
+- [ ] Create `routes/portal.routes.ts` — `GET /portal/:orgSlug/:token/records`
+- [ ] Add portal access token generation to sub-accounts service
+
+**Frontend:**
+- [ ] Create `apps/web/src/app/portal/client/[orgSlug]/[token]/page.tsx`
+- [ ] White-label branding from project settings
+- [ ] Record list filtered by `client_id`
+- [ ] Status timeline component
+- [ ] PDF export via client-side generation (jsPDF or server-side endpoint)
+
+**Deliverable**: Share portal link → Client sees only their records → Tracks status → Downloads PDF report.
+
+---
+
+### Phase 5 — Advanced Views & Analytics (Weeks 11–12)
+**Goal**: Rich visualizations for the Records data.
+
+**Frontend:**
+- [ ] `RecordKanbanView.tsx` — drag cards between STATUS columns
+- [ ] `RecordMapView.tsx` — integrate with existing `RoutingMapTab`/`RoutingMapLayer`
+- [ ] `RecordCardView.tsx` — responsive grid of summary cards
+- [ ] Report Builder in `AnalyticsTab.tsx` — drag columns to create charts
+- [ ] Cross-project dashboard at org level (`apps/web/src/app/(workspace)/[orgSlug]/analytics/page.tsx`)
+
+**API Backend:**
+- [ ] SLA engine: Scheduled Cloudflare cron (existing `wrangler.toml` line 34-35: `*/5 * * * *`) checks records past SLA hours
+- [ ] Scheduled report generation endpoint
+
+---
+
+### Phase 6 — Platform & Monetization (Week 13+)
+**Goal**: Self-service sign-up, billing, and public API docs.
+
+- [ ] Stripe billing integration (extend existing `SubscriptionTier` and `SUBSCRIPTION_LIMITS`)
+- [ ] Plan enforcement middleware (check limits per request)
+- [ ] Landing page at `www.validiant.in` (the existing `apps/web/src/app/page.tsx`)
+- [ ] Onboarding wizard (post-signup, pre-dashboard)
+- [ ] Type Template marketplace (browse/use public templates)
+- [ ] `@validiant/sdk` npm package (TypeScript API client)
+- [ ] OpenAPI spec auto-generation from Hono routes
+- [ ] WhatsApp notifications via Meta Cloud API
+
+---
+
+## Part 8 — Key Technical Decisions
+
+### 8.1 Records vs Tasks Co-existence
+
+Projects should support BOTH Tasks (the existing system) and Records (the new system) simultaneously during the transition. This is controlled by a `dataMode` field in `projects.settings` JSONB:
+
+```typescript
+interface ProjectSettings {
+  // ... existing fields ...
+  dataMode?: 'tasks' | 'records' | 'hybrid'; // Default: 'tasks' for existing projects
+}
+```
+
+- `tasks` mode: Project uses the existing DataExplorerTab with tasks
+- `records` mode: Project uses the new RecordsTab with Types/Columns
+- `hybrid` mode: Both tabs are visible (for migration period)
+
+New projects created after Phase 1 deployment default to `records` mode.
+
+### 8.2 Record Numbering Strategy (Concurrency-Safe)
+
+Record numbers must be sequential per project (e.g. BGV-0001, BGV-0002, ...) and **must never
+produce duplicates** even under concurrent inserts from the web UI, field portal, and inbound
+API simultaneously.
+
+**Implementation in `records.service.ts`:**
+
+```typescript
+import { db } from '../db';
+import { records } from '../db/schema';
+import { eq, sql, max } from 'drizzle-orm';
+
+async function getNextRecordNumber(projectId: string): Promise<number> {
+  // Use a Postgres transaction with advisory lock scoped to the project.
+  // pg_advisory_xact_lock takes a bigint key — we hash the project UUID to i64.
+  return await db.transaction(async (tx) => {
+    // 1. Acquire an advisory lock scoped to this project.
+    //    hashtext() returns a stable int4; cast to bigint for pg_advisory_xact_lock.
+    //    The lock is automatically released when the transaction commits/rolls back.
+    await tx.execute(
+      sql`SELECT pg_advisory_xact_lock(hashtext(${projectId}::text)::bigint)`
+    );
+
+    // 2. Get the current max number within the lock.
+    const [result] = await tx
+      .select({ maxNum: max(records.number) })
+      .from(records)
+      .where(eq(records.projectId, projectId));
+
+    const nextNumber = (result?.maxNum ?? 0) + 1;
+
+    return nextNumber;
+  });
+}
+```
+
+**Why advisory lock and not `FOR UPDATE`?**
+- There is no dedicated "sequence" row to lock. `SELECT MAX(...) FOR UPDATE` would lock
+  ALL matching rows in the `records` table for that project, causing severe contention.
+- `pg_advisory_xact_lock` is a lightweight mutex that only blocks other callers asking
+  for the same lock key. It does NOT block reads or unrelated writes.
+- The lock is transaction-scoped: it auto-releases on commit/rollback, so a crashed worker
+  cannot hold it forever.
+
+**Why not a Postgres SERIAL/SEQUENCE?**
+- SERIAL is global, not per-project. We need numbering scoped to each project.
+- A separate `sequences` table is an option but adds complexity without benefit over
+  advisory locks.
+
+**Display ID construction:**
+```typescript
+const displayId = `${project.key}-${nextNumber.toString().padStart(4, '0')}`;
+// e.g. "BGV-0042", "DLV-0001"
+```
+
+The `displayId` is stored on the record row for fast lookups (no joins needed).
+
+### 8.3 Data Storage: JSONB for Record Data
+
+Record data is stored in a single `data JSONB` column (not EAV). This is different from the
+existing `case_field_values` EAV approach.
+
+**Comparison table:**
+
+| Factor | JSONB (`records.data`) | EAV (`case_field_values`) |
+|--------|------------------------|---------------------------|
+| Read performance | ✅ Single row read | ❌ N rows per record |
+| Write performance | ✅ Single INSERT | ❌ N INSERTs per record |
+| Query flexibility | ⚠️ JSONB operators required | ✅ Standard SQL WHERE |
+| Schema validation | ⚠️ App-level only | ⚠️ App-level only |
+| Index support | ✅ GIN indexes on JSONB | ✅ B-tree on field_key + value |
+| Cold start latency | ✅ 1 round-trip | ❌ N+1 round-trips |
+
+**Why JSONB wins for Cloudflare Workers + Neon Postgres specifically:**
+
+1. **Connection cost.** Cloudflare Workers connect to Neon over a WebSocket driver
+   (`@neondatabase/serverless`). Each SQL query incurs a round-trip across the internet.
+   EAV requires 1 query to fetch the record + 1 query to fetch N field rows (or a JOIN
+   that returns N result rows). JSONB is always 1 row returned per record read, which
+   is dramatically faster on a serverless connection pool.
+
+2. **Worker CPU limits.** Workers have a 30ms CPU time budget (paid plan) per request.
+   Parsing 1 JSON object from a single row is significantly cheaper than materializing
+   and mapping N EAV rows into an object. For records with 20+ columns, this difference
+   is meaningful.
+
+3. **GIN indexing.** Neon Postgres fully supports GIN indexes on JSONB. For the queries
+   we need ("find all records where `data->>'status' = 'verified'`"), a GIN index with
+   `jsonb_path_ops` provides efficient lookup without needing a separate index table.
+   Example migration:
+   ```sql
+   CREATE INDEX records_data_gin ON records USING GIN (data jsonb_path_ops);
+   ```
+
+4. **Backward compatibility.** The existing EAV table (`case_field_values`) remains
+   untouched for legacy `tasks` with `verification_type_id` references. No data is lost.
+   The two patterns coexist cleanly — JSONB for new Records, EAV for old Tasks.
+
+5. **Eventual filtering strategy.** If cross-column filtering becomes a bottleneck,
+   we can add Postgres generated columns for hot fields:
+   ```sql
+   ALTER TABLE records ADD COLUMN status_val TEXT GENERATED ALWAYS AS (data->>'status') STORED;
+   CREATE INDEX records_status_val ON records (project_id, status_val);
+   ```
+   This gives us B-tree speed on specific columns without abandoning the JSONB model.
+
+### 8.4 Real-time Architecture
+
+Use the existing Cloudflare Durable Objects pattern:
+- Each project has a Durable Object room: `project:{projectId}`.
+- When a record is created/updated, the service broadcasts to the room.
+- Frontend subscribes via WebSocket through the existing real-time hook.
+- **Why**: Avoids extra dependencies (like Supabase or Ably) while stays within the Cloudflare Workers free tier.
+
+### 8.5 File Uploads (Optimized)
+
+Use Cloudflare R2 (existing `BACKUP_BUCKET` binding in `wrangler.toml`):
+- Add a new R2 bucket binding: `RECORD_FILES` for record attachments.
+- **Optimization**: Client-side image compression (using Canvas API in `apps/web`) to reduce storage costs and stay within the **10GB R2 Free Tier**.
+- Photo captures include EXIF GPS data extraction on the server.
+
+### 8.6 wrangler.toml Changes Required
+
+The following bindings need to be added to `apps/api/wrangler.toml`:
+
+```toml
+# ── R2 Bucket for Record File Uploads (Phase 1) ──────────────────────────────
+# Create via: wrangler r2 bucket create validiant-record-files
+[[r2_buckets]]
+binding = "RECORD_FILES"
+bucket_name = "validiant-record-files"
+```
+
+The `Env` interface in `apps/api/src/app.ts` (line 86) must be updated:
+
+```typescript
+export interface Env {
+  // ... existing fields ...
+  RECORD_FILES?: R2Bucket;   // NEW: R2 bucket for record attachments
+}
+```
+
+### 8.7 Design System: The Obsidian Verifier (Implementation Details)
+
+To achieve the "Premium Instrument" aesthetic without visual clutter, we technically enforce the **"No-Line" Rule** and **Tonal Layering** via a centralized token system in `packages/ui`.
+
+**Token Mapping (Material 3 standard):**
+- **Surface Strategy**: Instead of `border: 1px solid`, sections are separated by tonal steps.
+  - Base Layout: `bg-background` (#0c1324)
+  - Sidebar/Nav: `bg-surface-container-low` (#151b2d)
+  - Primary Cards: `bg-surface-container-highest` (#2e3447)
+- **Glassmorphism**: Floating elements use a custom class:
+  ```css
+  .glass-panel {
+    background: rgba(46, 52, 71, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Ghost border */
+  }
+  ```
+- **Typography**: `Manrope` for Headlines (Authority), `Inter` for Body (Function).
+  - Use `tracking-tighter` on headlines to mimic editorial print.
+
+**Technical Enforcement:**
+- Component library (`packages/ui`) will strictly use these semantic tokens.
+- No ad-hoc hex codes allowed in `apps/web`.
+- Tailwind config at `packages/config/tailwind/` will be the single source of truth for the Obsidian palette.
+
+### 8.8 Schema Evolution & Key Immutability
+
+Data integrity is paramount. In a JSONB model, changing a column key breaks existing records.
+
+- **Decision**: The `key` of a `TypeColumn` is **MUTABLE ONLY VIA MIGRATION**.
+  - In the UI, the `key` field is disabled after creation.
+  - Users can change the `label` (Display Name) anytime.
+  - To change a `key`, the API will provide a "Refactor Key" utility that runs a batch update on the `records` table for that project:
+    ```sql
+    UPDATE records SET data = (data - 'old_key') || jsonb_build_object('new_key', data->'old_key')
+    WHERE project_id = :projectId AND type_id = :typeId;
+    ```
+- **Type Safety**: When a column type changes (e.g., `NUMBER` to `TEXT`), the UI will warn that existing data might be invalidated by frontend validators.
+
+### 8.9 Advanced Search & GIN Index strategy
+
+To support fast searching across millions of records within the **Neon Free Tier (500MB storage)**, we utilize specialized indexes.
+
+- **Primary GIN Index**:
+  ```sql
+  CREATE INDEX records_data_path_idx ON records USING GIN (data jsonb_path_ops);
+  ```
+  *Why:* `jsonb_path_ops` indexes are smaller and faster than default GIN indexes, fitting perfectly within free tier storage limits.
+- **Project-Scoped GIN Indexing**:
+  Since 99% of queries are scoped to a `project_id`, we use a composite approach or filtered indexes to keep index sizes minimal.
+- **Search Logic**: Global search (Cmd+K) uses the `@neondatabase/serverless` driver to run:
+  ```sql
+  SELECT * FROM records WHERE data @> jsonb_build_object('search_field', 'query_val');
+  ```
+
+### 8.10 Record Projection & Field-Level Security (RBAC)
+
+We do NOT send the raw `data` JSONB object to the frontend. This prevents leaking "Internal Only" fields.
+
+- **Projection Pipeline**:
+  1. Service fetches `Record` + `TypeColumns`.
+  2. Filter `TypeColumns` by user's current role (`settings.visibleTo`).
+  3. Construct a new `data` object containing ONLY the keys the user is authorized to see.
+  4. Return the projected object.
+- **System Fields**: Fields starting with `_` (e.g., `_metadata`, `_version`) are reserved for system use and are stripped from all public API responses unless explicitly requested by an Admin.
+
+---
+
+## Part 9 — Implementation Strategy for Free Tiers (Critical Constraint)
+
+Every technical decision is optimized for the **Validiant Stack Free Tiers**:
+
+| Service | Tier Limit | Validiant Strategy |
+|---------|------------|--------------------|
+| **Cloudflare Workers** | 100k req/day | Heavy use of `stale-while-revalidate` caching on R2/DB reads. |
+| **Cloudflare R2** | 10GB storage | Client-side image compression (Canvas API) before upload to save space. |
+| **Neon Postgres** | 500MB storage | JSONB consolidation (fewer rows than EAV) + GIN `path_ops` (smaller index size). |
+| **Upstash Redis** | 10k req/day | Durable Objects for real-time (free) instead of Redis where possible. |
+| **Resend (Email)** | 3,000/month | Aggregated notification digests to reduce individual email volume. |
+
+---
+
+## Part 10 — UI Components (Refined)
+
+### 10.1 SchemaBuilderTab.tsx (Complexity: High)
+- Drag-and-drop column ordering using `@dnd-kit/core`.
+- Live preview of the "Obsidian Verifier" field style on the right.
+- Validation logic: Prevent duplicate keys within the same type.
+
+### 10.2 RecordsTab.tsx (Complexity: High)
+- Optimized for high-density data.
+- Row heights minimized to `h-10` with zero borders (No-Line Rule).
+- Pagination uses `offset` or `cursor` to keep JSONB fetches efficient.
+
+### 10.3 RecordSlideOver.tsx (Complexity: Medium)
+- Dynamic field generation based on `typeColumns`.
+- Field groups: `Basic Information`, `Verification Details`, `System Data`.
+
+---
+
+## Part 11 — Quality & Verification Plan
+
+### 11.1 Automated Testing
+- `pnpm test` (existing Jest/Vitest setup)
+- Unit tests for `records.service.ts` (specifically numbering and projection).
+- Integration tests for `ingest/:projectKey` endpoint.
+
+### 11.2 Manual Testing Checklist
+1. Create a `Type` with 5 different `Column` types.
+2. Create a `Record` with all fields filled.
+3. Verify that an agent with `viewer` role cannot see "Admin Only" fields.
+4. Verify that numbering is sequential (0001, 0002...).
+5. Verify that images uploaded are under 500KB (client-side compression).
+
+---
+
+## Part 12 — Conclusion: The Vision Realized
+
+Validiant is not just an app; it is a **configurable instrument** for field operations. By moving to the "Project as a Data Universe" model, we provide the flexibility of a spreadsheet with the power of a custom CRM, all while maintaining a premium, world-class aesthetic that sets a new standard for field ops tooling.

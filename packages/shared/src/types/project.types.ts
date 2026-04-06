@@ -331,6 +331,14 @@ export interface ProjectWithStats extends Project {
 }
 
 /**
+ * Project with Data Universe specifics
+ */
+export interface ProjectWithUniverse extends Project {
+  recordCount: number;
+  typePills?: { name: string; color?: string }[];
+}
+
+/**
  * Task with populated relations
  */
 export interface TaskWithDetails extends Task {
@@ -371,6 +379,7 @@ export interface CreateProjectData {
   budget?: number;
   currency?: string;
   settings?: Partial<ProjectSettings>;
+  templateId?: string;
 }
 
 /**

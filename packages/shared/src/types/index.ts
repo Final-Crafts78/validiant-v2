@@ -24,3 +24,6 @@ export * from './api.types';
 
 // Task types
 export * from './task.types';
+
+// Record and Schema types
+export * from './record.types';

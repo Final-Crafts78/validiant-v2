@@ -58,6 +58,14 @@ import bgvPartnerRoutes from './routes/bgv-partner.routes';
 import inboundRoutes from './routes/inbound.routes';
 import csvImportRoutes from './routes/csv-import.routes';
 import realtimeRoutes from './routes/realtime.routes';
+import recordsRoutes from './routes/records.routes';
+import subAccountsRoutes from './routes/sub-accounts.routes';
+import typesRoutes from './routes/types.routes';
+import columnsRoutes from './routes/columns.routes';
+import ingestRoutes from './routes/ingest.routes';
+import portalRoutes from './routes/portal.routes';
+import templatesRoutes from './routes/templates.routes';
+import billingRoutes from './routes/billing.routes';
 import { rateLimit } from './middleware/rateLimit';
 import { tenantIsolation } from './middleware/tenant';
 import { authenticate } from './middleware/auth';
@@ -220,7 +228,10 @@ export const createHonoApp = () => {
     '/api/v1/auth/reset-password',
     '/api/v1/webhook',
     '/api/v1/inbound',
+    '/api/v1/ingest',
+    '/api/v1/portal',
     '/api/v1/contact',
+    '/api/v1/billing/webhook',
   ];
 
   const isPublicPath = (path: string) =>
@@ -318,8 +329,18 @@ export const createHonoApp = () => {
   app.route('/api/v1/verifications', verificationRoutes);
   app.route('/api/v1/partners', bgvPartnerRoutes);
   app.route('/api/v1/inbound', inboundRoutes);
+  app.route('/api/v1/ingest', ingestRoutes);
+  app.route('/api/v1/portal', portalRoutes);
   app.route('/api/v1/import/csv', csvImportRoutes);
   app.route('/api/v1/realtime', realtimeRoutes);
+  app.route('/api/v1/sub-accounts', subAccountsRoutes);
+  app.route('/api/v1/type-templates', templatesRoutes);
+  app.route('/api/v1/billing', billingRoutes);
+
+  // Schema Architect - Deeply Nested Routes (Phase 5)
+  app.route('/api/v1/projects', typesRoutes);
+  app.route('/api/v1/projects', columnsRoutes);
+  app.route('/api/v1/projects', recordsRoutes);
 
   // ============================================================================
   // ERROR HANDLING

@@ -38,6 +38,7 @@ interface Organization {
   industryType?: string;
   size?: string;
   logoUrl?: string;
+  ownerId: string;
   settings: OrgSettings;
   createdAt: Date;
   updatedAt: Date;
@@ -202,6 +203,7 @@ export const getOrganizationById = async (
       industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
+      ownerId: organizations.ownerId,
       settings: organizations.settings,
       createdAt: organizations.createdAt,
       updatedAt: organizations.updatedAt,
@@ -237,6 +239,7 @@ export const getOrganizationBySlug = async (
       industryType: organizations.industryType,
       size: organizations.size,
       logoUrl: organizations.logoUrl,
+      ownerId: organizations.ownerId,
       settings: organizations.settings,
       createdAt: organizations.createdAt,
       updatedAt: organizations.updatedAt,

@@ -12,8 +12,11 @@ import {
   AlertCircle,
   Calendar,
   LayoutGrid,
+  Search,
 } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { ProjectsToolbar } from './ProjectsToolbar';
+import { useSearchParams } from 'next/navigation';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_STYLES: Record<string, string> = {
@@ -165,20 +168,31 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function ProjectsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { orgSlug } = useParams() as { orgSlug: string };
-  const { setActiveProject, activeOrgId } = useWorkspaceStore();
+  const { setActiveProject } = useWorkspaceStore();
   const { data: projects = [], isLoading, isError } = useProjects();
   const [showCreate, setShowCreate] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // 🔍 EXTREME VISIBILITY: Track project list state in the UI
-  // eslint-disable-next-line no-console
-  console.debug('[Page:Projects] State Update', {
-    orgSlug,
-    activeOrgId,
-    projectCount: projects.length,
-    isLoading,
-    isError,
-    timestamp: new Date().toISOString(),
+  // Filtering logic
+  const q = searchParams.get('q')?.toLowerCase() || '';
+  const statusFilter = searchParams.get('status')?.split(',') || [];
+  const priorityFilter = searchParams.get('priority')?.split(',') || [];
+
+  const filteredProjects = projects.filter((p) => {
+    const matchesSearch =
+      !q ||
+      p.name.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q);
+
+    const matchesStatus =
+      statusFilter.length === 0 || statusFilter.includes(p.status);
+
+    const matchesPriority =
+      priorityFilter.length === 0 || priorityFilter.includes(p.priority || '');
+
+    return matchesSearch && matchesStatus && matchesPriority;
   });
 
   if (isLoading)
@@ -199,24 +213,28 @@ export default function ProjectsPage() {
     );
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-[var(--color-text-base)] tracking-tight">
-            Projects
+    <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-in fade-in duration-700">
+      {/* Header - Advanced Typography */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-black text-[var(--color-text-base)] tracking-tight font-manrope">
+            Data Universe
           </h1>
-          <p className="text-sm text-[var(--color-text-muted)] mt-1 font-medium">
-            Manage and track your active initiatives across {orgSlug}
+          <p className="text-sm text-[var(--color-text-muted)] font-medium max-w-lg leading-relaxed">
+            Curating precision records and operational initiatives for{' '}
+            <span className="text-primary-500 font-bold">@{orgSlug}</span>.
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center justify-center gap-2 px-6 py-3 text-sm font-black btn-primary rounded-xl shadow-lg shadow-primary-600/20 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 px-8 py-3.5 text-xs font-black uppercase tracking-widest bg-primary-600 text-white rounded-2xl shadow-2xl shadow-primary-600/20 hover:bg-primary-700 hover:scale-[1.02] active:scale-95 transition-all"
         >
-          <Plus className="w-5 h-5" /> New Project
+          <Plus className="w-5 h-5" /> Initialize Project
         </button>
       </div>
+
+      {/* Advanced Toolbar */}
+      <ProjectsToolbar viewMode={viewMode} setViewMode={setViewMode} />
 
       {/* Empty state */}
       {projects.length === 0 && (
@@ -231,92 +249,183 @@ export default function ProjectsPage() {
         />
       )}
 
-      {/* Project cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {projects.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => {
-              setActiveProject(p.id);
-              router.push(`/${orgSlug}/projects/${p.id}`);
-            }}
-            className="group relative flex flex-col bg-glass border border-[var(--color-border-base)] rounded-3xl p-6 text-left hover-lift shadow-sm hover:border-primary-500/30 overflow-hidden"
-          >
-            {/* Background highlight */}
-            <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="w-8 h-8 rounded-full bg-primary-500/10 flex items-center justify-center">
-                <LayoutGrid className="w-4 h-4 text-primary-600" />
-              </div>
-            </div>
-
-            {/* Top row: name + status */}
-            <div className="mb-4 pr-8">
-              <h3 className="text-lg font-black text-[var(--color-text-base)] leading-tight group-hover:text-primary-600 transition-colors mb-2 line-clamp-2">
-                {p.name}
-              </h3>
-              <span
-                className={`inline-flex shrink-0 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg border shadow-sm ${
-                  STATUS_STYLES[p.status] ??
-                  STATUS_STYLES[ProjectStatus.PLANNING]
-                }`}
-              >
-                {STATUS_LABELS[p.status] ?? p.status}
-              </span>
-            </div>
-
-            {/* Description */}
-            {p.description ? (
-              <p className="text-xs text-[var(--color-text-muted)] line-clamp-3 mb-6 leading-relaxed font-medium">
-                {p.description}
-              </p>
-            ) : (
-              <div className="flex-1 mb-6 italic text-[var(--color-text-muted)]/40 text-xs">
-                No description provided for this initiative.
-              </div>
-            )}
-
-            {/* Progress bar */}
-            <div className="mt-auto pt-4 border-t border-[var(--color-border-base)]/30">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-muted)]/70">
-                  Mission Progress
-                </span>
-                <span className="text-xs font-black text-primary-600">
-                  {p.progress ?? 0}%
-                </span>
-              </div>
-              <div className="h-2 bg-[var(--color-surface-soft)] rounded-full overflow-hidden shadow-inner">
-                <div
-                  className="h-full bg-gradient-to-r from-primary-500 to-primary-700 rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(37,99,235,0.4)]"
-                  style={{ width: `${p.progress ?? 0}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Footer meta */}
-            <div className="flex items-center justify-between mt-4">
-              <span
-                className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${
-                  PRIORITY_STYLES[p.priority] ??
-                  PRIORITY_STYLES[ProjectPriority.MEDIUM]
-                }`}
-              >
-                {p.priority}
-              </span>
-
-              {p.endDate && (
-                <div className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-tight">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {new Date(p.endDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+      {/* Grid View */}
+      {viewMode === 'grid' && filteredProjects.length > 0 && (
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredProjects.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => {
+                setActiveProject(p.id);
+                router.push(`/${orgSlug}/projects/${p.id}`);
+              }}
+              className="group relative flex flex-col bg-[var(--color-surface-soft)]/40 hover:bg-[var(--color-surface-soft)] rounded-[2.5rem] p-8 text-left transition-all duration-500 hover:-translate-y-1"
+            >
+              <div className="mb-6 flex justify-between items-start">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--color-surface-base)] flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                  <LayoutGrid className="w-7 h-7 text-primary-500" />
                 </div>
-              )}
-            </div>
-          </button>
-        ))}
-      </div>
+                <div className="flex items-center gap-3">
+                  {(p as any).recordCount !== undefined && (
+                    <span className="text-[10px] font-black bg-primary-500/10 text-primary-600 px-2.5 py-1 rounded-lg">
+                      {(p as any).recordCount} Records
+                    </span>
+                  )}
+                  <span
+                    className={`text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border border-transparent shadow-sm ${
+                      STATUS_STYLES[p.status] ??
+                      STATUS_STYLES[ProjectStatus.PLANNING]
+                    }`}
+                  >
+                    {STATUS_LABELS[p.status] ?? p.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-xl font-black text-[var(--color-text-base)] tracking-tight group-hover:text-primary-600 transition-colors mb-2 line-clamp-2 font-manrope">
+                  {p.name}
+                </h3>
+                <p className="text-[11px] text-[var(--color-text-muted)] line-clamp-3 leading-relaxed font-medium">
+                  {p.description || 'System-generated project environment for mission-critical data processing.'}
+                </p>
+              </div>
+
+              <div className="mt-auto space-y-6">
+                <div>
+                  <div className="flex items-center justify-between mb-3 px-1">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-[var(--color-text-muted)] opacity-50">
+                      Sync Progress
+                    </span>
+                    <span className="text-xs font-black text-primary-600">
+                      {p.progress ?? 0}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-[var(--color-surface-base)] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary-500 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${p.progress ?? 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-xl ${
+                      PRIORITY_STYLES[p.priority] ??
+                      PRIORITY_STYLES[ProjectPriority.MEDIUM]
+                    }`}
+                  >
+                    {p.priority}
+                  </span>
+
+                    <div className="flex items-center gap-4 text-[10px] font-bold text-[var(--color-text-muted)]/60 uppercase tracking-tighter">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {p.endDate ? new Date(p.endDate).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        }) : '--'}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                        <span className="text-[8px] font-black opacity-40">API Active</span>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* List View */}
+      {viewMode === 'list' && filteredProjects.length > 0 && (
+        <div className="flex flex-col gap-3 group/list animate-in fade-in slide-in-from-right-4 duration-500">
+          <div className="flex items-center gap-6 px-4 mb-2">
+            <div className="w-12" />
+            <span className="flex-1 text-[9px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]/40">
+              Identity
+            </span>
+            <span className="w-48 hidden md:block text-[9px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]/40">
+              Status & Universe
+            </span>
+            <span className="w-32 hidden sm:block text-[9px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]/40">
+              API Status
+            </span>
+            <span className="w-24 hidden lg:block text-right text-[9px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]/40">
+              Timeline
+            </span>
+          </div>
+          {filteredProjects.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => {
+                setActiveProject(p.id);
+                router.push(`/${orgSlug}/projects/${p.id}`);
+              }}
+              className="group flex items-center gap-6 p-4 bg-[var(--color-surface-soft)]/30 hover:bg-[var(--color-surface-soft)] transition-all rounded-3xl text-left border border-transparent hover:border-primary-500/10"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-[var(--color-surface-base)] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                <FolderOpen className="w-6 h-6 text-primary-500" />
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-black text-[var(--color-text-base)] truncate font-manrope">
+                  {p.name}
+                </h3>
+                <p className="text-[10px] text-[var(--color-text-muted)] font-medium truncate opacity-60">
+                  {p.description || 'Mission workspace'}
+                </p>
+              </div>
+
+              <div className="hidden md:flex items-center gap-3 w-48">
+                <span
+                  className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${STATUS_STYLES[p.status]}`}
+                >
+                  {STATUS_LABELS[p.status]}
+                </span>
+                {(p as any).recordCount !== undefined && (
+                  <span className="text-[9px] font-black text-primary-600 bg-primary-50 px-2 py-0.5 rounded-lg">
+                    {(p as any).recordCount} Recs
+                  </span>
+                )}
+              </div>
+
+              <div className="w-32 hidden sm:flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-30">Active</span>
+              </div>
+
+              <div className="text-right hidden lg:block w-24 pr-2">
+                <span className="text-[10px] font-bold text-[var(--color-text-muted)]">
+                  {p.endDate
+                    ? new Date(p.endDate).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      })
+                    : '--'}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* No Results from filters */}
+      {projects.length > 0 && filteredProjects.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-24 bg-[var(--color-surface-soft)]/20 rounded-[3rem] border border-dashed border-[var(--color-border-base)]/10">
+          <div className="w-16 h-16 rounded-full bg-[var(--color-surface-soft)] flex items-center justify-center mb-4">
+            <Search className="w-8 h-8 text-[var(--color-text-muted)]/30" />
+          </div>
+          <h3 className="text-lg font-black text-[var(--color-text-base)] mb-1">
+            No matching precision units
+          </h3>
+          <p className="text-sm text-[var(--color-text-muted)] font-medium">
+            Try adjusting your filters to broaden the data scope.
+          </p>
+        </div>
+      )}
 
       {showCreate && (
         <CreateProjectModal

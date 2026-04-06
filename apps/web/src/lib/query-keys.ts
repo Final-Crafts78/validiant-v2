@@ -90,6 +90,35 @@ export const queryKeys = {
     list: (orgId: string) =>
       [...queryKeys.notifications.all, 'list', { orgId }] as const,
   },
+
+  // Project Types (Phase 5)
+  types: {
+    all: ['types'] as const,
+    byProject: (projectId: string) =>
+      [...queryKeys.types.all, { projectId }] as const,
+    detail: (projectId: string, typeId: string) =>
+      [...queryKeys.types.byProject(projectId), typeId] as const,
+  },
+
+  // Type Columns (Phase 5)
+  columns: {
+    all: ['columns'] as const,
+    byType: (projectId: string, typeId: string) =>
+      [...queryKeys.columns.all, { projectId, typeId }] as const,
+  },
+
+  // Project Records (Phase 5)
+  records: {
+    all: ['records'] as const,
+    byProject: (projectId: string, filters?: any) =>
+      filters
+        ? ([...queryKeys.records.all, 'list', { projectId, ...filters }] as const)
+        : ([...queryKeys.records.all, 'list', { projectId }] as const),
+    detail: (projectId: string, recordId: string) =>
+      [...queryKeys.records.all, 'detail', { projectId, recordId }] as const,
+    history: (projectId: string, recordId: string) =>
+      [...queryKeys.records.detail(projectId, recordId), 'history'] as const,
+  },
 } as const;
 
 // Alias for easier imports and backward compatibility if needed

@@ -67,6 +67,32 @@ export const PermissionKey = [
   'infra:backup',
   'csv:import',
   'field:access',
+
+  // Records (Next-gen Tasks)
+  'record:read',
+  'record:create',
+  'record:update',
+  'record:delete',
+  'record:submit',
+
+  // Schema Engine
+  'schema:read',
+  'schema:create',
+  'schema:update',
+  'schema:delete',
+
+  // Sub-Accounts
+  'sub_account:read',
+  'sub_account:create',
+  'sub_account:manage',
+
+  // Portals
+  'portal:access',
+  'portal:client_access',
+
+  // Field-Level Visibility (Perfection Phase)
+  'field:view_internal',   // View data visible to project members
+  'field:view_restricted', // View data visible to admins/leads
 ] as const;
 
 export type PermissionKey = (typeof PermissionKey)[number];
@@ -100,8 +126,24 @@ export const PLATFORM_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'csv:import',
     'infra:backup',
     'field:access',
+    'record:read',
+    'record:create',
+    'record:update',
+    'record:delete',
+    'schema:read',
+    'sub_account:read',
+    'sub_account:create',
+    'sub_account:manage',
   ],
-  user: ['org:read', 'user:read', 'task:read', 'task:update', 'project:read'],
+  user: [
+    'org:read',
+    'user:read',
+    'task:read',
+    'task:update',
+    'project:read',
+    'record:read',
+    'record:update',
+  ],
 };
 
 /**
@@ -138,6 +180,18 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'csv:import',
     'infra:backup',
     'field:access',
+    'record:read',
+    'record:create',
+    'record:update',
+    'record:delete',
+    'schema:read',
+    'schema:create',
+    'schema:update',
+    'schema:delete',
+    'sub_account:manage',
+    'portal:access',
+    'field:view_internal',
+    'field:view_restricted',
   ],
   manager: [
     'org:read',
@@ -154,6 +208,9 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'project:create',
     'project:update',
     'csv:import',
+    'record:update',
+    'sub_account:read',
+    'field:view_internal',
   ],
   executive: [
     'org:read',
@@ -166,6 +223,22 @@ export const ORG_ROLE_PERMISSIONS: Record<string, PermissionKey[]> = {
     'billing:read',
     'app:login',
     'field:access',
+    'record:read',
   ],
-  viewer: ['org:read', 'user:read', 'task:read', 'project:read'],
+  viewer: [
+    'org:read',
+    'user:read',
+    'task:read',
+    'project:read',
+    'record:read',
+    'field:view_internal',
+  ],
+  field_agent: [
+    'org:read',
+    'record:read',
+    'record:submit',
+    'portal:access',
+    'app:login',
+  ],
+  client_viewer: ['org:read', 'record:read', 'portal:client_access'],
 };

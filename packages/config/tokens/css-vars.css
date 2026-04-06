@@ -17,34 +17,36 @@
   --motion-easing-in: cubic-bezier(0.4, 0, 1, 1);
   --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
 
-  /* Surfaces & Backgrounds */
+  /* Surfaces & Backgrounds (The Obsidian Verifier) */
   --color-surface-base: #FFFFFF;
-  --color-surface-soft: #F8FAFC; /* Slate 50 */
-  --color-surface-muted: #F1F5F9; /* Slate 100 */
-  --color-surface-raised: #FFFFFF;
-  --color-surface-overlay: #FFFFFF;
-  --color-surface-inverse: #020617; /* Slate 950 */
+  --color-surface-soft: #F8FAFC; 
+  --color-surface-muted: #F1F5F9;
+  --color-surface-lowest: #F8FAFC;
+  --color-surface-container-low: #F1F5F9;
+  --color-surface-container-highest: #E2E8F0;
+  --color-surface-bright: #FFFFFF;
+  --color-surface-inverse: #0c1324;
 
   /* Text & Content */
-  --color-text-base: #0F172A; /* Slate 900 */
-  --color-text-subtle: #475569; /* Slate 600 */
-  --color-text-muted: #94A3B8; /* Slate 400 */
+  --color-text-base: #0c1324;
+  --color-text-subtle: #475569;
+  --color-text-muted: #94A3B8;
   --color-text-inverse: #FFFFFF;
 
-  /* Borders & Dividers */
-  --color-border-base: #E2E8F0; /* Slate 200 */
-  --color-border-subtle: #F1F5F9; /* Slate 100 */
-  --color-border-strong: #CBD5E1; /* Slate 300 */
+  /* Borders & Dividers (Note: Use opacity for 'Ghost Borders') */
+  --color-border-base: #E2E8F0;
+  --color-border-subtle: #F1F5F9;
+  --color-border-strong: #CBD5E1;
 
   /* Interactive & Forms */
-  --color-text-input: #0F172A;
+  --color-text-input: #0c1324;
   --color-surface-input: #FFFFFF;
   --color-border-input: #E2E8F0;
 
-  /* Brand & Semantic (Refined Indigo-Blue Spectrum) */
-  --color-accent-base: #2563EB;
-  --color-accent-subtle: #EFF6FF;
-  --color-accent-strong: #1D4ED8;
+  /* Brand & Semantic (The Architectural Glow) */
+  --color-accent-base: #0058be;
+  --color-accent-subtle: #dbeafe;
+  --color-accent-strong: #172554;
   --color-accent-text: #FFFFFF;
 
   --color-positive-base: #10B981;
@@ -61,51 +63,59 @@
   --color-critical-subtle: #FEF2F2;
   --color-critical-strong: #DC2626;
   --color-critical-text: #FFFFFF;
+
+  /* Obsidian Specific Accent */
+  --color-tertiary-base: #ffb786;
 }
 
 [data-theme="dark"] {
-  /* Surfaces & Backgrounds */
-  --color-surface-base: #020617; /* Slate 950 */
-  --color-surface-soft: #0F172A; /* Slate 900 */
-  --color-surface-muted: #1E293B; /* Slate 800 */
-  --color-surface-raised: #0F172A;
-  --color-surface-overlay: #1E293B;
+  /* Surfaces & Backgrounds (The Obsidian Verifier - PRIMARY EXPERIENCE) */
+  --color-surface-base: #0c1324;             /* The Void */
+  --color-surface-soft: #070d1f;             /* Lowest */
+  --color-surface-muted: #151b2d;            /* Container Low */
+  --color-surface-lowest: #070d1f;           /* Deep Recess */
+  --color-surface-container-low: #151b2d;    /* Structural Sections */
+  --color-surface-container-highest: #2e3447; /* Nested Content */
+  --color-surface-bright: #33394c;           /* Interaction Overlays */
   --color-surface-inverse: #FFFFFF;
 
   /* Text & Content */
-  --color-text-base: #F8FAFC; /* Slate 50 */
-  --color-text-subtle: #94A3B8; /* Slate 400 */
-  --color-text-muted: #64748B; /* Slate 500 */
-  --color-text-inverse: #0F172A;
+  --color-text-base: #F8FAFC; 
+  --color-text-subtle: #adc6ff;              /* Tinted primary for secondary text */
+  --color-text-muted: #64748B;
+  --color-text-inverse: #0c1324;
 
-  /* Borders & Dividers */
-  --color-border-base: #1E293B; /* Slate 800 */
-  --color-border-subtle: #0F172A;
-  --color-border-strong: #334155; /* Slate 700 */
+  /* Borders & Dividers (Ghost Borders) */
+  --color-border-base: #adc6ff26;            /* Primary at 15% opacity */
+  --color-border-subtle: #adc6ff1a;          /* 10% opacity */
+  --color-border-strong: #adc6ff40;          /* 25% opacity */
 
   /* Interactive & Forms */
   --color-text-input: #F8FAFC;
-  --color-surface-input: #0F172A;
-  --color-border-input: #1E293B;
+  --color-surface-input: #2e3447;            /* Surface Highest */
+  --color-border-input: transparent;         /* No border default */
 
   /* Brand & Semantic Overrides */
-  --color-accent-base: #3B82F6;
-  --color-accent-subtle: #3B82F61A;
-  --color-accent-strong: #60A5FA;
-  --color-accent-text: #FFFFFF;
+  --color-accent-base: #adc6ff;              /* The Glow */
+  --color-accent-subtle: #adc6ff1a;
+  --color-accent-strong: #4d8eff;           /* Primary Container */
+  --color-accent-text: #0c1324;
 
   --color-positive-base: #10B981;
   --color-positive-subtle: #10B9811A;
   --color-positive-strong: #34D399;
   --color-positive-text: #FFFFFF;
 
-  --color-warning-base: #F59E0B;
-  --color-warning-subtle: #F59E0B1A;
-  --color-warning-strong: #FBBF24;
-  --color-warning-text: #FFFFFF;
+  --color-warning-base: #ffb786;             /* Tertiary / Warning */
+  --color-warning-subtle: #ffb7861A;
+  --color-warning-strong: #ffb786;
+  --color-warning-text: #0c1324;
 
   --color-critical-base: #EF4444;
   --color-critical-subtle: #EF44441A;
   --color-critical-strong: #F87171;
   --color-critical-text: #FFFFFF;
+
+  /* Obsidian Specific Accent */
+  --color-tertiary-base: #ffb786;
 }

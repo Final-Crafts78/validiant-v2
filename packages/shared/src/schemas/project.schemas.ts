@@ -107,6 +107,7 @@ export const createProjectSchema = z
       .regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format')
       .optional(),
     iconUrl: z.string().url().optional(),
+    templateId: z.string().uuid().optional(),
   })
   .refine(
     (data) => {

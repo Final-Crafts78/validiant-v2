@@ -1,29 +1,34 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useTasks, useBulkDeleteTasks } from '@/hooks/useTasks';
+import { useTasks } from '@/hooks/useTasks';
 import { useVerificationTypes } from '@/hooks/useVerificationTypes';
 import { useWorkspaceStore } from '@/store/workspace';
 import { logger } from '@/lib/logger';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import {
   Loader2,
-  FileDigit,
   Upload,
   LayoutDashboard,
   Columns,
   Plus,
   Search,
+  Database,
 } from 'lucide-react';
 import { BulkUploadWizard } from '@/components/tasks/BulkUploadWizard';
 import { type VerificationField } from '@/types/tasks';
-import { TaskStatus } from '@validiant/shared';
 import { TasksBoard } from '@/components/tasks/TasksBoard';
+import { TasksTable } from '@/components/tasks/TasksTable';
 import { BulkActionBar } from '@/components/tasks/BulkActionBar';
 import { BulkAssignModal } from '@/components/modals/BulkAssignModal';
 import { BulkStatusModal } from '@/components/modals/BulkStatusModal';
 import { CreateTaskModal } from '@/components/modals/CreateTaskModal';
 import { type Task } from '@/hooks/useTasks';
+
+// Phase 2 Imports
+import { useProjectTypes } from '@/hooks/useProjectTypes';
+import { useRecords } from '@/hooks/useRecords';
+import { RecordTable } from '@/components/records/RecordTable';
+import { RecordSlideOver } from '@/components/records/RecordSlideOver';
 
 interface VerificationType {
   id: string;
@@ -33,9 +38,6 @@ interface VerificationType {
 }
 
 export function DataExplorerTab({ projectId }: { projectId: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { activeOrgId } = useWorkspaceStore();
   const { data: vTypes } = useVerificationTypes(activeOrgId || '');
   const { data: tasksData, isLoading, isError, error } = useTasks(projectId);
@@ -44,93 +46,55 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
     console.error('[DataExplorer:FetchError]', { projectId, error });
   }
 
-  const bulkDeleteMutation = useBulkDeleteTasks();
-
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isAssignOpen, setIsAssignOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
-  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'universe'>('universe');
+  
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
-  // Extract the project's custom verification schema
+  const [selectedRecordId, setSelectedRecordId] = useState<string | undefined>();
+  const [isRecordOpen, setIsRecordOpen] = useState(false);
+
+  // Phase 2: Project Types & Records
+  const { data: projectTypes } = useProjectTypes(projectId);
+  const { records, isLoading: recordsLoading } = useRecords(projectId);
+  const activeType = projectTypes?.[0];
+
   const customSchemaFields = useMemo(() => {
     if (!vTypes) return [];
     const projectWorkflow = vTypes.find(
       (v: VerificationType) => v.code === `PRJ_${projectId}_CUSTOM`
     );
-    logger.debug('[DataExplorerTab:SchemaMap]', {
-      projectId,
-      workflowFound: !!projectWorkflow,
-      fieldCount: projectWorkflow?.fieldSchema?.length || 0,
-    });
     return projectWorkflow?.fieldSchema || [];
   }, [vTypes, projectId]);
 
-  // Aggregate tasks flat array
   const tasks = useMemo<Task[]>(() => {
     const raw = tasksData?.pages.flatMap((page) => page.tasks) ?? [];
-    console.debug('[DataExplorer:TasksComputed]', {
-      rawCount: raw.length,
-      hasSearch: !!searchTerm,
-    });
     if (!searchTerm) return raw;
     return raw.filter((t) =>
       t.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [tasksData, searchTerm]);
 
-  console.debug('[DataExplorer:RenderPhase]', {
-    projectId,
-    taskCount: tasks.length,
-    viewMode,
-    selectedCount: selectedTaskIds.length,
-    isUploadOpen,
-    isCreateOpen,
-  });
+  const selectedTaskIds = useMemo(() => 
+    Object.keys(rowSelection).filter(id => rowSelection[id]), 
+    [rowSelection]
+  );
 
-  const toggleSelectAll = () => {
-    if (selectedTaskIds.length === tasks.length) {
-      setSelectedTaskIds([]);
-    } else {
-      setSelectedTaskIds(tasks.map((t) => t.id));
-    }
-  };
-
-  const toggleSelectTask = (id: string) => {
-    setSelectedTaskIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
-
-  const handleViewChange = (mode: 'table' | 'kanban') => {
+  const handleViewChange = (mode: 'table' | 'kanban' | 'universe') => {
     logger.info('[DataExplorer:ViewTransition]', { from: viewMode, to: mode });
     setViewMode(mode);
   };
 
   const handleBulkSuccess = () => {
-    setSelectedTaskIds([]);
+    setRowSelection({});
   };
 
-  const handleBulkDelete = () => {
-    if (
-      confirm(
-        `Are you sure you want to delete ${selectedTaskIds.length} tasks? This cannot be undone.`
-      )
-    ) {
-      bulkDeleteMutation.mutate(
-        { projectId, taskIds: selectedTaskIds },
-        {
-          onSuccess: () => {
-            logger.info('[MassDelete:Commit]', {
-              taskCount: selectedTaskIds.length,
-            });
-            handleBulkSuccess();
-          },
-        }
-      );
-    }
+  const onTaskClick = (taskId: string) => {
+    logger.debug('[DataExplorer:TaskClick]', { taskId });
   };
 
   return (
@@ -170,6 +134,17 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
             >
               <Columns className="w-4 h-4" />
             </button>
+            <button
+              onClick={() => handleViewChange('universe')}
+              className={`p-1.5 rounded-lg transition-all ${
+                viewMode === 'universe'
+                  ? 'bg-white text-indigo-600 shadow-sm border border-slate-200/50'
+                  : 'text-slate-500 hover:text-slate-700'
+              }`}
+              title="Data Universe"
+            >
+              <Database className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -183,10 +158,16 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
           </button>
           <button
             className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-md active:scale-95"
-            onClick={() => setIsCreateOpen(true)}
+            onClick={() => {
+              if (viewMode === 'universe') {
+                setIsRecordOpen(true);
+              } else {
+                setIsCreateOpen(true);
+              }
+            }}
           >
             <Plus className="w-4 h-4" />
-            New Task
+            {viewMode === 'universe' ? 'New Record' : 'New Task'}
           </button>
         </div>
       </div>
@@ -198,195 +179,79 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
             SYNCING COMMAND CENTER DATA...
           </p>
         </div>
-      ) : tasks.length === 0 ? (
-        <div className="py-20 bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-400 text-sm flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4 border border-slate-100">
-            <FileDigit className="w-8 h-8 text-slate-200" />
-          </div>
-          <p className="font-bold text-slate-800 text-lg mb-1">
-            No tasks found
-          </p>
-          <p className="text-slate-500">
-            Try adjusting your filters or upload a CSV to get started.
-          </p>
-        </div>
-      ) : viewMode === 'table' ? (
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100">
-                <th className="p-4 w-10">
-                  <input
-                    type="checkbox"
-                    className="rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                    checked={
-                      tasks.length > 0 &&
-                      selectedTaskIds.length === tasks.length
-                    }
-                    onChange={toggleSelectAll}
-                  />
-                </th>
-                <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Reference
-                </th>
-                <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Task Detail
-                </th>
-                <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Status
-                </th>
-                <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Assignees
-                </th>
-                <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Created
-                </th>
-                {customSchemaFields.map((field: VerificationField) => (
-                  <th
-                    key={field.fieldKey}
-                    className="p-4 text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-50/30"
-                  >
-                    <div className="flex items-center gap-1.5">
-                      {field.label}
-                      {field.required && (
-                        <span className="text-red-400 text-xs">*</span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {tasks.map((task: Task) => (
-                <tr
-                  key={task.id}
-                  onClick={() => {
-                    const params = new URLSearchParams(searchParams.toString());
-                    params.set('taskId', task.id);
-                    router.push(`${pathname}?${params.toString()}`);
-                  }}
-                  className={`hover:bg-slate-50/50 transition-colors group cursor-pointer ${
-                    selectedTaskIds.includes(task.id) ? 'bg-indigo-50/30' : ''
-                  }`}
-                >
-                  <td className="p-4">
-                    <input
-                      type="checkbox"
-                      className="rounded-md border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                      checked={selectedTaskIds.includes(task.id)}
-                      onChange={() => toggleSelectTask(task.id)}
-                    />
-                  </td>
-                  <td className="p-4">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                      ID-{task.id.slice(0, 6).toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <p className="text-sm font-bold text-slate-800 leading-tight">
-                      {task.title}
-                    </p>
-                    {task.description && (
-                      <p className="text-[10px] text-slate-400 truncate max-w-xs mt-0.5">
-                        {task.description}
-                      </p>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          task.status === TaskStatus.COMPLETED
-                            ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
-                            : task.status === TaskStatus.IN_PROGRESS
-                              ? 'bg-blue-500 animate-pulse'
-                              : 'bg-slate-300'
-                        }`}
-                      />
-                      <span className="text-xs font-bold text-slate-600">
-                        {task.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex -space-x-2">
-                      {task.assignees && task.assignees.length > 0 ? (
-                        task.assignees.slice(0, 3).map((a) => (
-                          <div
-                            key={a.id}
-                            className="w-7 h-7 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-600 shadow-sm"
-                            title={a.fullName}
-                          >
-                            {a.fullName.charAt(0).toUpperCase()}
-                          </div>
-                        ))
-                      ) : (
-                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
-                          None
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-xs font-medium text-slate-400">
-                      {new Date(task.createdAt).toLocaleDateString()}
-                    </span>
-                  </td>
-                  {customSchemaFields.map((field: VerificationField) => (
-                    <td
-                      key={field.fieldKey}
-                      className="p-4 border-l border-slate-50/50"
-                    >
-                      <span className="text-xs text-slate-600 font-medium">
-                        {String(task.customFields?.[field.fieldKey] || '-')}
-                      </span>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       ) : (
-        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4">
-          <TasksBoard
-            tasks={tasks}
-            onTaskClick={(id: string) => {
-              const params = new URLSearchParams(searchParams.toString());
-              params.set('taskId', id);
-              router.push(`${pathname}?${params.toString()}`);
-            }}
-          />
-        </div>
+        <>
+          {viewMode === 'table' && (
+            <TasksTable
+              tasks={tasks}
+              onTaskClick={onTaskClick}
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+            />
+          )}
+
+          {viewMode === 'kanban' && (
+            <TasksBoard 
+              tasks={tasks} 
+              onTaskClick={onTaskClick}
+            />
+          )}
+
+          {viewMode === 'universe' && activeType && (
+            <RecordTable
+              projectType={activeType}
+              records={records || []}
+              isLoading={recordsLoading}
+              onEdit={(id) => {
+                setSelectedRecordId(id);
+                setIsRecordOpen(true);
+              }}
+            />
+          )}
+        </>
       )}
 
-      {/* Bulk Action Bar - Sticky/Floating at the bottom */}
-      <BulkActionBar
-        selectedCount={selectedTaskIds.length}
-        onClear={() => setSelectedTaskIds([])}
-        onAssign={() => setIsAssignOpen(true)}
-        onStatusChange={() => setIsStatusOpen(true)}
-        onDelete={handleBulkDelete}
-      />
+      {/* Global Action Bar */}
+      {selectedTaskIds.length > 0 && (
+        <BulkActionBar
+          selectedCount={selectedTaskIds.length}
+          onClear={() => setRowSelection({})}
+          onAssign={() => setIsAssignOpen(true)}
+          onStatusChange={() => setIsStatusOpen(true)}
+        />
+      )}
 
-      {/* Triage Modals */}
-      <BulkUploadWizard
-        open={isUploadOpen}
-        onClose={() => setIsUploadOpen(false)}
-        fieldSchema={customSchemaFields}
-      />
-
+      {/* Slide-overs & Modals */}
       <CreateTaskModal
         open={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         defaultProjectId={projectId}
       />
 
+      {activeType && (
+        <RecordSlideOver
+          isOpen={isRecordOpen}
+          onClose={() => {
+            setIsRecordOpen(false);
+            setSelectedRecordId(undefined);
+          }}
+          projectId={projectId}
+          projectType={activeType}
+          recordId={selectedRecordId}
+        />
+      )}
+
+      <BulkUploadWizard
+        open={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        fieldSchema={customSchemaFields}
+      />
+
       <BulkAssignModal
         open={isAssignOpen}
         onClose={() => setIsAssignOpen(false)}
-        selectedTaskIds={selectedTaskIds}
         projectId={projectId}
+        selectedTaskIds={selectedTaskIds}
         orgId={activeOrgId || ''}
         onSuccess={handleBulkSuccess}
       />
@@ -394,8 +259,8 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
       <BulkStatusModal
         open={isStatusOpen}
         onClose={() => setIsStatusOpen(false)}
-        selectedTaskIds={selectedTaskIds}
         projectId={projectId}
+        selectedTaskIds={selectedTaskIds}
         onSuccess={handleBulkSuccess}
       />
     </div>

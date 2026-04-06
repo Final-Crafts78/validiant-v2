@@ -27,7 +27,7 @@ export function useProjectStats(projectId: string) {
   return useQuery({
     queryKey: ['project-stats', projectId],
     queryFn: () =>
-      get<APIResponse<ProjectStats>>(`/tasks/projects/${projectId}/stats`).then(
+      get<APIResponse<ProjectStats>>(`/projects/${projectId}/stats`).then(
         (res) => res.data.data
       ),
     enabled: !!projectId,

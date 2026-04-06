@@ -9,7 +9,16 @@
 
 import { eq, and, isNull, sql, or, desc, SQL } from 'drizzle-orm';
 import { db } from '../db';
-import { projects, projectMembers, organizations, users } from '../db/schema';
+import { 
+  projects,
+  projectMembers,
+  organizations,
+  users,
+  records, 
+  projectTypes,
+  typeTemplates,
+  typeColumns
+} from '../db/schema';
 import { cache } from '../config/redis.config';
 import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
 import { logger } from '../utils/logger';
@@ -58,6 +67,8 @@ interface ProjectWithStats extends Project {
   memberCount: number;
   taskCount?: number;
   completedTaskCount?: number;
+  recordCount?: number;
+  typePills?: { name: string; color?: string }[];
   organization?: {
     id: string;
     name: string;
@@ -103,6 +114,7 @@ export const createProject = async (
     themeColor?: string;
     logoUrl?: string;
     autoDispatchVerified?: boolean;
+    templateId?: string;
   }
 ): Promise<Project> => {
   // Proceed without db.transaction() because neon-http does not support interactive transactions
@@ -159,6 +171,52 @@ export const createProject = async (
       userId,
       role: 'owner',
     });
+    
+    // 3. PHASE 6: Archetype Marketplace Integration
+    // If a templateId is provided, initialize the project with that archetype
+    if (data.templateId) {
+      const template = await db.query.typeTemplates.findFirst({
+        where: eq(typeTemplates.id, data.templateId)
+      });
+      
+      if (template) {
+        const def = template.typeDefinition as any;
+        
+        // A. Create Project Type
+        const [newType] = await db.insert(projectTypes).values({
+          projectId: newProject.id,
+          name: def.typeName || template.name,
+          icon: def.typeIcon || 'Layers',
+          color: def.typeColor || '#4F46E5',
+          settings: def.settings || {},
+          createdBy: userId
+        }).returning();
+        
+        // B. Create Columns
+        if (def.columns && Array.isArray(def.columns)) {
+          const columnValues = def.columns.map((col: any, index: number) => ({
+            projectId: newProject.id,
+            typeId: newType.id,
+            name: col.name,
+            key: col.key,
+            columnType: col.columnType,
+            options: col.options || [],
+            settings: col.settings || {},
+            order: index,
+            isRequired: col.isRequired || false
+          }));
+          
+          if (columnValues.length > 0) {
+            await db.insert(typeColumns).values(columnValues);
+          }
+        }
+        
+        logger.info('Project initialized from archetype', { 
+          projectId: newProject.id, 
+          templateId: data.templateId 
+        });
+      }
+    }
   } catch (error) {
     // Manual rollback: If adding the member fails, delete the created project
     logger.error('Failed to add owner to new project, rolling back...', {
@@ -486,6 +544,12 @@ export const listOrganizationProjects = async (
           WHERE ${projectMembers.projectId} = ${projects.id}
           AND ${projectMembers.deletedAt} IS NULL
         )`,
+        // Subquery for record count
+        recordCount: sql<number>`(
+          SELECT COUNT(*)
+          FROM ${records}
+          WHERE ${records.projectId} = ${projects.id}
+        )`,
       })
       .from(projects)
       .where(whereClause)
@@ -497,6 +561,7 @@ export const listOrganizationProjects = async (
       projects: projectList.map((p: (typeof projectList)[number]) => ({
         ...p,
         memberCount: Number(p.memberCount),
+        recordCount: Number((p as any).recordCount || 0),
       })) as ProjectWithStats[],
       pagination: {
         total,

@@ -15,9 +15,14 @@ import {
   Settings,
   Map as MapIcon,
   ShieldAlert,
+  Fingerprint,
 } from 'lucide-react';
 
-// Stubbed Sub-Components (To be built in subsequent phases)
+// Precision Components (Phase 2 Architect)
+import { RecordsTab } from './components/RecordsTab';
+import { SchemaBuilderTab } from './components/SchemaBuilderTab';
+
+// Stubbed Sub-Components
 import { DataExplorerTab } from './components/DataExplorerTab';
 import { WorkflowBuilderTab } from './components/WorkflowBuilderTab';
 import { AutomationsTab } from './components/AutomationsTab';
@@ -45,7 +50,9 @@ const STATUS_OPTIONS = [
 ];
 
 const TABS = [
-  { id: 'data', label: 'Data Explorer', icon: Database },
+  { id: 'records', label: 'Records', icon: Fingerprint },
+  { id: 'schema', label: 'Schema Architect', icon: Database },
+  { id: 'data', label: 'Data Explorer (Legacy)', icon: Database },
   { id: 'map', label: 'Live Map', icon: MapIcon },
   { id: 'workflow', label: 'Workflow Builder', icon: GitMerge },
   { id: 'automations', label: 'Automations', icon: Puzzle },
@@ -62,7 +69,7 @@ export default function CommandCenterShell({
   const { id, orgSlug } = params;
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState('data');
+  const [activeTab, setActiveTab] = useState('records');
 
   const { data: project, isLoading, isError } = useProject(id);
   const updateMutation = useUpdateProject(id);
@@ -89,59 +96,58 @@ export default function CommandCenterShell({
     );
 
   // Dynamic Theme (Phase 13.5 Customization)
-  const settings = project.settings as any;
-  const themeColor = settings?.themeColor || '#4F46E5';
+  const settings = project.settings as Record<string, unknown> | null;
+  const themeColor = (settings?.themeColor as string) || '#4F46E5';
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50/50">
-      {/* 1. Command Header (Sticky) */}
-      <header className="sticky top-0 z-20 bg-white border-b border-slate-200">
-        <div className="px-6 py-4">
+    <div className="h-screen flex flex-col bg-[var(--color-surface-base)] font-manrope selection:bg-primary-500/30 selection:text-primary-900">
+      {/* Precision Header - Obsidian Layering */}
+      <header className="z-20 bg-[var(--color-surface-base)]">
+        <div className="px-8 pt-6 pb-2">
           <button
             onClick={() => router.push(`/${orgSlug}/projects`)}
-            className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-800 transition-colors mb-4"
+            className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] hover:text-primary-600 transition-all mb-4"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
+            <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> 
+            Back to Universe
           </button>
-
+ 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Optional Client Logo Injection */}
-              {settings?.logoUrl ? (
-                <img
-                  src={settings.logoUrl}
-                  alt="Client Logo"
-                  className="w-10 h-10 rounded-lg border border-slate-100 object-contain bg-white"
-                />
-              ) : (
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold"
-                  style={{ backgroundColor: themeColor }}
-                >
-                  {project.name.charAt(0)}
-                </div>
-              )}
-
-              <div>
-                <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                  {project.name}
+            <div className="flex items-center gap-6">
+              {/* Identity Nucleus */}
+              <div
+                className="w-14 h-14 rounded-[1.25rem] flex items-center justify-center text-white font-black text-xl shadow-2xl shadow-indigo-500/20 active:scale-95 transition-transform cursor-pointer"
+                style={{
+                  background: `linear-gradient(135deg, ${themeColor}, ${themeColor}CC)`,
+                }}
+              >
+                {project.name.charAt(0)}
+              </div>
+ 
+              <div className="space-y-1">
+                <div className="flex items-center gap-4">
+                  <h1 className="text-3xl font-black text-[var(--color-text-base)] tracking-tight">
+                    {project.name}
+                  </h1>
                   <span
-                    className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                    className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-sm border border-transparent ${
                       STATUS_STYLES[project.status] ??
                       STATUS_STYLES[ProjectStatus.PLANNING]
                     }`}
                   >
                     {project.status}
                   </span>
-                </h1>
-                <p className="text-sm text-slate-500 font-medium">
-                  Command Center
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]/50">
+                  Precision Command Node{' '}
+                  <span className="mx-2 opacity-20">/</span> ID:{' '}
+                  {id.slice(0, 8).toUpperCase()}
                 </p>
               </div>
             </div>
-
-            {/* Global Actions */}
-            <div className="flex items-center gap-3">
+ 
+            {/* Global Actions - Surface Layering */}
+            <div className="flex items-center gap-4 bg-[var(--color-surface-soft)] p-1.5 rounded-2xl border border-[var(--color-border-base)]/5">
               <select
                 value={project.status}
                 onChange={(e) =>
@@ -149,47 +155,55 @@ export default function CommandCenterShell({
                     status: e.target.value as ProjectStatus,
                   })
                 }
-                className="text-sm border shadow-sm border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="bg-transparent text-[10px] font-black uppercase tracking-widest px-4 py-2 focus:outline-none cursor-pointer hover:bg-[var(--color-surface-base)] rounded-xl transition-all"
               >
                 {STATUS_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
+                  <option key={o.value} value={o.value} className="bg-[var(--color-surface-base)]">
                     {o.label}
                   </option>
                 ))}
               </select>
+              <div className="w-px h-4 bg-[var(--color-border-base)]/10" />
+              <button className="p-2.5 text-[var(--color-text-muted)] hover:text-primary-600 transition-all rounded-xl hover:bg-[var(--color-surface-base)]">
+                <Settings className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Navigation Tabs */}
-        <div className="px-6 border-t border-slate-100">
-          <div className="flex space-x-8">
+ 
+        {/* Navigation Tabs - No-Line Design */}
+        <div className="px-8 mt-4 overflow-x-auto scroller-hidden">
+          <div className="flex items-center gap-2">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-4 px-1 flex items-center gap-2 text-sm font-semibold transition-all border-b-2 ${
+                className={`flex items-center gap-2.5 px-5 py-3.5 rounded-t-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative ${
                   activeTab === tab.id
-                    ? 'border-indigo-600 text-indigo-700'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    ? 'bg-[var(--color-surface-soft)] text-primary-600'
+                    : 'text-[var(--color-text-muted)]/60 hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)]/50'
                 }`}
-                style={
-                  activeTab === tab.id
-                    ? { borderColor: themeColor, color: themeColor }
-                    : {}
-                }
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon
+                  className={`w-3.5 h-3.5 transition-transform duration-500 ${
+                    activeTab === tab.id ? 'scale-110' : ''
+                  }`}
+                />
                 {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary-500 rounded-full shadow-lg shadow-primary-500/40" />
+                )}
               </button>
             ))}
           </div>
         </div>
       </header>
-
-      {/* 2. Scrollable Body Area */}
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-7xl mx-auto h-full space-y-6">
+ 
+      {/* Main Grid - Tonal Fluidity */}
+      <main className="flex-1 overflow-y-auto bg-[var(--color-surface-soft)] rounded-tl-[3.5rem] mt-[-1px] z-10 border-t border-[var(--color-border-base)]/5">
+        <div className="max-w-7xl mx-auto p-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+          {activeTab === 'records' && <RecordsTab projectId={project.id} />}
+          {activeTab === 'schema' && <SchemaBuilderTab projectId={project.id} />}
           {activeTab === 'data' && <DataExplorerTab projectId={project.id} />}
           {activeTab === 'map' && <RoutingMapTab projectId={project.id} />}
           {activeTab === 'workflow' && (

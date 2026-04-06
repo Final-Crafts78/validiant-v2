@@ -25,6 +25,7 @@ import {
 import * as projectController from '../controllers/project.controller';
 import * as taskController from '../controllers/task.controller';
 import { logger } from '../utils/logger';
+import { enforceLimit } from '../middleware/plan';
 
 const app = new Hono();
 
@@ -47,6 +48,7 @@ app.post(
       });
     }
   }),
+  enforceLimit('projects'),
   projectController.createProject
 );
 app.get('/my', projectController.getMyProjects);

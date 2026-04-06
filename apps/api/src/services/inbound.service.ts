@@ -1,68 +1,69 @@
 /**
- * Inbound BGV Service
- *
- * Handles processing of cases pushed by external partners.
+ * Inbound Case Ingestion Service
+ * Handles processing of cases pushed by external partners into the Project Universe.
  */
 
 import { eq, and } from 'drizzle-orm';
 import { db } from '../db';
-import { tasks, verificationTypes, projects, BgvPartner } from '../db/schema';
+import { projectTypes, projects, BgvPartner, records } from '../db/schema';
 import { logger } from '../utils/logger';
 import { logActivity } from '../utils/activity';
 import { ConflictError, NotFoundError, ForbiddenError } from '../utils/errors';
 import { InboundCasePushInput } from '@validiant/shared';
+import * as recordService from './records.service';
 
 /**
  * Process an inbound case push from a partner
  */
 export const processInboundCase = async (
-  partnerKey: string,
+  _partnerKey: string,
   data: InboundCasePushInput,
   partner: BgvPartner
 ) => {
   const organizationId = partner.organizationId;
 
-  // 1. Resolve Verification Type
-  const [vType] = await db
+  // 1. Resolve Project Archetype (Project Type)
+  // Partner sends data.checkType which maps to projectTypes.name or a slug
+  const [pType] = await db
     .select()
-    .from(verificationTypes)
+    .from(projectTypes)
     .where(
       and(
-        eq(verificationTypes.organizationId, organizationId),
-        eq(verificationTypes.code, data.checkType)
+        eq(projectTypes.projectId, data.projectId || ''), // Ideally projectId is in the push
+        eq(projectTypes.name, data.checkType)
       )
     )
     .limit(1);
 
-  if (!vType) {
+  if (!pType) {
     throw new NotFoundError(
-      `Verification type '${data.checkType}' not found for this organization`
+      `Project Archetype '${data.checkType}' not found in the target scope`
     );
   }
 
   // 2. Resource/Project Resolution
-  // If projectId is provided, verify it belongs to the org
-  let targetProjectId = data.projectId;
-  if (targetProjectId) {
+  let targetProjectId: string = '';
+  
+  if (data.projectId) {
     const [project] = await db
-      .select({ id: projects.id })
+      .select({ id: projects.id, ownerId: projects.ownerId })
       .from(projects)
       .where(
         and(
-          eq(projects.id, targetProjectId),
+          eq(projects.id, data.projectId),
           eq(projects.organizationId, organizationId)
         )
       )
       .limit(1);
 
     if (!project) {
-      throw new ForbiddenError('Project not found or access denied');
+      throw new ForbiddenError('Project scope access denied');
     }
+    targetProjectId = project.id;
   } else {
-    // Fallback: use the first active project or a default one if needed
-    // In a real system, we might have a "Default Inbound Project" in org settings
+    // Fallback logic for partner pushes without explicit projectId
     const [defaultProject] = await db
-      .select({ id: projects.id })
+      .select({ id: projects.id, ownerId: projects.ownerId })
       .from(projects)
       .where(
         and(
@@ -73,68 +74,63 @@ export const processInboundCase = async (
       .limit(1);
 
     if (!defaultProject) {
-      throw new Error('No active project found to assign the inbound case');
+      throw new Error('No active project universe found for this partner');
     }
     targetProjectId = defaultProject.id;
   }
 
-  // 3. Check for Duplicate Case ID (Atomic Collision Handling)
-  const [existingTask] = await db
-    .select({ id: tasks.id })
-    .from(tasks)
+  // 3. Deduplication (External ID check)
+  const [existingRecord] = await db
+    .select({ id: records.id })
+    .from(records)
     .where(
       and(
-        eq(tasks.organizationId, organizationId),
-        eq(tasks.caseId, data.caseId)
+        eq(records.projectId, targetProjectId),
+        eq(records.externalId, data.caseId)
       )
     )
     .limit(1);
 
-  if (existingTask) {
+  if (existingRecord) {
     throw new ConflictError(
-      `Case ID '${data.caseId}' already exists. Task ID: ${existingTask.id}`,
-      { taskId: existingTask.id }
+      `Case ID '${data.caseId}' already exists in this universe`,
+      { recordId: existingRecord.id }
     );
   }
 
-  // 4. Create Task
-  const [newTask] = await db
-    .insert(tasks)
-    .values({
-      organizationId,
-      projectId: targetProjectId as string,
-      title: `${data.candidateName} - ${vType.name}`,
-      description: `Inbound case from partner: ${partner.name}`,
-      statusKey: 'UNASSIGNED',
-      priority: data.priority,
-      caseId: data.caseId,
-      verificationTypeId: vType.id,
-      clientName: data.candidateName,
-      customFields: {
+  // 4. Create Record via Record Engine
+  const newRecord = await recordService.createRecord(
+    targetProjectId,
+    partner.organizationId, // System level identity
+    {
+      typeId: pType.id,
+      data: {
         ...data.customFields,
+        candidateName: data.candidateName,
         candidateEmail: data.candidateEmail,
         pushedByPartner: partner.id,
       },
-      createdById: partner.organizationId, // System created
-    })
-    .returning();
+      status: 'pending',
+      externalId: data.caseId,
+      createdVia: 'partner_api',
+    }
+  );
 
-  // 5. Audit Logging
+  // 5. High-level Audit
   await logActivity({
     organizationId,
     userId: organizationId,
-    action: 'CASE_RECEIVED_FROM_PARTNER',
-    entityId: newTask.id,
-    entityType: 'task',
-    details: `Case received from partner ${partner.name} (${partnerKey}). Case ID: ${data.caseId}`,
+    action: 'RECORD_INGESTED_VIA_PARTNER',
+    entityId: newRecord.id,
+    entityType: 'record',
+    details: `Record injected by partner ${partner.name}. External ID: ${data.caseId}`,
   });
 
-  logger.info('Inbound case created', {
-    taskId: newTask.id,
-    caseId: data.caseId,
-    partnerKey,
-    orgId: organizationId,
+  logger.info('[Inbound:Success] External case synced to Universe', {
+    recordId: newRecord.id,
+    externalId: data.caseId,
+    partnerId: partner.id,
   });
 
-  return newTask;
+  return newRecord;
 };

@@ -64,6 +64,11 @@ export default function SettingsLayout({
       href: `/${orgSlug}/settings/audit`,
       icon: History,
     },
+    {
+      name: 'Billing',
+      href: `/${orgSlug}/settings/billing`,
+      icon: Layers, // Placeholder icon, will use CreditCard if available
+    },
   ];
 
   return (

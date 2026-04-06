@@ -51,3 +51,9 @@ export * from './inbound-case.schemas';
 
 // CSV Import schemas (Phase 15)
 export * from './csv-import.schemas';
+
+// Record Engine schemas (Phase 2 Architect)
+export * from './record.schemas';
+
+// Sub-Account schemas
+export * from './sub-account.schemas';

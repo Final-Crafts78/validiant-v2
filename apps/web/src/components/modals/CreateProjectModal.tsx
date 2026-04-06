@@ -1,16 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { projectsApi, organizationsApi } from '@/lib/api';
-import { FolderKanban, Plus, X } from 'lucide-react';
+import {
+  FolderKanban,
+  Plus,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Zap,
+  Check,
+  Loader2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { Organization } from '@validiant/shared';
+import { ArchetypePicker } from '../workspace/ArchetypePicker';
+
+/**
+ * Phase 6.C: Project Archetype Marketplace Integration
+ * Two-step creation wizard with Obsidian design.
+ */
 
 interface CreateProjectModalProps {
   open: boolean;
   onClose: () => void;
-  // If we wanted to default to a specific organization we could pass it here,
-  // but let's let the user select their organization
   defaultOrganizationId?: string;
 }
 
@@ -19,21 +33,23 @@ export function CreateProjectModal({
   onClose,
   defaultOrganizationId,
 }: CreateProjectModalProps) {
+  const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [organizationId, setOrganizationId] = useState(
     defaultOrganizationId || ''
   );
+  const [templateId, setTemplateId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const queryClient = useQueryClient();
 
-  // Fetch user's organizations to populate the dropdown
+  // Fetch user's organizations
   const { data: orgResponse } = useQuery({
     queryKey: ['organizations', 'my'],
     queryFn: () => organizationsApi.getAll(),
-    enabled: open, // Only fetch when modal opens
+    enabled: open,
   });
 
   const organizations = (orgResponse?.data?.data?.organizations ||
@@ -41,10 +57,23 @@ export function CreateProjectModal({
 
   if (!open) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!organizationId) {
-      setError('Please select an organization');
+  const handleNext = () => {
+    if (!name || !organizationId) {
+      setError('Project name and organization are required');
+      return;
+    }
+    setError('');
+    setStep(2);
+  };
+
+  const handleBack = () => {
+    setStep(1);
+  };
+
+  const handleSubmit = async () => {
+    if (!organizationId || !name) {
+      setError('Missing required fields');
+      setStep(1);
       return;
     }
 
@@ -63,143 +92,171 @@ export function CreateProjectModal({
         key: projectKey,
         description,
         organizationId,
+        templateId: templateId || undefined,
       });
-      // Invalidate the projects query to trigger a refetch
+
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+
       // Reset form
       setName('');
       setDescription('');
+      setTemplateId(null);
+      setStep(1);
       if (!defaultOrganizationId) setOrganizationId('');
       onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else if (typeof err === 'object' && err !== null && 'message' in err) {
-        setError((err as { message: string }).message);
-      } else {
-        setError('Failed to create project');
-      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to create project');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="modal-surface w-full max-w-md">
-        <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-surface-subtle/50">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
-              <FolderKanban className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div
+        className={cn(
+          'modal-surface w-full transition-all duration-500',
+          step === 1 ? 'max-w-md' : 'max-w-2xl'
+        )}
+      >
+        <div className="px-6 py-4 border-b border-[var(--color-border-base)] flex items-center justify-between bg-[var(--color-surface-soft)]/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center">
+              {step === 1 ? (
+                <FolderKanban className="w-5 h-5 text-[var(--color-accent-base)]" />
+              ) : (
+                <Zap className="w-5 h-5 text-[var(--color-accent-base)]" />
+              )}
             </div>
-            <h2 className="text-lg font-semibold text-text-base">
-              Create Project
-            </h2>
+            <div>
+              <h2 className="text-lg font-bold text-[var(--color-text-base)]">
+                {step === 1 ? 'Project Identity' : 'Platform Archetype'}
+              </h2>
+              <p className="text-[10px] text-[var(--color-text-muted)] uppercase font-black tracking-widest">
+                Step {step} of 2
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-text-muted hover:text-text-base hover:bg-surface-muted rounded-lg transition-colors"
+            className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)] rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <div className="p-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+            <div className="mb-6 p-4 bg-red-500/10 text-red-500 text-sm rounded-xl border border-red-500/20 flex gap-3 items-center animate-in shake-in">
+              <X className="h-4 w-4" />
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="organizationId"
-                className="block text-sm font-medium text-text-subtle mb-1"
-              >
-                Organization <span className="text-danger-500">*</span>
-              </label>
-              <select
-                id="organizationId"
-                value={organizationId}
-                onChange={(e) => setOrganizationId(e.target.value)}
-                required
-                disabled={!!defaultOrganizationId}
-                className="input w-full"
-              >
-                <option value="" disabled>
-                  Select an organization
-                </option>
-                {organizations.map((org: Organization) => (
-                  <option key={org.id} value={org.id}>
-                    {org.name}
+          {step === 1 ? (
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-bold text-[var(--color-text-subtle)] mb-2">
+                  Organization
+                </label>
+                <select
+                  value={organizationId}
+                  onChange={(e) => setOrganizationId(e.target.value)}
+                  className="w-full bg-[var(--color-surface-soft)] border border-[var(--color-border-base)] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--color-accent-base)]/20 outline-none transition-all font-medium"
+                >
+                  <option value="" disabled>
+                    Select Organization
                   </option>
-                ))}
-              </select>
-            </div>
+                  {organizations.map((org: Organization) => (
+                    <option key={org.id} value={org.id}>
+                      {org.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Project Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="input w-full"
-                placeholder="e.g. Website Redesign"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-bold text-[var(--color-text-subtle)] mb-2">
+                  Project Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Q2 Compliance Audit"
+                  className="w-full bg-[var(--color-surface-soft)] border border-[var(--color-border-base)] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--color-accent-base)]/20 outline-none transition-all font-medium placeholder:text-[var(--color-text-muted)]/50"
+                />
+              </div>
 
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Description
-              </label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="input w-full min-h-[100px] py-2"
-                placeholder="What is this project about?"
-              />
+              <div>
+                <label className="block text-sm font-bold text-[var(--color-text-subtle)] mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="The objective of this universe is..."
+                  className="w-full bg-[var(--color-surface-soft)] border border-[var(--color-border-base)] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--color-accent-base)]/20 outline-none transition-all font-medium min-h-[100px] placeholder:text-[var(--color-text-muted)]/50"
+                />
+              </div>
             </div>
+          ) : (
+            <ArchetypePicker selectedId={templateId} onSelect={setTemplateId} />
+          )}
+
+          <div className="mt-8 pt-6 border-t border-[var(--color-border-base)] flex justify-between gap-3">
+            {step === 1 ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-6 py-3 text-sm font-bold text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="bg-[var(--color-accent-base)] text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 hover:translate-x-1"
+                >
+                  Configure Schema
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="px-6 py-3 text-sm font-bold text-[var(--color-text-subtle)] flex items-center gap-2 hover:text-[var(--color-text-base)] transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit()}
+                  disabled={isSubmitting}
+                  className="bg-[var(--color-accent-base)] text-white px-10 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 shadow-lg shadow-primary-500/20"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      Initialize Universe
+                      <Check className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </>
+            )}
           </div>
-
-          <div className="mt-6 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-outline"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSubmitting || !name.trim() || !organizationId}
-            >
-              {isSubmitting ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                <Plus className="w-4 h-4" />
-              )}
-              <span>Create Project</span>
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 }
+
 interface CreateProjectModalTriggerProps {
   defaultOrganizationId?: string;
   className?: string;

@@ -263,6 +263,21 @@ export const organizations = pgTable(
       .default(90)
       .notNull(),
     settings: jsonb('settings').default({}), // Extensible enterprise configuration
+
+    // =========================================================================
+    // PHASE 6: BILLING & SUBSCRIPTION LAYER
+    // =========================================================================
+    plan: text('plan', { enum: ['free', 'pro', 'enterprise'] })
+      .notNull()
+      .default('free'),
+    stripeCustomerId: text('stripe_customer_id'),
+    stripeSubscriptionId: text('stripe_subscription_id'),
+    subscriptionStatus: text('subscription_status'), // active, canceled, past_due, trialing
+    planExpiresAt: timestamp('plan_expires_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
+
     ownerId: uuid('owner_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -451,6 +466,8 @@ export const projects = pgTable(
     progress: integer('progress').notNull().default(0),
     color: text('color'),
     icon: text('icon'),
+    key: text('key').unique(), // External reference key (e.g. "PRJ-123")
+    clientApiKey: text('client_api_key').unique(), // For external ingestion
 
     // Project customizations (Client Command Center)
     themeColor: varchar('theme_color', { length: 7 }).default('#4F46E5'),
@@ -609,7 +626,7 @@ export const tasks = pgTable(
     customFields: jsonb('custom_fields').default({}),
 
     // Task hierarchy (subtasks) - cast to any to avoid circular reference
-    parentTaskId: uuid('parent_task_id').references((): any => tasks.id, {
+    parentTaskId: uuid('parent_task_id').references(() => tasks.id, {
       onDelete: 'cascade',
     }),
 
@@ -1315,12 +1332,11 @@ export const webhookSubscriptions = pgTable(
     projectId: uuid('project_id')
       .notNull()
       .references(() => projects.id, { onDelete: 'cascade' }),
-    
     name: text('name').notNull(),
     endpointUrl: text('endpoint_url').notNull(),
     secretKey: text('secret_key'), // Used for signing
     isActive: boolean('is_active').notNull().default(true),
-    
+
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -1358,7 +1374,7 @@ export const orgAnalyticsSnapshots = pgTable(
     recordedAt: timestamp('recorded_at', { mode: 'date', withTimezone: true })
       .notNull()
       .defaultNow(),
-    metrics: jsonb('metrics').$type<Record<string, any>>().notNull(),
+    metrics: jsonb('metrics').$type<Record<string, unknown>>().notNull(),
   },
   (table) => ({
     orgIdx: index('org_analytics_snapshots_org_idx').on(table.organizationId),
@@ -1409,6 +1425,227 @@ export type NewOrgAnalyticsSnapshot = typeof orgAnalyticsSnapshots.$inferInsert;
 export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect;
 export type NewWebhookSubscription = typeof webhookSubscriptions.$inferInsert;
 
+// ============================================================================
+// PROJECT TYPES (Schema Definitions — evolves from verification_types)
+// ============================================================================
+
+export const projectTypes = pgTable(
+  'project_types',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    description: text('description'),
+    icon: text('icon'), // Lucide icon key
+    color: text('color'),
+    order: integer('order').default(0),
+    settings: jsonb('settings').default({}),
+    createdBy: uuid('created_by').references(() => users.id),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    projectIdx: index('project_types_project_id_idx').on(table.projectId),
+    projectNameUnique: unique('project_types_project_name_unique').on(
+      table.projectId,
+      table.name
+    ),
+  })
+);
+
+export const projectTypesRelations = relations(
+  projectTypes,
+  ({ one, many }) => ({
+    project: one(projects, {
+      fields: [projectTypes.projectId],
+      references: [projects.id],
+    }),
+    columns: many(typeColumns),
+    records: many(records),
+  })
+);
+
+// ============================================================================
+// TYPE COLUMNS (Field Definitions — evolves from field_schema JSONB)
+// ============================================================================
+
+export const typeColumns = pgTable(
+  'type_columns',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    typeId: uuid('type_id')
+      .notNull()
+      .references(() => projectTypes.id, { onDelete: 'cascade' }),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(), // Display name
+    key: text('key').notNull(), // Programmatic key (snake_case)
+    columnType: text('column_type').notNull(),
+    options: jsonb('options'), // For SELECT/MULTI_SELECT: { choices: [{value, label, color}] }
+    settings: jsonb('settings').default({}),
+    order: integer('order').default(0),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    typeIdx: index('type_columns_type_id_idx').on(table.typeId),
+    projectIdx: index('type_columns_project_id_idx').on(table.projectId),
+    typeKeyUnique: unique('type_columns_type_key_unique').on(
+      table.typeId,
+      table.key
+    ),
+  })
+);
+
+export const typeColumnsRelations = relations(typeColumns, ({ one }) => ({
+  type: one(projectTypes, {
+    fields: [typeColumns.typeId],
+    references: [projectTypes.id],
+  }),
+  project: one(projects, {
+    fields: [typeColumns.projectId],
+    references: [projects.id],
+  }),
+}));
+
+// ============================================================================
+// RECORDS (Data Rows — next-gen of tasks + case_field_values)
+// ============================================================================
+
+export const records = pgTable(
+  'records',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    projectId: uuid('project_id')
+      .notNull()
+      .references(() => projects.id, { onDelete: 'cascade' }),
+    typeId: uuid('type_id')
+      .notNull()
+      .references(() => projectTypes.id),
+    number: integer('number').notNull(), // Auto-incremented per project
+    displayId: text('display_id'), // Computed: project.key + "-" + number
+    data: jsonb('data').notNull().default({}), // Column key → value mapping
+    status: text('status').notNull().default('pending'),
+    assignedTo: uuid('assigned_to').references(() => users.id),
+    createdBy: uuid('created_by').references(() => users.id),
+    createdVia: text('created_via').default('web'),
+    clientId: text('client_id'), // For client portal filtering
+
+    // GPS capture
+    gpsLat: real('gps_lat'),
+    gpsLng: real('gps_lng'),
+    gpsAccuracy: real('gps_accuracy'),
+
+    // Lifecycle timestamps
+    submittedAt: timestamp('submitted_at', {
+      mode: 'date',
+      withTimezone: true,
+    }),
+    closedAt: timestamp('closed_at', { mode: 'date', withTimezone: true }),
+    externalId: text('external_id'), // For deduplication from inbound API
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { mode: 'date', withTimezone: true }),
+  },
+  (table) => ({
+    projectIdx: index('records_project_id_idx').on(table.projectId),
+    typeIdx: index('records_type_id_idx').on(table.typeId),
+    assigneeIdx: index('records_assigned_to_idx').on(table.assignedTo),
+    statusIdx: index('records_status_idx').on(table.status),
+    clientIdx: index('records_client_id_idx').on(table.clientId),
+    externalIdIdx: index('records_external_id_idx').on(table.externalId),
+    projectNumberUnique: unique('records_project_number_unique').on(
+      table.projectId,
+      table.number
+    ),
+    externalIdUnique: unique('records_external_id_unique').on(
+      table.projectId,
+      table.typeId,
+      table.externalId
+    ),
+    // Performance: GIN index for JSONB path queries
+    dataPathIdx: index('records_data_path_idx')
+      .on(table.data)
+      .using(sql`jsonb_path_ops`),
+  })
+);
+
+export const recordsRelations = relations(records, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [records.projectId],
+    references: [projects.id],
+  }),
+  type: one(projectTypes, {
+    fields: [records.typeId],
+    references: [projectTypes.id],
+  }),
+  assignee: one(users, {
+    fields: [records.assignedTo],
+    references: [users.id],
+  }),
+  history: many(recordHistory),
+}));
+
+// ============================================================================
+// RECORD HISTORY (Immutable Audit Trail)
+// ============================================================================
+
+export const recordHistory = pgTable(
+  'record_history',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    recordId: uuid('record_id')
+      .notNull()
+      .references(() => records.id, { onDelete: 'cascade' }),
+    changedBy: uuid('changed_by').references(() => users.id),
+    changeType: text('change_type').notNull(), // 'created' | 'updated' | 'status_changed' | 'assigned' | 'comment'
+    diff: jsonb('diff'), // { field: { old: x, new: y } }
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    recordIdx: index('record_history_record_id_idx').on(table.recordId),
+    changedByIdx: index('record_history_changed_by_idx').on(table.changedBy),
+  })
+);
+
+export const recordHistoryRelations = relations(recordHistory, ({ one }) => ({
+  record: one(records, {
+    fields: [recordHistory.recordId],
+    references: [records.id],
+  }),
+  user: one(users, {
+    fields: [recordHistory.changedBy],
+    references: [users.id],
+  }),
+}));
+
+export type ProjectType = typeof projectTypes.$inferSelect;
+export type NewProjectType = typeof projectTypes.$inferInsert;
+
+export type TypeColumn = typeof typeColumns.$inferSelect;
+export type NewTypeColumn = typeof typeColumns.$inferInsert;
+
+export type ProjectRecord = typeof records.$inferSelect;
+export type NewProjectRecord = typeof records.$inferInsert;
+
+export type RecordHistory = typeof recordHistory.$inferSelect;
+export type NewRecordHistory = typeof recordHistory.$inferInsert;
 
 // ============================================================================
 // CLIENT API KEYS (Phase 13.5 - Client Command Center)
@@ -1436,3 +1673,85 @@ export const clientApiKeysRelations = relations(clientApiKeys, ({ one }) => ({
 
 export type ClientApiKey = typeof clientApiKeys.$inferSelect;
 export type NewClientApiKey = typeof clientApiKeys.$inferInsert;
+
+// ============================================================================
+// ORG SUB-ACCOUNTS (Field Agents, Client Viewers, Partners)
+// ============================================================================
+
+export const orgSubAccounts = pgTable(
+  'org_sub_accounts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: uuid('org_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id').references(() => users.id, {
+      onDelete: 'cascade',
+    }), // Links to actual user account
+    accountType: text('account_type').notNull(), // 'field_agent' | 'client_viewer' | 'partner'
+    name: text('name').notNull(),
+    email: text('email'),
+    phone: text('phone'),
+    industry: text('industry'), // For industry-specific context
+    projectAccess: jsonb('project_access').default([]), // Array of { projectId, role }
+    portalToken: text('portal_token'), // Hashed token for magic link access
+    metadata: jsonb('metadata').default({}), // Industry-specific or custom metadata
+    isActive: boolean('is_active').default(true),
+    createdBy: uuid('created_by').references(() => users.id),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    orgIdx: index('org_sub_accounts_org_id_idx').on(table.orgId),
+    userIdx: index('org_sub_accounts_user_id_idx').on(table.userId),
+  })
+);
+
+export const orgSubAccountsRelations = relations(orgSubAccounts, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [orgSubAccounts.orgId],
+    references: [organizations.id],
+  }),
+  user: one(users, {
+    fields: [orgSubAccounts.userId],
+    references: [users.id],
+  }),
+}));
+
+// ============================================================================
+// TYPE TEMPLATES (Reusable Schemas)
+// ============================================================================
+
+export const typeTemplates = pgTable(
+  'type_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: uuid('org_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
+    name: text('name').notNull(),
+    description: text('description'),
+    industry: text('industry'),
+    typeDefinition: jsonb('type_definition').notNull(),
+    // Schema: { typeName, typeIcon, typeColor, columns: [{name, key, columnType, options, settings}] }
+    isPublic: boolean('is_public').default(false),
+    createdBy: uuid('created_by').references(() => users.id),
+    createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    orgIdx: index('type_templates_org_id_idx').on(table.orgId),
+    industryIdx: index('type_templates_industry_idx').on(table.industry),
+  })
+);
+
+export type OrgSubAccount = typeof orgSubAccounts.$inferSelect;
+export type NewOrgSubAccount = typeof orgSubAccounts.$inferInsert;
+
+export type TypeTemplate = typeof typeTemplates.$inferSelect;
+export type NewTypeTemplate = typeof typeTemplates.$inferInsert;
