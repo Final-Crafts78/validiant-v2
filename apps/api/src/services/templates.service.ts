@@ -5,7 +5,7 @@
  * Supports public templates and organization-specific templates.
  */
 
-import { eq, and, or } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import { db } from '../db';
 import { typeTemplates } from '../db/schema';
 import { logger } from '../utils/logger';

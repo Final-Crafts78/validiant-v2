@@ -51,7 +51,7 @@ export const enforceLimit = (resource: 'projects' | 'records' | 'sub-accounts') 
         }, 403);
       }
     } else if (resource === 'sub-accounts') {
-      const [result] = await db.select({ value: count() }).from(orgSubAccounts).where(eq(orgSubAccounts.organizationId, orgId));
+      const [result] = await db.select({ value: count() }).from(orgSubAccounts).where(eq(orgSubAccounts.orgId, orgId));
       currentUsage = result.value;
       
       if (currentUsage >= quotas.subAccounts) {
@@ -63,6 +63,6 @@ export const enforceLimit = (resource: 'projects' | 'records' | 'sub-accounts') 
       }
     }
 
-    await next();
+    return await next();
   };
 };

@@ -51,7 +51,7 @@ async function migrateVerificationTypes() {
 
     // Filter types belonging to this project's organization (or system types)
     const projectLegacyTypes = legacyTypes.filter(
-      (lt) => !lt.organizationId || lt.organizationId === project.organizationId
+      (lt: any) => !lt.organizationId || lt.organizationId === project.organizationId
     );
 
     for (const vt of projectLegacyTypes) {

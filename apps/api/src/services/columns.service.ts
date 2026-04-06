@@ -57,7 +57,7 @@ export const updateTypeColumn = async (
     .where(eq(typeColumns.id, id))
     .returning();
   
-  if (!updated) throw new ApiError(404, 'Column not found');
+  if (!updated) throw new ApiError('Column not found', 404);
   return updated;
 };
 
@@ -72,10 +72,10 @@ export const deleteTypeColumn = async (id: string) => {
  * Reorder columns for a type
  */
 export const reorderColumns = async (
-  typeId: string,
+  _typeId: string,
   columnIds: string[]
 ) => {
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     for (let i = 0; i < columnIds.length; i++) {
       await tx
         .update(typeColumns)

@@ -1,0 +1,147 @@
+﻿
+> validiant-monorepo@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2
+> turbo run build
+
+ΓÇó Packages in scope: @validiant/api, @validiant/app, @validiant/config, @validiant/mobile, @validiant/shared, @validiant/ui, @validiant/web
+ΓÇó Running build in 7 packages
+ΓÇó Remote caching disabled
+@validiant/config:build: cache miss, executing 28e499597ea74e33
+@validiant/ui:build: cache hit, replaying logs 15e8fe426be194d9
+@validiant/ui:build: 
+@validiant/ui:build: > @validiant/ui@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\packages\ui
+@validiant/ui:build: > tsup src/index.ts --format cjs,esm --dts --minify --clean
+@validiant/ui:build: 
+@validiant/ui:build: [34mCLI[39m Building entry: src/index.ts
+@validiant/ui:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@validiant/ui:build: [34mCLI[39m tsup v8.5.1
+@validiant/ui:build: [34mCLI[39m Target: es2020
+@validiant/ui:build: [34mCLI[39m Cleaning output folder
+@validiant/ui:build: [34mCJS[39m Build start
+@validiant/ui:build: [34mESM[39m Build start
+@validiant/ui:build: [32mCJS[39m [1mdist\index.js [22m[32m28.20 KB[39m
+@validiant/ui:build: [32mCJS[39m ΓÜí∩╕Å Build success in 842ms
+@validiant/ui:build: [32mESM[39m [1mdist\index.mjs [22m[32m26.26 KB[39m
+@validiant/ui:build: [32mESM[39m ΓÜí∩╕Å Build success in 843ms
+@validiant/ui:build: [34mDTS[39m Build start
+@validiant/ui:build: [32mDTS[39m ΓÜí∩╕Å Build success in 12088ms
+@validiant/ui:build: [32mDTS[39m [1mdist\index.d.ts  [22m[32m13.58 KB[39m
+@validiant/ui:build: [32mDTS[39m [1mdist\index.d.mts [22m[32m13.58 KB[39m
+@validiant/shared:build: cache hit, replaying logs 9774cdc2936c0b23
+@validiant/shared:build: 
+@validiant/shared:build: > @validiant/shared@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\packages\shared
+@validiant/shared:build: > tsup src/index.ts --format cjs,esm --dts
+@validiant/shared:build: 
+@validiant/shared:build: [34mCLI[39m Building entry: src/index.ts
+@validiant/shared:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@validiant/shared:build: [34mCLI[39m tsup v8.5.1
+@validiant/shared:build: [34mCLI[39m Target: es2020
+@validiant/shared:build: [34mCJS[39m Build start
+@validiant/shared:build: [34mESM[39m Build start
+@validiant/shared:build: [32mESM[39m [1mdist\index.mjs [22m[32m110.36 KB[39m
+@validiant/shared:build: [32mESM[39m ΓÜí∩╕Å Build success in 186ms
+@validiant/shared:build: [32mCJS[39m [1mdist\index.js [22m[32m141.11 KB[39m
+@validiant/shared:build: [32mCJS[39m ΓÜí∩╕Å Build success in 189ms
+@validiant/shared:build: [34mDTS[39m Build start
+@validiant/shared:build: [32mDTS[39m ΓÜí∩╕Å Build success in 11525ms
+@validiant/shared:build: [32mDTS[39m [1mdist\index.d.ts  [22m[32m353.90 KB[39m
+@validiant/shared:build: [32mDTS[39m [1mdist\index.d.mts [22m[32m353.90 KB[39m
+@validiant/app:build: cache hit, replaying logs 5e3b66b7951c3f57
+@validiant/app:build: 
+@validiant/app:build: > @validiant/app@2.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\app
+@validiant/app:build: > echo 'Native app - build via EAS CLI'
+@validiant/app:build: 
+@validiant/app:build: 'Native app - build via EAS CLI'
+@validiant/mobile:build: cache hit, replaying logs 8d5ac0ad05a93ade
+@validiant/web:build: cache miss, executing 4bad4e1545d028ac
+@validiant/mobile:build: 
+@validiant/mobile:build: > @validiant/mobile@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\mobile
+@validiant/mobile:build: > echo 'Native app - build via EAS CLI'
+@validiant/mobile:build: 
+@validiant/mobile:build: 'Native app - build via EAS CLI'
+@validiant/api:build: cache miss, executing f79b610d15a18fd1
+@validiant/web:build: 
+@validiant/web:build: > @validiant/web@2.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+@validiant/web:build: > next build
+@validiant/web:build: 
+@validiant/config:build: 
+@validiant/config:build: > @validiant/config@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\packages\config
+@validiant/config:build: > npm run build:tokens
+@validiant/config:build: 
+@validiant/api:build: 
+@validiant/api:build: > @validiant/api@1.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api
+@validiant/api:build: > tsc
+@validiant/api:build: 
+@validiant/config:build: npm warn Unknown env config "npm-globalconfig". This will stop working in the next major version of npm.
+@validiant/config:build: npm warn Unknown env config "verify-deps-before-run". This will stop working in the next major version of npm.
+@validiant/config:build: npm warn Unknown env config "_jsr-registry". This will stop working in the next major version of npm.
+@validiant/config:build: 
+@validiant/config:build: > @validiant/config@1.0.0 build:tokens
+@validiant/config:build: > ts-node tokens/build-tokens.ts
+@validiant/config:build: 
+@validiant/web:build:   Γû▓ Next.js 14.2.35
+@validiant/web:build: 
+@validiant/config:build: Γ£à Generated css-vars.css
+@validiant/config:build: Γ£à Generated theme.ts
+@validiant/web:build:    Creating an optimized production build ...
+@validiant/api:build: src/controllers/columns.controller.ts(3,1): error TS6192: All imports in import declaration are unused.
+@validiant/api:build: src/db/migrate-verification-to-types.ts(54,8): error TS7006: Parameter 'lt' implicitly has an 'any' type.
+@validiant/api:build: src/db/schema.ts(598,14): error TS7022: 'tasks' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+@validiant/api:build: src/db/schema.ts(629,53): error TS7024: Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+@validiant/api:build: src/middleware/plan.ts(13,10): error TS7030: Not all code paths return a value.
+@validiant/api:build: src/middleware/plan.ts(54,105): error TS2339: Property 'organizationId' does not exist on type 'PgTableWithColumns<{ name: "org_sub_accounts"; schema: undefined; columns: { id: PgColumn<{ name: "id"; tableName: "org_sub_accounts"; dataType: "string"; columnType: "PgUUID"; data: string; driverParam: string; notNull: true; hasDefault: true; enumValues: undefined; baseColumn: never; }, {}, {}>; ... 13 more ...; u...'.
+@validiant/api:build: src/routes/verification.routes.ts(36,52): error TS7030: Not all code paths return a value.
+@validiant/api:build: src/routes/verification.routes.ts(63,52): error TS7030: Not all code paths return a value.
+@validiant/api:build: src/scripts/migrate-verification-to-types.ts(20,1): error TS6133: 'uuid' is declared but its value is never read.
+@validiant/api:build: src/scripts/migrate-verification-to-types.ts(51,16): error TS6133: 'existingType' is declared but its value is never read.
+@validiant/api:build: src/scripts/test-public-ingest.ts(1,19): error TS2307: Cannot find module 'axios' or its corresponding type declarations.
+@validiant/api:build: src/services/columns.service.ts(60,36): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+@validiant/api:build: src/services/columns.service.ts(75,3): error TS6133: 'typeId' is declared but its value is never read.
+@validiant/api:build: src/services/columns.service.ts(78,38): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+@validiant/api:build: src/services/records.service.ts(365,68): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'LogMetadata | Error | undefined'.
+@validiant/api:build: src/services/records.service.ts(458,54): error TS6133: 'userId' is declared but its value is never read.
+@validiant/api:build: src/services/templates.service.ts(8,14): error TS6133: 'and' is declared but its value is never read.
+@validiant/api:build: src/services/types.service.ts(76,36): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+@validiant/api:build: ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.
+node.exe : 
+@validiant/api:build: 
+ERROR: command finished 
+with error: command (C:\Us
+ers\manso\OneDrive\Documen
+ts\Validiant-v2\validiant-
+v2\apps\api) C:\Users\mans
+o\AppData\Roaming\npm\pnpm
+.cmd run build exited (2)
+At C:\Users\manso\AppData\
+Roaming\npm\pnpm.ps1:24 
+char:5
++     & "node$exe"  "$base
+dir/node_modules/pnpm/bin/
+pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (@  
+  validiant/api:...uild   
+  exited (2):String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+@validiant/api#build: 
+command (C:\Users\manso\On
+eDrive\Documents\Validiant
+-v2\validiant-v2\apps\api)
+ C:\Users\manso\AppData\Ro
+aming\npm\pnpm.cmd run 
+build exited (2)
+
+ Tasks:    5 successful, 7 total
+Cached:    4 cached, 7 total
+  Time:    39.596s 
+Failed:    @validiant/api#build
+
+ ERROR  run failed: 
+command  exited (2)
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.

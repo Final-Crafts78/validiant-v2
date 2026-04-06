@@ -625,8 +625,8 @@ export const tasks = pgTable(
     tags: jsonb('tags').$type<string[]>().default([]),
     customFields: jsonb('custom_fields').default({}),
 
-    // Task hierarchy (subtasks) - cast to any to avoid circular reference
-    parentTaskId: uuid('parent_task_id').references(() => tasks.id, {
+    // Task hierarchy (subtasks) - use lambda to avoid circular reference
+    parentTaskId: uuid('parent_task_id').references((): any => tasks.id, {
       onDelete: 'cascade',
     }),
 

@@ -50,6 +50,7 @@ app.post(
         400
       );
     }
+    return;
   }),
   verificationController.createVerificationType
 );
@@ -78,6 +79,7 @@ app.put(
         400
       );
     }
+    return;
   }),
   verificationController.updateVerificationType
 );

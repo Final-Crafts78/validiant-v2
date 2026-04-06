@@ -17,7 +17,6 @@ import {
   projects
 } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { uuid } from 'drizzle-orm/pg-core';
 import { v4 as uuidv4 } from 'uuid';
 
 async function migrate() {
@@ -47,14 +46,7 @@ async function migrate() {
         console.log(`  Migrating to Project: ${project.name} (${project.id})`);
 
         // Check if project_type already exists for this project/code
-        // (Actually code isn't in project_types, but we'll use name or a manual check)
-        const [existingType] = await db.select()
-          .from(projectTypes)
-          .where(eq(projectTypes.projectId, project.id))
-          .limit(1); // Simplification: assume 1:1 for now if needed, or check by name
-
-        // Since name is not necessarily unique across VTs, we'll just create it.
-        // In a real migration we'd check for duplicates.
+        // Simplification: just create it for now or check by name if needed.
         
         const typeId = uuidv4();
         await db.insert(projectTypes).values({

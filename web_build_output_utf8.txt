@@ -1,0 +1,70 @@
+﻿
+> @validiant/web@2.0.0 build C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web
+> next build
+
+  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+node.exe : Failed to 
+compile.
+At C:\Users\manso\AppData\
+Roaming\npm\pnpm.ps1:24 
+char:5
++     & "node$exe"  "$base
+dir/node_modules/pnpm/bin/
+pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (F  
+  ailed to compile.:Str   
+ ing) [], RemoteExcept    
+ion
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+./src/app/(portal)/client/
+[orgSlug]/[token]/page.tsx
+:49:27
+Type error: Object is 
+possibly 'undefined'.
+
+[0m [90m 47 |[39m   
+useMemo(() [33m=>[39m 
+{[0m
+[0m [90m 48 |[39m     
+[36mif[39m (projects[33
+m.[39mlength [33m>[39m 
+[35m0[39m [33m&&[39m 
+[33m![39mactiveProjectKey
+) {[0m
+[0m[31m[1m>[22m[39m[
+90m 49 |[39m       setAct
+iveProjectKey(projects[[3
+5m0[39m][33m.[39mprojec
+tKey [33m||[39m projects
+[[35m0[39m][33m.[39mpr
+ojectId)[33m;[39m[0m
+[0m [90m    |[39m      
+                     
+[31m[1m^[22m[39m[0m
+[0m [90m 50 |[39m     
+}[0m
+[0m [90m 51 |[39m   
+}[33m,[39m 
+[projects[33m,[39m activ
+eProjectKey])[33m;[39m[
+0m
+[0m [90m 52 |[39m[0m
+Next.js build worker 
+exited with code: 1 and 
+signal: null
+C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\web:
+ΓÇëERR_PNPM_RECURSIVE_RUN_FIRST_FAILΓÇë @validiant/web@2.0.0 build: `next build`
+Exit status 1

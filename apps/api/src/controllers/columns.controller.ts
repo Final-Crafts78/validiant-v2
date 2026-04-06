@@ -1,6 +1,5 @@
 import { Context } from 'hono';
 import * as columnService from '../services/columns.service';
-import { typeColumnCreateSchema, typeColumnUpdateSchema } from '@validiant/shared';
 
 /**
  * Columns Controller - Phase 2 Schema Architect

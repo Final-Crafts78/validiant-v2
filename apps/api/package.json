@@ -41,10 +41,12 @@
     "@upstash/redis": "^1.28.2",
     "@validiant/shared": "workspace:*",
     "arctic": "^1.9.2",
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.29.3",
     "hono": "^4.0.0",
     "jose": "^5.9.6",
+    "stripe": "^14.25.0",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },

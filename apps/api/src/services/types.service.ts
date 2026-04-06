@@ -73,7 +73,7 @@ export const updateProjectType = async (
     .where(eq(projectTypes.id, id))
     .returning();
   
-  if (!updated) throw new ApiError(404, 'Project type not found');
+  if (!updated) throw new ApiError('Project type not found', 404);
   return updated;
 };
 

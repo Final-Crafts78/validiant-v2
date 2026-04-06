@@ -361,7 +361,7 @@ export const validateAdvancedField = (type: string, value: any) => {
       default:
         return true;
     }
-  } catch (err) {
+  } catch (err: any) {
     logger.error(`[RecordService:ValidationFailed] Type: ${type}`, err);
     throw err;
   }
@@ -455,7 +455,7 @@ export const lockRecord = async (recordId: string, userId: string) => {
   return updated;
 };
 
-export const unlockRecord = async (recordId: string, userId: string) => {
+export const unlockRecord = async (recordId: string, _userId: string) => {
   const [updated] = await db
     .update(records)
     .set({
