@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Camera, RefreshCw, X, Check } from "lucide-react"
+import { Camera, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export interface PhotoCaptureProps {

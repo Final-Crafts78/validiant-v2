@@ -35,8 +35,10 @@ export function RecordCardView({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {records.map((record) => {
-        const status = STATUS_CONFIG[record.status] || STATUS_CONFIG.pending;
-        const StatusIcon = status.icon;
+        const resolvedStatus = STATUS_CONFIG[record.status] || STATUS_CONFIG['pending'];
+        const StatusIcon = resolvedStatus?.icon || Clock;
+        const statusColor = resolvedStatus?.color || 'text-slate-400';
+        const statusBg = resolvedStatus?.bg || 'bg-slate-400/10';
         
         // Find if there's a photo field for preview
         const photoKey = projectType.columns?.find(c => c.columnType === 'photo_capture')?.key;
@@ -68,8 +70,8 @@ export function RecordCardView({
               
               {/* Overlays */}
               <div className="absolute top-4 left-4">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bg} backdrop-blur-md border border-white/5`}>
-                  <StatusIcon className={`w-3.5 h-3.5 ${status.color}`} />
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusBg} backdrop-blur-md border border-white/5`}>
+                  <StatusIcon className={`w-3.5 h-3.5 ${statusColor}`} />
                   <span className="text-[9px] font-black uppercase tracking-widest text-white/90">
                     {record.status.replace('_', ' ')}
                   </span>

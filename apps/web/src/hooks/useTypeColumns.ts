@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, post, put, del } from '@/lib/api';
-import { TypeColumn, ColumnType } from '@validiant/shared';
+import { TypeColumn } from '@validiant/shared';
 import { queryKeys } from '../lib/query-keys';
 import { toast } from 'react-hot-toast';
 

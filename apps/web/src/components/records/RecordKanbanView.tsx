@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ProjectRecord } from '@validiant/shared';
+import { ProjectRecord, ProjectType } from '@validiant/shared';
 import { 
   Clock, 
   CheckCircle2, 
@@ -14,6 +14,7 @@ import {
 import { format } from 'date-fns';
 
 interface RecordKanbanViewProps {
+  projectType: ProjectType;
   records: ProjectRecord[];
   onEdit: (recordId: string) => void;
   onStatusChange?: (recordId: string, newStatus: string) => void;
@@ -55,6 +56,7 @@ const LANES = [
 ];
 
 export function RecordKanbanView({ 
+  projectType: _projectType,
   records, 
   onEdit, 
   onStatusChange 

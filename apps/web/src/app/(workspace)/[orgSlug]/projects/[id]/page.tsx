@@ -96,7 +96,7 @@ export default function CommandCenterShell({
     );
 
   // Dynamic Theme (Phase 13.5 Customization)
-  const settings = project.settings as Record<string, unknown> | null;
+  const settings = project.settings as unknown as Record<string, unknown> | null;
   const themeColor = (settings?.themeColor as string) || '#4F46E5';
 
   return (

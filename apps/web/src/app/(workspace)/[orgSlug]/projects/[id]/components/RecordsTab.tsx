@@ -12,7 +12,7 @@ import {
   Trello,
   Map as MapIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RecordTable } from '@/components/records/RecordTable';
 import { RecordSlideOver } from '@/components/records/RecordSlideOver';
 import { RecordKanbanView } from '@/components/records/RecordKanbanView';
@@ -39,9 +39,14 @@ export function RecordsTab({ projectId }: { projectId: string }) {
   const { data: types } = useProjectTypes(projectId);
 
   // Auto-select first type if none selected
-  if (!selectedTypeId && types && types.length > 0) {
-    setSelectedTypeId(types[0].id);
-  }
+  useEffect(() => {
+    if (!selectedTypeId && types && types.length > 0) {
+      const defaultId = types[0]?.id;
+      if (defaultId) {
+        setSelectedTypeId(defaultId);
+      }
+    }
+  }, [selectedTypeId, types]);
 
   const selectedType = types?.find((t) => t.id === selectedTypeId);
 

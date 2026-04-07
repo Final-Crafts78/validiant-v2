@@ -30,7 +30,7 @@ export default function IntegrationsSettings() {
 
   useEffect(() => {
     if (org?.settings) {
-      setSettings(org.settings as Record<string, unknown>);
+      setSettings(org.settings as unknown as Record<string, unknown>);
     }
   }, [org]);
 

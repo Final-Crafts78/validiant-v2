@@ -33,7 +33,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     }
   }
 
-  const selectedLabels = value.map(val => options.find(opt => opt.value === val)?.label || val)
 
   return (
     <div className={cn("relative group", className)}>
@@ -46,24 +45,27 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       >
         {value.length > 0 ? (
           <div className="flex flex-wrap gap-1">
-            {selectedLabels.map((label, idx) => (
-              <span
-                key={value[idx]}
-                className="flex items-center gap-1 rounded-full bg-primary/20 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary group/tag"
-              >
-                {label}
-                <button
-                  type="button"
-                  className="hover:text-white"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleUnselect(value[idx])
-                  }}
+            {value.map((val) => {
+              const label = options.find((opt) => opt.value === val)?.label || val;
+              return (
+                <span
+                  key={val}
+                  className="flex items-center gap-1 rounded-full bg-primary/20 border border-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary group/tag"
                 >
-                  <X className="w-2.5 h-2.5" />
-                </button>
-              </span>
-            ))}
+                  {label}
+                  <button
+                    type="button"
+                    className="hover:text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUnselect(val);
+                    }}
+                  >
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </span>
+              );
+            })}
           </div>
         ) : (
           <span className="text-white/20">{placeholder}</span>

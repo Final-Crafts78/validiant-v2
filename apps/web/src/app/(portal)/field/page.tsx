@@ -1,7 +1,7 @@
 'use client';
 
 import { useProjectTypes } from '@/hooks/useProjectTypes';
-import { Camera, MapPin, CheckCircle2, ChevronRight, Hash, Database, Search } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Hash, Database, Search } from 'lucide-react';
 import { useState } from 'react';
 
 /**
@@ -10,7 +10,7 @@ import { useState } from 'react';
  */
 export default function FieldPortal() {
   const [projectId, setProjectId] = useState('');
-  const { data: types, isLoading } = useProjectTypes(projectId || 'dummy'); // We'll need a real project ID filter
+  const { data: types } = useProjectTypes(projectId || 'dummy'); // We'll need a real project ID filter
 
   return (
     <div className="flex-1 flex flex-col pt-12 px-8 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">

@@ -79,8 +79,9 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({
     if (!ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = ('touches' in e ? e.touches[0].clientX : e.clientX) - rect.left;
-    const y = ('touches' in e ? e.touches[0].clientY : e.clientY) - rect.top;
+    const touch = 'touches' in e ? e.touches[0] : null;
+    const x = (touch ? touch.clientX : (e as React.MouseEvent).clientX) - rect.left;
+    const y = (touch ? touch.clientY : (e as React.MouseEvent).clientY) - rect.top;
 
     ctx.lineTo(x, y);
     ctx.stroke();

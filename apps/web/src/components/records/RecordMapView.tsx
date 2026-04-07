@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { ProjectRecord } from '@validiant/shared';
+import { ProjectRecord, ProjectType } from '@validiant/shared';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -12,6 +12,7 @@ import {
 import { format } from 'date-fns';
 
 interface RecordMapViewProps {
+  projectType: ProjectType;
   records: ProjectRecord[];
   onEdit: (recordId: string) => void;
 }
@@ -51,6 +52,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function RecordMapView({ 
+  projectType: _projectType,
   records, 
   onEdit 
 }: RecordMapViewProps) {
@@ -86,23 +88,26 @@ export function RecordMapView({
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         
-        {recordsWithGps.map((record) => (
-          <Marker 
-            key={record.id} 
-            position={[record.gpsLat || 0, record.gpsLng || 0]}
-            icon={createCustomIcon(STATUS_COLORS[record.status || 'pending'] || STATUS_COLORS.pending)}
-          >
-            <Popup className="obsidian-popup">
-              <div className="p-2 min-w-[200px] space-y-4 bg-slate-900 border border-white/5 rounded-2xl">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-[10px] font-mono font-black text-primary tracking-tighter">
-                    #{record.number}
-                  </span>
-                  <div 
-                    className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" 
-                    style={{ color: STATUS_COLORS[record.status || 'pending'] || STATUS_COLORS.pending }} 
-                  />
-                </div>
+        {recordsWithGps.map((record) => {
+          const statusColor = STATUS_COLORS[record.status] || STATUS_COLORS['pending'] || '#F59E0B';
+          
+          return (
+            <Marker 
+              key={record.id} 
+              position={[record.gpsLat || 0, record.gpsLng || 0]}
+              icon={createCustomIcon(statusColor)}
+            >
+              <Popup className="obsidian-popup">
+                <div className="p-2 min-w-[200px] space-y-4 bg-slate-900 border border-white/5 rounded-2xl">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-[10px] font-mono font-black text-primary tracking-tighter">
+                      #{record.number}
+                    </span>
+                    <div 
+                      className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" 
+                      style={{ color: statusColor }} 
+                    />
+                  </div>
                 
                 <div>
                   <h5 className="text-[11px] font-bold text-white leading-tight">
@@ -122,8 +127,9 @@ export function RecordMapView({
                 </button>
               </div>
             </Popup>
-          </Marker>
-        ))}
+            </Marker>
+          );
+        })}
         
         <FitBounds records={recordsWithGps} />
       </MapContainer>

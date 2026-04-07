@@ -43,8 +43,9 @@ export const Signature: React.FC<SignatureProps> = ({
     if (!ctx) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = ('touches' in e) ? e.touches[0].clientX - rect.left : e.clientX - rect.left
-    const y = ('touches' in e) ? e.touches[0].clientY - rect.top : e.clientY - rect.top
+    const touch = 'touches' in e ? e.touches[0] : null
+    const x = (touch ? touch.clientX : (e as React.MouseEvent).clientX) - rect.left
+    const y = (touch ? touch.clientY : (e as React.MouseEvent).clientY) - rect.top
 
     ctx.lineWidth = 2
     ctx.lineCap = "round"

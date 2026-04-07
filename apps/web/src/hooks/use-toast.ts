@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
 /**
  * Very basic toast hook for Phase 6 deployment.

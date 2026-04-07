@@ -507,7 +507,7 @@ export const isAPIError = (error: unknown): error is APIError => {
     typeof error === 'object' &&
     error !== null &&
     'success' in error &&
-    (error as Record<string, unknown>).success === false
+    (error as unknown as Record<string, unknown>).success === false
   );
 };
 

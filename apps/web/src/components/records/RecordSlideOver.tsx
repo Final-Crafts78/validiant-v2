@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Save, ShieldCheck, Database, Loader2, Lock } from 'lucide-react';
-import { ProjectType, TypeColumn } from '@validiant/shared';
+import { ProjectType } from '@validiant/shared';
 import { RecordFieldFactory } from './RecordFieldFactory';
 import { useRecords } from '@/hooks/useRecords';
 import { useAuthStore } from '@/store/auth';
@@ -32,8 +32,8 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
   const [isSaving, setIsSaving] = useState(false);
 
   const currentRecord = recordId ? records?.find((r) => r.id === recordId) : null;
-  const isLockedByOthers = currentRecord?.lockedBy && currentRecord.lockedBy !== user?.userId;
-  const isLockedByMe = currentRecord?.lockedBy === user?.userId;
+  const isLockedByOthers = !!(currentRecord?.lockedBy && currentRecord.lockedBy !== user?.id);
+  const isLockedByMe = currentRecord?.lockedBy === user?.id;
 
   // Initialize form data if editing
   useEffect(() => {

@@ -48,7 +48,13 @@ export default function FieldAgentPortal({
   // Handle initial selection
   useMemo(() => {
     if (projects.length > 0 && !activeProjectKey) {
-      setActiveProjectKey(projects[0].projectKey || projects[0].projectId);
+      const defaultKey = projects[0]?.projectKey || projects[0]?.projectId;
+      if (defaultKey) {
+        console.log('[FIELD_PORTAL] Auto-selecting initial project:', defaultKey);
+        setActiveProjectKey(defaultKey);
+      } else {
+        console.warn('[FIELD_PORTAL] No project key or ID found in access record', projects[0]);
+      }
     }
   }, [projects, activeProjectKey]);
 

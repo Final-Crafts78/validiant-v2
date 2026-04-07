@@ -45,8 +45,11 @@ export default function ClientPortal({
 
   // Handle initial project selection
   useMemo(() => {
-    if (projects.length > 0 && !activeProjectKey && projects[0]) {
-      setActiveProjectKey(projects[0].projectKey || projects[0].projectId);
+    if (projects.length > 0 && !activeProjectKey) {
+      const firstProject = projects[0];
+      if (firstProject) {
+        setActiveProjectKey(firstProject.projectKey || firstProject.projectId);
+      }
     }
   }, [projects, activeProjectKey]);
 
