@@ -4,10 +4,25 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Search, LayoutGrid, List, X } from 'lucide-react';
 import { ProjectStatus, ProjectPriority } from '@validiant/shared';
 import { useState, useCallback, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ProjectsToolbarProps {
   viewMode: 'grid' | 'list';
   setViewMode: (mode: 'grid' | 'list') => void;
+  viewSettings: {
+    showRecords: boolean;
+    showProgress: boolean;
+    showApiStatus: boolean;
+    showDescription: boolean;
+  };
+  setViewSettings: React.Dispatch<
+    React.SetStateAction<{
+      showRecords: boolean;
+      showProgress: boolean;
+      showApiStatus: boolean;
+      showDescription: boolean;
+    }>
+  >;
 }
 
 const STATUS_OPTIONS = Object.values(ProjectStatus);
@@ -16,6 +31,8 @@ const PRIORITY_OPTIONS = Object.values(ProjectPriority);
 export function ProjectsToolbar({
   viewMode,
   setViewMode,
+  viewSettings,
+  setViewSettings,
 }: ProjectsToolbarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -28,6 +45,8 @@ export function ProjectsToolbar({
   const [activePriorities, setActivePriorities] = useState<string[]>(
     searchParams.get('priority')?.split(',').filter(Boolean) || []
   );
+
+  const [showSettings, setShowSettings] = useState(false);
 
   // Update URL search params for sync
   const updateParams = useCallback(
@@ -83,85 +102,158 @@ export function ProjectsToolbar({
     search || activeStatuses.length > 0 || activePriorities.length > 0;
 
   return (
-    <div className="flex flex-col gap-6 mb-10 animate-in fade-in slide-in-from-top-2 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Search Bar - Editorial Design */}
-        <div className="relative flex-1 max-w-md group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[var(--color-text-muted)] group-focus-within:text-primary-500 transition-colors" />
+    <div className="flex flex-col gap-8 mb-16 animate-in fade-in slide-in-from-top-4 duration-1000">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        {/* Search Bar - Architectural Glass */}
+        <div className="relative flex-1 max-w-2xl group">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+            <Search className="w-5 h-5 text-text-muted group-focus-within:text-primary transition-premium opacity-40" />
+          </div>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search precision data..."
-            className="w-full pl-12 pr-4 h-12 bg-[var(--color-surface-soft)] border-none focus:ring-2 focus:ring-primary-500/20 focus:bg-[var(--color-surface-base)] transition-all rounded-2xl text-sm font-medium placeholder:text-[var(--color-text-muted)]/50"
+            placeholder="Search data universe precision records..."
+            className="w-full pl-14 pr-6 h-16 bg-surface-lowest/50 backdrop-blur-xl border border-white/5 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-3xl text-sm font-medium placeholder:text-text-muted/30 shadow-obsidian-inner"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-[var(--color-surface-muted)] rounded-xl transition-all"
+              className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-white/5 rounded-2xl transition-premium"
             >
-              <X className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
+              <X className="w-4 h-4 text-text-muted" />
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
+          {/* View Customization */}
+          <div className="relative">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className={cn(
+                'flex items-center justify-center h-12 px-6 rounded-xl transition-premium text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 shadow-obsidian-inner',
+                showSettings
+                  ? 'bg-primary text-background'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-white'
+              )}
+            >
+              Architectural View
+            </button>
+
+            {showSettings && (
+              <div className="absolute right-0 mt-4 w-72 bg-surface-container-high/90 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-2xl z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">
+                      Dynamic Perspective
+                    </label>
+                    <p className="text-[11px] text-text-muted font-medium">
+                      Configure your architectural data stream.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      { id: 'showRecords', label: 'Verified Records' },
+                      { id: 'showProgress', label: 'Sync Velocity' },
+                      { id: 'showApiStatus', label: 'Operational Status' },
+                      { id: 'showDescription', label: 'Descriptor Text' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() =>
+                          setViewSettings((prev) => ({
+                            ...prev,
+                            [opt.id]: !prev[opt.id as keyof typeof prev],
+                          }))
+                        }
+                        className="flex items-center justify-between w-full p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-premium"
+                      >
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/60">
+                          {opt.label}
+                        </span>
+                        <div
+                          className={cn(
+                            'w-10 h-5 rounded-full relative transition-premium',
+                            viewSettings[opt.id as keyof typeof viewSettings]
+                              ? 'bg-primary'
+                              : 'bg-white/10'
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'absolute top-1 w-3 h-3 rounded-full bg-white transition-premium',
+                              viewSettings[opt.id as keyof typeof viewSettings]
+                                ? 'left-6'
+                                : 'left-1'
+                            )}
+                          />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* View Switcher - Obsidian Texture */}
-          <div className="flex p-1 bg-[var(--color-surface-soft)] rounded-2xl border border-[var(--color-border-base)]/5">
+          <div className="flex p-1.5 bg-surface-lowest/50 backdrop-blur-xl rounded-[1.25rem] border border-white/5 shadow-obsidian-inner">
             <button
               onClick={() => setViewMode('grid')}
-              className={`flex items-center justify-center w-10 h-10 rounded-xl transition-all ${
+              className={`flex items-center justify-center w-12 h-12 rounded-xl transition-premium ${
                 viewMode === 'grid'
-                  ? 'bg-[var(--color-surface-base)] shadow-lg text-primary-600 scale-100'
-                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]'
+                  ? 'bg-primary text-background shadow-glow-primary scale-100'
+                  : 'text-text-muted hover:text-white hover:bg-white/5'
               }`}
-              title="Grid Layout"
+              title="Grid Architecture"
             >
-              <LayoutGrid className="w-4.5 h-4.5" />
+              <LayoutGrid className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`flex items-center justify-center w-10 h-10 rounded-xl transition-all ${
+              className={`flex items-center justify-center w-12 h-12 rounded-xl transition-premium ${
                 viewMode === 'list'
-                  ? 'bg-[var(--color-surface-base)] shadow-lg text-primary-600 scale-100'
-                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]'
+                  ? 'bg-primary text-background shadow-glow-primary scale-100'
+                  : 'text-text-muted hover:text-white hover:bg-white/5'
               }`}
-              title="List Inventory"
+              title="List Framework"
             >
-              <List className="w-4.5 h-4.5" />
+              <List className="w-5 h-5" />
             </button>
           </div>
 
           {hasFilters && (
             <button
               onClick={clearFilters}
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] hover:text-rose-500 transition-all px-2"
+              className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500 hover:text-rose-400 transition-premium px-4 py-2 rounded-xl bg-rose-500/5 hover:bg-rose-500/10"
             >
-              Reset
+              Purge Filters
             </button>
           )}
         </div>
       </div>
 
       {/* Dynamic Filter Strip */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-3 pr-4 border-r border-[var(--color-border-base)]/10">
-          <div className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--color-text-muted)]/40">
+      <div className="flex flex-wrap items-center gap-8">
+        <div className="flex items-center gap-4 pr-6">
+          <div className="w-2 h-2 rounded-full bg-primary shadow-glow-primary animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text-muted opacity-40">
             Verifier Criteria
           </span>
         </div>
 
         {/* Status Filters */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {STATUS_OPTIONS.map((status) => (
             <button
               key={status}
               onClick={() => toggleStatus(status)}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border-none transition-all ${
+              className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-premium ${
                 activeStatuses.includes(status)
-                  ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'
-                  : 'bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-base)]'
+                  ? 'bg-primary text-background shadow-glow-primary'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-white border border-white/5'
               }`}
             >
               {status}
@@ -169,18 +261,18 @@ export function ProjectsToolbar({
           ))}
         </div>
 
-        <div className="w-px h-4 bg-[var(--color-border-base)]/10 mx-1" />
+        <div className="w-px h-6 bg-white/5 mx-2" />
 
         {/* Priority Filters */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {PRIORITY_OPTIONS.map((priority) => (
             <button
               key={priority}
               onClick={() => togglePriority(priority)}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border-none transition-all ${
+              className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-premium ${
                 activePriorities.includes(priority)
-                  ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/10'
-                  : 'bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-base)]'
+                  ? 'bg-amber-500 text-background shadow-glow-amber'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-white border border-white/5'
               }`}
             >
               {priority}
