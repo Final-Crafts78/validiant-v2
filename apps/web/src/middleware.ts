@@ -416,7 +416,7 @@ export async function middleware(request: NextRequest) {
           reason,
           isAuthenticated,
           timestamp: new Date().toISOString(),
-          requestId
+          requestId,
         }
       );
     }

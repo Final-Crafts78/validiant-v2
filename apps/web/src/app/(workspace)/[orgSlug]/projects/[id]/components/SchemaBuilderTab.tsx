@@ -11,60 +11,70 @@ import {
   LayoutGrid,
   Settings,
   Trash2,
-  Edit3,
   Shield,
   X,
-  Save,
   Loader2,
+  Workflow,
+  Layers,
+  ArrowRight,
 } from 'lucide-react';
+import { MobileSchemaPreview } from './schema/MobileSchemaPreview';
+import { FieldConfigurator } from './schema/FieldConfigurator';
 
 /**
  * SchemaBuilderTab - The engine for defining project data types and columns.
- * Obsidian Verifier aesthetic with sidebar navigation.
+ * Obsidian Verifier aesthetic with 3-section split-pane layout.
  */
 export function SchemaBuilderTab({ projectId }: { projectId: string }) {
-  const { 
-    data: types, 
-    isLoading, 
-    createType, 
-    deleteType 
+  const {
+    data: types,
+    isLoading,
+    createType,
+    deleteType,
+    updateType,
   } = useProjectTypes(projectId);
-  
+
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
   const [showTypeModal, setShowTypeModal] = useState(false);
   const [showElementModal, setShowElementModal] = useState(false);
-  
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'elements' | 'workflow'>(
+    'elements'
+  );
+
   // Local form state for new archetype
-  const [newTypeData, setNewTypeData] = useState({ 
-    name: '', 
-    description: '', 
-    color: '#4f46e5' 
+  const [newTypeData, setNewTypeData] = useState({
+    name: '',
+    description: '',
+    color: '#adc6ff', // Default archetype accent
   });
-  
+
   // Local form state for new element
-  const [newElementData, setNewElementData] = useState({ 
-    name: '', 
-    key: '', 
-    columnType: ColumnType.TEXT 
+  const [newElementData, setNewElementData] = useState({
+    name: '',
+    key: '',
+    columnType: ColumnType.TEXT,
   });
 
   const projectTypes = (types as ProjectType[]) || [];
   const effectiveSelectedId = selectedTypeId || projectTypes[0]?.id;
   const selectedType = projectTypes.find((t) => t.id === effectiveSelectedId);
-  
-  const { 
-    columns, 
-    createColumn, 
-    deleteColumn 
-  } = useTypeColumns(projectId, selectedType?.id);
+
+  const { columns, createColumn, updateColumn, deleteColumn } = useTypeColumns(
+    projectId,
+    selectedType?.id
+  );
+
+  const editingColumn = columns?.find((c) => c.id === editingFieldId);
 
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">
         <div className="h-10 bg-surface-container-low rounded-xl w-1/4" />
         <div className="flex gap-8 h-96">
-          <div className="w-1/3 bg-surface-container-low rounded-[2.5rem]" />
+          <div className="w-20 bg-surface-container-low rounded-xl" />
           <div className="flex-1 bg-surface-container-low rounded-[2.5rem]" />
+          <div className="w-80 bg-surface-container-low rounded-[2.5rem]" />
         </div>
       </div>
     );
@@ -73,7 +83,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
   const handleCreateType = async () => {
     await createType.mutateAsync(newTypeData);
     setShowTypeModal(false);
-    setNewTypeData({ name: '', description: '', color: '#4f46e5' });
+    setNewTypeData({ name: '', description: '', color: '#adc6ff' });
   };
 
   const handleCreateElement = async () => {
@@ -84,320 +94,440 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
   };
 
   return (
-    <div className="flex gap-12 items-start h-[calc(100vh-12rem)] relative">
-      {/* Sidebar - Types List */}
-      <aside className="w-80 flex flex-col gap-8 h-full">
-        <div className="flex items-center justify-between px-2">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em]">
-              Structure
-            </span>
-            <h3 className="text-sm text-white/40 font-display">
-              Data Archetypes
-            </h3>
-          </div>
-          <button 
-            onClick={() => setShowTypeModal(true)}
-            className="p-2.5 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-all border border-primary/5 group"
-          >
-            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
-          </button>
-        </div>
+    <div className="flex gap-8 items-start h-[calc(100vh-14rem)] relative">
+      {/* 1. Sidebar - Archetype Navigation (Slim) */}
+      <aside className="w-20 flex flex-col gap-4 border-r border-[var(--border-subtle)] pr-4 h-full">
+        <button
+          onClick={() => setShowTypeModal(true)}
+          className="w-12 h-12 mx-auto bg-primary/10 text-primary rounded-2xl hover:bg-primary/20 transition-all border border-primary/20 flex items-center justify-center group"
+          title="New Archetype"
+        >
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+        </button>
 
-        <nav className="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2">
+        <div className="my-4 h-px bg-[var(--border-subtle)] w-8 mx-auto" />
+
+        <div className="flex flex-col gap-3 overflow-y-auto scroller-hidden pr-1">
           {projectTypes.map((type) => {
             const isActive = effectiveSelectedId === type.id;
             return (
               <button
                 key={type.id}
                 onClick={() => setSelectedTypeId(type.id)}
-                className={`group flex items-center justify-between p-5 rounded-2xl transition-all duration-500 ${
+                className={`w-12 h-12 mx-auto rounded-2xl flex items-center justify-center transition-all duration-300 relative group ${
                   isActive
-                    ? 'bg-surface-container-low shadow-obsidian-lg scale-[1.02]'
-                    : 'bg-transparent hover:bg-surface-lowest/30 text-white/40'
+                    ? 'bg-[var(--surface-container-low)] shadow-[0_0_20px_var(--primary-glow)]'
+                    : 'bg-[var(--surface-container-low)] hover:bg-white/5 grayscale'
                 }`}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-[0_0_20px_rgba(0,0,0,0.3)] relative"
-                    style={{ background: type.color || '#3b82f6' }}
-                  >
-                    <Database className="w-4 h-4" />
-                    <div className="absolute inset-0 bg-white/10 rounded-xl" />
-                  </div>
-                  <div className="text-left">
-                    <p
-                      className={`text-xs font-bold font-display tracking-tight transition-colors ${
-                        isActive ? 'text-primary' : 'text-white/60'
-                      }`}
-                    >
-                      {type.name}
-                    </p>
-                    <p className="text-[9px] font-mono text-white/20 uppercase tracking-widest">
-                      {type.columns?.length || 0} Elements
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight
-                  className={`w-4 h-4 transition-all duration-500 ${
-                    isActive
-                      ? 'translate-x-1 text-primary opacity-100'
-                      : 'opacity-0 group-hover:opacity-40'
-                  }`}
+                <Database
+                  className={`w-5 h-5 ${isActive ? 'text-[var(--surface-lowest)]' : 'text-[var(--text-muted)]'}`}
                 />
+
+                {/* Tooltip */}
+                <div className="absolute left-full ml-4 px-3 py-2 bg-surface-bright rounded-xl text-[10px] font-black text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all translate-x-[-10px] group-hover:translate-x-0 z-50 border border-[var(--border-subtle)] shadow-2xl">
+                  {type.name.toUpperCase()}
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-surface-bright rotate-45 border-l border-b border-[var(--border-subtle)]" />
+                </div>
               </button>
             );
           })}
-        </nav>
-
-        <div className="mt-auto bg-emerald-500/5 rounded-2xl p-6 space-y-3 relative overflow-hidden group/audit">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/audit:opacity-20 transition-opacity">
-            <Shield className="w-12 h-12 text-emerald-500" />
-          </div>
-          <div className="flex items-center gap-2 text-emerald-500">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">
-              Protocol_Audit
-            </span>
-          </div>
-          <p className="text-[11px] text-white/30 leading-relaxed font-mono italic">
-            // Structural changes are locked to global immutable ledger.
-          </p>
         </div>
       </aside>
 
-      {/* Main Content - Column Editor */}
-      <main className="flex-1 h-full flex flex-col bg-surface-lowest rounded-3xl shadow-obsidian overflow-hidden border border-white/[0.02]">
+      {/* 2. Main Content - The Architect Canvas */}
+      <main className="flex-1 min-w-0 bg-[var(--surface-lowest)]/50 rounded-[2.5rem] border border-[var(--border-subtle)] flex flex-col overflow-hidden shadow-obsidian">
         {selectedType ? (
           <>
-            <header className="p-10 border-b border-white/[0.02] bg-surface-bright/20 backdrop-blur-md flex items-center justify-between relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -mr-32 -mt-32" />
-              <div className="editorial-header relative z-10">
-                <label>Archetype_Config</label>
-                <h2 className="text-3xl text-white/80">{selectedType.name}</h2>
-                <p className="text-sm text-white/30 mt-2 max-w-lg">
+            <header className="p-8 border-b border-[var(--border-subtle)] bg-surface-container-low/20 backdrop-blur-xl flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
+                    ARCHETYPE_CORE
+                  </span>
+                  <div className="h-px w-8 bg-primary/20" />
+                </div>
+                <h2 className="text-2xl font-black text-[var(--text-base)] tracking-tight uppercase font-display">
+                  {selectedType.name}
+                </h2>
+                <p className="text-xs text-[var(--text-muted)] max-w-md line-clamp-1 italic">
                   {selectedType.description ||
-                    'Configuring global verification protocol parameters.'}
+                    'No protocol description defined.'}
                 </p>
               </div>
-              <div className="flex items-center gap-3 relative z-10">
-                <button className="p-3 bg-white/5 text-white/40 hover:text-primary hover:bg-primary/10 rounded-2xl transition-all">
-                  <Edit3 className="w-5 h-5" />
+
+              {/* Sub-Tabs */}
+              <div className="flex bg-[var(--surface-lowest)] rounded-xl p-1 border border-[var(--border-subtle)] mx-8">
+                <button
+                  onClick={() => setActiveTab('elements')}
+                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                    activeTab === 'elements'
+                      ? 'bg-primary text-[var(--surface-lowest)]'
+                      : 'text-white/40 hover:text-white'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  Elements
                 </button>
-                <button 
+                <button
+                  onClick={() => setActiveTab('workflow')}
+                  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+                    activeTab === 'workflow'
+                      ? 'bg-primary text-[var(--surface-lowest)]'
+                      : 'text-white/40 hover:text-white'
+                  }`}
+                >
+                  <Workflow className="w-3.5 h-3.5" />
+                  Workflow
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button className="p-3 bg-white/5 text-[var(--text-muted)] hover:text-primary rounded-2xl transition-all border border-[var(--border-subtle)]">
+                  <Settings className="w-5 h-5" />
+                </button>
+                <button
                   onClick={() => deleteType.mutate(selectedType.id)}
-                  className="p-3 bg-white/5 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all"
+                  className="p-3 bg-white/5 text-[var(--text-muted)] hover:text-rose-400 rounded-2xl transition-all border border-[var(--border-subtle)]"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             </header>
 
-            <div className="p-10 flex-1 overflow-y-auto space-y-10 custom-scrollbar">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-primary/60 font-bold uppercase tracking-[0.2em]">
-                    Schema
-                  </span>
-                  <h3 className="text-sm text-white/40 font-display">
-                    Universe Elements
-                  </h3>
-                </div>
-                <button 
-                  onClick={() => setShowElementModal(true)}
-                  className="btn btn-primary px-8 group"
-                >
-                  <Plus className="w-4 h-4 transition-transform group-hover:scale-125" />
-                  Inject Element
-                </button>
-              </div>
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+              {activeTab === 'elements' ? (
+                <>
+                  <div className="flex items-center justify-between sticky top-0 bg-[var(--surface-lowest)] z-20 pb-4 -mx-4 px-4 border-b border-white/[0.02]">
+                    <div className="flex flex-col">
+                      <h3 className="text-xs font-black text-[var(--text-muted)]/60 tracking-widest uppercase">
+                        Field_Elements
+                      </h3>
+                      <p className="text-[9px] text-[var(--text-muted)]/20 font-mono uppercase tracking-[0.2em]">
+                        {columns?.length || 0} Injected Modules
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowElementModal(true)}
+                      className="px-6 py-2.5 bg-primary text-[var(--surface-lowest)] rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                    >
+                      INJECT ELEMENT
+                    </button>
+                  </div>
 
-              <div className="grid grid-cols-1 gap-4">
-                {(columns || selectedType.columns)?.map((column: TypeColumn) => (
-                  <div
-                    key={column.id}
-                    className="group relative flex items-center justify-between p-6 bg-surface-container-low/40 rounded-2xl hover:bg-surface-container-low transition-all duration-500 overflow-hidden"
-                  >
-                    <div className="absolute inset-y-0 left-0 w-1 bg-primary/0 group-hover:bg-primary transition-all" />
+                  <div className="grid grid-cols-1 gap-4">
+                    {(columns || [])?.map((column: TypeColumn) => (
+                      <div
+                        key={column.id}
+                        onClick={() => setEditingFieldId(column.id)}
+                        className={`group relative flex items-center justify-between p-6 rounded-2xl transition-all duration-500 cursor-pointer overflow-hidden border ${
+                          editingFieldId === column.id
+                            ? 'bg-primary/5 border-primary/20 shadow-[0_0_30px_var(--primary-glow)]'
+                            : 'bg-surface-container-low/40 border-[var(--border-subtle)] hover:bg-surface-container-low/60 hover:border-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-6">
+                          <div
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
+                              editingFieldId === column.id
+                                ? 'bg-primary text-[var(--surface-lowest)]'
+                                : 'bg-[var(--surface-lowest)] text-white/10'
+                            }`}
+                          >
+                            <LayoutGrid className="w-5 h-5" />
+                          </div>
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-black text-[var(--text-base)] tracking-tight uppercase">
+                              {column.name}
+                            </h4>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[9px] font-mono text-[var(--text-muted)]/20 uppercase tracking-widest">
+                                {column.key}
+                              </span>
+                              <div className="w-1 h-1 rounded-full bg-white/10" />
+                              <span className="badge badge-primary scale-[0.7] origin-left uppercase font-black">
+                                {column.columnType}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
 
-                    <div className="flex items-center gap-6">
-                      <div className="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-white/20 group-hover:text-primary group-hover:bg-primary/10 transition-all duration-500 shadow-inner">
-                        <LayoutGrid className="w-5 h-5" />
+                        <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all">
+                          <button className="p-2.5 bg-white/5 text-[var(--text-muted)] hover:text-primary rounded-xl transition-all">
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <h4 className="text-[14px] font-bold text-white/70 tracking-tight group-hover:text-white transition-colors capitalize">
-                          {column.name}
-                        </h4>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] font-mono text-white/20 group-hover:text-primary/40 transition-colors uppercase">
-                            {column.key}
-                          </span>
-                          <div className="w-1 h-1 rounded-full bg-white/5" />
-                          <span className="badge badge-primary scale-[0.8] origin-left bg-primary/20 text-primary">
-                            {column.columnType}
-                          </span>
+                    ))}
+
+                    {columns?.length === 0 && (
+                      <div className="h-64 flex flex-col items-center justify-center rounded-[2.5rem] bg-white/[0.01] border border-dashed border-[var(--border-subtle)] gap-4">
+                        <Database className="w-10 h-10 text-white/5" />
+                        <p className="text-[10px] text-[var(--text-muted)]/20 font-black uppercase tracking-[0.3em]">
+                          Module_Array_Empty
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-500">
+                  <div className="editorial-header">
+                    <label>Workflow_Architect</label>
+                    <h3 className="text-xl text-[var(--text-base)]">
+                      Outcome Customization
+                    </h3>
+                    <p className="text-xs text-[var(--text-muted)] mt-2">
+                      Map internal system states to high-precision user
+                      outcomes.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-6 max-w-2xl">
+                    <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] p-8 border border-[var(--border-subtle)] space-y-6">
+                      <div className="flex items-center gap-4 text-primary">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Shield className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest">
+                            Internal Status:{' '}
+                            <span className="text-[var(--text-base)]">
+                              COMPLETED
+                            </span>
+                          </p>
+                          <p className="text-[8px] font-mono text-[var(--text-muted)]/20 uppercase">
+                            Global Success State
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-6">
+                        <ArrowRight className="w-4 h-4 text-white/10" />
+                        <div className="flex-1 space-y-2">
+                          <label className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">
+                            Custom Display Label
+                          </label>
+                          <input
+                            className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all"
+                            placeholder="E.G. OWNERSHIP_VERIFIED"
+                            value={
+                              selectedType.settings?.customVerificationLabels?.[
+                                'completed'
+                              ] || ''
+                            }
+                            onChange={(e) => {
+                              updateType.mutate({
+                                id: selectedType.id,
+                                data: {
+                                  settings: {
+                                    ...selectedType.settings,
+                                    customVerificationLabels: {
+                                      ...selectedType.settings
+                                        ?.customVerificationLabels,
+                                      completed: e.target.value,
+                                    },
+                                  },
+                                },
+                              });
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                      <button className="p-2.5 bg-white/5 text-white/30 hover:text-primary hover:bg-primary/10 rounded-xl transition-all">
-                        <Settings className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => deleteColumn.mutate(column.id)}
-                        className="p-2.5 bg-white/5 text-white/30 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
-                ))}
-
-                {(!selectedType.columns || selectedType.columns.length === 0) && (!columns || columns.length === 0) && (
-                  <div className="h-64 flex flex-col items-center justify-center rounded-[2.5rem] bg-surface-container-low/20 border border-dashed border-white/5 gap-4">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-white/10 font-bold uppercase tracking-[0.3em]">
-                        Void_Universe
-                      </span>
-                      <p className="text-xs text-white/20 font-mono italic">
-                        // No protocol elements defined yet.
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => setShowElementModal(true)}
-                      className="text-[10px] text-primary font-bold uppercase tracking-widest hover:underline decoration-primary/40 underline-offset-8"
-                    >
-                      Initialize First Element
-                    </button>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center flex-1 gap-6 opacity-20">
-            <Database className="w-16 h-16 text-white" />
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[10px] text-white font-bold uppercase tracking-[0.4em]">
-                Standby
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 opacity-30">
+            <Database className="w-20 h-20 text-[var(--text-base)]" />
+            <div className="text-center space-y-2">
+              <span className="text-[10px] text-[var(--text-base)] font-black uppercase tracking-[0.5em]">
+                SYSTEM_STANDBY
               </span>
-              <p className="text-[11px] text-white/40 font-mono tracking-widest uppercase">
-                Awaiting Archetype Selection
+              <p className="text-[11px] text-[var(--text-muted)] font-mono tracking-widest uppercase">
+                Select an archetype to begin protocol configuration
               </p>
             </div>
           </div>
         )}
       </main>
 
-      {/* New Archetype Modal */}
+      {/* 3. Right Pane - Live Mobile Preview (Fixed) */}
+      <MobileSchemaPreview
+        typeName={selectedType?.name || ''}
+        columns={columns || []}
+      />
+
+      {/* 4. Side Panel - Field Configurator */}
+      {editingColumn && (
+        <FieldConfigurator
+          column={editingColumn}
+          allColumns={columns || []}
+          onClose={() => setEditingFieldId(null)}
+          onUpdate={(data) =>
+            updateColumn.mutate({ id: editingColumn.id, data })
+          }
+          onDelete={(id) => {
+            deleteColumn.mutate(id);
+            setEditingFieldId(null);
+          }}
+        />
+      )}
+
+      {/* New Archetype Modal - High Fidelity */}
       {showTypeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="w-full max-w-md bg-surface-base rounded-[2.5rem] shadow-obsidian border border-white/5 overflow-hidden">
-            <div className="p-8 space-y-8">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-white/10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-12 bg-primary/5 blur-[100px] -mr-32 -mt-32" />
+            <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-center justify-between">
-                <div className="editorial-header">
-                  <label>Creation_Portal</label>
-                  <h3 className="text-2xl">New Archetype</h3>
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                    CREATION_GATE
+                  </span>
+                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                    New Archetype
+                  </h3>
                 </div>
-                <button onClick={() => setShowTypeModal(false)} className="p-2 hover:bg-white/5 rounded-full">
-                  <X className="w-5 h-5 text-white/40" />
+                <button
+                  onClick={() => setShowTypeModal(false)}
+                  className="p-3 hover:bg-white/5 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                >
+                  <X className="w-5 h-5 text-[var(--text-muted)]" />
                 </button>
               </div>
 
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Name</label>
-                  <input 
-                    className="input" 
-                    placeholder="e.g. Field Inspection" 
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                    Protocol Name
+                  </label>
+                  <input
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
+                    placeholder="E.G. SITE_INSPECTION"
                     value={newTypeData.name}
-                    onChange={(e) => setNewTypeData({...newTypeData, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewTypeData({ ...newTypeData, name: e.target.value })
+                    }
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Description</label>
-                  <textarea 
-                    className="input min-h-[80px]" 
-                    placeholder="Describe this protocol..." 
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                    Narrative Definition
+                  </label>
+                  <textarea
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-medium text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10 min-h-[100px]"
+                    placeholder="Define the scope of this verification archetype..."
                     value={newTypeData.description}
-                    onChange={(e) => setNewTypeData({...newTypeData, description: e.target.value})}
+                    onChange={(e) =>
+                      setNewTypeData({
+                        ...newTypeData,
+                        description: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleCreateType}
                 disabled={createType.isPending}
-                className="btn btn-primary w-full py-4 rounded-2xl group"
+                className="w-full py-5 bg-primary text-[var(--surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
-                {createType.isPending 
-                  ? <Loader2 className="w-5 h-5 animate-spin" /> 
-                  : <Save className="w-5 h-5 group-hover:scale-110" />
-                }
-                Define Archetype
+                {createType.isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Shield className="w-5 h-5" />
+                )}
+                INITIALIZE ARCHETYPE
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* New Element Modal */}
+      {/* New Element Modal - High Fidelity */}
       {showElementModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="w-full max-w-md bg-surface-base rounded-[2.5rem] shadow-obsidian border border-white/5 overflow-hidden">
-            <div className="p-8 space-y-8">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-white/10 overflow-hidden relative">
+            <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-center justify-between">
-                <div className="editorial-header">
-                  <label>Injection_Protocol</label>
-                  <h3 className="text-2xl">New Element</h3>
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                    INJECTION_PROTOCOL
+                  </span>
+                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                    New Element
+                  </h3>
                 </div>
-                <button onClick={() => setShowElementModal(false)} className="p-2 hover:bg-white/5 rounded-full">
-                  <X className="w-5 h-5 text-white/40" />
+                <button
+                  onClick={() => setShowElementModal(false)}
+                  className="p-3 hover:bg-white/5 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                >
+                  <X className="w-5 h-5 text-[var(--text-muted)]" />
                 </button>
               </div>
 
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Field Name</label>
-                  <input 
-                    className="input" 
-                    placeholder="e.g. Site Photograph" 
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                    Element Label
+                  </label>
+                  <input
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
+                    placeholder="E.G. SITE_PHOTOGRAPH"
                     value={newElementData.name}
                     onChange={(e) => {
                       const name = e.target.value;
-                      const key = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-                      setNewElementData({...newElementData, name, key});
+                      const key = name
+                        .toLowerCase()
+                        .replace(/\s+/g, '_')
+                        .replace(/[^a-z0-9_]/g, '');
+                      setNewElementData({ ...newElementData, name, key });
                     }}
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">Data Type</label>
-                  <select 
-                    className="input appearance-none text-white/60"
-                    value={newElementData.columnType}
-                    onChange={(e) => setNewElementData({
-                      ...newElementData, 
-                      columnType: e.target.value as ColumnType
-                    })}
-                  >
-                    {Object.values(ColumnType).map(type => (
-                      <option key={type} value={type}>{type}</option>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                    Data Archetype
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.values(ColumnType).map((type) => (
+                      <button
+                        key={type}
+                        onClick={() =>
+                          setNewElementData({
+                            ...newElementData,
+                            columnType: type as ColumnType,
+                          })
+                        }
+                        className={`p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${
+                          newElementData.columnType === type
+                            ? 'bg-primary/20 border-primary text-primary'
+                            : 'bg-[var(--surface-lowest)] border-[var(--border-subtle)] text-[var(--text-muted)]/20 hover:text-[var(--text-muted)]/40'
+                        }`}
+                      >
+                        {type.replace('_', ' ')}
+                      </button>
                     ))}
-                  </select>
+                  </div>
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleCreateElement}
                 disabled={createColumn.isPending}
-                className="btn btn-primary w-full py-4 rounded-2xl group"
+                className="w-full py-5 bg-primary text-[var(--surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
-                {createColumn.isPending 
-                  ? <Loader2 className="w-5 h-5 animate-spin" /> 
-                  : <Plus className="w-5 h-5 group-hover:scale-110" />
-                }
-                Inject Element
+                {createColumn.isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Plus className="w-5 h-5" />
+                )}
+                INJECT CORE ELEMENT
               </button>
             </div>
           </div>

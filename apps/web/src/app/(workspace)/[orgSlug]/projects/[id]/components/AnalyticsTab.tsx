@@ -39,20 +39,30 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
   const handleExport = async () => {
     if (!recordsData || recordsData.length === 0) return;
     setIsExporting(true);
-    
+
     try {
       // Basic CSV generation
-      const headers = ['ID', 'Number', 'Type', 'Status', 'CreatedAt', 'SubmittedAt', 'ClosedAt'];
-      const rows = recordsData.map((r: any) => [
-        r.id,
-        r.number,
-        r.typeId,
-        r.status,
-        r.createdAt,
-        r.submittedAt || '',
-        r.closedAt || ''
-      ].join(','));
-      
+      const headers = [
+        'ID',
+        'Number',
+        'Type',
+        'Status',
+        'CreatedAt',
+        'SubmittedAt',
+        'ClosedAt',
+      ];
+      const rows = recordsData.map((r: any) =>
+        [
+          r.id,
+          r.number,
+          r.typeId,
+          r.status,
+          r.createdAt,
+          r.submittedAt || '',
+          r.closedAt || '',
+        ].join(',')
+      );
+
       const csvContent = [headers.join(','), ...rows].join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -135,7 +145,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
         {/* 2. Volume Trend Node */}
         <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] -mr-32 -mt-32" />
-          
+
           <div className="flex items-center justify-between mb-8 relative z-10">
             <div>
               <h3 className="text-lg font-black text-white uppercase tracking-tighter">
@@ -169,34 +179,52 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                     <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient
+                    id="colorCompleted"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#1e293b"
+                />
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fontSize: 10, fill: '#64748b', fontWeight: 800 }}
                   dy={10}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fontSize: 10, fill: '#64748b', fontWeight: 800 }}
                 />
-                <Tooltip 
-                  contentStyle={{ 
+                <Tooltip
+                  contentStyle={{
                     backgroundColor: '#0f172a',
                     borderRadius: '20px',
                     border: '1px solid #1e293b',
                     boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)',
-                    padding: '12px'
+                    padding: '12px',
                   }}
-                  itemStyle={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase' }}
-                  labelStyle={{ color: '#94a3b8', marginBottom: '4px', fontWeight: 700 }}
+                  itemStyle={{
+                    fontSize: '12px',
+                    fontWeight: 900,
+                    textTransform: 'uppercase',
+                  }}
+                  labelStyle={{
+                    color: '#94a3b8',
+                    marginBottom: '4px',
+                    fontWeight: 700,
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -238,18 +266,18 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                   stroke="none"
                 >
                   {pieData.map((_, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
                       className="hover:opacity-80 transition-opacity cursor-pointer"
                     />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
+                <Tooltip
+                  contentStyle={{
                     backgroundColor: '#0f172a',
                     borderRadius: '16px',
-                    border: '1px solid #1e293b'
+                    border: '1px solid #1e293b',
                   }}
                 />
               </PieChart>
@@ -264,11 +292,14 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             </div>
             <div className="grid grid-cols-3 gap-4 w-full mt-6">
               {pieData.map((d, i) => (
-                <div key={d.name} className="flex flex-col items-center p-3 bg-slate-950/50 rounded-2xl border border-slate-800/50">
+                <div
+                  key={d.name}
+                  className="flex flex-col items-center p-3 bg-slate-950/50 rounded-2xl border border-slate-800/50"
+                >
                   <div className="flex items-center gap-2 mb-1">
-                    <div 
-                      className="w-2 h-2 rounded-full ring-2 ring-white/5" 
-                      style={{ backgroundColor: COLORS[i] }} 
+                    <div
+                      className="w-2 h-2 rounded-full ring-2 ring-white/5"
+                      style={{ backgroundColor: COLORS[i] }}
                     />
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                       {d.name}
@@ -288,7 +319,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
       <div className="bg-indigo-600 rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(79,70,229,0.3)] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 blur-[80px] -mr-48 -mt-48" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/20 blur-[60px] -ml-32 -mb-32" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-start gap-6 max-w-2xl">
             <div className="p-4 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20">
@@ -299,13 +330,14 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                 Data Universe Export
               </h3>
               <p className="text-indigo-100 mt-2 text-sm font-medium leading-relaxed">
-                Generate a comprehensive local snapshot of all records in this project universe. 
-                Includes metadata, verification timestamps, and archetype telemetry.
+                Generate a comprehensive local snapshot of all records in this
+                project universe. Includes metadata, verification timestamps,
+                and archetype telemetry.
               </p>
             </div>
           </div>
-          
-          <Button 
+
+          <Button
             onClick={handleExport}
             disabled={isExporting}
             className="h-16 px-10 bg-white text-indigo-600 hover:bg-slate-50 font-black uppercase tracking-widest rounded-3xl shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all flex items-center gap-3 disabled:opacity-50"
@@ -323,31 +355,37 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
       {/* 5. SLA & Quality Intelligence (Static Nodes) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
-           <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">
-              <AlertCircle className="w-6 h-6 text-amber-500" />
-           </div>
-           <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">At-Risk Nodes</p>
-              <p className="text-lg font-black text-white">4 Cases</p>
-           </div>
+          <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">
+            <AlertCircle className="w-6 h-6 text-amber-500" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              At-Risk Nodes
+            </p>
+            <p className="text-lg font-black text-white">4 Cases</p>
+          </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
-           <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-              <TrendingUp className="w-6 h-6 text-emerald-500" />
-           </div>
-           <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Avg. Processing</p>
-              <p className="text-lg font-black text-white">12.4 Hours</p>
-           </div>
+          <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+            <TrendingUp className="w-6 h-6 text-emerald-500" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              Avg. Processing
+            </p>
+            <p className="text-lg font-black text-white">12.4 Hours</p>
+          </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
-           <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
-              <FileText className="w-6 h-6 text-indigo-500" />
-           </div>
-           <div>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Archetypes</p>
-              <p className="text-lg font-black text-white">3 Active</p>
-           </div>
+          <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
+            <FileText className="w-6 h-6 text-indigo-500" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              Active Archetypes
+            </p>
+            <p className="text-lg font-black text-white">3 Active</p>
+          </div>
         </div>
       </div>
     </div>
@@ -388,7 +426,9 @@ function StatsCard({
           />
         </div>
       </div>
-      <h4 className="text-3xl font-black text-white tracking-tighter">{value}</h4>
+      <h4 className="text-3xl font-black text-white tracking-tighter">
+        {value}
+      </h4>
       <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2 group-hover:text-slate-400 transition-colors">
         {title}
       </p>

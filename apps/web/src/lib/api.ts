@@ -130,23 +130,34 @@ apiClient.interceptors.request.use(
     // 2. URL NORMALIZATION & DOUBLE PREFIX PROTECTION
     const baseURL = config.baseURL?.replace(/\/+$/, '') || '';
     let relativePart = config.url || '';
-    
+
     // Finding 62 Hardening: Strip redundant prefixes
     relativePart = relativePart.replace(/^(\/api\/v1)+/g, '');
     if (!relativePart.startsWith('/')) relativePart = '/' + relativePart;
-    
+
     config.url = relativePart;
-    const finalFullURL = `${baseURL}${relativePart}`.replace(/\/api\/v1\/api\/v1/g, '/api/v1');
+    const finalFullURL = `${baseURL}${relativePart}`.replace(
+      /\/api\/v1\/api\/v1/g,
+      '/api/v1'
+    );
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
     // 3. EXTREME VISIBILITY LOGGING
-    console.groupCollapsed(`[API:Request] [${requestId}] ${config.method?.toUpperCase()} ${relativePart}`);
+    console.groupCollapsed(
+      `[API:Request] [${requestId}] ${config.method?.toUpperCase()} ${relativePart}`
+    );
     console.log('Context:', {
       requestId,
       finalFullURL,
       method: config.method?.toUpperCase(),
       orgId: config.headers?.['X-Org-Id'] || 'MISSING',
-      orgIdSource: existingOrgId ? 'explicit' : fromWorkspaceStore ? 'workspace' : fromAuthStore ? 'auth' : 'none',
+      orgIdSource: existingOrgId
+        ? 'explicit'
+        : fromWorkspaceStore
+          ? 'workspace'
+          : fromAuthStore
+            ? 'auth'
+            : 'none',
       hasAuth: !!document.cookie.includes('accessToken'),
       isDoublePrefixed,
       timestamp: new Date().toISOString(),
@@ -154,19 +165,22 @@ apiClient.interceptors.request.use(
     console.log('Stores:', {
       workspace: fromWorkspaceStore || 'null',
       auth: fromAuthStore || 'null',
-      isAuthenticated: useAuthStore.getState().isAuthenticated
+      isAuthenticated: useAuthStore.getState().isAuthenticated,
     });
     console.log('Call Stack:\n', stack);
     console.groupEnd();
 
-    logger.debug(`[API:Req] [${requestId}] ${config.method?.toUpperCase()} ${config.url}`, {
-      requestId,
-      finalFullURL,
-      isDoublePrefixed,
-      orgId: config.headers?.['X-Org-Id'],
-      headers: { ...config.headers },
-      timestamp: new Date().toISOString()
-    });
+    logger.debug(
+      `[API:Req] [${requestId}] ${config.method?.toUpperCase()} ${config.url}`,
+      {
+        requestId,
+        finalFullURL,
+        isDoublePrefixed,
+        orgId: config.headers?.['X-Org-Id'],
+        headers: { ...config.headers },
+        timestamp: new Date().toISOString(),
+      }
+    );
 
     // 🚩 OUTGOING SIGNATURE (Finding 62/63 - Double Prefix & $undefined Trace)
     console.log(
@@ -201,7 +215,9 @@ apiClient.interceptors.response.use(
     // 2. SUCCESS LOGGING
     const requestId = (response.config as any)._requestId || 'NONE';
     const startTime = (response.config as any)._startTime;
-    const duration = startTime ? `${(performance.now() - startTime).toFixed(2)}ms` : 'N/A';
+    const duration = startTime
+      ? `${(performance.now() - startTime).toFixed(2)}ms`
+      : 'N/A';
 
     logger.debug(
       `[API:Success] [${requestId}] ${response.status} ${duration} ${response.config.method?.toUpperCase()} ${response.config.url}`,

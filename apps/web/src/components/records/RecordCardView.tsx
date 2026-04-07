@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { ProjectRecord, ProjectType } from '@validiant/shared';
-import { 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
-  Zap, 
-  User, 
+import {
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Zap,
+  User,
   MapPin,
   Calendar,
-  Eye
+  Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -20,32 +20,44 @@ interface RecordCardViewProps {
   onEdit: (recordId: string) => void;
 }
 
-const STATUS_CONFIG: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+const STATUS_CONFIG: Record<
+  string,
+  { icon: React.ElementType; color: string; bg: string }
+> = {
   pending: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   in_progress: { icon: Zap, color: 'text-primary', bg: 'bg-primary/10' },
-  verified: { icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  verified: {
+    icon: CheckCircle2,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+  },
   flagged: { icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
 };
 
-export function RecordCardView({ 
-  projectType, 
-  records, 
-  onEdit 
+export function RecordCardView({
+  projectType,
+  records,
+  onEdit,
 }: RecordCardViewProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {records.map((record) => {
-        const resolvedStatus = STATUS_CONFIG[record.status] || STATUS_CONFIG['pending'];
+        const resolvedStatus =
+          STATUS_CONFIG[record.status] || STATUS_CONFIG['pending'];
         const StatusIcon = resolvedStatus?.icon || Clock;
         const statusColor = resolvedStatus?.color || 'text-slate-400';
         const statusBg = resolvedStatus?.bg || 'bg-slate-400/10';
-        
+
         // Find if there's a photo field for preview
-        const photoKey = projectType.columns?.find(c => c.columnType === 'photo_capture')?.key;
+        const photoKey = projectType.columns?.find(
+          (c) => c.columnType === 'photo_capture'
+        )?.key;
         const photoUrl = photoKey ? (record.data[photoKey] as string) : null;
 
         const firstKey = Object.keys(record.data)[0];
-        const titleValue = firstKey ? String(record.data[firstKey]) : 'Untitled Node';
+        const titleValue = firstKey
+          ? String(record.data[firstKey])
+          : 'Untitled Node';
 
         return (
           <div
@@ -56,28 +68,32 @@ export function RecordCardView({
             {/* Visual Header / Photo Preview */}
             <div className="relative h-48 bg-surface-container-low overflow-hidden">
               {photoUrl ? (
-                <img 
-                  src={photoUrl} 
-                  alt="Record Evidence" 
+                <img
+                  src={photoUrl}
+                  alt="Record Evidence"
                   className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-700"
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center opacity-10 bg-gradient-to-br from-primary/5 to-transparent">
                   <DatabaseIcon className="w-12 h-12 mb-2" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">No Visual Evidence</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    No Visual Evidence
+                  </span>
                 </div>
               )}
-              
+
               {/* Overlays */}
               <div className="absolute top-4 left-4">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusBg} backdrop-blur-md border border-white/5`}>
+                <div
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusBg} backdrop-blur-md border border-white/5`}
+                >
                   <StatusIcon className={`w-3.5 h-3.5 ${statusColor}`} />
                   <span className="text-[9px] font-black uppercase tracking-widest text-white/90">
                     {record.status.replace('_', ' ')}
                   </span>
                 </div>
               </div>
-              
+
               <div className="absolute bottom-4 right-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
                   <Eye className="w-4 h-4 text-white" />
@@ -95,7 +111,9 @@ export function RecordCardView({
                   {record.gpsLat && (
                     <div className="flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-emerald-500" />
-                      <span className="text-[8px] font-bold text-emerald-500 uppercase">Geo Locked</span>
+                      <span className="text-[8px] font-bold text-emerald-500 uppercase">
+                        Geo Locked
+                      </span>
                     </div>
                   )}
                 </div>
@@ -106,7 +124,7 @@ export function RecordCardView({
 
               {/* Data Grid Preview */}
               <div className="grid grid-cols-2 gap-3">
-                {projectType.columns?.slice(1, 3).map(col => (
+                {projectType.columns?.slice(1, 3).map((col) => (
                   <div key={col.id} className="space-y-1">
                     <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/20">
                       {col.name}
@@ -148,16 +166,16 @@ export function RecordCardView({
 
 function DatabaseIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg 
-      {...props} 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <ellipse cx="12" cy="5" rx="9" ry="3" />

@@ -42,7 +42,9 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
         <Input
           {...commonProps}
           value={value || ''}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange(e.target.value)
+          }
         />
       );
     }
@@ -52,7 +54,9 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
         <Textarea
           {...commonProps}
           value={value || ''}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            onChange(e.target.value)
+          }
           rows={4}
         />
       );
@@ -64,7 +68,9 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
           {...commonProps}
           type="number"
           value={value ?? ''}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(parseFloat(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange(parseFloat(e.target.value))
+          }
         />
       );
     }
@@ -116,13 +122,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
     }
 
     case ColumnType.SIGNATURE: {
-      return (
-        <Signature
-          {...commonProps}
-          value={value}
-          onChange={onChange}
-        />
-      );
+      return <Signature {...commonProps} value={value} onChange={onChange} />;
     }
 
     case ColumnType.RATING: {

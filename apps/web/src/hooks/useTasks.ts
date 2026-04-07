@@ -131,7 +131,11 @@ const fetchTasks = async ({
   const paramsString = params.toString();
   const url = `/projects/${projectId}/tasks${paramsString ? `?${paramsString}` : ''}`;
 
-  console.debug('[Tasks:FetchInitiated]', { url, projectId, hasFilters: !!filters });
+  console.debug('[Tasks:FetchInitiated]', {
+    url,
+    projectId,
+    hasFilters: !!filters,
+  });
   const response = await get<TasksCursorResponse>(url);
   return response.data.data;
 };

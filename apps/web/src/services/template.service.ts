@@ -19,5 +19,5 @@ export const listTemplates = async (): Promise<TypeTemplate[]> =>
   get<APIResponse<{ data: TypeTemplate[] }>>('/templates').then((res) => {
     // The backend returns it under data.data or directly depending on controller
     // Let's assume the standard { data: { data: [...] } } or { data: [...] }
-    return res.data.data as unknown as TypeTemplate[] || [];
+    return (res.data.data as unknown as TypeTemplate[]) || [];
   });

@@ -58,6 +58,10 @@ export interface ProjectTypeSettings {
   slaHours?: number;
   gpsRequired?: boolean;
   allowedCreators?: ('admin' | 'member' | 'field_agent')[];
+  /**
+   * Custom mapping for verification states (e.g., 'completed' -> 'Ownership Verified')
+   */
+  customVerificationLabels?: Record<string, string>;
 }
 
 /**
@@ -96,6 +100,21 @@ export interface ColumnSettings {
   options?: string[];
   maxRating?: number;
   validation?: { [rule: string]: unknown };
+  /**
+   * Conditional logic for field visibility.
+   * Format: Show this field IF another field matches a specific criteria.
+   */
+  conditions?: {
+    fieldKey: string;
+    operator:
+      | 'equals'
+      | 'not_equals'
+      | 'contains'
+      | 'not_contains'
+      | 'is_set'
+      | 'is_not_set';
+    value: unknown;
+  }[];
 }
 
 /**

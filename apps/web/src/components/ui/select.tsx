@@ -1,9 +1,9 @@
-import * as React from "react"
-import { ChevronDown } from "lucide-react"
+import * as React from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  options: { label: string; value: string }[]
-  onValueChange?: (value: string) => void
+  options: { label: string; value: string }[];
+  onValueChange?: (value: string) => void;
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
@@ -13,23 +13,27 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           className="flex h-12 w-full appearance-none rounded-[1.5rem] bg-surface-lowest/50 border border-white/[0.03] px-6 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 shadow-obsidian inset-shadow-sm cursor-pointer pr-12"
           onChange={(e) => {
-            onChange?.(e)
-            onValueChange?.(e.target.value)
+            onChange?.(e);
+            onValueChange?.(e.target.value);
           }}
           ref={ref}
           {...props}
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value} className="bg-slate-950 text-white">
+            <option
+              key={option.value}
+              value={option.value}
+              className="bg-slate-950 text-white"
+            >
               {option.label}
             </option>
           ))}
         </select>
         <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-hover:text-primary transition-colors pointer-events-none" />
       </div>
-    )
+    );
   }
-)
-Select.displayName = "Select"
+);
+Select.displayName = 'Select';
 
-export { Select }
+export { Select };

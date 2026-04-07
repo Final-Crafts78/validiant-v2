@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { typesService } from '../services/types.service';
 import { queryKeys } from '../lib/query-keys';
-import { 
-  CreateProjectTypeData, 
-  UpdateProjectTypeData 
+import {
+  CreateProjectTypeData,
+  UpdateProjectTypeData,
 } from '@validiant/shared';
 import { toast } from 'react-hot-toast';
 
@@ -22,11 +22,11 @@ export const useProjectTypes = (projectId: string) => {
 
   // Create type mutation
   const createType = useMutation({
-    mutationFn: (data: CreateProjectTypeData) => 
+    mutationFn: (data: CreateProjectTypeData) =>
       typesService.createProjectType(projectId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.types.byProject(projectId) 
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.types.byProject(projectId),
       });
       toast.success('New data archetype defined');
     },
@@ -37,8 +37,8 @@ export const useProjectTypes = (projectId: string) => {
     mutationFn: ({ id, data }: { id: string; data: UpdateProjectTypeData }) =>
       typesService.updateProjectType(projectId, id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.types.byProject(projectId) 
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.types.byProject(projectId),
       });
       toast.success('Archetype updated');
     },
@@ -48,8 +48,8 @@ export const useProjectTypes = (projectId: string) => {
   const deleteType = useMutation({
     mutationFn: (id: string) => typesService.deleteProjectType(projectId, id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.types.byProject(projectId) 
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.types.byProject(projectId),
       });
       toast.success('Archetype removed from universe');
     },

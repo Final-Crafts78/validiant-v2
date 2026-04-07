@@ -82,7 +82,8 @@ export function ProjectCard({
   }
 
   const progress = project.progress ?? 0;
-  const currentRecordCount = (project as { recordCount?: number }).recordCount ?? 0;
+  const currentRecordCount =
+    (project as { recordCount?: number }).recordCount ?? 0;
 
   return (
     <button

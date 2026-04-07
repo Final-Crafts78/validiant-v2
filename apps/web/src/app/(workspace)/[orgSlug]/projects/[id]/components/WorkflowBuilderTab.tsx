@@ -22,9 +22,17 @@ const FIELD_TYPES = [
   { value: 'text', label: 'Short Text', backendType: 'text' },
   { value: 'textarea', label: 'Long Text', backendType: 'text' },
   { value: 'boolean', label: 'Yes/No Toggle', backendType: 'boolean' },
-  { value: 'photo-request', label: 'Camera / Photo Upload', backendType: 'photo' },
+  {
+    value: 'photo-request',
+    label: 'Camera / Photo Upload',
+    backendType: 'photo',
+  },
   { value: 'signature', label: 'E-Signature', backendType: 'photo' },
-  { value: 'pdf-upload', label: 'Document Upload (PDF)', backendType: 'document' },
+  {
+    value: 'pdf-upload',
+    label: 'Document Upload (PDF)',
+    backendType: 'document',
+  },
 ];
 
 const ROLES = [
@@ -119,7 +127,8 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
         fieldSchema: fields.map((f) => ({
           ...f,
           // Map to backend backendType if exists
-          type: FIELD_TYPES.find((t) => t.value === f.type)?.backendType || f.type,
+          type:
+            FIELD_TYPES.find((t) => t.value === f.type)?.backendType || f.type,
           // Ensure prompt is removed (not in backend schema)
           prompt: undefined,
         })),
@@ -217,9 +226,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                     <input
                       type="text"
                       value={field.key || field.fieldKey}
-                      onChange={(e) =>
-                        updateField(idx, 'key', e.target.value)
-                      }
+                      onChange={(e) => updateField(idx, 'key', e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 font-mono text-indigo-700 focus:ring-2 focus:ring-indigo-500"
                       placeholder="e.g. id_front"
                     />
@@ -297,11 +304,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                                 e.target.checked
                                   ? cur.add(role.value)
                                   : cur.delete(role.value);
-                                updateField(
-                                  idx,
-                                  'visibleTo',
-                                  Array.from(cur)
-                                );
+                                updateField(idx, 'visibleTo', Array.from(cur));
                               }}
                             />
                             {role.label}

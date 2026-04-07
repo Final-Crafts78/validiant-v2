@@ -54,7 +54,9 @@ export const useRecords = (projectId?: string) => {
   const lockRecord = useMutation({
     mutationFn: (id: string) => recordService.lockRecord(projectId || '', id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.records.byProject(projectId || '') });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.records.byProject(projectId || ''),
+      });
     },
   });
 
@@ -62,7 +64,26 @@ export const useRecords = (projectId?: string) => {
   const unlockRecord = useMutation({
     mutationFn: (id: string) => recordService.unlockRecord(projectId || '', id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.records.byProject(projectId || '') });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.records.byProject(projectId || ''),
+      });
+    },
+  });
+
+  // Bulk create records mutation
+  const bulkCreateRecords = useMutation({
+    mutationFn: (records: CreateRecordDataInput[]) =>
+      recordService.bulkCreateRecords(projectId || '', records),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.records.byProject(projectId || ''),
+      });
+      toast.success(
+        `Bulk operation complete: ${result.created} created, ${result.updated} updated`
+      );
+    },
+    onError: (error: any) => {
+      toast.error(`Bulk ingestion failed: ${error.message}`);
     },
   });
 
@@ -71,6 +92,7 @@ export const useRecords = (projectId?: string) => {
     isLoading,
     createRecord,
     updateRecord,
+    bulkCreateRecords,
     lockRecord,
     unlockRecord,
   };

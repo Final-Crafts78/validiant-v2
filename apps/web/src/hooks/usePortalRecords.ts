@@ -15,7 +15,7 @@ export function usePortalContext(token: string) {
 
 /**
  * Hook for fetching records in a portal session.
- * 
+ *
  * @param projectKey The project's public key (e.g., PJ-M001)
  * @param token The portal magic-link token
  */
@@ -38,10 +38,15 @@ export function usePortalRecords(projectKey: string, token: string) {
 /**
  * Hook for fetching a single record detail in a portal session.
  */
-export function usePortalRecord(projectKey: string, token: string, recordNumber: number) {
+export function usePortalRecord(
+  projectKey: string,
+  token: string,
+  recordNumber: number
+) {
   const query = useQuery({
     queryKey: ['portal', projectKey, 'records', recordNumber, token],
-    queryFn: () => portalService.getPortalRecord(projectKey, recordNumber, token),
+    queryFn: () =>
+      portalService.getPortalRecord(projectKey, recordNumber, token),
     enabled: !!projectKey && !!token && !!recordNumber,
     staleTime: 1000 * 60, // 1 minute
   });

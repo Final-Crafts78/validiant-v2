@@ -77,7 +77,7 @@ export const columnsService = {
   createTypeColumn,
   updateTypeColumn,
   deleteTypeColumn,
-  reorderColumns
+  reorderColumns,
 };
 
 export default columnsService;

@@ -14,7 +14,7 @@ export interface Organization {
   role?: string; // caller's role in this org
   memberCount?: number;
   projectCount?: number;
-  
+
   // Phase 6: Billing
   plan?: 'free' | 'pro' | 'enterprise';
   subscriptionStatus?: string;

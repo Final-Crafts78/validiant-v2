@@ -311,7 +311,8 @@ export default function ProjectsPage() {
                       {p.status}
                     </span>
                   </div>
-                  {(p as { recordCount?: number }).recordCount !== undefined && (
+                  {(p as { recordCount?: number }).recordCount !==
+                    undefined && (
                     <span className="text-[9px] font-black text-text-subtle">
                       {(p as { recordCount?: number }).recordCount} Records
                     </span>

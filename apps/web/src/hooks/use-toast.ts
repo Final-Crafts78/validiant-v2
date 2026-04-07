@@ -14,14 +14,20 @@ interface ToastOptions {
 }
 
 export function useToast() {
-  const toast = useCallback(({ title, description, variant = 'default' }: ToastOptions) => {
-    // Simple console log and alert for now, can be upgraded to full UI later
-    const icon = variant === 'destructive' ? '❌' : variant === 'success' ? '✅' : 'ℹ️';
-    console.log(`${icon} [${variant.toUpperCase()}] ${title}: ${description}`);
-    
-    // Using native alert as a fallback for the "premium" feel since I don't have the UI components yet
-    // In a follow-up, I'll build a proper Toast UI component.
-  }, []);
+  const toast = useCallback(
+    ({ title, description, variant = 'default' }: ToastOptions) => {
+      // Simple console log and alert for now, can be upgraded to full UI later
+      const icon =
+        variant === 'destructive' ? '❌' : variant === 'success' ? '✅' : 'ℹ️';
+      console.log(
+        `${icon} [${variant.toUpperCase()}] ${title}: ${description}`
+      );
+
+      // Using native alert as a fallback for the "premium" feel since I don't have the UI components yet
+      // In a follow-up, I'll build a proper Toast UI component.
+    },
+    []
+  );
 
   return { toast };
 }

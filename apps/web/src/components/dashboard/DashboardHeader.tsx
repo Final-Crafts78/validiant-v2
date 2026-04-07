@@ -219,7 +219,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 <ThemeToggle />
                 <NotificationBell />
               </div>
-              
+
               <div className="hidden md:flex items-center gap-3 pl-2">
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-black text-[var(--color-text-base)] leading-none mb-1">

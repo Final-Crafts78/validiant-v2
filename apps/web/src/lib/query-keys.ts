@@ -51,8 +51,7 @@ export const queryKeys = {
         : ([...queryKeys.projects.detail(id), 'tasks'] as const),
     members: (id: string) =>
       [...queryKeys.projects.detail(id), 'members'] as const,
-    types: (id: string) =>
-      [...queryKeys.projects.detail(id), 'types'] as const,
+    types: (id: string) => [...queryKeys.projects.detail(id), 'types'] as const,
     typeColumns: (id: string, typeId: string) =>
       [...queryKeys.projects.detail(id), 'types', typeId, 'columns'] as const,
   },
@@ -116,7 +115,11 @@ export const queryKeys = {
     all: ['records'] as const,
     byProject: (projectId: string, filters?: any) =>
       filters
-        ? ([...queryKeys.records.all, 'list', { projectId, ...filters }] as const)
+        ? ([
+            ...queryKeys.records.all,
+            'list',
+            { projectId, ...filters },
+          ] as const)
         : ([...queryKeys.records.all, 'list', { projectId }] as const),
     detail: (projectId: string, recordId: string) =>
       [...queryKeys.records.all, 'detail', { projectId, recordId }] as const,

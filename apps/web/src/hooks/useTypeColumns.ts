@@ -46,7 +46,13 @@ export const useTypeColumns = (projectId: string, typeId?: string) => {
 
   // Update column mutation
   const updateColumn = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<TypeColumn> }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<TypeColumn>;
+    }) => {
       const response = await put<{ data: { column: TypeColumn } }>(
         `/projects/${projectId}/types/${typeId}/columns/${id}`,
         data

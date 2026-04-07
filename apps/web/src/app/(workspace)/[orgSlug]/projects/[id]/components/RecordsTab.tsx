@@ -5,20 +5,25 @@ import { useProjectTypes } from '@/hooks/useProjectTypes';
 import {
   Database,
   Plus,
-  Search,
-  Filter,
   Grid,
   List as ListIcon,
   Trello,
   Map as MapIcon,
+  Upload,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { RecordTable } from '@/components/records/RecordTable';
-import { RecordSlideOver } from '@/components/records/RecordSlideOver';
 import { RecordKanbanView } from '@/components/records/RecordKanbanView';
 import { RecordCardView } from '@/components/records/RecordCardView';
 import { RecordMapView } from '@/components/records/RecordMapView';
 import { ProjectRecord, ProjectType } from '@validiant/shared';
+
+import { DashboardStatsRow } from './DashboardStatsRow';
+import { RecordsFilterBar } from './RecordsFilterBar';
+import { BulkActionBar } from './BulkActionBar';
+import { AuditActivityFeed } from './AuditActivityFeed';
+import { BulkUploadModal } from './upload/BulkUploadModal';
+import { VerificationSlideOver } from './verification/VerificationSlideOver';
 
 /**
  * RecordsTab - The primary data hub for the project universe.
@@ -30,13 +35,37 @@ export function RecordsTab({ projectId }: { projectId: string }) {
     null
   );
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeView, setActiveView] = useState<'list' | 'kanban' | 'map' | 'cards'>(
-    'list'
-  );
+  const [activeView, setActiveView] = useState<
+    'list' | 'kanban' | 'map' | 'cards'
+  >('list');
 
-  const { records, isLoading, updateRecord } = useRecords(projectId);
+  // Bulk Selection State
+  const [selectedRecordIds, setSelectedRecordIds] = useState<string[]>([]);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const { records = [], isLoading, updateRecord } = useRecords(projectId);
   const { data: types } = useProjectTypes(projectId);
+
+  // 100% Data-Driven Operational Metrics
+  const totalCount = records.length;
+  const verifiedCount = records.filter((r) => r.status === 'completed').length;
+  const pendingCount = records.filter((r) => r.status === 'pending').length;
+  const healthScore =
+    totalCount > 0 ? Math.round((verifiedCount / totalCount) * 100) : 100;
+  const slaCompliant =
+    totalCount > 0
+      ? Math.round(
+          ((totalCount -
+            records.filter(
+              (r) =>
+                r.status === 'pending' &&
+                new Date().getTime() - new Date(r.updatedAt).getTime() >
+                  24 * 60 * 60 * 1000
+            ).length) /
+            totalCount) *
+            100
+        )
+      : 100;
 
   // Auto-select first type if none selected
   useEffect(() => {
@@ -67,129 +96,135 @@ export function RecordsTab({ projectId }: { projectId: string }) {
     updateRecord.mutate({ id: recordId, data: { status: newStatus } });
   };
 
+  const handleBulkAction = (action: string) => {
+    // Implementation for bulk actions will come in later phases
+    return action;
+  };
+
   if (isLoading) {
     return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-10 bg-surface-container-low rounded-xl w-1/4" />
-        <div className="h-64 bg-surface-container-low rounded-[2.5rem]" />
+      <div className="animate-pulse space-y-8 p-8">
+        <div className="grid grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-white/5 rounded-2xl" />
+          ))}
+        </div>
+        <div className="h-10 bg-white/5 rounded-xl w-1/4" />
+        <div className="h-96 bg-white/5 rounded-[2.5rem]" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Type Selector Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto scroller-hidden pb-2">
-        {types?.map((type) => (
-          <button
-            key={type.id}
-            onClick={() => setSelectedTypeId(type.id)}
-            className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] transition-all relative whitespace-nowrap ${
-              selectedTypeId === type.id
-                ? 'bg-surface-lowest text-primary shadow-obsidian border border-white/[0.03]'
-                : 'text-white/20 hover:text-white/40 hover:bg-surface-lowest/30'
-            }`}
-          >
-            <div
-              className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]"
-              style={{ color: type.color || '#4F46E5' }}
-            />
-            {type.name}
-          </button>
-        ))}
-        <button className="flex items-center gap-2 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white/10 hover:text-primary transition-all border border-dashed border-white/5 hover:border-primary/20">
-          <Plus className="w-3 h-3" />
-          Define New Archetype
-        </button>
-      </div>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-32">
+      {/* 1. Dashboard Stats Row */}
+      <DashboardStatsRow records={records || []} />
 
-      {/* Dynamic Toolbar */}
+      {/* 2. Type Selector Tabs & View Switcher */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="relative group/search">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within/search:text-primary transition-colors" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Query Universe..."
-              className="pl-11 pr-6 py-3.5 bg-surface-lowest border border-white/[0.03] rounded-2xl text-[11px] font-mono uppercase tracking-widest focus:outline-none focus:ring-1 focus:ring-primary/40 w-96 transition-all shadow-obsidian placeholder:text-white/10"
-            />
-          </div>
-          <button className="flex items-center gap-3 px-6 py-3.5 bg-surface-lowest border border-white/[0.03] rounded-2xl text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white hover:bg-surface-container-low transition-all shadow-obsidian group">
-            <Filter className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
-            Advanced Filter
+        <div className="flex items-center gap-2 overflow-x-auto scroller-hidden">
+          {types?.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => setSelectedTypeId(type.id)}
+              className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] transition-all relative whitespace-nowrap ${
+                selectedTypeId === type.id
+                  ? 'bg-[var(--surface-lowest)] text-primary shadow-2xl border border-white/[0.03]'
+                  : 'text-white/20 hover:text-white/40 hover:bg-[var(--surface-lowest)]/30'
+              }`}
+            >
+              <div
+                className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]"
+                style={{ color: type.color || '#4d8eff' }}
+              />
+              {type.name}
+            </button>
+          ))}
+          <button className="flex items-center gap-2 px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white/10 hover:text-primary transition-all border border-dashed border-white/5 hover:border-primary/20">
+            <Plus className="w-3 h-3" />
+            New Archetype
           </button>
         </div>
 
-        <div className="flex items-center gap-4 bg-surface-lowest/50 p-2 rounded-2xl border border-white/[0.02] shadow-obsidian backdrop-blur-md">
-          <div className="flex items-center p-1 bg-surface-container-low/30 rounded-xl gap-1">
+        <div className="flex items-center gap-4 bg-[var(--surface-lowest)]/50 p-1.5 rounded-2xl border border-white/[0.02] shadow-2xl backdrop-blur-md">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setActiveView('list')}
-              className={`p-2.5 rounded-lg transition-all ${
+              className={`p-2 rounded-xl transition-all ${
                 activeView === 'list'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  ? 'bg-primary text-[#0c1324] shadow-lg shadow-[#adc6ff]/20'
                   : 'text-white/20 hover:text-white/60'
               }`}
-              title="List Universe"
+              title="List View"
             >
               <ListIcon className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveView('kanban')}
-              className={`p-2.5 rounded-lg transition-all ${
+              className={`p-2 rounded-xl transition-all ${
                 activeView === 'kanban'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  ? 'bg-primary text-[#0c1324] shadow-lg shadow-[#adc6ff]/20'
                   : 'text-white/20 hover:text-white/60'
               }`}
-              title="Orchestration Board"
+              title="Kanban Board"
             >
               <Trello className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveView('map')}
-              className={`p-2.5 rounded-lg transition-all ${
+              className={`p-2 rounded-xl transition-all ${
                 activeView === 'map'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  ? 'bg-primary text-[#0c1324] shadow-lg shadow-[#adc6ff]/20'
                   : 'text-white/20 hover:text-white/60'
               }`}
-              title="Geospatial Hub"
+              title="Map View"
             >
               <MapIcon className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveView('cards')}
-              className={`p-2.5 rounded-lg transition-all ${
+              className={`p-2 rounded-xl transition-all ${
                 activeView === 'cards'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  ? 'bg-primary text-[#0c1324] shadow-lg shadow-[#adc6ff]/20'
                   : 'text-white/20 hover:text-white/60'
               }`}
-              title="Visual Grid"
+              title="Card Grid"
             >
               <Grid className="w-4 h-4" />
             </button>
           </div>
-          <div className="w-px h-5 bg-white/5 mx-1" />
+          <div className="w-px h-4 bg-white/5 mx-1" />
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 text-white/60 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all group"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Bulk Upload
+          </button>
           <button
             onClick={handleAddRecord}
-            className="flex items-center gap-3 px-6 py-2.5 bg-primary text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 group"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-[#0c1324] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/80 transition-all shadow-lg shadow-[#adc6ff]/10 group"
           >
-            <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
+            <Plus className="w-3.5 h-3.5" />
             Inject Record
           </button>
         </div>
       </div>
 
-      {/* Main Viewport */}
+      {/* 3. Global Record Filter Bar */}
+      <div className="bg-[var(--surface-container-low)] p-6 rounded-[2rem] border border-white/5 shadow-xl">
+        <RecordsFilterBar />
+      </div>
+
+      {/* 4. Main Viewport (Table/Kanban/Map/Cards) */}
       {!records || records.length === 0 || !selectedType ? (
-        <div className="flex flex-col items-center justify-center py-40 gap-8 bg-surface-lowest rounded-[3rem] border border-white/[0.01] shadow-obsidian-lg relative overflow-hidden">
+        <div className="flex flex-col items-center justify-center py-40 gap-8 bg-[var(--surface-lowest)] rounded-[3rem] border border-white/[0.01] shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-primary/5 blur-[120px] opacity-20" />
-          <div className="relative w-28 h-28 rounded-[2.5rem] bg-surface-container-low flex items-center justify-center border border-white/[0.05] shadow-inner">
+          <div className="relative w-28 h-28 rounded-[2.5rem] bg-[var(--surface-container-low)] flex items-center justify-center border border-white/[0.05] shadow-inner">
             <Database className="w-12 h-12 text-white/10" />
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
           </div>
           <div className="text-center space-y-3 relative z-10">
-            <h3 className="text-2xl font-bold text-white/80 tracking-tight font-display">
+            <h3 className="text-2xl font-bold text-white/80 tracking-tight">
               Void Universe detected
             </h3>
             <p className="text-sm text-white/30 font-medium max-w-xs mx-auto italic font-mono">
@@ -207,6 +242,8 @@ export function RecordsTab({ projectId }: { projectId: string }) {
                 (r) => r.typeId === selectedTypeId
               )}
               onEdit={handleRecordClick}
+              selectedRecordIds={selectedRecordIds}
+              onSelectionChange={setSelectedRecordIds}
             />
           )}
 
@@ -243,16 +280,94 @@ export function RecordsTab({ projectId }: { projectId: string }) {
         </div>
       )}
 
-      {/* Detail Slide-Over */}
-      {selectedType && (
-        <RecordSlideOver
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-8 border-t border-white/5">
+        <AuditActivityFeed projectId={projectId} records={records} />
+
+        <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] border border-white/5 p-8 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
+            <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+          </div>
+          <h3 className="text-2xl font-black text-[#dce1fb] tracking-tight mb-2">
+            Operational Health: {healthScore}%
+          </h3>
+          <p className="text-sm text-[var(--text-muted)] max-w-sm">
+            Project is performing within healthy limits based on current volume
+            of <span className="text-white">{totalCount}</span> records. SLA
+            compliance is currently at{' '}
+            <span className="text-emerald-400 font-bold">{slaCompliant}%</span>.
+          </p>
+
+          <div className="grid grid-cols-2 gap-4 w-full mt-8">
+            <div className="bg-[var(--surface-lowest)] p-4 rounded-2xl border border-white/5 text-left">
+              <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1">
+                Pending Tasks
+              </p>
+              <p className="text-lg font-bold text-[#dce1fb]">{pendingCount}</p>
+            </div>
+            <div className="bg-[var(--surface-lowest)] p-4 rounded-2xl border border-white/5 text-left">
+              <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1">
+                SLA Compliant
+              </p>
+              <p className="text-lg font-bold text-[#dce1fb]">
+                {slaCompliant}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bulk Action Bar - Sticky/Floating */}
+      <BulkActionBar
+        selectedCount={selectedRecordIds.length}
+        onClear={() => setSelectedRecordIds([])}
+        onAction={handleBulkAction}
+      />
+
+      {/* Record Verification Flow */}
+      {selectedType && selectedRecord && (
+        <VerificationSlideOver
           isOpen={isSlideOverOpen}
           onClose={() => setIsSlideOverOpen(false)}
+          record={selectedRecord}
+          projectType={selectedType as unknown as ProjectType}
+          onStatusUpdate={async (label) => {
+            await updateRecord.mutateAsync({
+              id: selectedRecord.id,
+              data: { status: label },
+            });
+            setIsSlideOverOpen(false);
+          }}
+          isUpdating={updateRecord.isPending}
+        />
+      )}
+      {/* Bulk Upload Wizard */}
+      {isUploadModalOpen && selectedType && (
+        <BulkUploadModal
           projectId={projectId}
           projectType={selectedType as unknown as ProjectType}
-          recordId={selectedRecord?.id}
+          onClose={() => setIsUploadModalOpen(false)}
         />
       )}
     </div>
+  );
+}
+
+function CheckCircle2({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
   );
 }

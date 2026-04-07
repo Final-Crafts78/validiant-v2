@@ -1,10 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { columnsService } from '../services/columns.service';
 import { queryKeys } from '../lib/query-keys';
-import { 
-  CreateTypeColumnData, 
-  UpdateTypeColumnData 
-} from '@validiant/shared';
+import { CreateTypeColumnData, UpdateTypeColumnData } from '@validiant/shared';
 import { toast } from 'react-hot-toast';
 
 export const useColumns = (projectId: string, typeId: string) => {

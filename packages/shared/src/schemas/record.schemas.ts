@@ -71,6 +71,24 @@ export const typeColumnCreateSchema = z.object({
       showInMobile: z.boolean().optional(),
       defaultValue: z.unknown().optional(),
       hint: z.string().max(200).optional(),
+      placeholder: z.string().max(100).optional(),
+      disabled: z.boolean().optional(),
+      conditions: z
+        .array(
+          z.object({
+            fieldKey: z.string().min(1),
+            operator: z.enum([
+              'equals',
+              'not_equals',
+              'contains',
+              'not_contains',
+              'is_set',
+              'is_not_set',
+            ]),
+            value: z.unknown(),
+          })
+        )
+        .optional(),
     })
     .optional(),
   order: z.number().int().optional(),
@@ -102,6 +120,7 @@ export const projectTypeCreateSchema = z.object({
       allowedCreators: z
         .array(z.enum(['admin', 'member', 'field_agent']))
         .optional(),
+      customVerificationLabels: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
 });

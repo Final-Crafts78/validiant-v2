@@ -26,13 +26,18 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
   projectType,
   recordId,
 }) => {
-  const { createRecord, updateRecord, records, lockRecord, unlockRecord } = useRecords(projectId);
+  const { createRecord, updateRecord, records, lockRecord, unlockRecord } =
+    useRecords(projectId);
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentRecord = recordId ? records?.find((r) => r.id === recordId) : null;
-  const isLockedByOthers = !!(currentRecord?.lockedBy && currentRecord.lockedBy !== user?.id);
+  const currentRecord = recordId
+    ? records?.find((r) => r.id === recordId)
+    : null;
+  const isLockedByOthers = !!(
+    currentRecord?.lockedBy && currentRecord.lockedBy !== user?.id
+  );
   const isLockedByMe = currentRecord?.lockedBy === user?.id;
 
   // Initialize form data if editing
@@ -41,7 +46,7 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
       const record = records.find((r) => r.id === recordId);
       if (record) {
         setFormData(record.data as Record<string, unknown>);
-        
+
         // Auto-lock on open if not locked by others
         if (!record.lockedBy && isOpen) {
           lockRecord.mutate(recordId);
@@ -99,9 +104,9 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
       />
 
       <div className="absolute inset-y-0 right-0 max-w-full flex">
-        <div className="w-screen max-w-xl flex flex-col bg-surface-base shadow-obsidian border-l border-white/5 animate-in slide-in-from-right duration-500 ease-premium">
+        <div className="w-screen max-w-xl flex flex-col bg-[var(--surface-base)] shadow-obsidian border-l border-[var(--border-subtle)] animate-in slide-in-from-right duration-500 ease-premium">
           {/* Header */}
-          <div className="p-8 pb-6 flex items-center justify-between border-b border-white/[0.02]">
+          <div className="p-8 pb-6 flex items-center justify-between border-b border-[var(--border-subtle)]/20">
             <div className="editorial-header">
               <label>Universal_Entry</label>
               <h1 className="text-3xl">
@@ -111,7 +116,7 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
                 <div className="p-1 rounded bg-primary/10">
                   <Database className="w-3 h-3 text-primary" />
                 </div>
-                <span className="text-[10px] text-white/30 font-mono uppercase tracking-[0.1em]">
+                <span className="text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-[0.1em]">
                   {projectType.name} • Precision_v8.0
                 </span>
                 {isLockedByOthers && (
@@ -164,26 +169,32 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
           </div>
 
           {/* Footer - The Glass Command */}
-          <div className="p-8 bg-surface-container-low/50 backdrop-blur-xl border-t border-white/[0.02] flex flex-col gap-6">
-            <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-all ${
-              isLockedByOthers 
-                ? 'bg-amber-500/5 border-amber-500/10' 
-                : 'bg-white/[0.02] border-white/5'
-            }`}>
+          <div className="p-8 bg-[var(--surface-container-low)]/50 backdrop-blur-xl border-t border-[var(--border-subtle)]/20 flex flex-col gap-6">
+            <div
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-all ${
+                isLockedByOthers
+                  ? 'bg-amber-500/5 border-amber-500/10'
+                  : 'bg-white/[0.02] border-[var(--border-subtle)]'
+              }`}
+            >
               {isLockedByOthers ? (
                 <Lock className="w-4 h-4 text-amber-500" />
               ) : (
                 <ShieldCheck className="w-4 h-4 text-primary" />
               )}
               <div className="flex flex-col">
-                <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                  isLockedByOthers ? 'text-amber-500/60' : 'text-white/60'
-                }`}>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-wider ${
+                    isLockedByOthers
+                      ? 'text-amber-500/60'
+                      : 'text-[var(--text-muted)]/60'
+                  }`}
+                >
                   {isLockedByOthers ? 'Lock_Enforced' : 'Audit_Locked_Session'}
                 </span>
-                <span className="text-[9px] text-white/30 font-mono italic">
-                  {isLockedByOthers 
-                    ? 'Another operator is currently modifying this coordinate.' 
+                <span className="text-[9px] text-[var(--text-muted)] font-mono italic">
+                  {isLockedByOthers
+                    ? 'Another operator is currently modifying this coordinate.'
                     : 'Immutability enforced by Protocol_Xact'}
                 </span>
               </div>

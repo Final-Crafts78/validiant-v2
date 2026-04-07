@@ -1,8 +1,8 @@
 import { get, post, put, del } from '@/lib/api';
-import { 
-  ProjectRecord, 
-  CreateRecordDataInput, 
-  UpdateRecordDataInput 
+import {
+  ProjectRecord,
+  CreateRecordDataInput,
+  UpdateRecordDataInput,
 } from '@validiant/shared';
 
 import { APIResponse } from '@/lib/api';
@@ -15,7 +15,9 @@ import { APIResponse } from '@/lib/api';
 /**
  * List records for a project
  */
-export const listProjectRecords = async (projectId: string): Promise<ProjectRecord[]> => {
+export const listProjectRecords = async (
+  projectId: string
+): Promise<ProjectRecord[]> => {
   const response = await get<APIResponse<{ records: ProjectRecord[] }>>(
     `/projects/${projectId}/records`
   );
@@ -25,7 +27,10 @@ export const listProjectRecords = async (projectId: string): Promise<ProjectReco
 /**
  * Get a single record
  */
-export const getRecord = async (projectId: string, id: string): Promise<ProjectRecord> => {
+export const getRecord = async (
+  projectId: string,
+  id: string
+): Promise<ProjectRecord> => {
   const response = await get<APIResponse<{ record: ProjectRecord }>>(
     `/projects/${projectId}/records/${id}`
   );
@@ -75,10 +80,9 @@ export const getMediaUploadUrl = async (
   fieldKey: string,
   ext: string = 'png'
 ): Promise<{ uploadUrl: string; publicUrl: string; path: string }> => {
-  const response = await get<APIResponse<{ uploadUrl: string; publicUrl: string; path: string }>>(
-    `/projects/${projectId}/records/upload-url`,
-    { params: { fieldKey, ext } }
-  );
+  const response = await get<
+    APIResponse<{ uploadUrl: string; publicUrl: string; path: string }>
+  >(`/projects/${projectId}/records/upload-url`, { params: { fieldKey, ext } });
   if (!response.data.data) throw new Error('Failed to get upload URL');
   return response.data.data;
 };
@@ -106,7 +110,8 @@ export const uploadMedia = async (
   fieldKey: string,
   file: File | Blob
 ): Promise<string> => {
-  const ext = file instanceof File ? file.name.split('.').pop() || 'png' : 'png';
+  const ext =
+    file instanceof File ? file.name.split('.').pop() || 'png' : 'png';
   const { uploadUrl, publicUrl } = await getMediaUploadUrl(
     projectId,
     fieldKey,
@@ -131,7 +136,10 @@ export const uploadMedia = async (
 /**
  * Lock a record for editing (Phase 8 Precision)
  */
-export const lockRecord = async (projectId: string, recordId: string): Promise<ProjectRecord> => {
+export const lockRecord = async (
+  projectId: string,
+  recordId: string
+): Promise<ProjectRecord> => {
   const response = await post<APIResponse<{ record: ProjectRecord }>>(
     `/projects/${projectId}/records/${recordId}/lock`
   );
@@ -141,11 +149,28 @@ export const lockRecord = async (projectId: string, recordId: string): Promise<P
 /**
  * Unlock a record after editing (Phase 8 Precision)
  */
-export const unlockRecord = async (projectId: string, recordId: string): Promise<ProjectRecord> => {
+export const unlockRecord = async (
+  projectId: string,
+  recordId: string
+): Promise<ProjectRecord> => {
   const response = await del<APIResponse<{ record: ProjectRecord }>>(
     `/projects/${projectId}/records/${recordId}/lock`
   );
   return response.data.data?.record!;
+};
+
+/**
+ * Bulk create records for a project
+ */
+export const bulkCreateRecords = async (
+  projectId: string,
+  records: CreateRecordDataInput[]
+): Promise<{ created: number; updated: number }> => {
+  const response = await post<
+    APIResponse<{ created: number; updated: number }>
+  >(`/projects/${projectId}/records/bulk`, { records });
+  if (!response.data.data) throw new Error('Bulk operation failed');
+  return response.data.data;
 };
 
 // Internal service object for legacy imports
@@ -154,11 +179,12 @@ export const recordService = {
   getRecord,
   createRecord,
   updateRecord,
+  bulkCreateRecords,
   getMediaUploadUrl,
   uploadMedia,
   getRecordHistory,
   lockRecord,
-  unlockRecord
+  unlockRecord,
 };
 
 export default recordService;

@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import { ProjectRecord, ProjectType } from '@validiant/shared';
-import { 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
-  Zap, 
+import {
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Zap,
   Plus,
   GripVertical,
-  User
+  User,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -21,45 +21,45 @@ interface RecordKanbanViewProps {
 }
 
 const LANES = [
-  { 
-    id: 'pending', 
-    label: 'Pending', 
-    icon: Clock, 
-    color: 'text-amber-500', 
-    bg: 'bg-amber-500/10', 
-    border: 'border-amber-500/20' 
+  {
+    id: 'pending',
+    label: 'Pending',
+    icon: Clock,
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/20',
   },
-  { 
-    id: 'in_progress', 
-    label: 'In Progress', 
-    icon: Zap, 
-    color: 'text-primary', 
-    bg: 'bg-primary/10', 
-    border: 'border-primary/20' 
+  {
+    id: 'in_progress',
+    label: 'In Progress',
+    icon: Zap,
+    color: 'text-primary',
+    bg: 'bg-primary/10',
+    border: 'border-primary/20',
   },
-  { 
-    id: 'verified', 
-    label: 'Verified', 
-    icon: CheckCircle2, 
-    color: 'text-emerald-500', 
-    bg: 'bg-emerald-500/10', 
-    border: 'border-emerald-500/20' 
+  {
+    id: 'verified',
+    label: 'Verified',
+    icon: CheckCircle2,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+    border: 'border-emerald-500/20',
   },
-  { 
-    id: 'flagged', 
-    label: 'Flagged', 
-    icon: AlertCircle, 
-    color: 'text-rose-500', 
-    bg: 'bg-rose-500/10', 
-    border: 'border-rose-500/20' 
+  {
+    id: 'flagged',
+    label: 'Flagged',
+    icon: AlertCircle,
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/10',
+    border: 'border-rose-500/20',
   },
 ];
 
-export function RecordKanbanView({ 
+export function RecordKanbanView({
   projectType: _projectType,
-  records, 
-  onEdit, 
-  onStatusChange 
+  records,
+  onEdit,
+  onStatusChange,
 }: RecordKanbanViewProps) {
   const [draggedRecordId, setDraggedRecordId] = useState<string | null>(null);
 
@@ -104,7 +104,9 @@ export function RecordKanbanView({
             {/* Lane Header */}
             <div className="flex items-center justify-between px-2">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${lane.bg} border ${lane.border}`}>
+                <div
+                  className={`p-2 rounded-xl ${lane.bg} border ${lane.border}`}
+                >
                   <Icon className={`w-4 h-4 ${lane.color}`} />
                 </div>
                 <div>
@@ -122,17 +124,19 @@ export function RecordKanbanView({
             </div>
 
             {/* Lane Body */}
-            <div 
+            <div
               className={`flex-1 rounded-[2.5rem] p-4 flex flex-col gap-3 transition-colors duration-300 ${
-                draggedRecordId 
-                  ? 'bg-white/[0.02] border border-dashed border-white/5' 
+                draggedRecordId
+                  ? 'bg-white/[0.02] border border-dashed border-white/5'
                   : 'bg-surface-lowest/40'
               }`}
             >
               {laneRecords.map((record) => {
                 const firstKey = Object.keys(record.data)[0];
-                const titleValue = firstKey ? String(record.data[firstKey]) : 'Untitled Node';
-                
+                const titleValue = firstKey
+                  ? String(record.data[firstKey])
+                  : 'Untitled Node';
+
                 return (
                   <div
                     key={record.id}
@@ -191,7 +195,7 @@ export function RecordKanbanView({
                   </div>
                 );
               })}
-              
+
               {laneRecords.length === 0 && !draggedRecordId && (
                 <div className="flex-1 flex flex-col items-center justify-center opacity-10 py-10">
                   <Icon className="w-8 h-8 mb-2" />

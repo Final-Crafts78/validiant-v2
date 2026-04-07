@@ -32,7 +32,8 @@ export default function FieldAgentPortal({
   const { orgSlug, token } = params;
 
   // 1. Fetch Portal Context
-  const { data: context, isLoading: isContextLoading } = usePortalContext(token);
+  const { data: context, isLoading: isContextLoading } =
+    usePortalContext(token);
 
   // 2. Select Active Project
   const [activeProjectKey, setActiveProjectKey] = useState<string | null>(null);
@@ -50,10 +51,16 @@ export default function FieldAgentPortal({
     if (projects.length > 0 && !activeProjectKey) {
       const defaultKey = projects[0]?.projectKey || projects[0]?.projectId;
       if (defaultKey) {
-        console.log('[FIELD_PORTAL] Auto-selecting initial project:', defaultKey);
+        console.log(
+          '[FIELD_PORTAL] Auto-selecting initial project:',
+          defaultKey
+        );
         setActiveProjectKey(defaultKey);
       } else {
-        console.warn('[FIELD_PORTAL] No project key or ID found in access record', projects[0]);
+        console.warn(
+          '[FIELD_PORTAL] No project key or ID found in access record',
+          projects[0]
+        );
       }
     }
   }, [projects, activeProjectKey]);

@@ -16,7 +16,11 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { BgvPartner } from '@/services/partner.service';
-import { useUpdatePartner, useRegenerateToken, useCreatePartner } from '@/hooks/usePartners';
+import {
+  useUpdatePartner,
+  useRegenerateToken,
+  useCreatePartner,
+} from '@/hooks/usePartners';
 import toast from 'react-hot-toast';
 import { logger } from '@/lib/logger';
 

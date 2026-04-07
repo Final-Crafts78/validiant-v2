@@ -51,11 +51,15 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isAssignOpen, setIsAssignOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'universe'>('universe');
-  
+  const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'universe'>(
+    'universe'
+  );
+
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
-  const [selectedRecordId, setSelectedRecordId] = useState<string | undefined>();
+  const [selectedRecordId, setSelectedRecordId] = useState<
+    string | undefined
+  >();
   const [isRecordOpen, setIsRecordOpen] = useState(false);
 
   // Phase 2: Project Types & Records
@@ -79,8 +83,8 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
     );
   }, [tasksData, searchTerm]);
 
-  const selectedTaskIds = useMemo(() => 
-    Object.keys(rowSelection).filter(id => rowSelection[id]), 
+  const selectedTaskIds = useMemo(
+    () => Object.keys(rowSelection).filter((id) => rowSelection[id]),
     [rowSelection]
   );
 
@@ -191,10 +195,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
           )}
 
           {viewMode === 'kanban' && (
-            <TasksBoard 
-              tasks={tasks} 
-              onTaskClick={onTaskClick}
-            />
+            <TasksBoard tasks={tasks} onTaskClick={onTaskClick} />
           )}
 
           {viewMode === 'universe' && activeType && (

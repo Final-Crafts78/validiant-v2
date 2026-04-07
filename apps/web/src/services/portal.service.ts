@@ -60,9 +60,15 @@ export const getPortalRecord = async (
   projectKey: string,
   recordNumber: number,
   token: string
-): Promise<{ record: ProjectRecord; project: { name: string; key: string } }> => {
+): Promise<{
+  record: ProjectRecord;
+  project: { name: string; key: string };
+}> => {
   const response = await get<
-    APIResponse<{ record: ProjectRecord; project: { name: string; key: string } }>
+    APIResponse<{
+      record: ProjectRecord;
+      project: { name: string; key: string };
+    }>
   >(`/portal/${projectKey}/records/${recordNumber}`, {
     headers: {
       'x-portal-token': token,
