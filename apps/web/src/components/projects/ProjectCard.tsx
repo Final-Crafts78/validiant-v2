@@ -77,6 +77,10 @@ export function ProjectCard({
   const statusConfig =
     STATUS_CONFIG[project.status as keyof typeof STATUS_CONFIG] ||
     STATUS_CONFIG.default;
+  if (!statusConfig) {
+    throw new Error('STATUS_CONFIG must include a default fallback.');
+  }
+
   const progress = project.progress ?? 0;
   const currentRecordCount = (project as { recordCount?: number }).recordCount ?? 0;
 

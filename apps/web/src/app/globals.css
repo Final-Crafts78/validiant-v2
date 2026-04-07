@@ -209,7 +209,7 @@
   }
 
   .transition-premium {
-    @apply transition-all duration-500 cubic-bezier(0.2, 0.8, 0.2, 1);
+    @apply transition-all duration-500 ease-premium;
   }
 
   /* Ghost border fallback (15% opacity) */

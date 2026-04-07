@@ -95,6 +95,7 @@ const config: Config = {
         base: 'var(--motion-easing-base)',
         in: 'var(--motion-easing-in)',
         out: 'var(--motion-easing-out)',
+        premium: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
       },
       animation: {
         'fade-in':
