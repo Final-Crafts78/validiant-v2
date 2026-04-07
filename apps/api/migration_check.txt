@@ -1,5 +1,0 @@
-
---- Migration Result ---
-Project Types: 0
-Type Columns: 0
-Records: 0

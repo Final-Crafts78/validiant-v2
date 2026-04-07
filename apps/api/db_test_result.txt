@@ -1,2 +1,0 @@
-START
-ERROR: password authentication failed for user 'neondb_owner'

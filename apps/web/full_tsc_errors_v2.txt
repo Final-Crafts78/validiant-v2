@@ -1,6 +1,0 @@
-src/app/dashboard/settings/roles/page.tsx(111,25): error TS2532: Object is possibly 'undefined'.
-src/components/cases/ActionPanel.tsx(53,33): error TS2339: Property 'fieldSchema' does not exist on type '{ id: string; name: string; }'.
-src/components/cases/CaseFieldGrid.tsx(52,42): error TS2339: Property 'fieldSchema' does not exist on type '{ id: string; name: string; }'.
-src/components/cases/CaseSlaBanner.tsx(2,10): error TS6133: 'Clock' is declared but its value is never read.
-src/components/cases/CaseSlaBanner.tsx(110,19): error TS2322: Type '{ status: "on_track" | "at_risk" | "breached"; deadline: string; percentage: number; remainingMinutes: number; } | undefined' is not assignable to type '{ status: "on_track" | "at_risk" | "breached"; percentage: number; remainingHours: number; } | undefined'.
-  Property 'remainingHours' is missing in type '{ status: "on_track" | "at_risk" | "breached"; deadline: string; percentage: number; remainingMinutes: number; }' but required in type '{ status: "on_track" | "at_risk" | "breached"; percentage: number; remainingHours: number; }'.

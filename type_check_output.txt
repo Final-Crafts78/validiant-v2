@@ -1,4 +1,0 @@
-
-> @validiant/api@1.0.0 type-check C:\Users\manso\OneDrive\Documents\Validiant-v2\validiant-v2\apps\api
-> tsc --noEmit
-
