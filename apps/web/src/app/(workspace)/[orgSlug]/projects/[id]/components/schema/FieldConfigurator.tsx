@@ -9,8 +9,6 @@ import {
   Eye,
   Trash2,
   Plus,
-  ChevronDown,
-  Info,
   ShieldCheck,
 } from 'lucide-react';
 

@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import {
   ProjectType,
-  TypeColumn,
   CreateRecordDataInput,
 } from '@validiant/shared';
 import { useTypeColumns } from '@/hooks/useTypeColumns';
@@ -54,25 +53,37 @@ export function BulkUploadModal({
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    setFile(selectedFile);
     setIsProcessing(true);
 
     const reader = new FileReader();
     reader.onload = (evt) => {
       try {
         const bstr = evt.target?.result;
+        if (!bstr) throw new Error('File read failed');
+        
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
+        if (!wsname) throw new Error('No sheets found in workbook');
+        
         const ws = wb.Sheets[wsname];
+        if (!ws) throw new Error('Sheet not found');
+        
         const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
-        if (data.length < 2) {
+        if (!data || data.length < 2) {
           toast.error('File appears to be empty or missing headers');
           setIsProcessing(false);
           return;
         }
 
-        const csvHeaders = data[0]
+        const firstRow = data?.[0];
+        if (!firstRow) {
+          toast.error('Could not identify data headers');
+          setIsProcessing(false);
+          return;
+        }
+
+        const csvHeaders = firstRow
           .filter((h) => !!h)
           .map((h) => String(h).trim());
         const rows = XLSX.utils.sheet_to_json(ws) as any[];
