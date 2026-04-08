@@ -42,19 +42,6 @@
   --color-critical-subtle: #FEF2F2;
   --color-critical-strong: #DC2626;
   --color-critical-text: #FFFFFF;
-
-  /* Obsidian System Aliases (backward compat) */
-  --background: var(--color-surface-base);
-  --surface-lowest: var(--color-surface-inverse, #070b14);
-  --surface-container-low: var(--color-surface-subtle);
-  --surface-container: var(--color-surface-muted);
-  --surface-container-high: var(--color-surface-soft, #23293c);
-  --primary: var(--color-accent-base);
-  --primary-container: var(--color-accent-strong);
-  --text-base: var(--color-text-base);
-  --text-muted: var(--color-text-muted);
-  --error: var(--color-critical-base);
-  --tertiary: var(--color-accent-subtle);
 }
 
 [data-theme="dark"] {

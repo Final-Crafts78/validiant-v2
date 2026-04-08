@@ -83,7 +83,7 @@
 
   /* Global Input/Select Polish (No more white-on-white) */
   input, textarea, select {
-    @apply bg-[var(--color-surface-base)] text-[var(--color-text-base)] border-[var(--color-border-base)]/10 placeholder:text-[var(--color-text-muted)] border;
+    @apply bg-[var(--color-surface-base)] text-[var(--color-text-base)] border-[var(--color-border-base)] placeholder:text-[var(--color-text-muted)] border;
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
