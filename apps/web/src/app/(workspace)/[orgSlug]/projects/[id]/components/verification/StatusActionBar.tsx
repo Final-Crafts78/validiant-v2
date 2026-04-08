@@ -12,6 +12,7 @@ interface StatusActionBarProps {
 }
 
 /**
+ * [x] Resolve StatusActionBar.tsx type mismatch
  * StatusActionBar - The high-fidelity decision engine for executives.
  * Uses custom project-scoped verification labels for 100% data alignment.
  */
@@ -22,9 +23,24 @@ export function StatusActionBar({
   isUpdating = false,
 }: StatusActionBarProps) {
   // Extract custom verification labels from projectType (Fallbacks provided)
-  const labels = projectType.settings?.customVerificationLabels || [
-    { id: 'verified', label: 'Verified', color: 'var(--success)', icon: 'check' },
-    { id: 'rejected', label: 'Rejected', color: 'var(--error)', icon: 'x' },
+  // Normalize verification labels with custom overrides from projectType settings
+  const labels = [
+    {
+      id: 'verified',
+      label:
+        projectType.settings?.customVerificationLabels?.['completed'] ||
+        'Verified',
+      color: 'var(--success)',
+      icon: 'check',
+    },
+    {
+      id: 'rejected',
+      label:
+        projectType.settings?.customVerificationLabels?.['rejected'] ||
+        'Rejected',
+      color: 'var(--error)',
+      icon: 'x',
+    },
   ];
 
   return (
