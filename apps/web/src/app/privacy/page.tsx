@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 export default function PrivacyPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-[var(--color-text-base)]">
       <h1 className="mb-6 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-4xl font-bold text-transparent underline decoration-blue-400">
         Privacy Policy
       </h1>
-      <div className="mb-12 max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+      <div className="mb-12 max-w-md rounded-2xl border border-[var(--color-border-base)]/40 bg-[var(--color-surface-muted)]/50 p-8 backdrop-blur-sm">
         <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-400">
           Status: Privacy Audit
         </p>
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
       </div>
       <Link
         href="/"
-        className="rounded-lg bg-teal-600 px-8 py-3 font-medium text-white shadow-lg shadow-teal-500/20 transition-colors hover:bg-teal-700"
+        className="rounded-lg bg-teal-600 px-8 py-3 font-medium text-[var(--color-text-base)] shadow-lg shadow-teal-500/20 transition-colors hover:bg-teal-700"
       >
         Return Home
       </Link>

@@ -217,7 +217,7 @@ export function CreateProjectModal({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="bg-[var(--color-accent-base)] text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 hover:translate-x-1"
+                  className="bg-[var(--color-accent-base)] text-[var(--color-text-base)] px-8 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 hover:translate-x-1"
                 >
                   Configure Schema
                   <ArrowRight className="w-4 h-4" />
@@ -237,7 +237,7 @@ export function CreateProjectModal({
                   type="button"
                   onClick={() => handleSubmit()}
                   disabled={isSubmitting}
-                  className="bg-[var(--color-accent-base)] text-white px-10 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 shadow-lg shadow-primary-500/20"
+                  className="bg-[var(--color-accent-base)] text-[var(--color-text-base)] px-10 py-3 rounded-xl font-bold text-sm hover:bg-[var(--color-accent-base)]/90 transition-all flex items-center gap-2 shadow-lg shadow-primary-500/20"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -275,7 +275,7 @@ export function CreateProjectModalTrigger({
         onClick={() => setOpen(true)}
         className={
           className ||
-          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0'
+          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 text-[var(--color-text-base)] rounded-lg hover:bg-blue-700 transition-colors shrink-0'
         }
       >
         <Plus className="h-4 w-4" />

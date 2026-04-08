@@ -118,7 +118,7 @@ export function DeleteOrganizationModal({
             </button>
             <button
               type="submit"
-              className="btn bg-[var(--color-critical-base)] hover:bg-[var(--color-critical-strong)] text-white border-transparent"
+              className="btn bg-[var(--color-critical-base)] hover:bg-[var(--color-critical-strong)] text-[var(--color-text-base)] border-transparent"
               disabled={isDeleting || !canDelete}
             >
               {isDeleting ? (

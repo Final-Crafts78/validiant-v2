@@ -46,7 +46,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         <div
           className={`p-2 rounded-full transition-all shrink-0 ${
             isOpen
-              ? 'bg-blue-600 text-white'
+              ? 'bg-blue-600 text-[var(--color-text-base)]'
               : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'
           }`}
         >

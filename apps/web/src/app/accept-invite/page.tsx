@@ -109,7 +109,7 @@ function AcceptInviteContent() {
 
           <button
             onClick={handleAccept}
-            className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-2xl shadow-xl shadow-primary-200 transition-all flex items-center justify-center gap-2 group"
+            className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-[var(--color-text-base)] font-black rounded-2xl shadow-xl shadow-primary-200 transition-all flex items-center justify-center gap-2 group"
           >
             Join Organization
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -168,7 +168,7 @@ function AcceptInviteContent() {
                   `${ROUTES.LOGIN}?redirect=/accept-invite?token=${token}`
                 )
               }
-              className="w-full py-4 bg-slate-900 hover:bg-black text-white font-black rounded-2xl shadow-xl transition-all"
+              className="w-full py-4 bg-slate-900 hover:bg-black text-[var(--color-text-base)] font-black rounded-2xl shadow-xl transition-all"
             >
               Sign In to Continue
             </button>

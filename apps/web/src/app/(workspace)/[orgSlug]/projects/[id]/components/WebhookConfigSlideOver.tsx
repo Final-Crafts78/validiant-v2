@@ -302,7 +302,7 @@ export function WebhookConfigSlideOver({
               <button
                 onClick={handleSave}
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="px-6 py-2 bg-indigo-600 text-[var(--color-text-base)] text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {createMutation.isPending || updateMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

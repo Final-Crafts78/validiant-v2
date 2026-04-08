@@ -44,10 +44,10 @@ export function HeaderMapper({
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h4 className="text-xl font-bold text-white uppercase tracking-tight">
+          <h4 className="text-xl font-bold text-[var(--color-text-base)] uppercase tracking-tight">
             Protocol Alignment
           </h4>
-          <p className="text-[10px] text-white/30 uppercase font-black tracking-widest leading-relaxed">
+          <p className="text-[10px] text-[var(--color-text-base)]/30 uppercase font-black tracking-widest leading-relaxed">
             Match external data headers to internal system archetypes
           </p>
         </div>
@@ -69,7 +69,7 @@ export function HeaderMapper({
             className={`flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl transition-all ${
               requiredUnmapped.length === 0
                 ? 'bg-primary text-[#0c1324] hover:bg-primary/80 hover:scale-105 active:scale-95'
-                : 'bg-white/5 text-white/20 cursor-not-allowed grayscale'
+                : 'bg-[var(--color-surface-muted)]/50 text-[var(--color-text-base)]/20 cursor-not-allowed grayscale'
             }`}
           >
             PROCEED_TO_VALIDATION <ArrowRight className="w-4 h-4" />
@@ -112,7 +112,7 @@ export function HeaderMapper({
               className={`group relative bg-[#070d1f] hover:bg-[#070d1f]/60 border rounded-[2rem] p-6 flex items-center justify-between transition-all duration-300 ${
                 mappedKey
                   ? 'border-primary/20 shadow-lg shadow-primary/5'
-                  : 'border-white/5 opacity-80 hover:opacity-100'
+                  : 'border-[var(--color-border-base)]/20 opacity-80 hover:opacity-100'
               }`}
             >
               {/* Left: CSV Header Info */}
@@ -121,18 +121,18 @@ export function HeaderMapper({
                   className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
                     mappedKey
                       ? 'bg-primary/5 border-primary/20 text-primary'
-                      : 'bg-white/5 border-white/5 text-white/10'
+                      : 'bg-[var(--color-surface-muted)]/50 border-[var(--color-border-base)]/20 text-[var(--color-text-base)]/10'
                   }`}
                 >
                   <Database className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-white/30 uppercase tracking-widest leading-none">
+                    <span className="text-[9px] font-black text-[var(--color-text-base)]/30 uppercase tracking-widest leading-none">
                       Source_Header
                     </span>
                   </div>
-                  <h5 className="text-lg font-black text-white leading-none uppercase tracking-tight">
+                  <h5 className="text-lg font-black text-[var(--color-text-base)] leading-none uppercase tracking-tight">
                     {header}
                   </h5>
                 </div>
@@ -151,7 +151,7 @@ export function HeaderMapper({
                   className={`w-full bg-[#151b2d] border rounded-2xl p-4 text-[11px] font-bold uppercase tracking-widest outline-none transition-all appearance-none cursor-pointer pr-12 ${
                     mappedKey
                       ? 'border-primary/40 text-primary bg-primary/5'
-                      : 'border-white/10 text-white/40 hover:border-white/20'
+                      : 'border-[var(--color-border-base)]/40 text-[var(--color-text-base)]/40 hover:border-[var(--color-border-base)]'
                   }`}
                 >
                   <option value="">IGNORE_THIS_FIELD</option>
@@ -166,7 +166,7 @@ export function HeaderMapper({
                   {mappedKey ? (
                     <CheckCircle2 className="w-4 h-4 text-primary" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-white/20" />
+                    <ChevronDown className="w-4 h-4 text-[var(--color-text-base)]/20" />
                   )}
                 </div>
               </div>

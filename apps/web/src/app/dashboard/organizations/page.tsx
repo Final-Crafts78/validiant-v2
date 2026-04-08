@@ -32,7 +32,7 @@ export default function GlobalOrganizationsPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
             Workspace Hub
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -50,7 +50,7 @@ export default function GlobalOrganizationsPage() {
           </div>
           <button
             onClick={() => router.push(ROUTES.ONBOARDING)}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2 group"
+            className="px-6 py-2.5 bg-blue-600 text-[var(--color-text-base)] rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 flex items-center gap-2 group"
           >
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             New Org
@@ -98,7 +98,7 @@ export default function GlobalOrganizationsPage() {
                   </div>
                 </div>
 
-                <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate tracking-tighter">
+                <h3 className="text-xl font-black text-slate-900 dark:text-[var(--color-text-base)] group-hover:text-blue-600 transition-colors truncate tracking-tighter">
                   {org.name}
                 </h3>
                 <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.1em] mt-1 opacity-70">
@@ -110,7 +110,7 @@ export default function GlobalOrganizationsPage() {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                       Projects
                     </p>
-                    <p className="text-lg font-black text-slate-800 dark:text-white">
+                    <p className="text-lg font-black text-slate-800 dark:text-[var(--color-text-base)]">
                       {org.projectCount || 0}
                     </p>
                   </div>
@@ -118,7 +118,7 @@ export default function GlobalOrganizationsPage() {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
                       Members
                     </p>
-                    <p className="text-lg font-black text-slate-800 dark:text-white">
+                    <p className="text-lg font-black text-slate-800 dark:text-[var(--color-text-base)]">
                       {org.memberCount || 0}
                     </p>
                   </div>

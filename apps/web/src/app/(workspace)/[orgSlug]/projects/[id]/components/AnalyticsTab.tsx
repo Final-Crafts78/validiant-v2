@@ -148,7 +148,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
 
           <div className="flex items-center justify-between mb-8 relative z-10">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tighter">
+              <h3 className="text-lg font-black text-[var(--color-text-base)] uppercase tracking-tighter">
                 Ingestion Dynamics
               </h3>
               <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
@@ -249,7 +249,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
 
         {/* 3. Distribution Node */}
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-[2.5rem] p-8 shadow-2xl relative group">
-          <h3 className="text-lg font-black text-white uppercase tracking-tighter mb-8">
+          <h3 className="text-lg font-black text-[var(--color-text-base)] uppercase tracking-tighter mb-8">
             State Distribution
           </h3>
           <div className="h-72 w-full flex flex-col items-center justify-center relative">
@@ -283,7 +283,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-              <span className="text-4xl font-black text-white leading-none block">
+              <span className="text-4xl font-black text-[var(--color-text-base)] leading-none block">
                 {summary.total}
               </span>
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2">
@@ -305,7 +305,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
                       {d.name}
                     </span>
                   </div>
-                  <span className="text-sm font-black text-white">
+                  <span className="text-sm font-black text-[var(--color-text-base)]">
                     {d.value}
                   </span>
                 </div>
@@ -317,16 +317,16 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
 
       {/* 4. Report Builder & Data Export */}
       <div className="bg-indigo-600 rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(79,70,229,0.3)] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 blur-[80px] -mr-48 -mt-48" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-surface-muted)] blur-[80px] -mr-48 -mt-48" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/20 blur-[60px] -ml-32 -mb-32" />
 
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-start gap-6 max-w-2xl">
-            <div className="p-4 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20">
-              <FileText className="w-10 h-10 text-white" />
+            <div className="p-4 bg-[var(--color-surface-muted)] backdrop-blur-md rounded-[2rem] border border-[var(--color-border-base)]">
+              <FileText className="w-10 h-10 text-[var(--color-text-base)]" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-tight">
+              <h3 className="text-2xl font-black text-[var(--color-text-base)] uppercase tracking-tighter leading-tight">
                 Data Universe Export
               </h3>
               <p className="text-indigo-100 mt-2 text-sm font-medium leading-relaxed">
@@ -362,7 +362,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               At-Risk Nodes
             </p>
-            <p className="text-lg font-black text-white">4 Cases</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">4 Cases</p>
           </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
@@ -373,7 +373,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               Avg. Processing
             </p>
-            <p className="text-lg font-black text-white">12.4 Hours</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">12.4 Hours</p>
           </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
@@ -384,7 +384,7 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               Active Archetypes
             </p>
-            <p className="text-lg font-black text-white">3 Active</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">3 Active</p>
           </div>
         </div>
       </div>
@@ -426,7 +426,7 @@ function StatsCard({
           />
         </div>
       </div>
-      <h4 className="text-3xl font-black text-white tracking-tighter">
+      <h4 className="text-3xl font-black text-[var(--color-text-base)] tracking-tighter">
         {value}
       </h4>
       <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-2 group-hover:text-slate-400 transition-colors">

@@ -111,7 +111,7 @@ export const CaseFieldGrid: React.FC<CaseFieldGridProps> = ({ task }) => {
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-full text-sm font-bold shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-[var(--color-text-base)] rounded-full text-sm font-bold shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all disabled:opacity-50"
           >
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

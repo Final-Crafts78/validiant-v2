@@ -107,7 +107,7 @@ export function JoinOrganizationModal({
             </button>
             <button
               type="submit"
-              className="btn bg-[var(--color-positive-base)] hover:bg-[var(--color-positive-strong)] text-white border-transparent"
+              className="btn bg-[var(--color-positive-base)] hover:bg-[var(--color-positive-strong)] text-[var(--color-text-base)] border-transparent"
               disabled={isSubmitting || !token.trim()}
             >
               {isSubmitting ? (

@@ -72,14 +72,14 @@ export function RecordMapView({
     <div className="relative h-[calc(100vh-320px)] min-h-[500px] w-full rounded-[3rem] overflow-hidden border border-white/[0.05] shadow-obsidian-lg bg-surface-lowest group">
       {recordsWithGps.length === 0 && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md z-20 space-y-4">
-          <div className="w-20 h-20 rounded-3xl bg-surface-container-low flex items-center justify-center border border-white/5 opacity-20">
-            <Navigation className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 rounded-3xl bg-surface-container-low flex items-center justify-center border border-[var(--color-border-base)]/20 opacity-20">
+            <Navigation className="w-10 h-10 text-[var(--color-text-base)]" />
           </div>
           <div className="text-center">
-            <h4 className="text-lg font-bold text-white/60">
+            <h4 className="text-lg font-bold text-[var(--color-text-base)]/60">
               No Geospatial Data
             </h4>
-            <p className="text-xs text-white/20 uppercase tracking-widest font-black">
+            <p className="text-xs text-[var(--color-text-base)]/20 uppercase tracking-widest font-black">
               Universe is non-located
             </p>
           </div>
@@ -114,7 +114,7 @@ export function RecordMapView({
               icon={createCustomIcon(statusColor)}
             >
               <Popup className="obsidian-popup">
-                <div className="p-2 min-w-[200px] space-y-4 bg-slate-900 border border-white/5 rounded-2xl">
+                <div className="p-2 min-w-[200px] space-y-4 bg-slate-900 border border-[var(--color-border-base)]/20 rounded-2xl">
                   <div className="flex items-center justify-between gap-4">
                     <span className="text-[10px] font-mono font-black text-primary tracking-tighter">
                       #{record.number}
@@ -126,13 +126,13 @@ export function RecordMapView({
                   </div>
 
                   <div>
-                    <h5 className="text-[11px] font-bold text-white leading-tight">
+                    <h5 className="text-[11px] font-bold text-[var(--color-text-base)] leading-tight">
                       {String(
                         record.data[Object.keys(record.data)[0] || ''] ||
                           'Untitled Node'
                       )}
                     </h5>
-                    <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">
+                    <p className="text-[9px] font-bold text-[var(--color-text-base)]/40 uppercase tracking-widest mt-1">
                       Captured:{' '}
                       {format(new Date(record.createdAt), 'MMM dd, HH:mm')}
                     </p>
@@ -161,10 +161,10 @@ export function RecordMapView({
             <Navigation className="w-5 h-5 text-emerald-500" />
           </div>
           <div>
-            <h5 className="text-[10px] font-black uppercase tracking-widest text-white/80">
+            <h5 className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-base)]/80">
               Spatial Distribution
             </h5>
-            <p className="text-[9px] font-bold text-white/20 uppercase truncate">
+            <p className="text-[9px] font-bold text-[var(--color-text-base)]/20 uppercase truncate">
               {recordsWithGps.length} Located Nodes
             </p>
           </div>

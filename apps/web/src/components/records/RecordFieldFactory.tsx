@@ -138,7 +138,7 @@ export const RecordFieldFactory: React.FC<RecordFieldFactoryProps> = ({
 
     default: {
       return (
-        <div className="p-4 rounded-lg bg-surface-container-low border border-white/5 text-[10px] text-white/20 font-mono italic">
+        <div className="p-4 rounded-lg bg-surface-container-low border border-[var(--color-border-base)]/20 text-[10px] text-[var(--color-text-base)]/20 font-mono italic">
           // Unsupported column type: {column.columnType}
         </div>
       );

@@ -40,7 +40,7 @@ const labelCls =
 
 const btnPrimary =
   'inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold bg-blue-600 ' +
-  'text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] ' +
+  'text-[var(--color-text-base)] rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] ' +
   'disabled:opacity-60 disabled:cursor-not-allowed';
 
 const btnGhost =
@@ -274,7 +274,7 @@ export default function ProfilePage() {
       {/* Header with quick actions */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
             Account Console
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -310,12 +310,12 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover/avatar:scale-110"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center text-4xl font-black italic tracking-tighter">
+                <div className="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-700 text-[var(--color-text-base)] flex items-center justify-center text-4xl font-black italic tracking-tighter">
                   {initials}
                 </div>
               )}
 
-              <div className="absolute inset-0 bg-blue-900/40 backdrop-blur-[2px] opacity-0 group-hover/avatar:opacity-100 transition-all duration-300 flex flex-col items-center justify-center text-white">
+              <div className="absolute inset-0 bg-blue-900/40 backdrop-blur-[2px] opacity-0 group-hover/avatar:opacity-100 transition-all duration-300 flex flex-col items-center justify-center text-[var(--color-text-base)]">
                 {isUploading ? (
                   <Loader2 className="h-10 w-10 animate-spin" />
                 ) : (
@@ -340,7 +340,7 @@ export default function ProfilePage() {
 
           <div className="flex-1 text-center md:text-left space-y-4">
             <div>
-              <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+              <h2 className="text-3xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight leading-none">
                 {user.fullName}
               </h2>
               <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-3">
@@ -414,7 +414,7 @@ export default function ProfilePage() {
                 <User className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                <h3 className="text-xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
                   Public Profile Identity
                 </h3>
                 <p className="text-sm font-medium text-slate-400">
@@ -556,7 +556,7 @@ export default function ProfilePage() {
                   <Shield className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                  <h3 className="text-xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
                     Security Multi-Layer
                   </h3>
                   <p className="text-sm font-medium text-slate-400">
@@ -592,7 +592,7 @@ export default function ProfilePage() {
                     <Fingerprint className="h-6 w-6" />
                   </div>
                   <div className="text-center sm:text-left">
-                    <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                    <h3 className="text-lg font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
                       Frictionless Passkey
                     </h3>
                     <p className="text-sm font-medium text-slate-500 mt-1">

@@ -61,7 +61,7 @@ export default function IntegrationsSettings() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95"
+            className="px-8 py-3 bg-slate-900 text-[var(--color-text-base)] rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95"
           >
             Go Back
           </button>
@@ -102,7 +102,7 @@ export default function IntegrationsSettings() {
           <button
             onClick={handleSave}
             disabled={updateMutation.isPending}
-            className="flex items-center gap-2 px-8 py-3.5 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 px-8 py-3.5 bg-blue-600 text-[var(--color-text-base)] rounded-2xl font-bold hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all active:scale-95 disabled:opacity-50"
           >
             {updateMutation.isPending ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -214,11 +214,11 @@ export default function IntegrationsSettings() {
       </div>
 
       {/* Security Disclaimer */}
-      <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group">
+      <div className="bg-slate-900 rounded-[2.5rem] p-10 text-[var(--color-text-base)] relative overflow-hidden group">
         <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -ml-32 -mt-32 group-hover:bg-blue-500/20 transition-all duration-700" />
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-          <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20">
-            <Lock className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-[var(--color-surface-muted)] rounded-2xl flex items-center justify-center border border-[var(--color-border-base)]">
+            <Lock className="w-8 h-8 text-[var(--color-text-base)]" />
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-black mb-2">
@@ -231,13 +231,13 @@ export default function IntegrationsSettings() {
             </p>
           </div>
           <div className="flex gap-4">
-            <div className="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+            <div className="text-center px-4 py-2 bg-[var(--color-surface-muted)]/50 rounded-xl border border-[var(--color-border-base)]/40">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                 AES-256
               </p>
               <p className="text-xs font-bold text-blue-400">End-to-End</p>
             </div>
-            <div className="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+            <div className="text-center px-4 py-2 bg-[var(--color-surface-muted)]/50 rounded-xl border border-[var(--color-border-base)]/40">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                 SafeStore
               </p>

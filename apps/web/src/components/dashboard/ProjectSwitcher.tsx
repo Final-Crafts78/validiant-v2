@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useWorkspaceStore } from '@/store/workspace';
 import apiClient from '@/lib/api';
+import { queryKeys } from '@/lib/query-keys';
 import { FolderKanban, ChevronDown, Check } from 'lucide-react';
 
 interface Project {
@@ -36,7 +37,8 @@ export function ProjectSwitcher() {
 
   // Fetch projects for the active org
   const { data: projects = [], isLoading } = useQuery<Project[]>({
-    queryKey: ['projects', 'org', activeOrgId],
+    queryKey: queryKeys.projects.org(activeOrgId || ''),
+    enabled: !!activeOrgId,
     queryFn: async () => {
       console.debug('[ProjectSwitcher] Query firing', {
         activeOrgId,
@@ -51,7 +53,6 @@ export function ProjectSwitcher() {
       );
       return data?.data?.projects ?? [];
     },
-    enabled: !!activeOrgId,
     staleTime: 5 * 60 * 1000,
     meta: {
       onError: (err: Error) => {
@@ -122,7 +123,7 @@ export function ProjectSwitcher() {
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left transition-all group ${
                     project.id === activeProjectId
-                      ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20'
+                      ? 'bg-primary-600 text-[var(--color-text-base)] shadow-lg shadow-primary-600/20'
                       : 'text-[var(--color-text-subtle)] hover:bg-primary-50 dark:hover:bg-primary-950/20 hover:text-primary-600'
                   }`}
                 >
@@ -130,7 +131,7 @@ export function ProjectSwitcher() {
                     <p
                       className={`font-black truncate ${
                         project.id === activeProjectId
-                          ? 'text-white'
+                          ? 'text-[var(--color-text-base)]'
                           : 'text-[var(--color-text-base)]'
                       }`}
                     >
@@ -140,7 +141,7 @@ export function ProjectSwitcher() {
                       <span
                         className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md ${
                           project.id === activeProjectId
-                            ? 'bg-white/20 text-white'
+                            ? 'bg-white/20 text-[var(--color-text-base)]'
                             : (STATUS_COLORS[project.status] ??
                               'bg-slate-100 text-slate-500')
                         }`}
@@ -150,7 +151,7 @@ export function ProjectSwitcher() {
                       <span
                         className={`text-[10px] font-bold ${
                           project.id === activeProjectId
-                            ? 'text-white/70'
+                            ? 'text-[var(--color-text-base)]/70'
                             : 'text-[var(--color-text-muted)]'
                         }`}
                       >
@@ -159,7 +160,7 @@ export function ProjectSwitcher() {
                     </div>
                   </div>
                   {project.id === activeProjectId && (
-                    <Check className="w-4 h-4 text-white shrink-0" />
+                    <Check className="w-4 h-4 text-[var(--color-text-base)] shrink-0" />
                   )}
                 </button>
               ))

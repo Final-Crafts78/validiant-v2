@@ -79,7 +79,7 @@ export const Signature: React.FC<SignatureProps> = ({
   return (
     <div
       className={cn(
-        'relative group overflow-hidden rounded-[2.5rem] bg-surface-lowest border border-white/5 p-8 shadow-obsidian-lg transition-all min-h-[250px]',
+        'relative group overflow-hidden rounded-[2.5rem] bg-surface-lowest border border-[var(--color-border-base)]/20 p-8 shadow-obsidian-lg transition-all min-h-[250px]',
         className
       )}
     >
@@ -98,7 +98,7 @@ export const Signature: React.FC<SignatureProps> = ({
           </div>
           <button
             onClick={() => onChange('')}
-            className="text-[9px] font-black uppercase tracking-widest text-white/20 hover:text-rose-500/60 transition-colors mt-2"
+            className="text-[9px] font-black uppercase tracking-widest text-[var(--color-text-base)]/20 hover:text-rose-500/60 transition-colors mt-2"
           >
             Clear and Re-sign
           </button>
@@ -106,14 +106,14 @@ export const Signature: React.FC<SignatureProps> = ({
       ) : (
         <div className="flex flex-col h-full gap-6">
           <div className="flex items-center justify-between">
-            <h5 className="text-[10px] font-black uppercase tracking-widest text-white/40 flex items-center gap-2">
+            <h5 className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-base)]/40 flex items-center gap-2">
               <Pencil className="w-3 h-3 text-primary" />
               Electronic Authorization Pad
             </h5>
             <div className="flex gap-2">
               <button
                 onClick={clear}
-                className="p-3 bg-surface-container-low hover:bg-rose-500/10 text-white/20 hover:text-rose-500 rounded-2xl transition-all"
+                className="p-3 bg-surface-container-low hover:bg-rose-500/10 text-[var(--color-text-base)]/20 hover:text-rose-500 rounded-2xl transition-all"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -140,7 +140,7 @@ export const Signature: React.FC<SignatureProps> = ({
           />
 
           <div className="text-center">
-            <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest">
+            <p className="text-[9px] font-bold text-[var(--color-text-base)]/10 uppercase tracking-widest">
               Sign within the capture boundary
             </p>
           </div>

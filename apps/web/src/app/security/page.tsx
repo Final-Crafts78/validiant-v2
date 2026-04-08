@@ -10,7 +10,7 @@ const LegalLayout = ({
   title: string;
   status?: string;
 }) => (
-  <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-white">
+  <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-[var(--color-text-base)]">
     <div className="max-w-2xl">
       <h1 className="mb-6 bg-gradient-to-r from-red-400 to-amber-400 bg-clip-text text-5xl font-bold text-transparent">
         {title}
@@ -20,7 +20,7 @@ const LegalLayout = ({
         legal documentation and compliance frameworks are currently being
         reviewed.
       </p>
-      <div className="mb-12 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+      <div className="mb-12 rounded-2xl border border-[var(--color-border-base)]/40 bg-[var(--color-surface-muted)]/50 p-8 backdrop-blur-sm">
         <p className="mb-2 text-sm font-medium uppercase tracking-widest text-amber-400">
           Status: {status}
         </p>
@@ -31,7 +31,7 @@ const LegalLayout = ({
       </div>
       <Link
         href="/"
-        className="rounded-lg border border-white/10 bg-slate-800 px-8 py-3 font-medium transition-colors hover:bg-slate-700"
+        className="rounded-lg border border-[var(--color-border-base)]/40 bg-slate-800 px-8 py-3 font-medium transition-colors hover:bg-slate-700"
       >
         Return Home
       </Link>

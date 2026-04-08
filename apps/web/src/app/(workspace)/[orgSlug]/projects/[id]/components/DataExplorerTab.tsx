@@ -161,7 +161,7 @@ export function DataExplorerTab({ projectId }: { projectId: string }) {
             Bulk Upload
           </button>
           <button
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-md active:scale-95"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold bg-indigo-600 text-[var(--color-text-base)] rounded-xl hover:bg-indigo-700 transition-all shadow-md active:scale-95"
             onClick={() => {
               if (viewMode === 'universe') {
                 setIsRecordOpen(true);

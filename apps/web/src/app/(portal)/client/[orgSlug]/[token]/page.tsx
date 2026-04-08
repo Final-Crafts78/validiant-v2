@@ -92,7 +92,7 @@ export default function ClientPortal({
           </div>
         </div>
         <div className="space-y-1">
-          <h1 className="font-manrope text-3xl font-black tracking-tight text-white">
+          <h1 className="font-manrope text-3xl font-black tracking-tight text-[var(--color-text-base)]">
             Verification Universe
           </h1>
           <p className="px-1 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
@@ -113,7 +113,7 @@ export default function ClientPortal({
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">
               Active Records
             </p>
-            <p className="text-2xl font-black text-white">
+            <p className="text-2xl font-black text-[var(--color-text-base)]">
               {records?.length || 0}
             </p>
           </div>
@@ -177,7 +177,7 @@ export default function ClientPortal({
                       <Fingerprint className="h-5 w-5 text-slate-500 transition-colors group-hover:text-primary-500" />
                     </div>
                     <div className="space-y-0.5">
-                      <p className="font-mono text-[11px] font-black uppercase tracking-tighter text-white">
+                      <p className="font-mono text-[11px] font-black uppercase tracking-tighter text-[var(--color-text-base)]">
                         #{record.number}
                       </p>
                       <p className="text-[9px] font-bold uppercase tracking-widest text-slate-600">
@@ -226,7 +226,7 @@ export default function ClientPortal({
       </div>
 
       <div className="fixed bottom-8 left-8 right-8 z-50">
-        <button className="flex w-full items-center justify-center gap-3 rounded-[2.5rem] border border-primary-500/20 bg-primary-600 py-6 text-[11px] font-black uppercase tracking-widest text-white shadow-2xl shadow-primary-600/30 backdrop-blur-md transition-all hover:bg-primary-700 active:scale-[0.98]">
+        <button className="flex w-full items-center justify-center gap-3 rounded-[2.5rem] border border-primary-500/20 bg-primary-600 py-6 text-[11px] font-black uppercase tracking-widest text-[var(--color-text-base)] shadow-2xl shadow-primary-600/30 backdrop-blur-md transition-all hover:bg-primary-700 active:scale-[0.98]">
           <ExternalLink className="h-4 w-4" />
           Download Verifier Protocol (.XLSX)
         </button>

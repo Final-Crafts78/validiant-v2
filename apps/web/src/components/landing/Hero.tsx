@@ -50,7 +50,7 @@ export default function Hero() {
               <div className="flex flex-col sm:flex-row items-center gap-6 mb-16">
                 <Link
                   href={ROUTES.REGISTER}
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold bg-blue-600 text-white rounded-xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all gap-2"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold bg-blue-600 text-[var(--color-text-base)] rounded-xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all gap-2"
                 >
                   Start Free
                   <ArrowRight size={20} />

@@ -40,8 +40,8 @@ export default function FieldRoutePage() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white shadow-xl shadow-indigo-100 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+      <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-[var(--color-text-base)] shadow-xl shadow-indigo-100 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-surface-muted)] rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-indigo-200 fill-current" />
@@ -109,7 +109,7 @@ export default function FieldRoutePage() {
 
                   <div className="flex gap-2">
                     <button
-                      className="flex-1 bg-slate-900 dark:bg-indigo-600 text-white py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2"
+                      className="flex-1 bg-slate-900 dark:bg-indigo-600 text-[var(--color-text-base)] py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2"
                       onClick={() => {
                         const mapLink = (task.customFields as any)
                           ?.googleMapsLink;
@@ -146,8 +146,8 @@ export default function FieldRoutePage() {
       )}
 
       {/* Optimization Notice */}
-      <div className="bg-slate-900 dark:bg-slate-800 rounded-[2rem] p-6 text-white flex items-center gap-4">
-        <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
+      <div className="bg-slate-900 dark:bg-slate-800 rounded-[2rem] p-6 text-[var(--color-text-base)] flex items-center gap-4">
+        <div className="w-12 h-12 bg-[var(--color-surface-muted)] rounded-2xl flex items-center justify-center shrink-0">
           <Info className="w-6 h-6 text-indigo-400" />
         </div>
         <div>

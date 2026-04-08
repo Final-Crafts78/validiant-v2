@@ -191,7 +191,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                 className="flex items-center gap-2 group"
               >
                 <div className="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-600/20 group-hover:scale-105 transition-transform duration-200">
-                  <LayoutDashboard className="h-5 w-5 text-white" />
+                  <LayoutDashboard className="h-5 w-5 text-[var(--color-text-base)]" />
                 </div>
                 <span className="text-xl font-black text-[var(--color-text-base)] hidden lg:inline tracking-tight group-hover:text-primary-600 transition-colors">
                   Validiant
@@ -238,7 +238,7 @@ export function DashboardHeader({ user, orgs = [] }: DashboardHeaderProps) {
                     />
                   ) : (
                     <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-                      <span className="text-sm font-black text-white">
+                      <span className="text-sm font-black text-[var(--color-text-base)]">
                         {initials}
                       </span>
                     </div>

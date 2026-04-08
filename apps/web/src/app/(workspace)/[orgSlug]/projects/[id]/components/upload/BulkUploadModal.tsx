@@ -146,8 +146,8 @@ export function BulkUploadModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
-      <div className="w-full max-w-4xl bg-[#151b2d] rounded-[3rem] shadow-obsidian-2xl border border-white/10 overflow-hidden flex flex-col h-[80vh] relative">
-        <header className="p-8 border-b border-white/5 flex items-center justify-between bg-surface-container-low/20 backdrop-blur-xl">
+      <div className="w-full max-w-4xl bg-[#151b2d] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden flex flex-col h-[80vh] relative">
+        <header className="p-8 border-b border-[var(--color-border-base)]/20 flex items-center justify-between bg-surface-container-low/20 backdrop-blur-xl">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <Database className="w-4 h-4 text-primary" />
@@ -155,15 +155,15 @@ export function BulkUploadModal({
                 INGESTION_WIZARD
               </span>
             </div>
-            <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+            <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
               Bulk Record Injection
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-3 hover:bg-white/5 rounded-2xl border border-white/5 transition-all group"
+            className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--color-border-base)]/20 transition-all group"
           >
-            <X className="w-5 h-5 text-white/40 group-hover:text-white" />
+            <X className="w-5 h-5 text-[var(--color-text-base)]/40 group-hover:text-[var(--color-text-base)]" />
           </button>
         </header>
 
@@ -177,18 +177,18 @@ export function BulkUploadModal({
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
                       step === s.toLowerCase()
                         ? 'bg-primary border-primary text-[#0c1324] shadow-[0_0_15px_rgba(173,198,255,0.3)]'
-                        : 'border-white/5 text-white/20'
+                        : 'border-[var(--color-border-base)]/20 text-[var(--color-text-base)]/20'
                     }`}
                   >
                     {i + 1}
                   </div>
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest ${step === s.toLowerCase() ? 'text-white' : 'text-white/10'}`}
+                    className={`text-[10px] font-black uppercase tracking-widest ${step === s.toLowerCase() ? 'text-[var(--color-text-base)]' : 'text-[var(--color-text-base)]/10'}`}
                   >
                     {s}
                   </span>
                 </div>
-                {i < 3 && <ArrowRight className="w-4 h-4 text-white/5" />}
+                {i < 3 && <ArrowRight className="w-4 h-4 text-[var(--color-text-base)]/5" />}
               </React.Fragment>
             ))}
           </div>
@@ -207,24 +207,24 @@ export function BulkUploadModal({
                   />
                 </div>
                 <div className="text-center space-y-2">
-                  <h4 className="text-xl font-bold text-white tracking-tight">
+                  <h4 className="text-xl font-bold text-[var(--color-text-base)] tracking-tight">
                     Select Data Universe
                   </h4>
-                  <p className="text-xs text-white/30 max-w-xs leading-relaxed">
+                  <p className="text-xs text-[var(--color-text-base)]/30 max-w-xs leading-relaxed">
                     Drop your CSV or Excel file here. The architect will
                     intelligently parse headers for schema alignment.
                   </p>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/5">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-muted)]/50 rounded-xl border border-[var(--color-border-base)]/20">
                     <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-widest">
                       CSV_INGEST
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/5">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface-muted)]/50 rounded-xl border border-[var(--color-border-base)]/20">
                     <FileSpreadsheet className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-widest">
                       XLSX_PROTO
                     </span>
                   </div>
@@ -261,10 +261,10 @@ export function BulkUploadModal({
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <h4 className="text-xl font-bold text-white tracking-tight uppercase">
+                  <h4 className="text-xl font-bold text-[var(--color-text-base)] tracking-tight uppercase">
                     Ingesting Universe...
                   </h4>
-                  <p className="text-xs text-white/30 font-mono animate-pulse">
+                  <p className="text-xs text-[var(--color-text-base)]/30 font-mono animate-pulse">
                     Encrypting protocols and committing to immutable ledger
                   </p>
                 </div>
@@ -275,9 +275,9 @@ export function BulkUploadModal({
 
         {isProcessing && (
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center">
-            <div className="bg-[#151b2d] p-8 rounded-3xl border border-white/10 flex flex-col items-center gap-4 shadow-2xl">
+            <div className="bg-[#151b2d] p-8 rounded-3xl border border-[var(--color-border-base)]/40 flex flex-col items-center gap-4 shadow-2xl">
               <Loader2 className="w-10 h-10 text-primary animate-spin" />
-              <span className="text-xs font-black text-white/60 uppercase tracking-widest">
+              <span className="text-xs font-black text-[var(--color-text-base)]/60 uppercase tracking-widest">
                 Processing Data...
               </span>
             </div>

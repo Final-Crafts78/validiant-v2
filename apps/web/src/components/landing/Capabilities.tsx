@@ -96,7 +96,7 @@ export default function Capabilities() {
             >
               <div className="group bg-white border border-slate-200 rounded-3xl p-10 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-500 flex flex-col w-full">
                 <div className="w-14 h-14 bg-blue-50 group-hover:bg-blue-600 rounded-2xl flex items-center justify-center mb-8 transition-all duration-300">
-                  <Icon className="h-7 w-7 text-blue-600 group-hover:text-white transition-all duration-300" />
+                  <Icon className="h-7 w-7 text-blue-600 group-hover:text-[var(--color-text-base)] transition-all duration-300" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-4 transition-colors group-hover:text-blue-600">
                   {title}

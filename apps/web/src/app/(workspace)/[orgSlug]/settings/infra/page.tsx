@@ -110,7 +110,7 @@ export default function InfraSettings() {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95"
+            className="px-8 py-3 bg-slate-900 text-[var(--color-text-base)] rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95"
           >
             Go Back
           </button>
@@ -134,7 +134,7 @@ export default function InfraSettings() {
         <button
           onClick={handleTriggerBackup}
           disabled={isBackingUp}
-          className="group flex items-center gap-3 px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all active:scale-95 disabled:opacity-50"
+          className="group flex items-center gap-3 px-8 py-3.5 bg-slate-900 text-[var(--color-text-base)] rounded-2xl font-bold hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all active:scale-95 disabled:opacity-50"
         >
           {isBackingUp ? (
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -206,7 +206,7 @@ export default function InfraSettings() {
       <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
         <div className="px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-[var(--color-text-base)] shadow-lg shadow-indigo-100">
               <History className="w-5 h-5" />
             </div>
             <div>
@@ -320,8 +320,8 @@ export default function InfraSettings() {
       </div>
 
       {/* Compliance Notice */}
-      <div className="bg-amber-600 rounded-[2.5rem] p-8 text-white flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-amber-100 relative group overflow-hidden">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -ml-32 -mt-32 group-hover:scale-110 transition-all duration-700" />
+      <div className="bg-amber-600 rounded-[2.5rem] p-8 text-[var(--color-text-base)] flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-amber-100 relative group overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-[var(--color-surface-muted)] rounded-full blur-3xl -ml-32 -mt-32 group-hover:scale-110 transition-all duration-700" />
 
         <div className="flex-1 relative z-10 text-center md:text-left">
           <h4 className="text-lg font-black flex items-center justify-center md:justify-start gap-2 mb-2">
@@ -338,12 +338,12 @@ export default function InfraSettings() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4 relative z-10 bg-white/10 p-5 rounded-3xl border border-white/20">
+        <div className="flex items-center gap-4 relative z-10 bg-[var(--color-surface-muted)] p-5 rounded-3xl border border-[var(--color-border-base)]">
           <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-amber-600 shadow-xl">
             <ShieldCheck className="w-7 h-7" />
           </div>
           <div>
-            <p className="text-sm font-black text-white leading-tight">
+            <p className="text-sm font-black text-[var(--color-text-base)] leading-tight">
               ISO-27001 Compliant
             </p>
             <p className="text-[10px] text-amber-100 font-bold uppercase tracking-widest mt-0.5">

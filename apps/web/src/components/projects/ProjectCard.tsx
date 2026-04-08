@@ -105,7 +105,7 @@ export function ProjectCard({
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary opacity-60">
               Project Identity
             </label>
-            <span className="text-[11px] font-mono font-black text-white/40 uppercase tracking-tighter">
+            <span className="text-[11px] font-mono font-black text-[var(--color-text-base)]/40 uppercase tracking-tighter">
               {project.key || 'PRJ-' + project.id.substring(0, 4)}
             </span>
           </div>
@@ -114,7 +114,7 @@ export function ProjectCard({
         <div className="flex flex-col items-end text-right">
           <div
             className={cn(
-              'flex items-center gap-2 mb-1 px-3 py-1 rounded-full bg-white/5 backdrop-blur-md border border-white/5',
+              'flex items-center gap-2 mb-1 px-3 py-1 rounded-full bg-[var(--color-surface-muted)]/50 backdrop-blur-md border border-[var(--color-border-base)]/20',
               statusConfig.color
             )}
           >
@@ -135,7 +135,7 @@ export function ProjectCard({
 
       {/* 2. Core Content: Editorial Typography */}
       <div className="space-y-3 mb-12">
-        <h3 className="text-3xl font-black text-white tracking-tight leading-none group-hover:text-primary transition-colors font-display">
+        <h3 className="text-3xl font-black text-[var(--color-text-base)] tracking-tight leading-none group-hover:text-primary transition-colors font-display">
           {project.name}
         </h3>
         {settings.showDescription && (
@@ -150,12 +150,12 @@ export function ProjectCard({
       {(settings.showRecords || settings.showProgress) && (
         <div className="grid grid-cols-2 gap-8 mb-10">
           {settings.showRecords && (
-            <div className="flex flex-col gap-1.5 p-5 rounded-3xl bg-surface-lowest/50 border border-white/5 group-hover:bg-surface-lowest transition-all">
+            <div className="flex flex-col gap-1.5 p-5 rounded-3xl bg-surface-lowest/50 border border-[var(--color-border-base)]/20 group-hover:bg-surface-lowest transition-all">
               <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted">
                 Verified Records
               </label>
               <div className="flex items-baseline gap-2">
-                <span className="text-[2xl] font-black text-white font-display leading-none">
+                <span className="text-[2xl] font-black text-[var(--color-text-base)] font-display leading-none">
                   {currentRecordCount}
                 </span>
                 <span className="text-[10px] font-bold text-emerald-500">
@@ -165,12 +165,12 @@ export function ProjectCard({
             </div>
           )}
           {settings.showProgress && (
-            <div className="flex flex-col gap-1.5 p-5 rounded-3xl bg-surface-lowest/50 border border-white/5 group-hover:bg-surface-lowest transition-all">
+            <div className="flex flex-col gap-1.5 p-5 rounded-3xl bg-surface-lowest/50 border border-[var(--color-border-base)]/20 group-hover:bg-surface-lowest transition-all">
               <label className="text-[9px] font-black uppercase tracking-[0.2em] text-text-muted">
                 Sync Velocity
               </label>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-black text-white font-display leading-none">
+                <span className="text-2xl font-black text-[var(--color-text-base)] font-display leading-none">
                   {progress}%
                 </span>
                 <div className="w-12 h-1 bg-surface-soft rounded-full overflow-hidden">
@@ -186,7 +186,7 @@ export function ProjectCard({
       )}
 
       {/* 4. Footer: Action & Timeline */}
-      <div className="mt-auto pt-8 border-t border-white/5 flex items-center justify-between">
+      <div className="mt-auto pt-8 border-t border-[var(--color-border-base)]/20 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <Calendar className="w-3.5 h-3.5 text-text-muted" />

@@ -15,16 +15,11 @@
 
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
-import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
-import { CommandPalette } from '@/components/CommandPalette';
 import { ROUTES } from '@/lib/config';
 import {
   getCurrentUserAction,
   getUserOrganizationsAction,
 } from '@/actions/auth.actions';
-import { GlobalSidebar } from '@/components/dashboard/GlobalSidebar';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -107,22 +102,9 @@ export default async function DashboardLayout({
     });
 
     return (
-      <div className="min-h-screen bg-[var(--color-surface-soft)] dark:bg-slate-950 flex transition-colors duration-300">
-        <AuthStoreInitializer user={user} accessToken={accessToken} />
-        <WorkspaceInitializer orgs={orgs} />
-
-        <GlobalSidebar />
-
-        <div className="flex-1 flex flex-col min-w-0">
-          <DashboardHeader user={user} orgs={orgs} />
-
-          <main className="flex-1 container-custom py-4 md:py-8 pb-24 md:pb-12 overflow-y-auto">
-            {children}
-          </main>
-
-          <CommandPalette />
-        </div>
-      </div>
+      <>
+        {children}
+      </>
     );
   } catch (renderErr: any) {
     console.error('[Dashboard:Layout] CRITICAL RENDER FAILURE', {

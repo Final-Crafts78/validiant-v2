@@ -81,7 +81,7 @@ export default function CommandCenterShell({
       <div className="flex flex-col items-center justify-center h-screen bg-[var(--surface-lowest)] gap-4">
         <AlertCircle className="h-12 w-12 text-rose-500" />
         <div className="text-center">
-          <h2 className="text-xl font-black text-white uppercase tracking-widest">
+          <h2 className="text-xl font-black text-[var(--color-text-base)] uppercase tracking-widest">
             Connection_Lost
           </h2>
           <p className="text-xs text-[var(--text-muted)] font-mono mt-1">
@@ -90,7 +90,7 @@ export default function CommandCenterShell({
         </div>
         <button
           onClick={() => router.back()}
-          className="mt-4 px-6 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-[#adc6ff]/10 transition-all"
+          className="mt-4 px-6 py-2 bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/40 rounded-full text-[10px] font-black uppercase tracking-widest text-primary hover:bg-[#adc6ff]/10 transition-all"
         >
           Return to Hub
         </button>
@@ -98,7 +98,7 @@ export default function CommandCenterShell({
     );
 
   return (
-    <div className="h-screen flex flex-col bg-[var(--surface-lowest)] font-manrope selection:bg-primary/30 selection:text-white overflow-hidden">
+    <div className="h-screen flex flex-col bg-[var(--surface-lowest)] font-manrope selection:bg-primary/30 selection:text-[var(--color-text-base)] overflow-hidden">
       {/* 
           OBSIDIAN HEADER 
           Editorial layout with glassmorphism and tonal layering.
@@ -114,7 +114,7 @@ export default function CommandCenterShell({
               <Globe className="w-3 h-3" />
               Universe
             </button>
-            <ChevronRight className="w-3 h-3 text-white/10" />
+            <ChevronRight className="w-3 h-3 text-[var(--color-text-base)]/10" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
               {project.name.replace(/\s+/g, '_').toUpperCase()}
             </span>
@@ -125,14 +125,14 @@ export default function CommandCenterShell({
               {/* Identity Nucleus */}
               <div className="relative group p-1">
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#adc6ff] to-transparent rounded-[1.75rem] blur opacity-0 group-hover:opacity-20 transition duration-500" />
-                <div className="relative w-16 h-16 rounded-[1.5rem] bg-[var(--surface-container-low)] border border-white/5 flex items-center justify-center text-primary font-black text-2xl shadow-inner active:scale-95 transition-transform cursor-pointer">
+                <div className="relative w-16 h-16 rounded-[1.5rem] bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 flex items-center justify-center text-primary font-black text-2xl shadow-inner active:scale-95 transition-transform cursor-pointer">
                   {project.name.charAt(0)}
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center gap-4">
-                  <h1 className="text-4xl font-black text-white tracking-tighter leading-none">
+                  <h1 className="text-4xl font-black text-[var(--color-text-base)] tracking-tighter leading-none">
                     {project.name}
                   </h1>
                   <div
@@ -160,7 +160,7 @@ export default function CommandCenterShell({
             {/* Contextual Actions */}
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <div className="flex items-center gap-2 bg-[var(--surface-container-low)]/50 p-1.5 rounded-[1.25rem] border border-white/5 shadow-inner">
+              <div className="flex items-center gap-2 bg-[var(--surface-container-low)]/50 p-1.5 rounded-[1.25rem] border border-[var(--color-border-base)]/20 shadow-inner">
                 <select
                   value={project.status}
                   onChange={(e) =>
@@ -168,22 +168,22 @@ export default function CommandCenterShell({
                       status: e.target.value as ProjectStatus,
                     })
                   }
-                  className="bg-transparent text-[10px] font-black uppercase tracking-widest pl-4 pr-10 py-2.5 focus:outline-none cursor-pointer hover:bg-white/5 rounded-xl transition-all appearance-none"
+                  className="bg-transparent text-[10px] font-black uppercase tracking-widest pl-4 pr-10 py-2.5 focus:outline-none cursor-pointer hover:bg-[var(--color-surface-muted)]/50 rounded-xl transition-all appearance-none"
                 >
                   {STATUS_OPTIONS.map((o) => (
                     <option
                       key={o.value}
                       value={o.value}
-                      className="bg-[var(--surface-lowest)] text-white"
+                      className="bg-[var(--surface-lowest)] text-[var(--color-text-base)]"
                     >
                       {o.label.toUpperCase()}
                     </option>
                   ))}
                 </select>
-                <div className="w-px h-5 bg-white/5" />
+                <div className="w-px h-5 bg-[var(--color-surface-muted)]/50" />
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className="p-2.5 text-[var(--text-muted)] hover:text-primary transition-all rounded-xl hover:bg-white/5"
+                  className="p-2.5 text-[var(--text-muted)] hover:text-primary transition-all rounded-xl hover:bg-[var(--color-surface-muted)]/50"
                 >
                   <Settings className="w-5 h-5" />
                 </button>
@@ -202,7 +202,7 @@ export default function CommandCenterShell({
                 className={`flex items-center gap-3 px-6 py-4 rounded-t-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 relative group overflow-hidden ${
                   activeTab === tab.id
                     ? 'bg-[var(--surface-container-low)] text-primary'
-                    : 'text-[var(--text-muted)]/60 hover:text-white hover:bg-white/5'
+                    : 'text-[var(--text-muted)]/60 hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]/50'
                 }`}
               >
                 <tab.icon

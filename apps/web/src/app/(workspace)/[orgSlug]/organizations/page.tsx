@@ -63,7 +63,7 @@ export default function OrganizationsPage() {
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   org.id === activeOrgId
-                    ? 'bg-blue-600 text-white border-blue-600'
+                    ? 'bg-blue-600 text-[var(--color-text-base)] border-blue-600'
                     : 'bg-white text-slate-700 border-slate-200 hover:border-blue-400'
                 }`}
               >
@@ -149,7 +149,7 @@ export default function OrganizationsPage() {
           <button
             type="submit"
             disabled={inviteMutation.isPending}
-            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-[var(--color-text-base)] bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
             {inviteMutation.isPending ? 'Sending…' : 'Send Invite'}
           </button>

@@ -19,6 +19,8 @@ export function useProjects() {
     timestamp: new Date().toISOString(),
   });
 
+  const hasHydrated = useWorkspaceStore((s) => s._hasHydrated);
+
   const query = useQuery({
     queryKey: queryKeys.projects.org(activeOrgId ?? ''),
     queryFn: async () => {
@@ -31,8 +33,10 @@ export function useProjects() {
       });
       return projects;
     },
-    enabled: !!activeOrgId,
+    enabled: !!activeOrgId && hasHydrated,
     staleTime: 2 * 60 * 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   return query;
@@ -44,6 +48,8 @@ export function useProject(id: string) {
     queryFn: () => projectService.getProjectById(id),
     enabled: !!id,
     staleTime: 2 * 60 * 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
 

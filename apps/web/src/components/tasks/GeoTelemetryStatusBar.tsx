@@ -49,10 +49,10 @@ export function GeoTelemetryStatusBar({
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-transform duration-500 ${
               isWithinRange
-                ? 'bg-emerald-500 text-white scale-110'
+                ? 'bg-emerald-500 text-[var(--color-text-base)] scale-110'
                 : !isTracking
                   ? 'bg-slate-200 text-slate-400'
-                  : 'bg-amber-500 text-white animate-pulse'
+                  : 'bg-amber-500 text-[var(--color-text-base)] animate-pulse'
             }`}
           >
             {isWithinRange ? (
@@ -106,7 +106,7 @@ export function GeoTelemetryStatusBar({
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
               elapsedTime > 0
-                ? 'bg-indigo-600 text-white shadow-indigo-100'
+                ? 'bg-indigo-600 text-[var(--color-text-base)] shadow-indigo-100'
                 : 'bg-slate-200 text-slate-400'
             }`}
           >

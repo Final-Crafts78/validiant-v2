@@ -114,8 +114,6 @@ apiClient.interceptors.request.use(
     (config as any)._startTime = startTime;
     (config as any)._requestId = requestId;
 
-    const stack = new Error().stack?.split('\n').slice(2, 6).join('\n');
-
     // 1. INJECT ORGANIZATION CONTEXT (X-Org-Id)
     const fromAuthStore = useAuthStore.getState().user?.activeOrganizationId;
     const fromWorkspaceStore = useWorkspaceStore.getState().activeOrgId;
@@ -142,33 +140,7 @@ apiClient.interceptors.request.use(
     );
     const isDoublePrefixed = finalFullURL.includes('/api/v1/api/v1');
 
-    // 3. EXTREME VISIBILITY LOGGING
-    console.groupCollapsed(
-      `[API:Request] [${requestId}] ${config.method?.toUpperCase()} ${relativePart}`
-    );
-    console.log('Context:', {
-      requestId,
-      finalFullURL,
-      method: config.method?.toUpperCase(),
-      orgId: config.headers?.['X-Org-Id'] || 'MISSING',
-      orgIdSource: existingOrgId
-        ? 'explicit'
-        : fromWorkspaceStore
-          ? 'workspace'
-          : fromAuthStore
-            ? 'auth'
-            : 'none',
-      hasAuth: !!document.cookie.includes('accessToken'),
-      isDoublePrefixed,
-      timestamp: new Date().toISOString(),
-    });
-    console.log('Stores:', {
-      workspace: fromWorkspaceStore || 'null',
-      auth: fromAuthStore || 'null',
-      isAuthenticated: useAuthStore.getState().isAuthenticated,
-    });
-    console.log('Call Stack:\n', stack);
-    console.groupEnd();
+    // Console logs removed for production noise reduction
 
     logger.debug(
       `[API:Req] [${requestId}] ${config.method?.toUpperCase()} ${config.url}`,
@@ -182,17 +154,7 @@ apiClient.interceptors.request.use(
       }
     );
 
-    // 🚩 OUTGOING SIGNATURE (Finding 62/63 - Double Prefix & $undefined Trace)
-    console.log(
-      `%c[API:Signature] [${requestId}] ${config.method?.toUpperCase()} → ${finalFullURL}`,
-      'color: #2563eb; font-weight: bold;',
-      {
-        requestId,
-        orgId: config.headers?.['X-Org-Id'] || 'MISSING',
-        payload: config.data ? { ...config.data } : 'EMPTY',
-        stack: stack?.split('\n')[0] || 'UNKNOWN',
-      }
-    );
+
 
     return config;
   },
@@ -425,17 +387,7 @@ apiClient.interceptors.response.use(
       });
     }
 
-    // 🚩 GHOST ROUTE TRACING (404)
-    if (statusCode === 404) {
-      console.warn('[API:404] GHOST ROUTE DETECTED', {
-        url: error.config?.url,
-        method: error.config?.method?.toUpperCase(),
-        referer:
-          typeof window !== 'undefined' ? window.location.href : 'SERVER',
-        headers: error.config?.headers,
-        timestamp: new Date().toISOString(),
-      });
-    }
+
 
     // Return structured error
     const apiError: APIError = {

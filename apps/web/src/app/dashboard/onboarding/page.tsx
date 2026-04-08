@@ -154,7 +154,7 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg mb-5">
-            <Rocket className="w-8 h-8 text-white" />
+            <Rocket className="w-8 h-8 text-[var(--color-text-base)]" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900">
             Welcome, {firstName}!{' '}
@@ -226,7 +226,7 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={isPending || !name.trim()}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[var(--color-text-base)] bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               {isPending ? (
                 <>

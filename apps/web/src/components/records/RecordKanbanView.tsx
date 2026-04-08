@@ -110,15 +110,15 @@ export function RecordKanbanView({
                   <Icon className={`w-4 h-4 ${lane.color}`} />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-white/80">
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-[var(--color-text-base)]/80">
                     {lane.label}
                   </h4>
-                  <p className="text-[9px] font-bold text-white/20 uppercase tracking-tighter">
+                  <p className="text-[9px] font-bold text-[var(--color-text-base)]/20 uppercase tracking-tighter">
                     {laneRecords.length} Nodes detected
                   </p>
                 </div>
               </div>
-              <button className="p-1.5 rounded-lg text-white/10 hover:text-white/40 transition-colors">
+              <button className="p-1.5 rounded-lg text-[var(--color-text-base)]/10 hover:text-[var(--color-text-base)]/40 transition-colors">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
@@ -127,7 +127,7 @@ export function RecordKanbanView({
             <div
               className={`flex-1 rounded-[2.5rem] p-4 flex flex-col gap-3 transition-colors duration-300 ${
                 draggedRecordId
-                  ? 'bg-white/[0.02] border border-dashed border-white/5'
+                  ? 'bg-white/[0.02] border border-dashed border-[var(--color-border-base)]/20'
                   : 'bg-surface-lowest/40'
               }`}
             >
@@ -154,24 +154,24 @@ export function RecordKanbanView({
                               #{record.number}
                             </span>
                           </div>
-                          <h5 className="text-[11px] font-bold text-white/90 line-clamp-1">
+                          <h5 className="text-[11px] font-bold text-[var(--color-text-base)]/90 line-clamp-1">
                             {titleValue}
                           </h5>
                         </div>
-                        <GripVertical className="w-4 h-4 text-white/5 group-hover:text-white/20 transition-colors" />
+                        <GripVertical className="w-4 h-4 text-[var(--color-text-base)]/5 group-hover:text-[var(--color-text-base)]/20 transition-colors" />
                       </div>
 
                       {/* Metadata Preview */}
                       <div className="grid grid-cols-2 gap-2">
                         <div className="flex items-center gap-2 bg-white/[0.02] rounded-xl p-2 px-3">
-                          <User className="w-3 h-3 text-white/20" />
-                          <span className="text-[9px] font-bold text-white/40 truncate uppercase tracking-widest">
+                          <User className="w-3 h-3 text-[var(--color-text-base)]/20" />
+                          <span className="text-[9px] font-bold text-[var(--color-text-base)]/40 truncate uppercase tracking-widest">
                             {record.createdVia}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/[0.02] rounded-xl p-2 px-3">
-                          <Clock className="w-3 h-3 text-white/20" />
-                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                          <Clock className="w-3 h-3 text-[var(--color-text-base)]/20" />
+                          <span className="text-[9px] font-bold text-[var(--color-text-base)]/40 uppercase tracking-widest">
                             {format(new Date(record.createdAt), 'MMM dd')}
                           </span>
                         </div>
@@ -181,12 +181,12 @@ export function RecordKanbanView({
                       <div className="flex items-center justify-between pt-2">
                         <div className="flex -space-x-1.5">
                           <div className="w-5 h-5 rounded-full border border-surface-lowest bg-surface-container-low flex items-center justify-center">
-                            <User className="w-2.5 h-2.5 text-white/30" />
+                            <User className="w-2.5 h-2.5 text-[var(--color-text-base)]/30" />
                           </div>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                          <span className="text-[8px] font-black uppercase tracking-widest text-white/30">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-[var(--color-text-base)]/30">
                             Active
                           </span>
                         </div>

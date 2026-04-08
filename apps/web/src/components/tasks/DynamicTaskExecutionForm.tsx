@@ -232,13 +232,13 @@ export function DynamicTaskExecutionForm({
                       alt="Captured"
                       className="w-full h-48 object-cover"
                     />
-                    <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded backdrop-blur-md flex items-center gap-1">
+                    <div className="absolute top-2 left-2 bg-black/60 text-[var(--color-text-base)] text-[10px] font-bold px-2 py-1 rounded backdrop-blur-md flex items-center gap-1">
                       <MapPin className="w-3 h-3 text-emerald-400" />
                       GEO-TAGGED
                     </div>
                     <button
                       onClick={() => updateField(field.fieldKey, null)}
-                      className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-md hover:bg-black/90 transition-colors"
+                      className="absolute top-2 right-2 bg-black/70 text-[var(--color-text-base)] text-xs px-2 py-1 rounded backdrop-blur-md hover:bg-black/90 transition-colors"
                     >
                       Retake
                     </button>
@@ -339,7 +339,7 @@ export function DynamicTaskExecutionForm({
       <button
         onClick={handleSave}
         disabled={isSaving}
-        className="mt-6 w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+        className="mt-6 w-full py-4 bg-indigo-600 text-[var(--color-text-base)] rounded-2xl font-bold shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
       >
         {isSaving ? (
           <Loader2 className="w-5 h-5 animate-spin" />

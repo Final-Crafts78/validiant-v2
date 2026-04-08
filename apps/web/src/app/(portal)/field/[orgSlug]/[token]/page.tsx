@@ -120,10 +120,10 @@ export default function FieldAgentPortal({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-slate-950 px-10 text-center animate-in fade-in zoom-in-95 duration-500">
         <div className="flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-emerald-500 shadow-2xl shadow-emerald-500/40">
-          <CheckCircle2 className="h-12 w-12 text-white" />
+          <CheckCircle2 className="h-12 w-12 text-[var(--color-text-base)]" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-2xl font-black text-white italic">
+          <h2 className="text-2xl font-black text-[var(--color-text-base)] italic">
             Data Injected Successfully
           </h2>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500">
@@ -140,7 +140,7 @@ export default function FieldAgentPortal({
         <header className="flex items-center justify-between">
           <button
             onClick={() => setSelectedType(null)}
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:text-white"
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:text-[var(--color-text-base)]"
           >
             <X className="h-4 w-4" />
             Cancel session
@@ -152,7 +152,7 @@ export default function FieldAgentPortal({
         </header>
 
         <div className="space-y-1">
-          <h2 className="text-2xl font-black italic text-white leading-tight">
+          <h2 className="text-2xl font-black italic text-[var(--color-text-base)] leading-tight">
             Verification Input
           </h2>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-500">
@@ -194,7 +194,7 @@ export default function FieldAgentPortal({
                       setFormData({ ...formData, [col.key]: e.target.value })
                     }
                     placeholder={`Enter ${col.name}...`}
-                    className="w-full rounded-3xl border border-slate-800 bg-slate-900/50 px-6 py-5 font-mono text-[11px] font-black uppercase tracking-widest text-white transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/10"
+                    className="w-full rounded-3xl border border-slate-800 bg-slate-900/50 px-6 py-5 font-mono text-[11px] font-black uppercase tracking-widest text-[var(--color-text-base)] transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/10"
                   />
                 )}
               </div>
@@ -204,7 +204,7 @@ export default function FieldAgentPortal({
           {/* Telemetry Block */}
           <div className="rounded-[2.5rem] border border-emerald-500/20 bg-emerald-500/5 p-6 flex items-center gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500 shadow-lg shadow-emerald-500/20">
-              <MapPin className="h-5 w-5 text-white" />
+              <MapPin className="h-5 w-5 text-[var(--color-text-base)]" />
             </div>
             <div className="flex-1">
               <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">
@@ -220,7 +220,7 @@ export default function FieldAgentPortal({
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-[2.2rem] bg-primary-600 py-6 text-[11px] font-black uppercase tracking-widest text-white shadow-2xl shadow-primary-600/30 transition-all hover:bg-primary-700 active:scale-[0.98] disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-[2.2rem] bg-primary-600 py-6 text-[11px] font-black uppercase tracking-widest text-[var(--color-text-base)] shadow-2xl shadow-primary-600/30 transition-all hover:bg-primary-700 active:scale-[0.98] disabled:opacity-50"
         >
           {isSubmitting ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -240,7 +240,7 @@ export default function FieldAgentPortal({
       <header className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600 shadow-2xl shadow-primary-500/20">
-            <Zap className="h-6 w-6 text-white" />
+            <Zap className="h-6 w-6 text-[var(--color-text-base)]" />
           </div>
           <div className="flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-1.5">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
@@ -250,7 +250,7 @@ export default function FieldAgentPortal({
           </div>
         </div>
         <div className="space-y-1">
-          <h1 className="font-manrope text-3xl font-black tracking-tight text-white">
+          <h1 className="font-manrope text-3xl font-black tracking-tight text-[var(--color-text-base)]">
             Verification Node
           </h1>
           <p className="px-1 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
@@ -267,7 +267,7 @@ export default function FieldAgentPortal({
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">
               Active Identity
             </p>
-            <p className="text-xl font-black italic text-white">
+            <p className="text-xl font-black italic text-[var(--color-text-base)]">
               {context?.account?.name}
             </p>
           </div>
@@ -324,7 +324,7 @@ export default function FieldAgentPortal({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-5">
                     <div
-                      className="flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-xl transition-transform duration-500 group-hover:scale-110"
+                      className="flex h-14 w-14 items-center justify-center rounded-2xl text-[var(--color-text-base)] shadow-xl transition-transform duration-500 group-hover:scale-110"
                       style={{
                         background: type.color || '#4F46E5',
                         boxShadow: `0 8px-30px ${type.color}33`,
@@ -333,7 +333,7 @@ export default function FieldAgentPortal({
                       <Database className="h-6 w-6" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-lg font-black italic tracking-tight text-white">
+                      <p className="text-lg font-black italic tracking-tight text-[var(--color-text-base)]">
                         {type.name}
                       </p>
                       <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">

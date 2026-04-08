@@ -124,8 +124,14 @@ export default function RootLayout({
                   
                   if (prefs.brandConfig) {
                     var root = document.documentElement;
-                    if (prefs.brandConfig.accentPrimary) root.style.setProperty('--color-accent-base', prefs.brandConfig.accentPrimary);
-                    if (prefs.brandConfig.surfaceBase) root.style.setProperty('--color-surface-base', prefs.brandConfig.surfaceBase);
+                    if (prefs.brandConfig.accentPrimary) {
+                      root.style.setProperty('--color-accent-base', prefs.brandConfig.accentPrimary);
+                      root.style.setProperty('--primary', prefs.brandConfig.accentPrimary);
+                    }
+                    if (prefs.brandConfig.surfaceBase) {
+                      root.style.setProperty('--color-surface-base', prefs.brandConfig.surfaceBase);
+                      root.style.setProperty('--surface-lowest', prefs.brandConfig.surfaceBase);
+                    }
                   }
                 } catch (e) {
                   console.error('Theme initialization failed', e);

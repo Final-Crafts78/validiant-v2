@@ -85,18 +85,18 @@ export function RecordCardView({
               {/* Overlays */}
               <div className="absolute top-4 left-4">
                 <div
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusBg} backdrop-blur-md border border-white/5`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusBg} backdrop-blur-md border border-[var(--color-border-base)]/20`}
                 >
                   <StatusIcon className={`w-3.5 h-3.5 ${statusColor}`} />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-white/90">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-[var(--color-text-base)]/90">
                     {record.status.replace('_', ' ')}
                   </span>
                 </div>
               </div>
 
               <div className="absolute bottom-4 right-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/5 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                  <Eye className="w-4 h-4 text-white" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-surface-muted)] backdrop-blur-md border border-[var(--color-border-base)]/20 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                  <Eye className="w-4 h-4 text-[var(--color-text-base)]" />
                 </div>
               </div>
             </div>
@@ -117,7 +117,7 @@ export function RecordCardView({
                     </div>
                   )}
                 </div>
-                <h5 className="text-sm font-bold text-white/90 truncate drop-shadow-sm">
+                <h5 className="text-sm font-bold text-[var(--color-text-base)]/90 truncate drop-shadow-sm">
                   {titleValue}
                 </h5>
               </div>
@@ -126,10 +126,10 @@ export function RecordCardView({
               <div className="grid grid-cols-2 gap-3">
                 {projectType.columns?.slice(1, 3).map((col) => (
                   <div key={col.id} className="space-y-1">
-                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/20">
+                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-[var(--color-text-base)]/20">
                       {col.name}
                     </p>
-                    <p className="text-[10px] font-bold text-white/60 truncate">
+                    <p className="text-[10px] font-bold text-[var(--color-text-base)]/60 truncate">
                       {String(record.data[col.key] || '—')}
                     </p>
                   </div>
@@ -140,9 +140,9 @@ export function RecordCardView({
               <div className="pt-2 border-t border-white/[0.03] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-surface-container-low flex items-center justify-center">
-                    <User className="w-3 h-3 text-white/30" />
+                    <User className="w-3 h-3 text-[var(--color-text-base)]/30" />
                   </div>
-                  <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                  <span className="text-[9px] font-bold text-[var(--color-text-base)]/40 uppercase tracking-widest">
                     {record.createdVia}
                   </span>
                 </div>

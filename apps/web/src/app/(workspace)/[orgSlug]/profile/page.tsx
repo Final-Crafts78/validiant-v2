@@ -36,7 +36,7 @@ const labelCls = 'block text-sm font-semibold text-slate-700 mb-1.5';
 
 const btnPrimary =
   'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-blue-600 ' +
-  'text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 ' +
+  'text-[var(--color-text-base)] rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 ' +
   'disabled:cursor-not-allowed';
 
 const btnGhost =
@@ -617,7 +617,7 @@ export default function ProfilePage() {
                     );
                   }
                 }}
-                className="flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--color-text-base)] bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {passkeyStatus === 'loading' ? (
                   <>

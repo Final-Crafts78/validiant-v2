@@ -24,9 +24,9 @@ interface AuditTimelineProps {
 export function AuditTimeline({ events }: AuditTimelineProps) {
   if (!events || events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-white/[0.01]">
-        <History className="w-8 h-8 text-white/10 mb-4" />
-        <p className="text-[10px] font-black text-white/20 uppercase tracking-widest italic">
+      <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-[var(--color-border-base)]/20 rounded-[2.5rem] bg-white/[0.01]">
+        <History className="w-8 h-8 text-[var(--color-text-base)]/10 mb-4" />
+        <p className="text-[10px] font-black text-[var(--color-text-base)]/20 uppercase tracking-widest italic">
           NO_AUDIT_TRAIL_FOUND
         </p>
       </div>
@@ -37,14 +37,14 @@ export function AuditTimeline({ events }: AuditTimelineProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-8">
         <div className="space-y-1">
-          <h5 className="text-xs font-black text-white uppercase tracking-widest">
+          <h5 className="text-xs font-black text-[var(--color-text-base)] uppercase tracking-widest">
             Protocol Ledger
           </h5>
-          <p className="text-[9px] text-white/30 uppercase font-bold tracking-widest leading-relaxed">
+          <p className="text-[9px] text-[var(--color-text-base)]/30 uppercase font-bold tracking-widest leading-relaxed">
             Immutable Audit History
           </p>
         </div>
-        <div className="px-3 py-1 bg-white/5 rounded-full border border-white/5 flex items-center gap-2">
+        <div className="px-3 py-1 bg-[var(--color-surface-muted)]/50 rounded-full border border-[var(--color-border-base)]/20 flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">
             LIVE_SYNC_ENABLED
@@ -69,7 +69,7 @@ export function AuditTimeline({ events }: AuditTimelineProps) {
                   ? 'border-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                   : event.type === 'creation'
                     ? 'border-primary shadow-[0_0_10px_rgba(173,198,255,0.3)]'
-                    : 'border-white/20'
+                    : 'border-[var(--color-border-base)]'
               }`}
             >
               {event.type === 'verification' ? (
@@ -83,31 +83,31 @@ export function AuditTimeline({ events }: AuditTimelineProps) {
 
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-white uppercase tracking-widest bg-white/5 px-3 py-1 rounded-lg border border-white/5">
+                <span className="text-[10px] font-black text-[var(--color-text-base)] uppercase tracking-widest bg-[var(--color-surface-muted)]/50 px-3 py-1 rounded-lg border border-[var(--color-border-base)]/20">
                   {event.type}
                 </span>
-                <span className="text-[9px] font-mono text-white/20 italic">
+                <span className="text-[9px] font-mono text-[var(--color-text-base)]/20 italic">
                   //{' '}
                   {format(new Date(event.timestamp), 'MMM dd, yyyy • HH:mm:ss')}
                 </span>
               </div>
 
-              <div className="bg-surface-container-high/30 p-5 rounded-[1.5rem] border border-white/5 group hover:border-white/10 transition-all">
-                <p className="text-xs text-white/70 font-medium leading-relaxed italic mb-4">
+              <div className="bg-surface-container-high/30 p-5 rounded-[1.5rem] border border-[var(--color-border-base)]/20 group hover:border-[var(--color-border-base)]/40 transition-all">
+                <p className="text-xs text-[var(--color-text-base)]/70 font-medium leading-relaxed italic mb-4">
                   "{event.details}"
                 </p>
 
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-2">
                     <User className="w-3.5 h-3.5 text-primary/40" />
-                    <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-widest">
                       {event.user}
                     </span>
                   </div>
                   {event.metadata && (
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5 text-white/10" />
-                      <span className="text-[9px] font-mono text-white/30 uppercase tracking-tighter">
+                      <Calendar className="w-3.5 h-3.5 text-[var(--color-text-base)]/10" />
+                      <span className="text-[9px] font-mono text-[var(--color-text-base)]/30 uppercase tracking-tighter">
                         REF_{event.id.slice(0, 8)}
                       </span>
                     </div>

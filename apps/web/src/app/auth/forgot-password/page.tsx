@@ -117,16 +117,16 @@ export default function ForgotPasswordPage() {
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-10">
-            <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
-              <ShieldCheck className="h-7 w-7 text-white" />
+            <div className="w-12 h-12 bg-[var(--color-surface-muted)] border border-[var(--color-border-base)] rounded-xl flex items-center justify-center">
+              <ShieldCheck className="h-7 w-7 text-[var(--color-text-base)]" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-white">
+            <span className="text-2xl font-bold tracking-tight text-[var(--color-text-base)]">
               Validiant
             </span>
           </div>
 
           {/* Headline */}
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-snug mb-5">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-text-base)] leading-snug mb-5">
             Account Recovery.{' '}
             <span className="text-blue-300">Secure &amp; Verified.</span>
           </h2>
@@ -174,7 +174,7 @@ export default function ForgotPasswordPage() {
         {/* Mobile-only brand mark */}
         <div className="flex lg:hidden items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <ShieldCheck className="h-4 w-4 text-white" />
+            <ShieldCheck className="h-4 w-4 text-[var(--color-text-base)]" />
           </div>
           <span className="text-lg font-bold text-slate-900">Validiant</span>
         </div>
@@ -331,7 +331,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={forgotPasswordMutation.isPending}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-[var(--color-text-base)] rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                 >
                   {forgotPasswordMutation.isPending ? (
                     <>

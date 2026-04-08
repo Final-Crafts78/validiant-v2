@@ -68,7 +68,7 @@ export function NotificationBell() {
           className={`w-5 h-5 ${unreadCount > 0 ? 'text-blue-600' : 'text-slate-500'}`}
         />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full border-2 border-white">
+          <span className="absolute top-0 right-0 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-[var(--color-text-base)] bg-red-500 rounded-full border-2 border-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

@@ -82,7 +82,7 @@ export default function HowItWorks() {
                 delay={400}
                 className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left"
               >
-                <div className="w-16 h-16 bg-blue-600 text-white flex items-center justify-center rounded-2xl text-2xl font-black mb-10 shadow-lg shadow-blue-600/30">
+                <div className="w-16 h-16 bg-blue-600 text-[var(--color-text-base)] flex items-center justify-center rounded-2xl text-2xl font-black mb-10 shadow-lg shadow-blue-600/30">
                   0{index + 1}
                 </div>
                 <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8 max-w-md">

@@ -26,6 +26,7 @@ import {
 import { CreateTaskModal } from '../modals/CreateTaskModal';
 import { CreateProjectModal } from '../modals/CreateProjectModal';
 import { CreateOrganizationModal } from '../modals/CreateOrganizationModal';
+import { CommandRailUserMenu } from './CommandRailUserMenu';
 
 interface RailItem {
   icon: React.ElementType;
@@ -67,7 +68,7 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
       {/* Brand Logo Slot (Global Escape Hatch) */}
       <Link
         href="/dashboard"
-        className="mb-8 p-2 rounded-xl bg-[var(--color-accent-base)] text-white shadow-lg shadow-[var(--color-accent-base)]/20 hover:scale-105 active:scale-95 transition-transform"
+        className="mb-8 p-2 rounded-xl bg-[var(--color-accent-base)] text-[var(--color-text-base)] shadow-lg shadow-[var(--color-accent-base)]/20 hover:scale-105 active:scale-95 transition-transform"
         title="Switch Organization"
       >
         <div className="w-8 h-8 flex items-center justify-center font-bold text-xl">
@@ -204,6 +205,7 @@ export function CommandRail({ orgSlug }: { orgSlug: string }) {
             );
           })}
         </TooltipProvider>
+        <CommandRailUserMenu />
       </div>
       <CreateTaskModal
         open={createTaskOpen}

@@ -165,7 +165,7 @@ export const RejectionModal: React.FC<RejectionModalProps> = ({
               disabled={isSubmitDisabled}
               onClick={handleConfirm}
               className={cn(
-                'flex-[2] py-4 px-6 rounded-2xl font-bold text-sm text-white transition-all shadow-lg',
+                'flex-[2] py-4 px-6 rounded-2xl font-bold text-sm text-[var(--color-text-base)] transition-all shadow-lg',
                 isSubmitDisabled
                   ? 'bg-gray-200 shadow-none'
                   : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20 active:scale-95'

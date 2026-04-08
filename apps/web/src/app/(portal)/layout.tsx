@@ -8,7 +8,7 @@ import { ReactNode } from 'react';
  */
 export default function PortalLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-primary-500/30 selection:text-white antialiased font-manrope">
+    <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-primary-500/30 selection:text-[var(--color-text-base)] antialiased font-manrope">
       <div className="max-w-md mx-auto min-h-screen flex flex-col">
         <main className="flex-1 flex flex-col">{children}</main>
 

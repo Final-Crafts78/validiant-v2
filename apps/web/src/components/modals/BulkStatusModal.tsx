@@ -102,7 +102,7 @@ export function BulkStatusModal({
                 </div>
                 {selectedStatus === s.value && (
                   <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg">
-                    <Check className="w-3 h-3 text-white" />
+                    <Check className="w-3 h-3 text-[var(--color-text-base)]" />
                   </div>
                 )}
               </button>
@@ -120,7 +120,7 @@ export function BulkStatusModal({
           <button
             onClick={handleConfirm}
             disabled={!selectedStatus || mutation.isPending}
-            className="inline-flex items-center gap-2 px-6 py-2 text-sm font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-6 py-2 text-sm font-bold bg-indigo-600 text-[var(--color-text-base)] rounded-lg hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
             {mutation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

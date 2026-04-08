@@ -75,12 +75,12 @@ export function VerificationSlideOver({
                   <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
                     RECORD_PROTOCOL_{record.id.slice(-6).toUpperCase()}
                   </span>
-                  <ChevronRight className="w-3 h-3 text-white/10" />
+                  <ChevronRight className="w-3 h-3 text-[var(--color-text-base)]/10" />
                   <span className="text-[10px] font-black text-[var(--text-muted)]/60 uppercase tracking-[0.3em] font-mono">
                     {projectType.name}
                   </span>
                 </div>
-                <h2 className="text-2xl font-black text-white tracking-tight italic uppercase">
+                <h2 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight italic uppercase">
                   Case Verification
                 </h2>
               </div>
@@ -89,13 +89,13 @@ export function VerificationSlideOver({
               <div className="flex bg-[var(--surface-container-low)]/40 rounded-2xl p-1 border border-[var(--border-subtle)]">
                 <button
                   onClick={() => setActiveTab('details')}
-                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'details' ? 'bg-white/10 text-white shadow-lg' : 'text-[var(--text-muted)] hover:text-white'}`}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'details' ? 'bg-[var(--color-surface-muted)] text-[var(--color-text-base)] shadow-lg' : 'text-[var(--text-muted)] hover:text-[var(--color-text-base)]'}`}
                 >
                   DETAILS
                 </button>
                 <button
                   onClick={() => setActiveTab('audit')}
-                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'audit' ? 'bg-white/10 text-white shadow-lg' : 'text-[var(--text-muted)] hover:text-white'}`}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'audit' ? 'bg-[var(--color-surface-muted)] text-[var(--color-text-base)] shadow-lg' : 'text-[var(--text-muted)] hover:text-[var(--color-text-base)]'}`}
                 >
                   AUDIT_TRAIL
                 </button>
@@ -104,7 +104,7 @@ export function VerificationSlideOver({
                 onClick={onClose}
                 className="p-3 hover:bg-[var(--surface-container-low)]/40 rounded-2xl border border-[var(--border-subtle)] transition-all group"
               >
-                <X className="w-6 h-6 text-[var(--text-muted)] group-hover:text-white group-hover:rotate-90 transition-all duration-500" />
+                <X className="w-6 h-6 text-[var(--text-muted)] group-hover:text-[var(--color-text-base)] group-hover:rotate-90 transition-all duration-500" />
               </button>
             </div>
           </div>
@@ -120,7 +120,7 @@ export function VerificationSlideOver({
                     </p>
                     <div className="flex items-center gap-3">
                       <Calendar className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-black text-white italic">
+                      <span className="text-sm font-black text-[var(--color-text-base)] italic">
                         {format(new Date(record.createdAt), 'MMM dd, yyyy')}
                       </span>
                     </div>
@@ -142,7 +142,7 @@ export function VerificationSlideOver({
                     </p>
                     <div className="flex items-center gap-3">
                       <Fingerprint className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-black text-white italic uppercase tracking-tighter">
+                      <span className="text-sm font-black text-[var(--color-text-base)] italic uppercase tracking-tighter">
                         {record.createdVia || 'MANUAL_ENTRY'}
                       </span>
                     </div>
@@ -152,7 +152,7 @@ export function VerificationSlideOver({
                 {/* 2. Responsive Record Details Layout */}
                 <div className="space-y-8">
                   <div className="flex items-center gap-4">
-                    <h3 className="text-xs font-black text-white uppercase tracking-[0.3em]">
+                    <h3 className="text-xs font-black text-[var(--color-text-base)] uppercase tracking-[0.3em]">
                       Protocol Dataset
                     </h3>
                     <div className="flex-1 h-px bg-[var(--surface-container-low)]/40" />
@@ -174,13 +174,13 @@ export function VerificationSlideOver({
                               {col.name}
                             </label>
                             <div className="opacity-0 group-hover/field:opacity-100 transition-opacity">
-                              <span className="text-[8px] font-mono text-white/10 uppercase tracking-widest">
+                              <span className="text-[8px] font-mono text-[var(--color-text-base)]/10 uppercase tracking-widest">
                                 {col.columnType}
                               </span>
                             </div>
                           </div>
                           <div className="bg-surface-lowest p-5 rounded-[1.5rem] border border-[var(--border-subtle)] group-hover/field:border-primary/20 transition-all min-h-[64px] flex items-center">
-                            <span className="text-sm font-medium text-white/80 tracking-tight leading-relaxed">
+                            <span className="text-sm font-medium text-[var(--color-text-base)]/80 tracking-tight leading-relaxed">
                               {value === undefined ||
                               value === null ||
                               value === '' ? (
@@ -200,7 +200,7 @@ export function VerificationSlideOver({
                 </div>
 
                 {/* 3. Media & Evidence (Placeholder) */}
-                <div className="bg-white/[0.01] border border-[var(--border-subtle)] rounded-[2.5rem] p-10 flex flex-col items-center justify-center space-y-6 group hover:border-white/10 transition-all">
+                <div className="bg-white/[0.01] border border-[var(--border-subtle)] rounded-[2.5rem] p-10 flex flex-col items-center justify-center space-y-6 group hover:border-[var(--color-border-base)]/40 transition-all">
                   <div className="p-5 bg-[var(--surface-container-low)]/40 rounded-full border border-[var(--border-subtle)] group-hover:scale-110 transition-transform duration-500">
                     <Expand className="w-8 h-8 text-[var(--text-muted)]/20" />
                   </div>
@@ -208,7 +208,7 @@ export function VerificationSlideOver({
                     <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em]">
                       MEDIA_EVIDENCE_REPOSITORY
                     </p>
-                    <p className="text-[9px] text-white/10 uppercase font-bold tracking-widest leading-relaxed">
+                    <p className="text-[9px] text-[var(--color-text-base)]/10 uppercase font-bold tracking-widest leading-relaxed">
                       No multimedia captures attached to this protocol
                     </p>
                   </div>

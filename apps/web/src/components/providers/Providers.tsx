@@ -9,11 +9,12 @@
 
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RealtimeProvider } from './RealtimeProvider';
 import { ThemeProvider } from './ThemeProvider';
+import { queryClient } from '@/lib/query-client';
 
 /**
  * Props for Providers component
@@ -28,29 +29,6 @@ interface ProvidersProps {
  * Initializes and provides all app-wide providers.
  */
 export function Providers({ children }: ProvidersProps) {
-  // Create a client instance
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // Default to 5 minutes stale time
-            staleTime: 5 * 60 * 1000,
-            // Retry failed requests 1 time
-            retry: 1,
-            // Refetch on window focus in production only
-            refetchOnWindowFocus: process.env.NODE_ENV === 'production',
-            // Don't refetch on mount if data is fresh
-            refetchOnMount: false,
-          },
-          mutations: {
-            // Retry failed mutations 0 times
-            retry: 0,
-          },
-        },
-      })
-  );
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

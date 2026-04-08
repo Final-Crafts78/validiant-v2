@@ -117,7 +117,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                 className={`w-12 h-12 mx-auto rounded-2xl flex items-center justify-center transition-all duration-300 relative group ${
                   isActive
                     ? 'bg-[var(--surface-container-low)] shadow-[0_0_20px_var(--primary-glow)]'
-                    : 'bg-[var(--surface-container-low)] hover:bg-white/5 grayscale'
+                    : 'bg-[var(--surface-container-low)] hover:bg-[var(--color-surface-muted)]/50 grayscale'
                 }`}
               >
                 <Database
@@ -125,7 +125,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                 />
 
                 {/* Tooltip */}
-                <div className="absolute left-full ml-4 px-3 py-2 bg-surface-bright rounded-xl text-[10px] font-black text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all translate-x-[-10px] group-hover:translate-x-0 z-50 border border-[var(--border-subtle)] shadow-2xl">
+                <div className="absolute left-full ml-4 px-3 py-2 bg-surface-bright rounded-xl text-[10px] font-black text-[var(--color-text-base)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all translate-x-[-10px] group-hover:translate-x-0 z-50 border border-[var(--border-subtle)] shadow-2xl">
                   {type.name.toUpperCase()}
                   <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-surface-bright rotate-45 border-l border-b border-[var(--border-subtle)]" />
                 </div>
@@ -163,7 +163,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                   className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                     activeTab === 'elements'
                       ? 'bg-primary text-[var(--surface-lowest)]'
-                      : 'text-white/40 hover:text-white'
+                      : 'text-[var(--color-text-base)]/40 hover:text-[var(--color-text-base)]'
                   }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
@@ -174,7 +174,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                   className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                     activeTab === 'workflow'
                       ? 'bg-primary text-[var(--surface-lowest)]'
-                      : 'text-white/40 hover:text-white'
+                      : 'text-[var(--color-text-base)]/40 hover:text-[var(--color-text-base)]'
                   }`}
                 >
                   <Workflow className="w-3.5 h-3.5" />
@@ -183,12 +183,12 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
               </div>
 
               <div className="flex items-center gap-3">
-                <button className="p-3 bg-white/5 text-[var(--text-muted)] hover:text-primary rounded-2xl transition-all border border-[var(--border-subtle)]">
+                <button className="p-3 bg-[var(--color-surface-muted)]/50 text-[var(--text-muted)] hover:text-primary rounded-2xl transition-all border border-[var(--border-subtle)]">
                   <Settings className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => deleteType.mutate(selectedType.id)}
-                  className="p-3 bg-white/5 text-[var(--text-muted)] hover:text-rose-400 rounded-2xl transition-all border border-[var(--border-subtle)]"
+                  className="p-3 bg-[var(--color-surface-muted)]/50 text-[var(--text-muted)] hover:text-rose-400 rounded-2xl transition-all border border-[var(--border-subtle)]"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -223,7 +223,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                         className={`group relative flex items-center justify-between p-6 rounded-2xl transition-all duration-500 cursor-pointer overflow-hidden border ${
                           editingFieldId === column.id
                             ? 'bg-primary/5 border-primary/20 shadow-[0_0_30px_var(--primary-glow)]'
-                            : 'bg-surface-container-low/40 border-[var(--border-subtle)] hover:bg-surface-container-low/60 hover:border-white/10'
+                            : 'bg-surface-container-low/40 border-[var(--border-subtle)] hover:bg-surface-container-low/60 hover:border-[var(--color-border-base)]/40'
                         }`}
                       >
                         <div className="flex items-center gap-6">
@@ -231,7 +231,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                             className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 ${
                               editingFieldId === column.id
                                 ? 'bg-primary text-[var(--surface-lowest)]'
-                                : 'bg-[var(--surface-lowest)] text-white/10'
+                                : 'bg-[var(--surface-lowest)] text-[var(--color-text-base)]/10'
                             }`}
                           >
                             <LayoutGrid className="w-5 h-5" />
@@ -244,7 +244,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                               <span className="text-[9px] font-mono text-[var(--text-muted)]/20 uppercase tracking-widest">
                                 {column.key}
                               </span>
-                              <div className="w-1 h-1 rounded-full bg-white/10" />
+                              <div className="w-1 h-1 rounded-full bg-[var(--color-surface-muted)]" />
                               <span className="badge badge-primary scale-[0.7] origin-left uppercase font-black">
                                 {column.columnType}
                               </span>
@@ -253,7 +253,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                         </div>
 
                         <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                          <button className="p-2.5 bg-white/5 text-[var(--text-muted)] hover:text-primary rounded-xl transition-all">
+                          <button className="p-2.5 bg-[var(--color-surface-muted)]/50 text-[var(--text-muted)] hover:text-primary rounded-xl transition-all">
                             <ChevronRight className="w-4 h-4" />
                           </button>
                         </div>
@@ -262,7 +262,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
 
                     {columns?.length === 0 && (
                       <div className="h-64 flex flex-col items-center justify-center rounded-[2.5rem] bg-white/[0.01] border border-dashed border-[var(--border-subtle)] gap-4">
-                        <Database className="w-10 h-10 text-white/5" />
+                        <Database className="w-10 h-10 text-[var(--color-text-base)]/5" />
                         <p className="text-[10px] text-[var(--text-muted)]/20 font-black uppercase tracking-[0.3em]">
                           Module_Array_Empty
                         </p>
@@ -303,7 +303,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                       </div>
 
                       <div className="flex items-center gap-6">
-                        <ArrowRight className="w-4 h-4 text-white/10" />
+                        <ArrowRight className="w-4 h-4 text-[var(--color-text-base)]/10" />
                         <div className="flex-1 space-y-2">
                           <label className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1">
                             Custom Display Label
@@ -380,7 +380,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
       {/* New Archetype Modal - High Fidelity */}
       {showTypeModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
-          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-white/10 overflow-hidden relative">
+          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
             <div className="absolute top-0 right-0 p-12 bg-primary/5 blur-[100px] -mr-32 -mt-32" />
             <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-center justify-between">
@@ -388,13 +388,13 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                   <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
                     CREATION_GATE
                   </span>
-                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                  <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
                     New Archetype
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowTypeModal(false)}
-                  className="p-3 hover:bg-white/5 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--border-subtle)] transition-all"
                 >
                   <X className="w-5 h-5 text-[var(--text-muted)]" />
                 </button>
@@ -406,7 +406,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                     Protocol Name
                   </label>
                   <input
-                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
                     placeholder="E.G. SITE_INSPECTION"
                     value={newTypeData.name}
                     onChange={(e) =>
@@ -419,7 +419,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                     Narrative Definition
                   </label>
                   <textarea
-                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-medium text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10 min-h-[100px]"
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-medium text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10 min-h-[100px]"
                     placeholder="Define the scope of this verification archetype..."
                     value={newTypeData.description}
                     onChange={(e) =>
@@ -452,20 +452,20 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
       {/* New Element Modal - High Fidelity */}
       {showElementModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
-          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-white/10 overflow-hidden relative">
+          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
             <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
                     INJECTION_PROTOCOL
                   </span>
-                  <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                  <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
                     New Element
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowElementModal(false)}
-                  className="p-3 hover:bg-white/5 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--border-subtle)] transition-all"
                 >
                   <X className="w-5 h-5 text-[var(--text-muted)]" />
                 </button>
@@ -477,7 +477,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
                     Element Label
                   </label>
                   <input
-                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-white font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
+                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
                     placeholder="E.G. SITE_PHOTOGRAPH"
                     value={newElementData.name}
                     onChange={(e) => {

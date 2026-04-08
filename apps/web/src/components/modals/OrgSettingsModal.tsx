@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { organizationsApi } from '@/lib/api';
-import { Building2, X, Save } from 'lucide-react';
+import { Building2, X, Save, Palette } from 'lucide-react';
+import Link from 'next/link';
 import { UpdateOrganizationData } from '@validiant/shared';
 
 interface OrgForSettings {
@@ -11,6 +12,7 @@ interface OrgForSettings {
   name: string;
   description?: string | null;
   industry?: string | null;
+  slug?: string;
 }
 
 interface OrgSettingsModalProps {
@@ -149,6 +151,27 @@ export function OrgSettingsModal({
                 className="input w-full min-h-[100px] py-2"
               />
             </div>
+            
+            {organization.slug && (
+              <div className="pt-4 border-t border-border-base mt-4">
+                <Link
+                  href={`/${organization.slug}/settings/branding`}
+                  onClick={onClose}
+                  className="w-full flex items-center justify-between p-4 rounded-xl border border-border-base bg-surface-muted hover:bg-surface-soft hover:border-primary-500/50 transition-all group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-600">
+                      <Palette className="w-5 h-5" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-bold text-text-base group-hover:text-primary-600 transition-colors">Theme & Branding</p>
+                      <p className="text-xs text-text-muted">Customize colors, logo, and identity</p>
+                    </div>
+                  </div>
+                  <span className="text-text-muted group-hover:translate-x-1 transition-transform">→</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           <div className="mt-6 flex justify-end gap-3">

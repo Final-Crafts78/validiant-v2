@@ -14,10 +14,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       default:
         'bg-[#64FFDA] text-slate-950 hover:opacity-90 shadow-[0_0_20px_rgba(100,255,218,0.3)]',
       outline:
-        'border border-white/5 bg-transparent hover:bg-white/5 text-white/60 hover:text-white',
-      ghost: 'hover:bg-white/5 hover:text-white text-white/40',
+        'border border-[var(--color-border-base)]/20 bg-transparent hover:bg-[var(--color-surface-muted)]/50 text-[var(--color-text-base)]/60 hover:text-[var(--color-text-base)]',
+      ghost: 'hover:bg-[var(--color-surface-muted)]/50 hover:text-[var(--color-text-base)] text-[var(--color-text-base)]/40',
       obsidian:
-        'bg-[#0A0F16] border border-white/5 text-white/60 hover:text-white hover:border-[#64FFDA]/20 shadow-2xl',
+        'bg-[#0A0F16] border border-[var(--color-border-base)]/20 text-[var(--color-text-base)]/60 hover:text-[var(--color-text-base)] hover:border-[#64FFDA]/20 shadow-2xl',
     };
 
     const sizes = {

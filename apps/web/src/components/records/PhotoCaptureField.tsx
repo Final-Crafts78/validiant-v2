@@ -106,7 +106,7 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
   return (
     <div className="space-y-3">
       {value ? (
-        <div className="relative group rounded-xl overflow-hidden aspect-video bg-black/40 border border-white/10">
+        <div className="relative group rounded-xl overflow-hidden aspect-video bg-black/40 border border-[var(--color-border-base)]/40">
           <img
             src={value.url}
             alt="Captured"
@@ -119,7 +119,7 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="text-xs text-white/50 absolute bottom-3 left-3 bg-black/40 px-2 py-1 rounded">
+            <div className="text-xs text-[var(--color-text-base)]/50 absolute bottom-3 left-3 bg-black/40 px-2 py-1 rounded">
               Captured {new Date(value.timestamp).toLocaleTimeString()}
             </div>
           </div>
@@ -130,10 +130,10 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
           <button
             onClick={startCamera}
             disabled={disabled || isUploading}
-            className="flex flex-col items-center justify-center gap-3 p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
+            className="flex flex-col items-center justify-center gap-3 p-6 bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/40 rounded-xl hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-border-base)] transition-all group"
           >
-            <Camera className="w-8 h-8 text-white/40 group-hover:text-white transition-colors" />
-            <span className="text-sm font-medium text-white/60 group-hover:text-white text-center">
+            <Camera className="w-8 h-8 text-[var(--color-text-base)]/40 group-hover:text-[var(--color-text-base)] transition-colors" />
+            <span className="text-sm font-medium text-[var(--color-text-base)]/60 group-hover:text-[var(--color-text-base)] text-center">
               Take Photo
             </span>
           </button>
@@ -142,10 +142,10 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || isUploading}
-            className="flex flex-col items-center justify-center gap-3 p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
+            className="flex flex-col items-center justify-center gap-3 p-6 bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/40 rounded-xl hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-border-base)] transition-all group"
           >
-            <Upload className="w-8 h-8 text-white/40 group-hover:text-white transition-colors" />
-            <span className="text-sm font-medium text-white/60 group-hover:text-white text-center">
+            <Upload className="w-8 h-8 text-[var(--color-text-base)]/40 group-hover:text-[var(--color-text-base)] transition-colors" />
+            <span className="text-sm font-medium text-[var(--color-text-base)]/60 group-hover:text-[var(--color-text-base)] text-center">
               From Gallery
             </span>
           </button>
@@ -161,19 +161,19 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
             playsInline
             className="w-full flex-1 object-cover"
           />
-          <div className="p-10 flex items-center justify-between bg-zinc-950/80 border-t border-white/10">
+          <div className="p-10 flex items-center justify-between bg-zinc-950/80 border-t border-[var(--color-border-base)]/40">
             <button
               onClick={stopCamera}
-              className="p-4 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+              className="p-4 bg-[var(--color-surface-muted)]/50 rounded-full hover:bg-[var(--color-surface-muted)] transition-colors"
             >
-              <X className="w-8 h-8 text-white" />
+              <X className="w-8 h-8 text-[var(--color-text-base)]" />
             </button>
             <button
               onClick={capturePhoto}
               className="w-20 h-20 bg-white rounded-full border-4 border-zinc-900 shadow-xl active:scale-95 transition-transform"
             />
-            <button className="p-4 bg-white/5 rounded-full opacity-50 cursor-not-allowed">
-              <RefreshCcw className="w-8 h-8 text-white" />
+            <button className="p-4 bg-[var(--color-surface-muted)]/50 rounded-full opacity-50 cursor-not-allowed">
+              <RefreshCcw className="w-8 h-8 text-[var(--color-text-base)]" />
             </button>
           </div>
         </div>
@@ -193,7 +193,7 @@ export const PhotoCaptureField: React.FC<PhotoCaptureFieldProps> = ({
       <canvas ref={canvasRef} className="hidden" />
 
       {isUploading && (
-        <div className="flex items-center gap-2 text-xs text-white/40 italic">
+        <div className="flex items-center gap-2 text-xs text-[var(--color-text-base)]/40 italic">
           <ShieldCheck className="w-3 h-3 animate-pulse" />
           Verifying and encrypting capture...
         </div>

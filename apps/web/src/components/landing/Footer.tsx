@@ -14,7 +14,7 @@ export default function Footer() {
           <div className="space-y-6">
             <Link href="/" className="flex items-center gap-2.5">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                <ShieldCheck className="h-4 w-4 text-white" />
+                <ShieldCheck className="h-4 w-4 text-[var(--color-text-base)]" />
               </div>
               <span className="text-lg font-bold tracking-tight text-slate-900">
                 Validiant

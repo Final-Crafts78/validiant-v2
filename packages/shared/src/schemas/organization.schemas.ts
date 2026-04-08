@@ -102,6 +102,13 @@ export const brandConfigSchema = z.object({
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/)
     .default('#4f46e5'),
+  surfaceBase: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  surfaceSubtle: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  surfaceMuted: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  textBase: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  textMuted: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  borderBase: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  criticalBase: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
   logoUrl: z.string().url().optional(),
   faviconUrl: z.string().url().optional(),
   displayName: z.string().optional(),

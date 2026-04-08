@@ -53,7 +53,12 @@ function getContrastRatio(lux1: number, lux2: number) {
 const brandingSchema = z.object({
   displayName: z.string().min(2).max(50),
   subtext: z.string().max(100).optional(),
-  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format'),
+  accentPrimary: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format'),
+  surfaceBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
+  surfaceSubtle: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
+  textBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
+  borderBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
+  criticalBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
   logoUrl: z.string().optional(),
 });
 
@@ -75,7 +80,7 @@ export default function BrandingSettings() {
     resolver: zodResolver(brandingSchema),
   });
 
-  const accentColor = watch('accentColor') || '#2563eb';
+  const accentPrimary = watch('accentPrimary') || '#2563eb';
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   useEffect(() => {
@@ -84,7 +89,12 @@ export default function BrandingSettings() {
       reset({
         displayName: config.displayName || org.name,
         subtext: config.subtext || 'Verification Excellence',
-        accentColor: config.accentColor || '#2563eb',
+        accentPrimary: config.accentPrimary || '#2563eb',
+        surfaceBase: config.surfaceBase || '#ffffff',
+        surfaceSubtle: config.surfaceSubtle || '#f8fafc',
+        textBase: config.textBase || '#0f172a',
+        borderBase: config.borderBase || '#e2e8f0',
+        criticalBase: config.criticalBase || '#ef4444',
         logoUrl: config.logoUrl || org.logoUrl || '',
       });
       setLogoPreview(config.logoUrl || org.logoUrl || null);
@@ -93,7 +103,7 @@ export default function BrandingSettings() {
 
   // Contrast Validation
   const contrastResults = useMemo(() => {
-    const rgb = hexToRgb(accentColor);
+    const rgb = hexToRgb(accentPrimary);
     if (!rgb) return null;
 
     const accentLux = getRelativeLuminance(rgb);
@@ -117,7 +127,7 @@ export default function BrandingSettings() {
         passed: darkRatio >= 4.5,
       },
     };
-  }, [accentColor]);
+  }, [accentPrimary]);
 
   const onSubmit = async (values: BrandingFormValues) => {
     try {
@@ -143,7 +153,7 @@ export default function BrandingSettings() {
     reset({
       displayName: org.name,
       subtext: 'Verification Excellence',
-      accentColor: '#2563eb',
+      accentPrimary: '#2563eb',
       logoUrl: '',
     });
     setLogoPreview(null);
@@ -274,14 +284,14 @@ export default function BrandingSettings() {
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
-                      {...register('accentColor')}
+                      {...register('accentPrimary')}
                       className="w-12 h-12 rounded-lg cursor-pointer border-none bg-transparent"
                     />
                     <input
                       type="text"
-                      value={accentColor}
+                      value={accentPrimary}
                       onChange={(e) =>
-                        setValue('accentColor', e.target.value, {
+                        setValue('accentPrimary', e.target.value, {
                           shouldDirty: true,
                         })
                       }
@@ -328,10 +338,51 @@ export default function BrandingSettings() {
                   )}
                 </div>
               </div>
-              <p className="text-xs text-[var(--color-text-muted)] italic flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" /> WCAG AA compliance requires
-                at least 4.5:1 contrast against background surfaces.
+              <p className="text-xs text-[var(--color-text-muted)] flex items-center gap-1 mb-6">
+                <AlertCircle className="w-3 h-3" /> WCAG AA compliance requires at least 4.5:1 contrast against background surfaces.
               </p>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-6 border-t border-[var(--color-border-base)]/50">
+                 <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Surface Base (Main BG)</label>
+                   <div className="flex items-center gap-2">
+                      <input type="color" {...register('surfaceBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
+                      <input type="text" {...register('surfaceBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Surface Subtle (Cards)</label>
+                   <div className="flex items-center gap-2">
+                      <input type="color" {...register('surfaceSubtle')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
+                      <input type="text" {...register('surfaceSubtle')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Text Base (Primary)</label>
+                   <div className="flex items-center gap-2">
+                      <input type="color" {...register('textBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
+                      <input type="text" {...register('textBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Border Base</label>
+                   <div className="flex items-center gap-2">
+                      <input type="color" {...register('borderBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
+                      <input type="text" {...register('borderBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Critical Base (Error)</label>
+                   <div className="flex items-center gap-2">
+                      <input type="color" {...register('criticalBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
+                      <input type="text" {...register('criticalBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
+                   </div>
+                 </div>
+              </div>
             </div>
 
             {/* Form Actions */}
@@ -360,10 +411,10 @@ export default function BrandingSettings() {
             </h3>
 
             {/* Card Preview */}
-            <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
+            <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-[var(--color-border-base)]/40 group">
               <div
                 className="h-40 bg-gradient-to-br p-6 flex flex-col justify-between transition-all"
-                style={{ backgroundColor: accentColor }}
+                style={{ backgroundColor: accentPrimary }}
               >
                 <div className="w-10 h-10 bg-white shadow-xl rounded-xl flex items-center justify-center">
                   {logoPreview ? (
@@ -377,24 +428,24 @@ export default function BrandingSettings() {
                   )}
                 </div>
                 <div>
-                  <h4 className="text-white font-bold text-xl drop-shadow-sm">
+                  <h4 className="text-[var(--color-text-base)] font-bold text-xl drop-shadow-sm">
                     {watch('displayName')}
                   </h4>
-                  <p className="text-white/80 text-xs font-medium">
+                  <p className="text-[var(--color-text-base)]/80 text-xs font-medium">
                     {watch('subtext')}
                   </p>
                 </div>
               </div>
               <div className="p-6 bg-[#0F172A] space-y-4">
                 <div className="space-y-2">
-                  <div className="h-2 w-32 bg-white/10 rounded-full" />
-                  <div className="h-2 w-full bg-white/5 rounded-full" />
-                  <div className="h-2 w-3/4 bg-white/5 rounded-full" />
+                  <div className="h-2 w-32 bg-[var(--color-surface-muted)] rounded-full" />
+                  <div className="h-2 w-full bg-[var(--color-surface-muted)]/50 rounded-full" />
+                  <div className="h-2 w-3/4 bg-[var(--color-surface-muted)]/50 rounded-full" />
                 </div>
                 <div className="pt-2">
                   <div
                     className="h-10 w-full rounded-xl transition-all"
-                    style={{ backgroundColor: accentColor }}
+                    style={{ backgroundColor: accentPrimary }}
                   ></div>
                 </div>
               </div>
@@ -405,9 +456,9 @@ export default function BrandingSettings() {
               <div className="flex items-center gap-3">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: accentColor }}
+                  style={{ backgroundColor: accentPrimary }}
                 >
-                  <ImageIcon className="w-4 h-4 text-white" />
+                  <ImageIcon className="w-4 h-4 text-[var(--color-text-base)]" />
                 </div>
                 <span className="font-bold text-[var(--color-text-base)] text-sm">
                   Sidebar Icon
@@ -416,13 +467,13 @@ export default function BrandingSettings() {
               <div
                 className="h-10 w-full rounded-xl flex items-center px-4 gap-3 transition-colors"
                 style={{
-                  backgroundColor: `${accentColor}15`,
-                  color: accentColor,
+                  backgroundColor: `${accentPrimary}15`,
+                  color: accentPrimary,
                 }}
               >
                 <div
                   className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: accentColor }}
+                  style={{ backgroundColor: accentPrimary }}
                 />
                 <span className="text-xs font-bold uppercase tracking-wider">
                   Active State

@@ -111,7 +111,7 @@ export default function Metrics() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {METRICS.map((metric, idx) => (
             <ScrollReveal key={idx} delay={idx * 100} className="text-center">
-              <div className="text-4xl md:text-6xl font-black text-white mb-4">
+              <div className="text-4xl md:text-6xl font-black text-[var(--color-text-base)] mb-4">
                 <AnimatedCounter
                   end={metric.value}
                   suffix={metric.suffix}

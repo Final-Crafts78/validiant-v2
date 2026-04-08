@@ -37,7 +37,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     <div className={cn('relative group', className)}>
       <div
         className={cn(
-          'flex min-h-12 w-full flex-wrap gap-2 items-center rounded-[1.5rem] bg-surface-lowest/50 border border-white/[0.03] px-6 py-2 text-sm text-white focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 shadow-obsidian inset-shadow-sm cursor-pointer',
+          'flex min-h-12 w-full flex-wrap gap-2 items-center rounded-[1.5rem] bg-surface-lowest/50 border border-white/[0.03] px-6 py-2 text-sm text-[var(--color-text-base)] focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 shadow-obsidian inset-shadow-sm cursor-pointer',
           disabled && 'opacity-50 cursor-not-allowed'
         )}
         onClick={() => !disabled && setOpen(!open)}
@@ -55,7 +55,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   {label}
                   <button
                     type="button"
-                    className="hover:text-white"
+                    className="hover:text-[var(--color-text-base)]"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleUnselect(val);
@@ -68,15 +68,15 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             })}
           </div>
         ) : (
-          <span className="text-white/20">{placeholder}</span>
+          <span className="text-[var(--color-text-base)]/20">{placeholder}</span>
         )}
         <div className="ml-auto flex items-center">
-          <ChevronDown className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
+          <ChevronDown className="w-4 h-4 text-[var(--color-text-base)]/20 group-hover:text-primary transition-colors" />
         </div>
       </div>
 
       {open && !disabled && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-60 overflow-auto rounded-3xl bg-slate-950/90 backdrop-blur-xl border border-white/10 p-2 shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-60 overflow-auto rounded-3xl bg-slate-950/90 backdrop-blur-xl border border-[var(--color-border-base)]/40 p-2 shadow-2xl animate-in fade-in zoom-in duration-300">
           <div className="grid gap-1">
             {options.map((option) => {
               const isSelected = value.includes(option.value);
@@ -87,7 +87,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                     'flex items-center px-4 py-2 rounded-xl text-xs font-medium cursor-pointer transition-colors',
                     isSelected
                       ? 'bg-primary/20 text-primary'
-                      : 'hover:bg-white/5 text-white/60 hover:text-white'
+                      : 'hover:bg-[var(--color-surface-muted)]/50 text-[var(--color-text-base)]/60 hover:text-[var(--color-text-base)]'
                   )}
                   onClick={(e) => {
                     e.stopPropagation();

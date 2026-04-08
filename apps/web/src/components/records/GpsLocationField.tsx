@@ -64,9 +64,9 @@ export const GpsLocationField: React.FC<GpsLocationFieldProps> = ({
   return (
     <div className="space-y-3">
       {value ? (
-        <div className="bg-black/20 border border-white/10 rounded-xl overflow-hidden">
+        <div className="bg-black/20 border border-[var(--color-border-base)]/40 rounded-xl overflow-hidden">
           {/* Map Preview (Simple Google Maps Iframe) */}
-          <div className="w-full h-32 bg-zinc-900 border-b border-white/5 relative">
+          <div className="w-full h-32 bg-zinc-900 border-b border-[var(--color-border-base)]/20 relative">
             <iframe
               title="GPS Preview"
               src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=${value.lat},${value.lng}&zoom=15`}
@@ -79,10 +79,10 @@ export const GpsLocationField: React.FC<GpsLocationFieldProps> = ({
 
           <div className="p-4 flex items-center justify-between">
             <div className="space-y-1">
-              <div className="text-sm font-semibold text-white/90">
+              <div className="text-sm font-semibold text-[var(--color-text-base)]/90">
                 {value.lat.toFixed(6)}, {value.lng.toFixed(6)}
               </div>
-              <div className="text-[10px] text-white/30 font-mono uppercase tracking-widest leading-relaxed">
+              <div className="text-[10px] text-[var(--color-text-base)]/30 font-mono uppercase tracking-widest leading-relaxed">
                 Accuracy: ±{Math.round(value.accuracy)}m{' '}
                 <span className="opacity-50">•</span> Captured{' '}
                 {new Date(value.timestamp).toLocaleTimeString()}
@@ -92,10 +92,10 @@ export const GpsLocationField: React.FC<GpsLocationFieldProps> = ({
             {!disabled && (
               <button
                 onClick={captureLocation}
-                className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors group"
+                className="p-2 bg-[var(--color-surface-muted)]/50 hover:bg-[var(--color-surface-muted)] rounded-lg transition-colors group"
                 title="Refresh Location"
               >
-                <RotateCcw className="w-4 h-4 text-white/40 group-hover:text-white" />
+                <RotateCcw className="w-4 h-4 text-[var(--color-text-base)]/40 group-hover:text-[var(--color-text-base)]" />
               </button>
             )}
           </div>
@@ -104,7 +104,7 @@ export const GpsLocationField: React.FC<GpsLocationFieldProps> = ({
         <button
           onClick={captureLocation}
           disabled={disabled || isLocating}
-          className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 transition-all group"
+          className="w-full flex items-center justify-between p-4 bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/40 rounded-xl hover:bg-[var(--color-surface-muted)] hover:border-[var(--color-border-base)] transition-all group"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-500/10 rounded-lg">
@@ -117,15 +117,15 @@ export const GpsLocationField: React.FC<GpsLocationFieldProps> = ({
               />
             </div>
             <div className="text-left">
-              <div className="text-sm font-medium text-white/80 group-hover:text-white">
+              <div className="text-sm font-medium text-[var(--color-text-base)]/80 group-hover:text-[var(--color-text-base)]">
                 Pin Current Location
               </div>
-              <div className="text-[10px] text-white/40 font-mono uppercase tracking-widest italic group-hover:text-white/60">
+              <div className="text-[10px] text-[var(--color-text-base)]/40 font-mono uppercase tracking-widest italic group-hover:text-[var(--color-text-base)]/60">
                 {isLocating ? 'Awaiting Satellite Lock...' : 'One-tap Capture'}
               </div>
             </div>
           </div>
-          <MapIcon className="w-4 h-4 text-white/20" />
+          <MapIcon className="w-4 h-4 text-[var(--color-text-base)]/20" />
         </button>
       )}
 

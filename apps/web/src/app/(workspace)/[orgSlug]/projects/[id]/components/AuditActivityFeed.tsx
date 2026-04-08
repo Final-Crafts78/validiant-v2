@@ -44,10 +44,10 @@ function ActivityItem({
   return (
     <div className="flex gap-4 group">
       <div className="flex flex-col items-center">
-        <div className="w-8 h-8 rounded-full bg-white/5 border border-white/5 flex items-center justify-center group-hover:border-white/10 transition-colors">
+        <div className="w-8 h-8 rounded-full bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/20 flex items-center justify-center group-hover:border-[var(--color-border-base)]/40 transition-colors">
           {getIcon()}
         </div>
-        <div className="w-px h-full bg-white/5 group-last:bg-transparent mt-2" />
+        <div className="w-px h-full bg-[var(--color-surface-muted)]/50 group-last:bg-transparent mt-2" />
       </div>
 
       <div className="pb-6 w-full">
@@ -110,7 +110,7 @@ export function AuditActivityFeed({
     }));
 
   return (
-    <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] border border-white/5 p-8 h-full">
+    <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] border border-[var(--color-border-base)]/20 p-8 h-full">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#adc6ff]/10 rounded-2xl flex items-center justify-center text-primary">

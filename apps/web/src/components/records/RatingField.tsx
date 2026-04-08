@@ -25,7 +25,7 @@ export const RatingField: React.FC<RatingFieldProps> = ({
   const maxValue = column.options?.maxValue || 5;
 
   return (
-    <div className="flex flex-col items-center gap-2 p-6 bg-white/[0.02] border border-white/5 rounded-2xl transition-all hover:bg-white/[0.04]">
+    <div className="flex flex-col items-center gap-2 p-6 bg-white/[0.02] border border-[var(--color-border-base)]/20 rounded-2xl transition-all hover:bg-white/[0.04]">
       <div className="flex items-center gap-1.5">
         {[...Array(maxValue)].map((_, i) => {
           const ratingValue = i + 1;
@@ -54,7 +54,7 @@ export const RatingField: React.FC<RatingFieldProps> = ({
                   ${
                     isActive
                       ? 'text-yellow-400 fill-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]'
-                      : 'text-white/10'
+                      : 'text-[var(--color-text-base)]/10'
                   }
                   ${isSelected && !hover ? 'text-yellow-500 fill-yellow-500' : ''}
                 `}
@@ -67,16 +67,16 @@ export const RatingField: React.FC<RatingFieldProps> = ({
           );
         })}
       </div>
-      <div className="mt-2 text-[10px] font-mono tracking-widest uppercase text-white/30 flex items-center gap-2">
+      <div className="mt-2 text-[10px] font-mono tracking-widest uppercase text-[var(--color-text-base)]/30 flex items-center gap-2">
         <div
           className={`h-1 w-8 rounded-full ${
-            value ? 'bg-yellow-500/50' : 'bg-white/10'
+            value ? 'bg-yellow-500/50' : 'bg-[var(--color-surface-muted)]'
           }`}
         />
         <span>{value ? `${value} / ${maxValue}` : 'Awaiting Rating'}</span>
         <div
           className={`h-1 w-8 rounded-full ${
-            value ? 'bg-yellow-500/50' : 'bg-white/10'
+            value ? 'bg-yellow-500/50' : 'bg-[var(--color-surface-muted)]'
           }`}
         />
       </div>

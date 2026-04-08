@@ -23,9 +23,9 @@ export default function FieldPortal() {
       <header className="space-y-2">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-primary-600 flex items-center justify-center shadow-2xl shadow-primary-500/20">
-            <Database className="w-5 h-5 text-white" />
+            <Database className="w-5 h-5 text-[var(--color-text-base)]" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white font-manrope">
+          <h1 className="text-2xl font-black tracking-tight text-[var(--color-text-base)] font-manrope">
             Verification Node
           </h1>
         </div>
@@ -42,7 +42,7 @@ export default function FieldPortal() {
           placeholder="Access Project Code..."
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
-          className="w-full bg-slate-900/50 border border-slate-800 rounded-3xl pl-14 pr-6 py-5 text-[11px] font-black uppercase tracking-widest text-white focus:outline-none focus:ring-4 focus:ring-primary-500/10 transition-all font-mono"
+          className="w-full bg-slate-900/50 border border-slate-800 rounded-3xl pl-14 pr-6 py-5 text-[11px] font-black uppercase tracking-widest text-[var(--color-text-base)] focus:outline-none focus:ring-4 focus:ring-primary-500/10 transition-all font-mono"
         />
       </div>
 
@@ -68,7 +68,7 @@ export default function FieldPortal() {
               >
                 <div className="flex items-center gap-5">
                   <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-xl"
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center text-[var(--color-text-base)] shadow-xl"
                     style={{
                       background: type.color || '#4F46E5',
                       boxShadow: `0 8px 30px ${type.color}33`,
@@ -77,7 +77,7 @@ export default function FieldPortal() {
                     <Database className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-black text-white tracking-tight">
+                    <p className="text-sm font-black text-[var(--color-text-base)] tracking-tight">
                       {type.name}
                     </p>
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">

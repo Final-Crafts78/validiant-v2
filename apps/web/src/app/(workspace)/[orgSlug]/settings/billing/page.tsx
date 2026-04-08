@@ -266,7 +266,7 @@ function PlanCard({
       )}
     >
       {highlight && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[var(--color-accent-base)] text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[var(--color-accent-base)] text-[var(--color-text-base)] text-[10px] font-black uppercase tracking-widest rounded-full">
           Most Popular
         </div>
       )}
@@ -312,7 +312,7 @@ function PlanCard({
           isCurrent
             ? 'bg-[var(--color-surface-soft)] text-[var(--color-text-muted)] cursor-not-allowed'
             : highlight
-              ? 'bg-[var(--color-accent-base)] text-white hover:bg-[var(--color-accent-base)]/90 hover:scale-[1.02] shadow-lg shadow-primary-500/20'
+              ? 'bg-[var(--color-accent-base)] text-[var(--color-text-base)] hover:bg-[var(--color-accent-base)]/90 hover:scale-[1.02] shadow-lg shadow-primary-500/20'
               : 'border border-[var(--color-border-base)] text-[var(--color-text-base)] hover:bg-[var(--color-surface-soft)]'
         )}
       >

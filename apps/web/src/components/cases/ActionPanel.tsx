@@ -176,7 +176,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ task }) => {
               className={cn(
                 'group relative flex items-center justify-between p-4 rounded-2xl border transition-all duration-300 overflow-hidden text-left',
                 isPrimary
-                  ? 'bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-600/20 hover:scale-[1.02]'
+                  ? 'bg-primary-600 border-primary-500 text-[var(--color-text-base)] shadow-lg shadow-primary-600/20 hover:scale-[1.02]'
                   : 'bg-white hover:bg-gray-50 text-gray-700'
               )}
             >
@@ -185,7 +185,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ task }) => {
                   className={cn(
                     'p-2 rounded-xl transition-colors',
                     isPrimary
-                      ? 'bg-white/10'
+                      ? 'bg-[var(--color-surface-muted)]'
                       : 'bg-gray-100 group-hover:bg-primary-50 group-hover:text-primary-600'
                   )}
                 >
@@ -216,7 +216,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ task }) => {
                 <ChevronRight
                   className={cn(
                     'w-4 h-4 transition-transform duration-300 group-hover:translate-x-1',
-                    isPrimary ? 'text-white/40' : 'text-gray-300'
+                    isPrimary ? 'text-[var(--color-text-base)]/40' : 'text-gray-300'
                   )}
                 />
               )}

@@ -210,7 +210,7 @@ export function AutomationsTab({ projectId }: { projectId: string }) {
           </div>
           <button
             onClick={() => openAutomationConfig(null)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-[var(--color-text-base)] text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all"
           >
             <Zap className="w-4 h-4" /> Create Workflow
           </button>

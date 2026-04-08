@@ -51,9 +51,9 @@ export function BulkActionBar({
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-slate-900 text-white rounded-2xl shadow-2xl px-6 py-4 flex items-center gap-6 border border-slate-700/50 backdrop-blur-md bg-opacity-95">
+      <div className="bg-slate-900 text-[var(--color-text-base)] rounded-2xl shadow-2xl px-6 py-4 flex items-center gap-6 border border-slate-700/50 backdrop-blur-md bg-opacity-95">
         <div className="flex items-center gap-3 pr-6 border-r border-slate-700">
-          <div className="bg-blue-600 text-white h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold">
+          <div className="bg-blue-600 text-[var(--color-text-base)] h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold">
             {selectedCount}
           </div>
           <span className="text-sm font-medium text-slate-200">
@@ -91,7 +91,7 @@ export function BulkActionBar({
 
         <button
           onClick={() => safeInvoke(onClear, 'onClear')}
-          className="ml-2 p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="ml-2 p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-[var(--color-text-base)] transition-colors"
           title="Clear Selection"
         >
           <X className="h-4 w-4" />

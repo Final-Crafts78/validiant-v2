@@ -280,11 +280,11 @@ export function CreateTaskModal({
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-indigo-600 text-[var(--color-text-base)] rounded-lg hover:bg-indigo-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100"
               disabled={isSubmitting || !title.trim() || !projectId}
             >
               {isSubmitting ? (
-                <span className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                <span className="h-4 w-4 border-2 border-[var(--color-border-base)] border-t-white rounded-full animate-spin"></span>
               ) : (
                 <Plus className="w-4 h-4" />
               )}
@@ -315,7 +315,7 @@ export function CreateTaskModalTrigger({
         onClick={() => setOpen(true)}
         className={
           className ||
-          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shrink-0 shadow-sm'
+          'inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-600 text-[var(--color-text-base)] rounded-lg hover:bg-indigo-700 transition-colors shrink-0 shadow-sm'
         }
       >
         <Plus className="h-4 w-4" />

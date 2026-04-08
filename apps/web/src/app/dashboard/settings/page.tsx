@@ -22,7 +22,7 @@ export default function GlobalSettingsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-4xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
           System Preferences
         </h1>
         <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -61,7 +61,7 @@ export default function GlobalSettingsPage() {
         {/* Content Area */}
         <div className="lg:col-span-3 space-y-8 pb-20">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 shadow-sm">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-8 pb-4 border-b border-slate-50 dark:border-slate-800/50">
+            <h3 className="text-xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight mb-8 pb-4 border-b border-slate-50 dark:border-slate-800/50">
               Interface Thematic
             </h3>
 
@@ -85,7 +85,7 @@ export default function GlobalSettingsPage() {
                     className={cn(
                       'p-4 rounded-2xl transition-all shadow-sm',
                       activeTheme === theme.id
-                        ? 'bg-blue-600 text-white shadow-blue-600/20'
+                        ? 'bg-blue-600 text-[var(--color-text-base)] shadow-blue-600/20'
                         : 'bg-slate-50 dark:bg-slate-950 text-slate-400 group-hover:text-slate-600'
                     )}
                   >
@@ -107,7 +107,7 @@ export default function GlobalSettingsPage() {
           </div>
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-10 shadow-sm">
-            <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-8 pb-4 border-b border-slate-50 dark:border-slate-800/50">
+            <h3 className="text-xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight mb-8 pb-4 border-b border-slate-50 dark:border-slate-800/50">
               Global Display Language
             </h3>
 
@@ -125,7 +125,7 @@ export default function GlobalSettingsPage() {
             </div>
           </div>
 
-          <div className="p-10 bg-gradient-to-br from-slate-900 to-slate-950 dark:from-slate-950 dark:to-black rounded-[2.5rem] text-white overflow-hidden relative group">
+          <div className="p-10 bg-gradient-to-br from-slate-900 to-slate-950 dark:from-slate-950 dark:to-black rounded-[2.5rem] text-[var(--color-text-base)] overflow-hidden relative group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full -mr-32 -mt-32 blur-3xl" />
 
             <div className="relative z-10">

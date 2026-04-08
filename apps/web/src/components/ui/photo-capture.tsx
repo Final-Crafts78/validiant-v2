@@ -58,7 +58,7 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   return (
     <div
       className={cn(
-        'relative group overflow-hidden rounded-[2.5rem] bg-surface-lowest border border-white/5 shadow-obsidian',
+        'relative group overflow-hidden rounded-[2.5rem] bg-surface-lowest border border-[var(--color-border-base)]/20 shadow-obsidian',
         aspectRatio,
         className
       )}
@@ -98,7 +98,7 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
               onClick={stopCamera}
               className="absolute right-6 bottom-4 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center hover:bg-black/60 transition-colors"
             >
-              <X className="w-5 h-5 text-white/40" />
+              <X className="w-5 h-5 text-[var(--color-text-base)]/40" />
             </button>
           </div>
         </div>
@@ -108,11 +108,11 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
           disabled={disabled}
           className="h-full w-full flex flex-col items-center justify-center gap-4 hover:bg-white/[0.02] transition-colors group/btn disabled:opacity-50"
         >
-          <div className="w-16 h-16 rounded-[1.8rem] bg-surface-container-low flex items-center justify-center border border-white/5 shadow-obsidian group-hover/btn:border-primary/20 group-hover/btn:scale-110 transition-all duration-500">
-            <Camera className="w-7 h-7 text-white/20 group-hover/btn:text-primary transition-colors" />
+          <div className="w-16 h-16 rounded-[1.8rem] bg-surface-container-low flex items-center justify-center border border-[var(--color-border-base)]/20 shadow-obsidian group-hover/btn:border-primary/20 group-hover/btn:scale-110 transition-all duration-500">
+            <Camera className="w-7 h-7 text-[var(--color-text-base)]/20 group-hover/btn:text-primary transition-colors" />
           </div>
           <div className="text-center">
-            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] group-hover/btn:text-white/60 transition-colors">
+            <span className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-[0.2em] group-hover/btn:text-[var(--color-text-base)]/60 transition-colors">
               Initialize Visual Capture
             </span>
           </div>

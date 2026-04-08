@@ -18,7 +18,7 @@ export default function GlobalTasksPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
             Universal Worklist
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -48,7 +48,7 @@ export default function GlobalTasksPage() {
               <ListIcon className="w-4 h-4" />
             </div>
           </div>
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 group">
+          <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-[var(--color-text-base)] rounded-xl text-sm font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 group">
             <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
             Task Entry
           </button>
@@ -63,7 +63,7 @@ export default function GlobalTasksPage() {
           <div className="w-20 h-20 rounded-[2rem] bg-indigo-50 dark:bg-indigo-900/10 flex items-center justify-center mb-8 border border-indigo-100 dark:border-indigo-900/20">
             <CheckSquare className="w-10 h-10 text-indigo-600" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-[var(--color-text-base)] mb-2">
             No Active Task Telemetry
           </h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-10 font-medium">

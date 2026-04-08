@@ -45,7 +45,7 @@ const Rating: React.FC<RatingProps> = ({
                 'w-5 h-5 transition-all duration-300',
                 isActive
                   ? 'fill-primary text-primary drop-shadow-[0_0_8px_rgba(100,255,218,0.5)]'
-                  : 'fill-transparent text-white/20'
+                  : 'fill-transparent text-[var(--color-text-base)]/20'
               )}
             />
           </button>

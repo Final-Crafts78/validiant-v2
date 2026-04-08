@@ -58,7 +58,7 @@ export function GlobalSidebar() {
           className="flex items-center gap-3 group"
         >
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-200">
-            <LayoutDashboard className="h-6 w-6 text-white" />
+            <LayoutDashboard className="h-6 w-6 text-[var(--color-text-base)]" />
           </div>
           <div className="flex flex-col">
             <span className="text-lg font-bold text-[var(--color-text-base)] tracking-tight">

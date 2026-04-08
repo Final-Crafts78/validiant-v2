@@ -112,9 +112,9 @@ export default function SettingsLayout({
         </div>
 
         {/* Support Card */}
-        <div className="mt-6 p-4 bg-[var(--color-accent-base)] rounded-2xl text-white shadow-lg shadow-[var(--color-accent-base)]/20">
+        <div className="mt-6 p-4 bg-[var(--color-accent-base)] rounded-2xl text-[var(--color-text-base)] shadow-lg shadow-[var(--color-accent-base)]/20">
           <h3 className="font-bold text-sm mb-1">Need help?</h3>
-          <p className="text-xs text-white/80 mb-4">
+          <p className="text-xs text-[var(--color-text-base)]/80 mb-4">
             Check our documentation or contact enterprise support.
           </p>
           <button className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-all backdrop-blur-sm">

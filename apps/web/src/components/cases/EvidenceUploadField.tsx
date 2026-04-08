@@ -105,13 +105,13 @@ export const EvidenceUploadField: React.FC<EvidenceUploadFieldProps> = ({
                 type="button"
                 onClick={clear}
                 disabled={isPending}
-                className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                className="p-2 bg-red-500 text-[var(--color-text-base)] rounded-full hover:bg-red-600 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             {!!capturedGeo && (
-              <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 px-3 py-1.5 bg-green-500/90 backdrop-blur-sm text-white text-[10px] font-bold rounded-lg uppercase tracking-wider">
+              <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2 px-3 py-1.5 bg-green-500/90 backdrop-blur-sm text-[var(--color-text-base)] text-[10px] font-bold rounded-lg uppercase tracking-wider">
                 <CheckCircle2 className="h-3 w-3" />
                 Forensic Meta Captured
               </div>

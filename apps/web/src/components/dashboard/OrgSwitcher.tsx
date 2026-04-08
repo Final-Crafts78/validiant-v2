@@ -91,7 +91,7 @@ export function OrgSwitcher() {
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left transition-all group ${
                   org.id === activeOrgId
-                    ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20'
+                    ? 'bg-primary-600 text-[var(--color-text-base)] shadow-lg shadow-primary-600/20'
                     : 'text-[var(--color-text-subtle)] hover:bg-primary-50 dark:hover:bg-primary-950/20 hover:text-primary-600'
                 }`}
               >
@@ -114,7 +114,7 @@ export function OrgSwitcher() {
                     <Building2
                       className={`w-4 h-4 ${
                         org.id === activeOrgId
-                          ? 'text-white'
+                          ? 'text-[var(--color-text-base)]'
                           : 'text-[var(--color-text-muted)] group-hover:text-primary-600'
                       }`}
                     />
@@ -124,7 +124,7 @@ export function OrgSwitcher() {
                   <p
                     className={`font-black truncate ${
                       org.id === activeOrgId
-                        ? 'text-white'
+                        ? 'text-[var(--color-text-base)]'
                         : 'text-[var(--color-text-base)]'
                     }`}
                   >
@@ -134,7 +134,7 @@ export function OrgSwitcher() {
                     <p
                       className={`text-[10px] font-bold uppercase tracking-wider truncate ${
                         org.id === activeOrgId
-                          ? 'text-white/70'
+                          ? 'text-[var(--color-text-base)]/70'
                           : 'text-[var(--color-text-muted)]'
                       }`}
                     >
@@ -143,7 +143,7 @@ export function OrgSwitcher() {
                   )}
                 </div>
                 {org.id === activeOrgId && (
-                  <Check className="w-4 h-4 text-white shrink-0" />
+                  <Check className="w-4 h-4 text-[var(--color-text-base)] shrink-0" />
                 )}
               </button>
             ))}

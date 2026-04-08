@@ -129,7 +129,7 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="p-3 hover:bg-white/5 rounded-full transition-all text-white/20 hover:text-white hover:rotate-90"
+              className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-full transition-all text-[var(--color-text-base)]/20 hover:text-[var(--color-text-base)] hover:rotate-90"
             >
               <X className="w-6 h-6" />
             </button>
@@ -149,7 +149,7 @@ export const RecordSlideOver: React.FC<RecordSlideOverProps> = ({
                       )}
                     </label>
                     {column.settings?.hint && (
-                      <span className="text-[9px] text-white/20 italic font-mono">
+                      <span className="text-[9px] text-[var(--color-text-base)]/20 italic font-mono">
                         // {column.settings.hint}
                       </span>
                     )}

@@ -401,7 +401,7 @@ export function TaskDetailSlideOver() {
                           `/${activeOrgSlug}/cases/${task.customFields?.caseId}`
                         )
                       }
-                      className="w-full py-2 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                      className="w-full py-2 bg-primary text-[var(--color-text-base)] text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
                     >
                       Open Case Command Center
                       <ChevronRight className="w-3 h-3" />
@@ -477,16 +477,16 @@ export function TaskDetailSlideOver() {
 
                   <div className="grid grid-cols-1 gap-3">
                     <div className="flex items-center justify-between p-4 bg-slate-900 rounded-2xl shadow-xl shadow-slate-100 group overflow-hidden relative">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700" />
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--color-surface-muted)]/50 rounded-full -mr-12 -mt-12 blur-xl group-hover:scale-150 transition-transform duration-700" />
                       <div className="flex items-center gap-4 relative z-10">
-                        <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white">
+                        <div className="w-10 h-10 bg-[var(--color-surface-muted)] rounded-xl flex items-center justify-center text-[var(--color-text-base)]">
                           <Timer className="w-5 h-5" />
                         </div>
                         <div>
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
                             Active Timer
                           </p>
-                          <p className="text-xl font-mono font-black text-white leading-none">
+                          <p className="text-xl font-mono font-black text-[var(--color-text-base)] leading-none">
                             {task.status === TaskStatus.IN_PROGRESS
                               ? '04:12:45'
                               : '00:00:00'}
@@ -497,7 +497,7 @@ export function TaskDetailSlideOver() {
                         className={cn(
                           'px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all relative z-10',
                           task.status === TaskStatus.IN_PROGRESS
-                            ? 'bg-red-500 text-white hover:bg-red-600'
+                            ? 'bg-red-500 text-[var(--color-text-base)] hover:bg-red-600'
                             : 'bg-white text-slate-900 hover:bg-slate-50'
                         )}
                         onClick={() => {
@@ -530,7 +530,7 @@ export function TaskDetailSlideOver() {
                         className={cn(
                           'flex flex-col items-center gap-3 p-5 rounded-3xl transition-all group border',
                           task.customFields?.googleMapsLink
-                            ? 'bg-indigo-600 text-white border-transparent'
+                            ? 'bg-indigo-600 text-[var(--color-text-base)] border-transparent'
                             : 'bg-surface-base border-border-base hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-50/20'
                         )}
                       >
@@ -538,8 +538,8 @@ export function TaskDetailSlideOver() {
                           className={cn(
                             'w-10 h-10 rounded-2xl flex items-center justify-center transition-all',
                             task.customFields?.googleMapsLink
-                              ? 'bg-white/20 text-white'
-                              : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white'
+                              ? 'bg-white/20 text-[var(--color-text-base)]'
+                              : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-[var(--color-text-base)]'
                           )}
                         >
                           <Navigation2 className="w-5 h-5" />
@@ -548,7 +548,7 @@ export function TaskDetailSlideOver() {
                           className={cn(
                             'text-[10px] font-black uppercase tracking-tighter',
                             task.customFields?.googleMapsLink
-                              ? 'text-white'
+                              ? 'text-[var(--color-text-base)]'
                               : 'text-text-muted group-hover:text-indigo-600'
                           )}
                         >
@@ -565,7 +565,7 @@ export function TaskDetailSlideOver() {
                         }
                         className="flex flex-col items-center gap-3 p-5 bg-surface-base border border-border-base rounded-3xl hover:border-emerald-600 hover:shadow-lg hover:shadow-emerald-50/20 transition-all group"
                       >
-                        <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                        <div className="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-[var(--color-text-base)] transition-all">
                           <Fingerprint className="w-5 h-5" />
                         </div>
                         <span className="text-[10px] font-black text-text-muted uppercase tracking-tighter group-hover:text-emerald-600">

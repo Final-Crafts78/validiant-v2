@@ -81,7 +81,7 @@ export function RecordTable({
   const renderCell = (column: TypeColumn, value: unknown) => {
     if (value === null || value === undefined) {
       return (
-        <span className="text-white/5 italic text-[10px] font-mono">
+        <span className="text-[var(--color-text-base)]/5 italic text-[10px] font-mono">
           NULL_VOID
         </span>
       );
@@ -92,7 +92,7 @@ export function RecordTable({
         const photo = value as { url: string };
         return (
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[var(--surface-lowest)] overflow-hidden relative group/img border border-white/5">
+            <div className="w-10 h-10 rounded-lg bg-[var(--surface-lowest)] overflow-hidden relative group/img border border-[var(--color-border-base)]/20">
               <img
                 src={photo.url}
                 alt="Capture"
@@ -160,7 +160,7 @@ export function RecordTable({
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                   i < (value as number)
                     ? 'bg-primary shadow-[0_0_8px_rgba(173,198,255,0.6)]'
-                    : 'bg-white/5'
+                    : 'bg-[var(--color-surface-muted)]/50'
                 }`}
               />
             ))}
@@ -177,10 +177,10 @@ export function RecordTable({
   };
 
   return (
-    <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden backdrop-blur-3xl">
+    <div className="bg-[var(--surface-container-low)] rounded-[2.5rem] border border-[var(--color-border-base)]/20 shadow-2xl overflow-hidden backdrop-blur-3xl">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-[var(--surface-lowest)]/50 border-b border-white/5">
+          <tr className="bg-[var(--surface-lowest)]/50 border-b border-[var(--color-border-base)]/20">
             <th className="pl-8 pr-4 py-6 w-10">
               <button
                 onClick={() => handleSelectAll(!allSelected)}
@@ -189,7 +189,7 @@ export function RecordTable({
                     ? 'bg-primary border-primary text-[#0c1324]'
                     : someSelected
                       ? 'bg-primary/20 border-primary text-primary'
-                      : 'bg-[var(--surface-container-low)] border-white/10 hover:border-white/30'
+                      : 'bg-[var(--surface-container-low)] border-[var(--color-border-base)]/40 hover:border-white/30'
                 }`}
               >
                 {allSelected && (
@@ -251,7 +251,7 @@ export function RecordTable({
                     className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
                       isSelected
                         ? 'bg-primary border-primary text-[#0c1324]'
-                        : 'bg-white/5 border-white/10 opacity-0 group-hover:opacity-100'
+                        : 'bg-[var(--color-surface-muted)]/50 border-[var(--color-border-base)]/40 opacity-0 group-hover:opacity-100'
                     }`}
                   >
                     {isSelected && (
@@ -313,21 +313,21 @@ export function RecordTable({
       </table>
 
       {/* Footer / Hub Status */}
-      <div className="px-8 py-6 bg-[var(--surface-lowest)]/50 border-t border-white/5 flex items-center justify-between">
+      <div className="px-8 py-6 bg-[var(--surface-lowest)]/50 border-t border-[var(--color-border-base)]/20 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Database className="w-4 h-4 text-white/10" />
-          <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">
+          <Database className="w-4 h-4 text-[var(--color-text-base)]/10" />
+          <span className="text-[10px] font-bold text-[var(--color-text-base)]/20 uppercase tracking-[0.2em]">
             Obsidian_Core_v2.0 // Active_Universe
           </span>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-            <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-widest">
               Live_Sync
             </span>
           </div>
-          <span className="text-[10px] font-mono text-white/10">
+          <span className="text-[10px] font-mono text-[var(--color-text-base)]/10">
             LOAD_TIME: 42ms
           </span>
         </div>

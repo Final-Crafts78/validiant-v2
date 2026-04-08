@@ -143,7 +143,7 @@ export function SettingsTab({ project }: { project: Project }) {
               <button
                 onClick={handleSaveSettings}
                 disabled={isPending}
-                className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-all flex items-center gap-2"
+                className="px-4 py-2 bg-indigo-600 text-[var(--color-text-base)] text-sm font-bold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-all flex items-center gap-2"
               >
                 {updateMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

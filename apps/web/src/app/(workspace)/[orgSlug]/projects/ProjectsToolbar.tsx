@@ -114,12 +114,12 @@ export function ProjectsToolbar({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search data universe precision records..."
-            className="w-full pl-14 pr-6 h-16 bg-surface-lowest/50 backdrop-blur-xl border border-white/5 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-3xl text-sm font-medium placeholder:text-text-muted/30 shadow-obsidian-inner"
+            className="w-full pl-14 pr-6 h-16 bg-surface-lowest/50 backdrop-blur-xl border border-[var(--color-border-base)]/20 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-3xl text-sm font-medium placeholder:text-text-muted/30 shadow-obsidian-inner"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-white/5 rounded-2xl transition-premium"
+              className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl transition-premium"
             >
               <X className="w-4 h-4 text-text-muted" />
             </button>
@@ -132,17 +132,17 @@ export function ProjectsToolbar({
             <button
               onClick={() => setShowSettings(!showSettings)}
               className={cn(
-                'flex items-center justify-center h-12 px-6 rounded-xl transition-premium text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 shadow-obsidian-inner',
+                'flex items-center justify-center h-12 px-6 rounded-xl transition-premium text-[10px] font-black uppercase tracking-[0.2em] border border-[var(--color-border-base)]/20 shadow-obsidian-inner',
                 showSettings
                   ? 'bg-primary text-background'
-                  : 'bg-surface-lowest/50 text-text-muted hover:text-white'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-[var(--color-text-base)]'
               )}
             >
               Architectural View
             </button>
 
             {showSettings && (
-              <div className="absolute right-0 mt-4 w-72 bg-surface-container-high/90 backdrop-blur-3xl rounded-3xl p-6 border border-white/10 shadow-2xl z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="absolute right-0 mt-4 w-72 bg-surface-container-high/90 backdrop-blur-3xl rounded-3xl p-6 border border-[var(--color-border-base)]/40 shadow-2xl z-50 animate-in fade-in slide-in-from-top-4 duration-300">
                 <div className="space-y-6">
                   <div className="flex flex-col gap-1">
                     <label className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">
@@ -168,9 +168,9 @@ export function ProjectsToolbar({
                             [opt.id]: !prev[opt.id as keyof typeof prev],
                           }))
                         }
-                        className="flex items-center justify-between w-full p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-premium"
+                        className="flex items-center justify-between w-full p-4 rounded-2xl bg-[var(--color-surface-muted)]/50 hover:bg-[var(--color-surface-muted)] transition-premium"
                       >
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white/60">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--color-text-base)]/60">
                           {opt.label}
                         </span>
                         <div
@@ -178,7 +178,7 @@ export function ProjectsToolbar({
                             'w-10 h-5 rounded-full relative transition-premium',
                             viewSettings[opt.id as keyof typeof viewSettings]
                               ? 'bg-primary'
-                              : 'bg-white/10'
+                              : 'bg-[var(--color-surface-muted)]'
                           )}
                         >
                           <div
@@ -199,13 +199,13 @@ export function ProjectsToolbar({
           </div>
 
           {/* View Switcher - Obsidian Texture */}
-          <div className="flex p-1.5 bg-surface-lowest/50 backdrop-blur-xl rounded-[1.25rem] border border-white/5 shadow-obsidian-inner">
+          <div className="flex p-1.5 bg-surface-lowest/50 backdrop-blur-xl rounded-[1.25rem] border border-[var(--color-border-base)]/20 shadow-obsidian-inner">
             <button
               onClick={() => setViewMode('grid')}
               className={`flex items-center justify-center w-12 h-12 rounded-xl transition-premium ${
                 viewMode === 'grid'
                   ? 'bg-primary text-background shadow-glow-primary scale-100'
-                  : 'text-text-muted hover:text-white hover:bg-white/5'
+                  : 'text-text-muted hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]/50'
               }`}
               title="Grid Architecture"
             >
@@ -216,7 +216,7 @@ export function ProjectsToolbar({
               className={`flex items-center justify-center w-12 h-12 rounded-xl transition-premium ${
                 viewMode === 'list'
                   ? 'bg-primary text-background shadow-glow-primary scale-100'
-                  : 'text-text-muted hover:text-white hover:bg-white/5'
+                  : 'text-text-muted hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]/50'
               }`}
               title="List Framework"
             >
@@ -253,7 +253,7 @@ export function ProjectsToolbar({
               className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-premium ${
                 activeStatuses.includes(status)
                   ? 'bg-primary text-background shadow-glow-primary'
-                  : 'bg-surface-lowest/50 text-text-muted hover:text-white border border-white/5'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-[var(--color-text-base)] border border-[var(--color-border-base)]/20'
               }`}
             >
               {status}
@@ -261,7 +261,7 @@ export function ProjectsToolbar({
           ))}
         </div>
 
-        <div className="w-px h-6 bg-white/5 mx-2" />
+        <div className="w-px h-6 bg-[var(--color-surface-muted)]/50 mx-2" />
 
         {/* Priority Filters */}
         <div className="flex flex-wrap gap-3">
@@ -272,7 +272,7 @@ export function ProjectsToolbar({
               className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-premium ${
                 activePriorities.includes(priority)
                   ? 'bg-amber-500 text-background shadow-glow-amber'
-                  : 'bg-surface-lowest/50 text-text-muted hover:text-white border border-white/5'
+                  : 'bg-surface-lowest/50 text-text-muted hover:text-[var(--color-text-base)] border border-[var(--color-border-base)]/20'
               }`}
             >
               {priority}

@@ -78,7 +78,7 @@ export default function Pricing() {
                 }`}
               >
                 {tier.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-[10px] uppercase font-black tracking-widest px-4 py-1 rounded-full">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-[var(--color-text-base)] text-[10px] uppercase font-black tracking-widest px-4 py-1 rounded-full">
                     Most Popular
                   </div>
                 )}
@@ -122,7 +122,7 @@ export default function Pricing() {
                   }
                   className={`w-full py-4 text-center font-bold rounded-2xl transition-all flex items-center justify-center gap-2 ${
                     tier.popular
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700'
+                      ? 'bg-blue-600 text-[var(--color-text-base)] shadow-lg shadow-blue-500/30 hover:bg-blue-700'
                       : 'bg-slate-50 text-slate-900 hover:bg-slate-100'
                   }`}
                 >

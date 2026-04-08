@@ -85,7 +85,7 @@ export default function SearchPage() {
             key={filter}
             className={`px-4 py-2 rounded-full text-sm font-bold transition-all border ${
               i === 0
-                ? 'bg-slate-900 border-slate-900 text-white shadow-lg'
+                ? 'bg-slate-900 border-slate-900 text-[var(--color-text-base)] shadow-lg'
                 : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
             }`}
           >

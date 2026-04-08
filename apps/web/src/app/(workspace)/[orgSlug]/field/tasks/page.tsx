@@ -130,7 +130,7 @@ export function FieldTasksPage() {
                   </div>
                 </div>
 
-                <button className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                <button className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1.5 rounded-full group-hover:bg-indigo-600 group-hover:text-[var(--color-text-base)] transition-all">
                   Details
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -142,7 +142,7 @@ export function FieldTasksPage() {
 
       {/* Quick Stats Summary */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-indigo-600 rounded-[2rem] p-5 text-white shadow-lg shadow-indigo-200">
+        <div className="bg-indigo-600 rounded-[2rem] p-5 text-[var(--color-text-base)] shadow-lg shadow-indigo-200">
           <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-1">
             Total Done
           </p>

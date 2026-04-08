@@ -29,7 +29,7 @@ const Tabs = ({ value, onValueChange, children, className }: any) => {
 
 const TabsList = ({ children, className, activeTab, handleTabChange }: any) => (
   <div
-    className={`inline-flex h-14 items-center justify-center rounded-[2rem] bg-[#0A0F16]/50 border border-white/5 p-1.5 text-slate-500 shadow-2xl px-3 ${className || ''}`}
+    className={`inline-flex h-14 items-center justify-center rounded-[2rem] bg-[#0A0F16]/50 border border-[var(--color-border-base)]/20 p-1.5 text-slate-500 shadow-2xl px-3 ${className || ''}`}
   >
     {React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
@@ -57,7 +57,7 @@ const TabsTrigger = ({
       className={`inline-flex items-center justify-center whitespace-nowrap rounded-[1.5rem] px-8 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
         isActive
           ? 'bg-[#64FFDA] text-slate-950 shadow-[0_0_15px_rgba(100,255,218,0.4)]'
-          : 'text-white/20 hover:text-white/60'
+          : 'text-[var(--color-text-base)]/20 hover:text-[var(--color-text-base)]/60'
       } ${className || ''}`}
     >
       {children}

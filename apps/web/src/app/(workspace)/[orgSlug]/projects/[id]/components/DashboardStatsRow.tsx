@@ -23,7 +23,7 @@ interface StatCardProps {
 
 function StatCard({ label, value, icon, trend, colorClass }: StatCardProps) {
   return (
-    <div className="group relative bg-[var(--surface-container-low)] rounded-2xl border border-white/5 p-6 hover:border-white/10 transition-all duration-300">
+    <div className="group relative bg-[var(--surface-container-low)] rounded-2xl border border-[var(--color-border-base)]/20 p-6 hover:border-[var(--color-border-base)]/40 transition-all duration-300">
       {/* Subtle Glow Effect */}
       <div
         className={`absolute -inset-0.5 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-${colorClass}/5 group-hover:to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500`}

@@ -14,12 +14,15 @@ interface WorkspaceStore {
   activeOrgId: string | null;
   activeOrgSlug: string | null;
   activeProjectId: string | null;
+  dashboardLayouts: Record<string, any[]>; // orgId -> Array of Layout items
+  _hasHydrated: boolean;
   setActiveOrg: (
     id: string,
     slug: string,
     brandConfig?: Record<string, unknown>
   ) => void;
   setActiveProject: (id: string) => void;
+  setDashboardLayout: (orgId: string, layout: any[]) => void;
   clearWorkspace: () => void;
 }
 
@@ -29,6 +32,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       activeOrgId: null,
       activeOrgSlug: null,
       activeProjectId: null,
+      dashboardLayouts: {},
+      _hasHydrated: false,
 
       // Setting a new org resets the project selection and purges stale cache
       setActiveOrg: (id, slug, brandConfig) => {
@@ -67,6 +72,14 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
 
       setActiveProject: (id) => set({ activeProjectId: id }),
 
+      setDashboardLayout: (orgId, layout) =>
+        set((state) => ({
+          dashboardLayouts: {
+            ...state.dashboardLayouts,
+            [orgId]: layout,
+          },
+        })),
+
       clearWorkspace: () => {
         const orgId = get().activeOrgId;
         if (orgId) {
@@ -75,7 +88,12 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
         set({ activeOrgId: null, activeOrgSlug: null, activeProjectId: null });
       },
     }),
-    { name: 'validiant-workspace-storage' }
+    { 
+      name: 'validiant-workspace-storage',
+      onRehydrateStorage: () => (state) => {
+        if (state) state._hasHydrated = true;
+      },
+    }
   )
 );
 

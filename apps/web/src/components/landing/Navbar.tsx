@@ -21,7 +21,7 @@ export default function Navbar() {
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       {showAnnouncement && (
-        <div className="bg-blue-600 text-white px-4 py-2 text-center text-xs font-medium flex items-center justify-center relative">
+        <div className="bg-blue-600 text-[var(--color-text-base)] px-4 py-2 text-center text-xs font-medium flex items-center justify-center relative">
           <span>Now with AI-powered task routing →</span>
           <button
             onClick={() => setShowAnnouncement(false)}
@@ -45,7 +45,7 @@ export default function Navbar() {
             className="flex items-center gap-2.5 hover:opacity-90 transition-opacity"
           >
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-              <ShieldCheck className="h-5 w-5 text-white" />
+              <ShieldCheck className="h-5 w-5 text-[var(--color-text-base)]" />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
               Validiant
@@ -90,7 +90,7 @@ export default function Navbar() {
             </Link>
             <Link
               href={ROUTES.REGISTER}
-              className="px-5 py-2 text-sm font-semibold bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 transition-all flex items-center gap-2"
+              className="px-5 py-2 text-sm font-semibold bg-blue-600 text-[var(--color-text-base)] rounded-md shadow-sm hover:bg-blue-700 transition-all flex items-center gap-2"
             >
               Client Portal
               <ArrowRight size={16} />

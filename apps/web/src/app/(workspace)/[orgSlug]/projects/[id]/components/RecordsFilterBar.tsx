@@ -28,12 +28,12 @@ export function RecordsFilterBar() {
           <input
             type="text"
             placeholder="Search records, IDs, or candidates..."
-            className="w-full h-11 pl-11 pr-4 bg-[var(--surface-container-low)] border border-white/5 rounded-2xl text-sm text-[#dce1fb] placeholder-[#8c909f] focus:outline-none focus:border-white/10 transition-all font-medium"
+            className="w-full h-11 pl-11 pr-4 bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 rounded-2xl text-sm text-[#dce1fb] placeholder-[#8c909f] focus:outline-none focus:border-[var(--color-border-base)]/40 transition-all font-medium"
           />
         </div>
 
         {/* Date Filter */}
-        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-white/5 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-white/10 transition-all">
+        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-[var(--color-border-base)]/40 transition-all">
           <Calendar className="w-4 h-4" />
           <span className="font-bold uppercase tracking-widest text-[9px]">
             Date Range
@@ -42,7 +42,7 @@ export function RecordsFilterBar() {
         </button>
 
         {/* Status Filter */}
-        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-white/5 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-white/10 transition-all">
+        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-[var(--color-border-base)]/40 transition-all">
           <Filter className="w-4 h-4" />
           <span className="font-bold uppercase tracking-widest text-[9px]">
             Status
@@ -51,7 +51,7 @@ export function RecordsFilterBar() {
         </button>
 
         {/* Member Filter */}
-        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-white/5 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-white/10 transition-all">
+        <button className="h-11 px-4 bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 rounded-2xl flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[#dce1fb] hover:border-[var(--color-border-base)]/40 transition-all">
           <User className="w-4 h-4" />
           <span className="font-bold uppercase tracking-widest text-[9px]">
             Assigned
@@ -67,7 +67,7 @@ export function RecordsFilterBar() {
 
       {/* Active Filter Chips */}
       {activeFilters.length > 0 && (
-        <div className="flex items-center flex-wrap gap-2 pt-2 border-t border-white/5">
+        <div className="flex items-center flex-wrap gap-2 pt-2 border-t border-[var(--color-border-base)]/20">
           <span className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest px-2">
             Active Filters:
           </span>

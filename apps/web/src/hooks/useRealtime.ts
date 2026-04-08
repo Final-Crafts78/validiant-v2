@@ -56,6 +56,8 @@ export function useRealtime() {
   const userId = useAuthStore((s) => s.user?.id);
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  const hasHydrated = useWorkspaceStore((s) => s._hasHydrated);
+
   // Helper for state logging
   const logStateTransition = (state: string, url?: string) => {
     console.log(`[Realtime:State] ${state}`, {
@@ -67,8 +69,8 @@ export function useRealtime() {
   };
 
   useEffect(() => {
-    // Guards: Don't connect if not in an org or not authenticated
-    if (!activeOrgId || !userId) {
+    // Guards: Don't connect if not in an org or not authenticated or not hydrating
+    if (!activeOrgId || !userId || !hasHydrated) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null;

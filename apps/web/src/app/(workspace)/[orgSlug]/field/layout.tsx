@@ -64,7 +64,7 @@ export default function FieldAppLayout({
         </p>
         <button
           onClick={() => router.push(`/${orgSlug}/dashboard`)}
-          className="w-full max-w-xs py-4 bg-slate-900 text-white rounded-[2rem] font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl"
+          className="w-full max-w-xs py-4 bg-slate-900 text-[var(--color-text-base)] rounded-[2rem] font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl"
         >
           Return to Dashboard
         </button>
@@ -77,7 +77,7 @@ export default function FieldAppLayout({
       {/* Mobile-First Header */}
       <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-[var(--color-text-base)] shadow-lg shadow-indigo-200">
             <Navigation className="w-4 h-4 fill-current" />
           </div>
           <div>

@@ -126,8 +126,8 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({
         className={`relative aspect-[16/6] bg-black/40 border rounded-xl overflow-hidden touch-none transition-all duration-300
           ${
             isUploading
-              ? 'opacity-50 animate-pulse border-white/20'
-              : 'border-white/10 hover:border-white/20'
+              ? 'opacity-50 animate-pulse border-[var(--color-border-base)]'
+              : 'border-[var(--color-border-base)]/40 hover:border-[var(--color-border-base)]'
           }
           ${value ? 'border-green-500/30' : ''}`}
       >
@@ -146,9 +146,9 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({
               {!disabled && (
                 <button
                   onClick={clear}
-                  className="p-1 bg-white/5 hover:bg-white/10 rounded transition-colors"
+                  className="p-1 bg-[var(--color-surface-muted)]/50 hover:bg-[var(--color-surface-muted)] rounded transition-colors"
                 >
-                  <RotateCcw className="w-3 h-3 text-white/40" />
+                  <RotateCcw className="w-3 h-3 text-[var(--color-text-base)]/40" />
                 </button>
               )}
             </div>
@@ -170,12 +170,12 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({
             />
 
             <div className="absolute top-2 right-2 flex items-center gap-2 pointer-events-none opacity-40">
-              <PenTool className="w-4 h-4 text-white" />
+              <PenTool className="w-4 h-4 text-[var(--color-text-base)]" />
             </div>
 
             {isEmpty && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="text-[11px] font-mono tracking-[0.2em] uppercase text-white/20">
+                <div className="text-[11px] font-mono tracking-[0.2em] uppercase text-[var(--color-text-base)]/20">
                   Sign Here With Mouse/Finger
                 </div>
               </div>
@@ -188,7 +188,7 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({
         <div className="flex items-center justify-between">
           <button
             onClick={clear}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-white/60 transition-all active:scale-95"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-surface-muted)]/50 hover:bg-[var(--color-surface-muted)] rounded-lg text-xs text-[var(--color-text-base)]/60 transition-all active:scale-95"
           >
             <Eraser className="w-3.5 h-3.5" />
             Clear Pad

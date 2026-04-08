@@ -400,7 +400,7 @@ export default function RolesSettings() {
                                 className={cn(
                                   'mt-1 w-5 h-5 rounded-md flex items-center justify-center transition-all',
                                   isEnabled
-                                    ? 'bg-success-500 text-white shadow-lg shadow-success-500/20'
+                                    ? 'bg-success-500 text-[var(--color-text-base)] shadow-lg shadow-success-500/20'
                                     : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
                                 )}
                               >

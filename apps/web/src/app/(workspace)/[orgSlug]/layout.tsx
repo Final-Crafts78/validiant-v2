@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
+import { DynamicThemeInjector } from '@/components/providers/DynamicThemeInjector';
 import { ROUTES } from '@/lib/config';
 import { logger } from '@/lib/logger';
 import {
@@ -71,7 +72,8 @@ export default async function OrgLayout({
   return (
     <>
       <AuthStoreInitializer user={user} accessToken={accessToken} />
-      <WorkspaceInitializer orgs={orgs} />
+      <WorkspaceInitializer orgs={orgs} urlOrgSlug={params.orgSlug} />
+      <DynamicThemeInjector orgs={orgs} urlOrgSlug={params.orgSlug} />
 
       <WorkspaceLayoutContent orgSlug={params.orgSlug}>
         {children}

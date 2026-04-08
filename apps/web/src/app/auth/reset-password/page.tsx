@@ -157,7 +157,7 @@ function ResetPasswordForm() {
 
         <Link
           href={ROUTES.FORGOT_PASSWORD}
-          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-[var(--color-text-base)] rounded-lg shadow-sm hover:bg-blue-700 transition-colors"
         >
           Request New Reset Link
         </Link>
@@ -207,7 +207,7 @@ function ResetPasswordForm() {
         {/* Continue to Sign In */}
         <Link
           href={ROUTES.LOGIN}
-          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-[var(--color-text-base)] rounded-lg shadow-sm hover:bg-blue-700 transition-colors"
         >
           Continue to Sign In
         </Link>
@@ -358,7 +358,7 @@ function ResetPasswordForm() {
         <button
           type="submit"
           disabled={resetPasswordMutation.isPending}
-          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors mt-1"
+          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold bg-blue-600 text-[var(--color-text-base)] rounded-lg shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors mt-1"
         >
           {resetPasswordMutation.isPending ? (
             <>
@@ -418,16 +418,16 @@ export default function ResetPasswordPage() {
         <div className="relative z-10 max-w-md text-center">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-10">
-            <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
-              <ShieldCheck className="h-7 w-7 text-white" />
+            <div className="w-12 h-12 bg-[var(--color-surface-muted)] border border-[var(--color-border-base)] rounded-xl flex items-center justify-center">
+              <ShieldCheck className="h-7 w-7 text-[var(--color-text-base)]" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-white">
+            <span className="text-2xl font-bold tracking-tight text-[var(--color-text-base)]">
               Validiant
             </span>
           </div>
 
           {/* Headline */}
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white leading-snug mb-5">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--color-text-base)] leading-snug mb-5">
             Secure <span className="text-blue-300">Password Reset.</span>
           </h2>
 
@@ -473,7 +473,7 @@ export default function ResetPasswordPage() {
         {/* Mobile-only brand mark */}
         <div className="flex lg:hidden items-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <ShieldCheck className="h-4 w-4 text-white" />
+            <ShieldCheck className="h-4 w-4 text-[var(--color-text-base)]" />
           </div>
           <span className="text-lg font-bold text-slate-900">Validiant</span>
         </div>

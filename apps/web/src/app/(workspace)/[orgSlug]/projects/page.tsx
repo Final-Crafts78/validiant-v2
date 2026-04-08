@@ -11,6 +11,7 @@ import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { ProjectPriority } from '@validiant/shared';
 import { ProjectsToolbar } from './ProjectsToolbar';
 import { EmptyState } from '@/components/ui/EmptyState';
+import DashboardEngine from '@/components/dashboard-engine/DashboardEngine';
 
 // ── Create modal ──────────────────────────────────────────────────────────────
 function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
@@ -48,7 +49,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-2xl z-50 flex items-center justify-center p-6 animate-in fade-in duration-500">
-      <div className="w-full max-w-xl bg-surface-container-low rounded-[3rem] p-12 border border-white/5 shadow-obsidian relative overflow-hidden scale-in-center">
+      <div className="w-full max-w-xl bg-surface-container-low rounded-[3rem] p-12 border border-[var(--color-border-base)]/20 shadow-obsidian relative overflow-hidden scale-in-center">
         {/* Glow effect */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px]" />
 
@@ -57,7 +58,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
             <label className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-2 block">
               Architectural Initiative
             </label>
-            <h2 className="text-4xl font-black text-white tracking-tighter font-display leading-none">
+            <h2 className="text-4xl font-black text-[var(--color-text-base)] tracking-tighter font-display leading-none">
               Initialize Project
             </h2>
           </div>
@@ -72,7 +73,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. ALPHA_VERIFIER_01"
-                className="w-full h-16 px-6 bg-surface-lowest/50 border border-white/5 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-2xl text-sm font-medium text-white placeholder:text-text-muted/20 shadow-obsidian-inner"
+                className="w-full h-16 px-6 bg-surface-lowest/50 border border-[var(--color-border-base)]/20 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-2xl text-sm font-medium text-[var(--color-text-base)] placeholder:text-text-muted/20 shadow-obsidian-inner"
                 required
               />
             </div>
@@ -86,7 +87,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
                 onChange={(e) => setDesc(e.target.value)}
                 rows={3}
                 placeholder="Objective parameters and scope details..."
-                className="w-full p-6 bg-surface-lowest/50 border border-white/5 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-2xl text-sm font-medium text-white placeholder:text-text-muted/20 resize-none shadow-obsidian-inner"
+                className="w-full p-6 bg-surface-lowest/50 border border-[var(--color-border-base)]/20 focus:border-primary/20 focus:bg-surface-lowest transition-premium rounded-2xl text-sm font-medium text-[var(--color-text-base)] placeholder:text-text-muted/20 resize-none shadow-obsidian-inner"
               />
             </div>
 
@@ -109,7 +110,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
                       'h-14 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-premium border',
                       priority === opt.value
                         ? 'bg-primary text-background border-primary shadow-glow-primary'
-                        : 'bg-surface-lowest/50 text-text-muted border-white/5 hover:bg-white/5'
+                        : 'bg-surface-lowest/50 text-text-muted border-[var(--color-border-base)]/20 hover:bg-[var(--color-surface-muted)]/50'
                     )}
                   >
                     {opt.label}
@@ -122,7 +123,7 @@ function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
               <button
                 type="button"
                 onClick={() => onClose()}
-                className="flex-1 h-16 text-[10px] font-black uppercase tracking-[0.2em] text-text-muted hover:text-white transition-premium"
+                className="flex-1 h-16 text-[10px] font-black uppercase tracking-[0.2em] text-text-muted hover:text-[var(--color-text-base)] transition-premium"
               >
                 Abort
               </button>
@@ -187,7 +188,7 @@ export default function ProjectsPage() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-3 bg-background min-h-screen text-white">
+      <div className="flex flex-col items-center justify-center py-32 gap-3 bg-background min-h-screen text-[var(--color-text-base)]">
         <div className="p-4 rounded-full bg-rose-500/10 text-rose-500 mb-4">
           <FolderOpen className="w-8 h-8" />
         </div>
@@ -199,7 +200,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-white pb-20 animate-in fade-in duration-1000">
+    <div className="min-h-screen bg-background text-[var(--color-text-base)] pb-20 animate-in fade-in duration-1000">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 space-y-12">
         {/* Header - Editorial Scale */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pt-12">
@@ -219,15 +220,18 @@ export default function ProjectsPage() {
             </p>
           </div>
 
-          <button
-            onClick={() => setShowCreate(true)}
-            className="btn-primary px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-3xl"
-          >
-            <div className="flex items-center gap-3">
-              <Plus className="w-5 h-5" />
-              <span>Initialize Project</span>
-            </div>
-          </button>
+          <div className="flex items-center gap-3">
+
+            <button
+              onClick={() => setShowCreate(true)}
+              className="btn-primary px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-3xl"
+            >
+              <div className="flex items-center gap-3">
+                <Plus className="w-5 h-5" />
+                <span>Initialize Project</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* 2. Advanced Toolbar */}
@@ -251,17 +255,30 @@ export default function ProjectsPage() {
           />
         )}
 
-        {/* Grid View - The Obsidian Stack */}
+        {/* Grid View - The Obsidian Stack with Dashboard Widgets */}
         {viewMode === 'grid' && filteredProjects.length > 0 && (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProjects.map((p) => (
-              <ProjectCard
-                key={p.id}
-                project={p}
-                orgSlug={orgSlug}
-                settings={viewSettings}
-              />
-            ))}
+          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            {/* Dashboard Region */}
+            <div className="bg-surface-lowest/50 border border-[var(--color-border-base)]/20 rounded-[3rem] p-4">
+              <div className="flex items-center justify-between px-6 py-4 mb-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+                   Architectural Dashboard
+                </span>
+              </div>
+              <DashboardEngine orgId={orgSlug} />
+            </div>
+            
+            {/* Standard Project Grid */}
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredProjects.map((p) => (
+                <ProjectCard
+                  key={p.id}
+                  project={p}
+                  orgSlug={orgSlug}
+                  settings={viewSettings}
+                />
+              ))}
+            </div>
           </div>
         )}
 
@@ -297,7 +314,7 @@ export default function ProjectsPage() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-black text-white tracking-tight leading-none mb-1 font-display">
+                  <h3 className="text-lg font-black text-[var(--color-text-base)] tracking-tight leading-none mb-1 font-display">
                     {p.name}
                   </h3>
                   <p className="text-[11px] text-text-muted font-medium truncate opacity-60">
@@ -306,7 +323,7 @@ export default function ProjectsPage() {
                 </div>
 
                 <div className="hidden md:flex items-center gap-3 w-48">
-                  <div className="px-3 py-1 rounded-full bg-white/5 border border-white/5">
+                  <div className="px-3 py-1 rounded-full bg-[var(--color-surface-muted)]/50 border border-[var(--color-border-base)]/20">
                     <span className="text-[8px] font-black uppercase tracking-widest text-primary">
                       {p.status}
                     </span>
@@ -326,7 +343,7 @@ export default function ProjectsPage() {
                       style={{ width: `${p.progress ?? 0}%` }}
                     />
                   </div>
-                  <span className="text-[10px] font-black text-white">
+                  <span className="text-[10px] font-black text-[var(--color-text-base)]">
                     {p.progress ?? 0}%
                   </span>
                 </div>
@@ -348,11 +365,11 @@ export default function ProjectsPage() {
 
         {/* No Results from filters */}
         {projects.length > 0 && filteredProjects.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 bg-surface-container-low/20 rounded-[3rem] border border-dashed border-white/5">
+          <div className="flex flex-col items-center justify-center py-24 bg-surface-container-low/20 rounded-[3rem] border border-dashed border-[var(--color-border-base)]/20">
             <div className="w-20 h-20 rounded-full bg-surface-lowest flex items-center justify-center mb-6">
               <FolderOpen className="w-10 h-10 text-text-muted opacity-30" />
             </div>
-            <h3 className="text-xl font-black text-white mb-2 font-display">
+            <h3 className="text-xl font-black text-[var(--color-text-base)] mb-2 font-display">
               No matching precision units
             </h3>
             <p className="text-sm text-text-subtle font-medium">

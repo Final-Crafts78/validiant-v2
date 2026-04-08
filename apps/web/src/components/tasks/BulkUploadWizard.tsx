@@ -232,7 +232,7 @@ export function BulkUploadWizard({
         {/* Header */}
         <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-100">
+            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-[var(--color-text-base)] shadow-xl shadow-indigo-100">
               <Upload className="w-6 h-6" />
             </div>
             <div>
@@ -526,7 +526,7 @@ export function BulkUploadWizard({
                 {step === 'map' && (
                   <button
                     onClick={() => setStep('preview')}
-                    className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all flex items-center gap-2 active:scale-95"
+                    className="px-8 py-3 bg-slate-900 text-[var(--color-text-base)] rounded-2xl font-bold hover:bg-slate-800 transition-all flex items-center gap-2 active:scale-95"
                   >
                     Preview Data
                     <ChevronRight className="w-4 h-4" />
@@ -536,7 +536,7 @@ export function BulkUploadWizard({
                   <button
                     onClick={() => mutation.mutate(mappedData)}
                     disabled={mutation.isPending}
-                    className="px-10 py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-xl shadow-indigo-100 active:scale-95 disabled:opacity-50"
+                    className="px-10 py-3 bg-indigo-600 text-[var(--color-text-base)] rounded-2xl font-black hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-xl shadow-indigo-100 active:scale-95 disabled:opacity-50"
                   >
                     {mutation.isPending ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -551,7 +551,7 @@ export function BulkUploadWizard({
           ) : (
             <button
               onClick={handleClose}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl"
+              className="w-full py-4 bg-slate-900 text-[var(--color-text-base)] rounded-2xl font-black hover:bg-slate-800 transition-all active:scale-95 shadow-xl"
             >
               Back to Command Center
             </button>

@@ -42,7 +42,7 @@ export default function GlobalProjectsPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-[var(--color-text-base)] tracking-tight">
             Global Projects
           </h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium mt-1">
@@ -70,7 +70,7 @@ export default function GlobalProjectsPage() {
           <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-blue-600">
             <FolderKanban className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-[var(--color-text-base)] mb-2">
             No Active Projects
           </h2>
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8 font-medium">
@@ -91,7 +91,7 @@ export default function GlobalProjectsPage() {
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 transition-colors" />
               </div>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 transition-colors truncate">
+              <h3 className="text-lg font-black text-slate-900 dark:text-[var(--color-text-base)] mb-2 group-hover:text-blue-600 transition-colors truncate">
                 {project.name}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium line-clamp-2 mb-6 h-10">

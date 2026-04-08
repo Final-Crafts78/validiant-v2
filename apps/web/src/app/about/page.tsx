@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function AboutPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-center text-[var(--color-text-base)]">
       <div className="max-w-2xl">
         <h1 className="mb-6 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-5xl font-bold text-transparent">
           About Validiant
@@ -15,7 +15,7 @@ export default function AboutPage() {
           infrastructure. We&apos;re building the most secure, transparent, and
           efficient platform for enterprise verification workflows.
         </p>
-        <div className="mb-12 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+        <div className="mb-12 rounded-2xl border border-[var(--color-border-base)]/40 bg-[var(--color-surface-muted)]/50 p-8 backdrop-blur-sm">
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-indigo-400">
             Status: In Development
           </p>
@@ -26,7 +26,7 @@ export default function AboutPage() {
         </div>
         <Link
           href="/"
-          className="rounded-lg bg-indigo-600 px-8 py-3 font-medium text-white shadow-lg shadow-indigo-500/20 transition-colors hover:bg-indigo-700"
+          className="rounded-lg bg-indigo-600 px-8 py-3 font-medium text-[var(--color-text-base)] shadow-lg shadow-indigo-500/20 transition-colors hover:bg-indigo-700"
         >
           Return Home
         </Link>
