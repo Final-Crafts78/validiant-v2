@@ -14,7 +14,10 @@ console.log(`[BFF:Module] [${Date.now()}] EP-0.1: Module loading started`);
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
+// @ts-ignore - 'cache' is available in React 18 for RSC but may not be recognized by all environments/types
 import { cache } from 'react';
+/* eslint-enable @typescript-eslint/prefer-ts-expect-error */
 import { getBaseCookieOptions } from '@/lib/auth-utils';
 import type {
   AuthUser,

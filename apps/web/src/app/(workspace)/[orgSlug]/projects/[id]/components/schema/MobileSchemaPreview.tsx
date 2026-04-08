@@ -3,15 +3,13 @@
 import React from 'react';
 import { TypeColumn, ColumnType } from '@validiant/shared';
 import {
-  Smartphone,
   MapPin,
   Camera,
-  Signature,
+  FileSignature,
   CheckSquare,
   ChevronRight,
-  Info,
   Database,
-  ArrowRight,
+  Zap,
 } from 'lucide-react';
 
 interface MobileSchemaPreviewProps {
@@ -179,7 +177,7 @@ export function MobileSchemaPreview({
                       </div>
                     ) : col.columnType === ColumnType.SIGNATURE ? (
                       <div className="w-full h-28 rounded-2xl bg-[#070d1f] border border-white/5 flex flex-col items-center justify-center gap-3 group/field transition-all hover:border-[#adc6ff]/10">
-                        <Signature className="w-6 h-6 text-white/5 group-hover/field:text-white/10 transition-colors" />
+                        <FileSignature className="w-6 h-6 text-white/5 group-hover/field:text-white/10 transition-colors" />
                         <span className="text-[8px] font-black text-white/10 uppercase tracking-widest">
                           Draw Certification
                         </span>
