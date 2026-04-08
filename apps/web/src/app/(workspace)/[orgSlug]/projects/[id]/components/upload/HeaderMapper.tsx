@@ -6,7 +6,6 @@ import {
   Database,
   AlertCircle,
   CheckCircle2,
-  Search,
   ChevronDown,
   Info,
 } from 'lucide-react';
@@ -106,7 +105,6 @@ export function HeaderMapper({
       <div className="grid grid-cols-1 gap-4">
         {headers.map((header, idx) => {
           const mappedKey = mapping[header];
-          const mappedColumn = columns.find((c) => c.key === mappedKey);
 
           return (
             <div
