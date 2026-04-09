@@ -12,6 +12,7 @@ import {
   Bell,
   Search,
   Plus,
+  FolderKanban,
 } from 'lucide-react';
 import { cn } from '@validiant/ui';
 import {
@@ -37,6 +38,7 @@ interface RailItem {
 
 const mainItems: RailItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
+  { icon: FolderKanban, label: 'Projects', href: '/projects' },
   { icon: CheckSquare, label: 'Tasks', href: '/tasks' },
   { icon: BarChart3, label: 'Analytics', href: '/analytics' },
   { icon: Database, label: 'Infrastructure', href: '/infra' },

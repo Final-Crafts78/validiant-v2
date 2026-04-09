@@ -21,6 +21,8 @@ const config: Config = {
         secondary: {
           DEFAULT: 'var(--color-surface-muted)',
           foreground: 'var(--color-text-base)',
+          container: 'var(--color-secondary-container)',
+          'on-container': 'var(--color-on-secondary-container)',
         },
         tertiary: {
           DEFAULT: 'rgb(var(--color-tertiary-base) / <alpha-value>)',
@@ -31,7 +33,9 @@ const config: Config = {
           soft: 'var(--color-surface-soft)',
           muted: 'var(--color-surface-muted)',
           lowest: 'var(--color-surface-lowest)',
+          'container-lowest': 'var(--color-surface-container-lowest)',
           'container-low': 'var(--color-surface-container-low)',
+          container: 'var(--color-surface-container)',
           'container-highest': 'var(--color-surface-container-highest)',
           bright: 'var(--color-surface-bright)',
           inverse: 'var(--color-surface-inverse)',
@@ -64,6 +68,10 @@ const config: Config = {
           subtle: 'var(--color-critical-subtle)',
           strong: 'var(--color-critical-strong)',
           text: 'var(--color-critical-text)',
+        },
+        error: {
+          container: 'var(--color-error-container)',
+          'on-container': 'var(--color-on-error-container)',
         },
       },
       fontFamily: {

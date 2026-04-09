@@ -68,6 +68,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
         }
 
         set({ activeOrgId: id, activeOrgSlug: slug, activeProjectId: null });
+        queryClient.invalidateQueries({ queryKey: ['projects', 'org', id] });
       },
 
       setActiveProject: (id) => set({ activeProjectId: id }),

@@ -17,7 +17,10 @@ import {
   ChevronRight,
   Globe,
   Zap,
+  LayoutDashboard,
 } from 'lucide-react';
+
+import { ProjectDashboard } from '@/components/projects/ProjectDashboard';
 
 // Precision Components (Phase 2 Architect)
 import { RecordsTab } from './components/RecordsTab';
@@ -43,6 +46,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABS = [
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'records', label: 'Data Universe', icon: Fingerprint },
   { id: 'schema', label: 'Schema Architect', icon: Database },
   { id: 'workflow', label: 'Orchestration', icon: GitMerge },
@@ -61,7 +65,7 @@ export default function CommandCenterShell({
   const { id, orgSlug } = params;
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState('records');
+  const [activeTab, setActiveTab] = useState('overview');
 
   const { data: project, isLoading, isError } = useProject(id);
   const updateMutation = useUpdateProject(id);
@@ -232,6 +236,7 @@ export default function CommandCenterShell({
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/5 blur-[120px] pointer-events-none rounded-full" />
 
         <div className="max-w-[1600px] mx-auto p-12 relative z-20 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          {activeTab === 'overview' && <ProjectDashboard projectId={id} />}
           {activeTab === 'records' && <RecordsTab projectId={id} />}
           {activeTab === 'schema' && <SchemaBuilderTab projectId={id} />}
           {activeTab === 'workflow' && <WorkflowBuilderTab projectId={id} />}

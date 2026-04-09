@@ -11,8 +11,6 @@ import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { ProjectPriority } from '@validiant/shared';
 import { ProjectsToolbar } from './ProjectsToolbar';
 import { EmptyState } from '@/components/ui/EmptyState';
-import DashboardEngine from '@/components/dashboard-engine/DashboardEngine';
-
 // ── Create modal ──────────────────────────────────────────────────────────────
 function CreateProjectModal({ onClose }: { onClose: (id?: string) => void }) {
   const createMutation = useCreateProject();
@@ -258,16 +256,6 @@ export default function ProjectsPage() {
         {/* Grid View - The Obsidian Stack with Dashboard Widgets */}
         {viewMode === 'grid' && filteredProjects.length > 0 && (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            {/* Dashboard Region */}
-            <div className="bg-surface-lowest/50 border border-[var(--color-border-base)]/20 rounded-[3rem] p-4">
-              <div className="flex items-center justify-between px-6 py-4 mb-2">
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
-                   Architectural Dashboard
-                </span>
-              </div>
-              <DashboardEngine orgId={orgSlug} />
-            </div>
-            
             {/* Standard Project Grid */}
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {filteredProjects.map((p) => (
