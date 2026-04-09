@@ -212,11 +212,6 @@ export default function RolesSettings() {
         roleId: selectedRole.id,
         newPermissionsTotal: pendingPermissions.length,
       });
-<<<<<<< Updated upstream
-
-=======
-      
->>>>>>> Stashed changes
       setHasChanges(false);
     } catch (err) {
       // eslint-disable-next-line no-console

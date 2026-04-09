@@ -58,8 +58,6 @@ export async function GET(request: Request) {
   // Safely delete cookies in a Route Handler (not allowed in Server Components)
   // CRITICAL: Uses explicit overwrite method for multiple potential domain scopes
   // (.validiant.in and host-only) to ensure browser compliance.
-<<<<<<< Updated upstream
-
   const isProd =
     process.env.NODE_ENV === 'production' ||
     process.env.NEXT_PUBLIC_APP_URL?.includes('validiant.in');
@@ -70,12 +68,6 @@ export async function GET(request: Request) {
     isProd ? '.validiant.in' : undefined,
   ].filter((d, i, arr) => arr.indexOf(d) === i); // Unique domains
 
-  const cookieNames = ['accessToken', 'refreshToken', 'user_id', 'oauth_state'];
-
-  console.warn(
-    '[SessionExpired] Starting multi-domain cookie clear (Finding 48)',
-=======
-  const domainsToClear = [COOKIE_OPTIONS.domain, '.validiant.in', undefined];
   const cookieNames = [
     'accessToken',
     'refreshToken',
@@ -85,8 +77,7 @@ export async function GET(request: Request) {
   ];
 
   console.warn(
-    '[SessionExpired] Starting AGGRESSIVE multi-domain cookie clear',
->>>>>>> Stashed changes
+    '[SessionExpired] Starting multi-domain cookie clear (Finding 48)',
     {
       domains: domainsToClear,
       names: cookieNames,
@@ -96,17 +87,6 @@ export async function GET(request: Request) {
 
   for (const domain of domainsToClear) {
     for (const name of cookieNames) {
-<<<<<<< Updated upstream
-      cookieStore.set({
-        name,
-        value: '',
-        expires: new Date(0),
-        path: '/',
-        secure: COOKIE_OPTIONS.secure,
-        sameSite: 'lax',
-        domain: domain as string | undefined, // Type cast for iteration
-      });
-=======
       try {
         cookieStore.set({
           name,
@@ -115,7 +95,7 @@ export async function GET(request: Request) {
           path: '/',
           secure: COOKIE_OPTIONS.secure,
           sameSite: 'lax',
-          domain,
+          domain: domain as string | undefined, // Type cast for iteration
         });
       } catch (err) {
         console.error(
@@ -123,7 +103,6 @@ export async function GET(request: Request) {
           err
         );
       }
->>>>>>> Stashed changes
     }
   }
 
@@ -131,8 +110,6 @@ export async function GET(request: Request) {
 
   // Redirect back to login, preserving the intended destination if provided
   const loginUrl = new URL(ROUTES.LOGIN, request.url);
-<<<<<<< Updated upstream
-
   // Normalize redirect param (sometimes it's 'redirect', sometimes 'from')
   const redirectToVal = redirectTo || searchParams.get('from');
   if (redirectToVal && redirectToVal.startsWith('/')) {
@@ -153,42 +130,18 @@ export async function GET(request: Request) {
     forceLogout: forceVal,
     target: loginUrl.pathname + loginUrl.search,
   });
-=======
-  
-  // 🔍 EXTREME VISIBILITY: Flag Propagation Hardening
-  const redirectParam = searchParams.get('redirect');
-  const reasonParam = searchParams.get('reason') || 'expired';
-  const forceParam = searchParams.get('force') || 'true';
-
-  if (redirectParam && redirectParam.startsWith('/')) {
-    loginUrl.searchParams.set('redirect', redirectParam);
-  }
-  
-  loginUrl.searchParams.set('reason', reasonParam);
-  loginUrl.searchParams.set(
-    'forceLogout',
-    forceParam === 'true' ? 'true' : 'true'
-  ); // Force true if we hit this route
->>>>>>> Stashed changes
 
   const response = NextResponse.redirect(loginUrl);
 
   // DEBUG: Inspect the headers that will be sent to the browser
   const setCookieHeaders = response.headers.getSetCookie();
 
-<<<<<<< Updated upstream
-  console.info('[SessionExpired] [EP-FINAL] Finalizing redirect', {
-=======
   console.info('[SessionExpired] Finalizing redirect with EXTREME VISIBILITY', {
->>>>>>> Stashed changes
     target: loginUrl.toString(),
-    reason: reasonParam,
-    force: forceParam,
+    reason: reasonVal,
+    force: forceVal,
     setCookieCount: setCookieHeaders.length,
-<<<<<<< Updated upstream
     setCookieHeaders: setCookieHeaders.map((h) => h.split(';')[0] + '; ...'), // Partial for security
-=======
->>>>>>> Stashed changes
     timestamp: new Date().toISOString(),
   });
 

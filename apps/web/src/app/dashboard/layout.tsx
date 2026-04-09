@@ -61,25 +61,18 @@ export default async function DashboardLayout({
         timestamp: new Date().toISOString(),
       }
     );
-<<<<<<< Updated upstream
-    // CRITICAL: Include reason=expired and force=true to prevent redirect loops in Middleware (Finding 48)
-    redirect(
-      `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(currentPath)}`
-=======
-
     // 🔍 EXTREME VISIBILITY: FORCED REDIRECT WITH LOOP PREVENTION FLAGS
     const redirectUrl = `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(
       currentPath
     )}`;
 
-    console.debug(
+    console.warn(
       '[Dashboard:Layout] EXTREME VISIBILITY: Loop Prevention flags set',
       {
         redirectUrl,
         reason,
         timestamp: new Date().toISOString(),
       }
->>>>>>> Stashed changes
     );
 
     redirect(redirectUrl);

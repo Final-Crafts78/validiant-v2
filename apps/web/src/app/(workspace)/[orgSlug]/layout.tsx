@@ -30,23 +30,16 @@ async function getData(): Promise<{
   const result = await getCurrentUserAction();
 
   if (!result.success || !result.user || !result.accessToken) {
-<<<<<<< Updated upstream
-    console.warn('[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED', {
-      reason: result.error,
+    const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
+    console.warn(`[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED`, {
+      reason: loginReason,
       timestamp: new Date().toISOString(),
     });
+
+    // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
     redirect(
       `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent('/dashboard')}`
     );
-=======
-    const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
-    console.warn(
-      `[Org Layout] [${Date.now()}] EP-U.ERR: Redirecting - ${loginReason}`
-    );
-
-    // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
-    redirect('/api/auth/session-expired?reason=expired&force=true');
->>>>>>> Stashed changes
   }
 
   const orgs = await getUserOrganizationsAction(result.accessToken);

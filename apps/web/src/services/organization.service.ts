@@ -14,14 +14,10 @@ export interface Organization {
   role?: string; // caller's role in this org
   memberCount?: number;
   projectCount?: number;
-<<<<<<< Updated upstream
-
   // Phase 6: Billing
   plan?: 'free' | 'pro' | 'enterprise';
   subscriptionStatus?: string;
   planExpiresAt?: string;
-=======
->>>>>>> Stashed changes
 }
 
 export interface OrgMember {
