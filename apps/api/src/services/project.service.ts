@@ -140,6 +140,17 @@ export const createProject = async (
       settings: {},
       createdBy: userId,
     })
+    .catch((err) => {
+      // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
+      const isMissingColumn = err.message.includes('column') || err.message.includes('not found');
+      logger.error('CRITICAL: Database failure during project creation', {
+        error: err.message,
+        isMissingColumn,
+        suggestion: isMissingColumn ? 'Run Phase 1 SQL migrations in Neon console' : 'Check backend logs for details',
+        data: { name: data.name, organizationId }
+      });
+      throw err;
+    })
     .returning({
       id: projects.id,
       organizationId: projects.organizationId,
