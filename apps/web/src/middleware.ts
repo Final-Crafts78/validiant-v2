@@ -145,7 +145,11 @@ export async function middleware(request: NextRequest) {
     const nodeEnv = process.env.NODE_ENV || 'MISSING';
 
     // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
     console.log(
+=======
+    console.debug(
+>>>>>>> Stashed changes
       `[MW:Edge] [${requestId}] EP-1.0.2: ENV - jwt=${jwtPresent}, api=${apiUrl}, app=${appUrl}, env=${nodeEnv}`
     );
 
@@ -169,10 +173,16 @@ export async function middleware(request: NextRequest) {
 
       const headerLength = rawCookieHeader?.length || 0;
       // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
       console.log(
         `[MW:Edge] [${requestId}] EP-0.1.1: Header length: ${headerLength}`
       );
 
+=======
+      console.debug(
+        `[MW:Edge] [${requestId}] EP-0.1.1: Header length: ${headerLength}`
+      );
+>>>>>>> Stashed changes
       if (rawCookieHeader) {
         // eslint-disable-next-line no-console
         console.log(`[MW:Edge] [${requestId}] EP-0.1.2: Parsing substrings`);
@@ -182,7 +192,11 @@ export async function middleware(request: NextRequest) {
         cookieScan = parts.map((c) => c.split('=')[0]?.trim() || 'MALFORMED');
 
         // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
         console.log(
+=======
+        console.debug(
+>>>>>>> Stashed changes
           `[MW:Edge] [${requestId}] EP-0.1.3: Names: ${cookieScan.join(', ')}`
         );
       }
@@ -199,7 +213,11 @@ export async function middleware(request: NextRequest) {
     const userId = getSafeCookie(request, 'user_id', requestId);
 
     // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
     console.log(
+=======
+    console.debug(
+>>>>>>> Stashed changes
       `[MW:Edge] [${requestId}] EP-2: Single cookies: access=${!!accessToken}, refresh=${!!refreshToken}, user=${!!userId}`
     );
 
@@ -209,7 +227,11 @@ export async function middleware(request: NextRequest) {
     const isSemiPublic = matchesRoute(pathname, SEMI_PUBLIC_ROUTES);
 
     // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
     console.log(
+=======
+    console.debug(
+>>>>>>> Stashed changes
       `[MW:Edge] [${requestId}] EP-3: Logic Match - protected=${isProtectedRoute}, auth=${isAuthRoute}, semi=${isSemiPublic}`
     );
 
@@ -231,7 +253,11 @@ export async function middleware(request: NextRequest) {
       }));
 
       // eslint-disable-next-line no-console
+<<<<<<< Updated upstream
       console.log(
+=======
+      console.debug(
+>>>>>>> Stashed changes
         `[MW:Edge] [${requestId}] EP-5: getAll() end, count=${cookieCount}`
       );
     } catch (cookieErr: unknown) {
@@ -301,6 +327,7 @@ export async function middleware(request: NextRequest) {
         isAuthenticated,
         authFailureReason,
         tokenLength: accessTokenValue.length,
+        secretFP,
         timestamp: new Date().toISOString(),
       }
     );
@@ -329,15 +356,19 @@ export async function middleware(request: NextRequest) {
       // eslint-disable-next-line no-console
       console.warn(
         `
-        [MW:Edge] [${requestId}] EP-8: Force logout detected
+        [MW:Edge] [${requestId}] EP-8: FORCE LOGOUT / EXPIRED SESSION DETECTED
       `,
         {
           pathname,
           forceLogout,
           reason,
+          isAuthenticated,
           timestamp: new Date().toISOString(),
+          audit: 'CRITICAL_BYPASS_AUTHORIZED',
         }
       );
+      // 🔥 EXTREME VISIBILITY: This bypasses all further authentication checks
+      // and lets the user land on the login page even if they have a stale cookie.
       return NextResponse.next();
     }
 
@@ -377,6 +408,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Redirect authenticated users from auth pages to dashboard
+<<<<<<< Updated upstream
     // CRITICAL: We MUST NOT redirect if forceLogout or reason=expired is present,
     // as that indicates a session cleanup is in progress (Finding 48 Loop Prevention)
     if (
@@ -388,6 +420,27 @@ export async function middleware(request: NextRequest) {
       const destParam =
         request.nextUrl.searchParams.get('redirect') ||
         request.nextUrl.searchParams.get('from'); // Standard query param
+=======
+    if (isAuthRoute && isAuthenticated) {
+      // 🔍 EXTREME VISIBILITY: Double check for loop indicators before redirecting
+      const forceFlag = request.nextUrl.searchParams.get('forceLogout');
+      const reasonFlag = request.nextUrl.searchParams.get('reason');
+
+      if (forceFlag === 'true' || reasonFlag === 'expired') {
+        console.warn(
+          `[MW:Edge] [${requestId}] EP-10.LOOP_PREVENT: Stale token detected but flags prevent redirect loop.`,
+          {
+            pathname,
+            forceFlag,
+            reasonFlag,
+            timestamp: new Date().toISOString(),
+          }
+        );
+        return NextResponse.next();
+      }
+
+      const destParam = request.nextUrl.searchParams.get('redirect');
+>>>>>>> Stashed changes
       const dest = destParam ? decodeURIComponent(destParam) : '/dashboard';
 
       // eslint-disable-next-line no-console

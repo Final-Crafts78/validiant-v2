@@ -23,13 +23,14 @@ import {
 export const dynamic = 'force-dynamic';
 
 async function getData(): Promise<{
-  user: any;
-  orgs: any[];
+  user: import('@/types/auth.types').AuthUser;
+  orgs: import('@/types/auth.types').Organization[];
   accessToken: string;
 }> {
   const result = await getCurrentUserAction();
 
   if (!result.success || !result.user || !result.accessToken) {
+<<<<<<< Updated upstream
     console.warn('[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED', {
       reason: result.error,
       timestamp: new Date().toISOString(),
@@ -37,6 +38,15 @@ async function getData(): Promise<{
     redirect(
       `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent('/dashboard')}`
     );
+=======
+    const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
+    console.warn(
+      `[Org Layout] [${Date.now()}] EP-U.ERR: Redirecting - ${loginReason}`
+    );
+
+    // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
+    redirect('/api/auth/session-expired?reason=expired&force=true');
+>>>>>>> Stashed changes
   }
 
   const orgs = await getUserOrganizationsAction(result.accessToken);

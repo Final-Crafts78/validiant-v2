@@ -61,10 +61,28 @@ export default async function DashboardLayout({
         timestamp: new Date().toISOString(),
       }
     );
+<<<<<<< Updated upstream
     // CRITICAL: Include reason=expired and force=true to prevent redirect loops in Middleware (Finding 48)
     redirect(
       `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(currentPath)}`
+=======
+
+    // 🔍 EXTREME VISIBILITY: FORCED REDIRECT WITH LOOP PREVENTION FLAGS
+    const redirectUrl = `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent(
+      currentPath
+    )}`;
+
+    console.debug(
+      '[Dashboard:Layout] EXTREME VISIBILITY: Loop Prevention flags set',
+      {
+        redirectUrl,
+        reason,
+        timestamp: new Date().toISOString(),
+      }
+>>>>>>> Stashed changes
     );
+
+    redirect(redirectUrl);
   }
 
   const { user, accessToken } = result;
@@ -106,10 +124,11 @@ export default async function DashboardLayout({
         {children}
       </>
     );
-  } catch (renderErr: any) {
+  } catch (renderErr: unknown) {
+    const error = renderErr as Error;
     console.error('[Dashboard:Layout] CRITICAL RENDER FAILURE', {
-      message: renderErr.message,
-      stack: renderErr.stack,
+      message: error.message,
+      stack: error.stack,
       timestamp: new Date().toISOString(),
     });
     throw renderErr; // Re-throw so Next.js handles the 500 but we have the log
