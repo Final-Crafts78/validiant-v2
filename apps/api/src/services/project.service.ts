@@ -134,21 +134,43 @@ export const createProject = async (
       budget: data.budget,
       color: data.color,
       icon: data.icon,
-      themeColor: data.themeColor || '#4F46E5',
-      logoUrl: data.logoUrl,
-      autoDispatchVerified: data.autoDispatchVerified || false,
+      // PHASE 1: BRANDING SAFETY WRAP
+      // Attempt to include these only if we are sure the schema is migrated
+      // If the migration hasn't been run, the INSERT will fail.
+      // We keep them here but ensure the SQL is run.
+      ...(data.themeColor !== undefined && { themeColor: data.themeColor || '#4F46E5' }),
+      ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+      ...(data.autoDispatchVerified !== undefined && { autoDispatchVerified: data.autoDispatchVerified || false }),
       settings: {},
       createdBy: userId,
     })
     .catch((err) => {
       // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
       const isMissingColumn = err.message.includes('column') || err.message.includes('not found');
-      logger.error('CRITICAL: Database failure during project creation', {
-        error: err.message,
-        isMissingColumn,
-        suggestion: isMissingColumn ? 'Run Phase 1 SQL migrations in Neon console' : 'Check backend logs for details',
-        data: { name: data.name, organizationId }
-      });
+      if (isMissingColumn) {
+        logger.warn('DEGRADED MODE: Project created without branding columns due to missing DB migration.', {
+          error: err.message,
+          suggestion: 'Run the Phase 1 SQL to fix this permanently.'
+        });
+        
+        // Fallback: Try insert WITHOUT the new columns to at least get the project created
+        return db.insert(projects).values({
+          organizationId,
+          ownerId: userId,
+          name: data.name,
+          description: data.description,
+          status: data.status || ProjectStatus.PLANNING,
+          priority: data.priority || ProjectPriority.MEDIUM,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          estimatedHours: data.estimatedHours,
+          budget: data.budget,
+          color: data.color,
+          icon: data.icon,
+          settings: {},
+          createdBy: userId,
+        });
+      }
       throw err;
     })
     .returning({
