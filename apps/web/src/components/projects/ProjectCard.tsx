@@ -87,7 +87,16 @@ export function ProjectCard({
 
   return (
     <button
-      onClick={() => router.push(`/${orgSlug}/projects/${project.id}`)}
+      onClick={() => {
+        console.debug('[ProjectCard] Navigation event triggered', {
+          orgSlug,
+          projectId: project.id,
+          isOrgSlugUUID: /^[0-9a-f]{8}-/.test(orgSlug),
+          targetUrl: `/${orgSlug}/projects/${project.id}`,
+          timestamp: new Date().toISOString(),
+        });
+        router.push(`/${orgSlug}/projects/${project.id}`);
+      }}
       className={cn(
         'group relative flex flex-col w-full text-left transition-premium',
         'bg-surface-container-low hover:bg-surface-soft rounded-[2.5rem] p-10',

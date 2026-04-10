@@ -41,6 +41,16 @@ export function WorkspaceInitializer({ orgs, urlOrgSlug }: WorkspaceInitializerP
       }
 
       const currentSlug = state.activeOrgSlug;
+
+      console.debug('[Workspace:Init] Org sync decision details', {
+        urlOrgSlug,
+        currentOrgId,
+        currentSlug,
+        targetOrg: targetOrg ? { id: targetOrg.id, slug: targetOrg.slug, name: targetOrg.name } : 'NONE',
+        isSlugUUID: urlOrgSlug ? /^[0-9a-f]{8}-/.test(urlOrgSlug) : false,
+        timestamp: new Date().toISOString(),
+      });
+
       if (targetOrg && (targetOrg.id !== currentOrgId || targetOrg.slug !== currentSlug)) {
         console.info('[Workspace] Syncing org context from URL:', targetOrg.slug);
         state.setActiveOrg(targetOrg.id, targetOrg.slug || '', targetOrg.settings?.brandConfig);

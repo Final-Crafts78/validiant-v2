@@ -88,14 +88,35 @@ export default async function OrgLayout({
 }) {
   const { user, orgs, accessToken } = await getData();
 
+  // 🔍 EXTREME VISIBILITY: Diagnostic Slug Resolution
+  console.debug('[Org:Layout] SLUG RESOLUTION START', {
+    urlOrgSlug: params.orgSlug,
+    orgCount: orgs.length,
+    orgSlugs: orgs.map(o => ({ id: o.id, slug: o.slug })),
+    isUUID: /^[0-9a-f]{8}-/.test(params.orgSlug),
+    timestamp: new Date().toISOString(),
+  });
+
   // Validate the slug exists in user's orgs
-  const activeOrg = orgs.find((o) => o.slug === params.orgSlug);
+  // Logic: Try slug match first, then fallback to ID match for legacy/desynced links
+  const activeOrg = orgs.find((o) => o.slug === params.orgSlug) || 
+                    orgs.find((o) => o.id === params.orgSlug);
+
+  const matchMethod = orgs.find((o) => o.slug === params.orgSlug) ? 'BY_SLUG' : 
+                    orgs.find((o) => o.id === params.orgSlug) ? 'BY_ID_FALLBACK' : 'NO_MATCH';
+
+  console.info('[Org:Layout] SLUG RESOLUTION DECISION', {
+    matchMethod,
+    activeOrg: activeOrg ? { id: activeOrg.id, slug: activeOrg.slug } : 'NOT_FOUND',
+    urlOrgSlug: params.orgSlug,
+    timestamp: new Date().toISOString(),
+  });
 
   // If org doesn't exist or slug is invalid for this user, check if we should redirect
   // For now, if not found, we redirect to onboarding or global dashboard
   if (!activeOrg && params.orgSlug !== 'new') {
     logger.warn(
-      `[Org Layout] Org slug ${params.orgSlug} not found in user orgs`
+      `[Org Layout] Org slug/ID ${params.orgSlug} not found in user orgs - REDIRECTING TO ONBOARDING`
     );
     redirect(ROUTES.ONBOARDING);
   }

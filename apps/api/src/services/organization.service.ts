@@ -122,6 +122,15 @@ export const createOrganization = async (
   // Generate unique slug
   const slug = await generateSlug(data.name);
 
+  // Procedural debugging: EXTREME VISIBILITY for organization creation
+  console.debug('[Service:Org:Create] Starting DB INSERT attempt', {
+    name: data.name,
+    slug,
+    ownerId: userId,
+    industryType: data.industryType,
+    timestamp: new Date().toISOString()
+  });
+
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Create organization
   const newOrgResult = await db
@@ -149,7 +158,18 @@ export const createOrganization = async (
       createdAt: organizations.createdAt,
       updatedAt: organizations.updatedAt,
     });
+
   const newOrg = newOrgResult[0];
+  if (!newOrg) {
+    console.error('[Service:Org:Create] DB INSERT returned empty result');
+    throw new Error('FAILED_TO_CREATE_ORGANIZATION_DB');
+  }
+
+  console.info('[Service:Org:Create] DB INSERT success', {
+    id: newOrg.id,
+    slug: newOrg.slug,
+    timestamp: new Date().toISOString()
+  });
 
   try {
     // 2. Add creator as owner

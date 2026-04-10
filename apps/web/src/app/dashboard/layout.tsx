@@ -98,6 +98,15 @@ export default async function DashboardLayout({
     currentPath,
   });
 
+  console.debug('[Dashboard:Layout] ONBOARDING DECISION', {
+    orgCount: orgs.length,
+    currentPath,
+    willRedirect: orgs.length === 0 && !currentPath.includes('/dashboard/onboarding'),
+    orgIds: orgs.map(o => o.id),
+    orgSlugs: orgs.map(o => o.slug),
+    timestamp: new Date().toISOString(),
+  });
+
   if (orgs.length === 0 && !currentPath.includes('/dashboard/onboarding')) {
     console.warn(
       '[Dashboard:Layout] Redirecting to ONBOARDING - No organizations found'
