@@ -27,28 +27,56 @@ async function getData(): Promise<{
   orgs: import('@/types/auth.types').Organization[];
   accessToken: string;
 }> {
-  const result = await getCurrentUserAction();
+  console.debug('[Org:Layout] Starting getData() diagnostic fetch');
+  
+  try {
+    const result = await getCurrentUserAction();
 
-  if (!result.success || !result.user || !result.accessToken) {
-    const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
-    console.warn(`[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED`, {
-      reason: loginReason,
-      timestamp: new Date().toISOString(),
+    console.debug('[Org:Layout] getCurrentUserAction result', {
+      success: result.success,
+      hasUser: !!result.user,
+      error: result.error,
+      timestamp: new Date().toISOString()
     });
 
-    // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
-    redirect(
-      `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent('/dashboard')}`
-    );
+    if (!result.success || !result.user || !result.accessToken) {
+      const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
+      console.warn(`[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED`, {
+        reason: loginReason,
+        timestamp: new Date().toISOString(),
+      });
+
+      // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
+      redirect(
+        `/api/auth/session-expired?reason=expired&force=true&redirect=${encodeURIComponent('/dashboard')}`
+      );
+    }
+
+    console.debug('[Org:Layout] Fetching organizations for user', {
+      email: result.user.email,
+      timestamp: new Date().toISOString()
+    });
+
+    const orgs = await getUserOrganizationsAction(result.accessToken);
+
+    console.debug('[Org:Layout] fetchOrganizations success', {
+      count: orgs.length,
+      timestamp: new Date().toISOString()
+    });
+
+    return {
+      user: result.user,
+      orgs,
+      accessToken: result.accessToken,
+    };
+  } catch (err) {
+    console.error('[Org:Layout] CRITICAL getData() CRASH', {
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+    throw err;
   }
-
-  const orgs = await getUserOrganizationsAction(result.accessToken);
-
-  return {
-    user: result.user,
-    orgs,
-    accessToken: result.accessToken,
-  };
 }
 
 export default async function OrgLayout({

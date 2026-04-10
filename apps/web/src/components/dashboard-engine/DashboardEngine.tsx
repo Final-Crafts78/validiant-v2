@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
-import ReactGridLayout, { Responsive as ResponsiveGridLayoutRaw } from 'react-grid-layout';
+import { ResponsiveGridLayout, useContainerWidth, verticalCompactor } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { DashboardLayout, LayoutItem } from './types';
@@ -9,7 +9,7 @@ import { getWidgetDefinition, getAllWidgets } from './WidgetRegistry';
 import { WidgetShell } from './WidgetShell';
 import { Settings2, Plus, X } from 'lucide-react';
 
-const ResponsiveGridLayout = (ReactGridLayout as any).WidthProvider(ResponsiveGridLayoutRaw);
+// REMOVED: Deprecated WidthProvider HOC (Finding 49)
 
 interface DashboardEngineProps {
   orgId: string;
@@ -20,6 +20,9 @@ export default function DashboardEngine({ orgId, projectId }: DashboardEnginePro
   const [isEditing, setIsEditing] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isAddWidgetOpen, setIsAddWidgetOpen] = useState(false);
+  
+  // 🔍 MODERN WIDTH DETECTION (Finding 49 Fix)
+  const { width, containerRef } = useContainerWidth();
   
   // Safe SSR check
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function DashboardEngine({ orgId, projectId }: DashboardEnginePro
     ]
   });
 
-  const onLayoutChange = (currentLayout: any[]) => {
+  const onLayoutChange = (currentLayout: readonly any[]) => {
     if (!isEditing) return;
     
     setLayout(prev => ({
@@ -104,7 +107,7 @@ export default function DashboardEngine({ orgId, projectId }: DashboardEnginePro
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full relative">
+    <div ref={containerRef as any} className="flex flex-col gap-4 w-full h-full relative">
       {/* Dashboard Toolbar */}
       <div className="flex justify-end items-center sticky top-0 z-40 mb-2 mt-4 px-2">
         {isEditing ? (
@@ -173,15 +176,14 @@ export default function DashboardEngine({ orgId, projectId }: DashboardEnginePro
         layouts={{ lg: rglLayout }}
         breakpoints={{ lg: 1200, md: 768, sm: 480, xs: 0 }}
         cols={{ lg: 12, md: 6, sm: 2, xs: 1 }}
+        width={width} // CRITICAL: Explicitly pass width from hook
         rowHeight={80} // Base unit height
         onLayoutChange={onLayoutChange}
-        isDraggable={isEditing}
-        isResizable={isEditing}
-        draggableHandle=".drag-handle"
+        dragConfig={{ enabled: isEditing, handle: ".drag-handle" }}
+        resizeConfig={{ enabled: isEditing }}
         margin={[16, 16]}
         containerPadding={[16, 16]}
-        compactType="vertical"
-        useCSSTransforms={true}
+        compactor={verticalCompactor}
       >
         {layout.widgets.map(item => {
           const def = getWidgetDefinition(item.widgetId);

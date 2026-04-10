@@ -405,8 +405,9 @@ export const getCurrentUserAction = cache(
       }
 
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U2: Fetching /auth/me`);
+      console.log(`[BFF:GetUser] [${Date.now()}] EP-U2: Fetching /auth/me from ${API_BASE_URL}`);
 
+      const startTime = Date.now();
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
         method: 'GET',
         headers: {
@@ -417,9 +418,10 @@ export const getCurrentUserAction = cache(
         cache: 'no-store',
       });
 
+      const duration = Date.now() - startTime;
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetUser] [${Date.now()}] EP-U3: Response status=${response.status}`
+        `[BFF:GetUser] [${Date.now()}] EP-U3: Response status=${response.status}, took ${duration}ms`
       );
 
       if (response.status === 401 || response.status === 403) {
@@ -502,7 +504,8 @@ export const getUserOrganizationsAction = cache(
   async (accessToken: string): Promise<Organization[]> => {
     try {
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetOrgs] [${Date.now()}] EP-O1: Fetching orgs`);
+      console.log(`[BFF:GetOrgs] [${Date.now()}] EP-O1: Fetching orgs from ${API_BASE_URL}`);
+      const startTime = Date.now();
       const response = await fetch(`${API_BASE_URL}/organizations/my`, {
         method: 'GET',
         headers: {
@@ -521,9 +524,11 @@ export const getUserOrganizationsAction = cache(
       }
 
       const data = await response.json();
+      const duration = Date.now() - startTime;
+      const orgCount = data?.data?.organizations?.length || 0;
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${data?.data?.organizations?.length || 0}`
+        `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${orgCount}, took ${duration}ms`
       );
       return data?.data?.organizations ?? [];
     } catch (error) {

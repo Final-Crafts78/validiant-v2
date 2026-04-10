@@ -139,21 +139,45 @@ export async function middleware(request: NextRequest) {
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-1.0.1: Env Audit Starting`);
 
-    const jwtPresent = !!process.env.JWT_SECRET;
+    let jwtPresent = false;
+    try {
+      jwtPresent = !!process.env.JWT_SECRET;
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-1.0.1.A: JWT_SECRET check done: ${jwtPresent}`);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`[MW:Edge] [${requestId}] EP-1.0.1.ERROR: JWT_SECRET access failed`, e);
+    }
+
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'MISSING';
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.1.B: API_URL: ${apiUrl}`);
+
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'MISSING';
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.1.C: APP_URL: ${appUrl}`);
+
     const nodeEnv = process.env.NODE_ENV || 'MISSING';
+    // eslint-disable-next-line no-console
+    console.log(`[MW:Edge] [${requestId}] EP-1.0.1.D: NODE_ENV: ${nodeEnv}`);
 
     // eslint-disable-next-line no-console
     console.log(
-      `[MW:Edge] [${requestId}] EP-1.0.2: ENV - jwt=${jwtPresent}, api=${apiUrl}, app=${appUrl}, env=${nodeEnv}`
+      `[MW:Edge] [${requestId}] EP-1.0.2: ENV check complete`
     );
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-1.0.3: Fingerprint calc start`);
-    const secretFP = await getSecretFingerprint();
-    // eslint-disable-next-line no-console
-    console.log(`[MW:Edge] [${requestId}] EP-1.0.4: FP Value: ${secretFP}`);
+    let secretFP = 'PENDING';
+    try {
+      secretFP = await getSecretFingerprint();
+      // eslint-disable-next-line no-console
+      console.log(`[MW:Edge] [${requestId}] EP-1.0.4: FP Value Success: ${secretFP}`);
+    } catch (fpErr) {
+       // eslint-disable-next-line no-console
+       console.error(`[MW:Edge] [${requestId}] EP-1.0.4.ERROR: FP Calc failed`, fpErr);
+       secretFP = 'ERROR';
+    }
 
     // eslint-disable-next-line no-console
     console.log(`[MW:Edge] [${requestId}] EP-1.0.5: Path: ${pathname}`);
