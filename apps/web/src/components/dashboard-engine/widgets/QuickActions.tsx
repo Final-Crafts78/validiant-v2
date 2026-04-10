@@ -4,14 +4,17 @@ import React from 'react';
 import { WidgetProps } from '../types';
 import { FolderPlus, CheckSquare, Users, Settings, Activity } from 'lucide-react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 export default function QuickActions({ orgId, isEditing }: WidgetProps) {
+  const params = useParams();
+  const orgSlug = params?.orgSlug as string;
   const actions = [
     { name: 'New Project', icon: FolderPlus, color: 'text-blue-500', bg: 'bg-blue-500/10', onClick: () => console.log('Create project') },
     { name: 'Add Task', icon: CheckSquare, color: 'text-green-500', bg: 'bg-green-500/10', onClick: () => console.log('Create task') },
     { name: 'Invite Member', icon: Users, color: 'text-purple-500', bg: 'bg-purple-500/10', onClick: () => console.log('Invite') },
-    { name: 'Analytics', icon: Activity, color: 'text-orange-500', bg: 'bg-orange-500/10', href: `/${orgId}/analytics` },
-    { name: 'Settings', icon: Settings, color: 'text-gray-500', bg: 'bg-gray-500/10', href: `/${orgId}/settings` },
+    { name: 'Analytics', icon: Activity, color: 'text-orange-500', bg: 'bg-orange-500/10', href: `/${orgSlug}/analytics` },
+    { name: 'Settings', icon: Settings, color: 'text-gray-500', bg: 'bg-gray-500/10', href: `/${orgSlug}/settings` },
   ];
 
   return (

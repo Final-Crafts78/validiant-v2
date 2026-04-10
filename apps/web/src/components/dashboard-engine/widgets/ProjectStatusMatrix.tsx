@@ -5,8 +5,11 @@ import { WidgetProps } from '../types';
 import { useProjects } from '@/hooks/useProjects';
 import { FolderKanban } from 'lucide-react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
+  const params = useParams();
+  const orgSlug = params?.orgSlug as string;
   const { data: projects, isLoading } = useProjects();
 
   if (isLoading) {
@@ -32,7 +35,7 @@ export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
         {projects.slice(0, 6).map((project) => (
           <Link
             key={project.id}
-            href={`/${orgId}/projects/${project.id}`}
+            href={`/${orgSlug}/projects/${project.id}`}
             onClick={(e) => {
                if (isEditing) e.preventDefault();
             }}
@@ -56,7 +59,7 @@ export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
       </div>
       <div className="mt-auto flex justify-end">
         <Link 
-          href={`/${orgId}/projects`}
+          href={`/${orgSlug}/projects`}
           className={`text-xs font-bold text-primary hover:text-primary/80 ${isEditing ? 'pointer-events-none' : ''}`}
         >
           View All Projects →

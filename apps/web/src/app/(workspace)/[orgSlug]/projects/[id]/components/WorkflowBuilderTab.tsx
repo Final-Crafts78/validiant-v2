@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { logger } from '@/lib/logger';
+import { MobileSchemaPreview } from './schema/MobileSchemaPreview';
+import { ColumnType } from '@validiant/shared';
 
 const FIELD_TYPES = [
   { value: 'text', label: 'Short Text', backendType: 'text' },
@@ -145,13 +147,14 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl pb-24">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">
-            Dynamic Workflow Builder
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">
+    <div className="flex gap-8 items-start h-full relative w-full">
+      <div className="flex-1 space-y-6 max-w-4xl pb-24 overflow-y-auto custom-scrollbar">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-[var(--color-text-base)]">
+              Dynamic Workflow Builder
+            </h2>
+            <p className="text-sm text-[var(--color-text-muted)] mt-1">
             Construct the exact data collection requirements and visibility
             rules for field executives.
           </p>
@@ -172,31 +175,31 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
 
       <div className="space-y-4">
         {fields.length === 0 ? (
-          <div className="bg-white border-2 border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">
+          <div className="bg-[var(--color-surface-container-low)] border-2 border-dashed border-[var(--color-border-subtle)] rounded-xl p-12 text-center text-[var(--color-text-muted)]">
             No fields configured yet. Start building your custom workflow!
           </div>
         ) : (
           fields.map((field, idx) => (
             <div
               key={idx}
-              className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col md:flex-row"
+              className="bg-[var(--color-surface-container-low)] border border-[var(--color-border-subtle)] rounded-xl shadow-sm overflow-hidden flex flex-col md:flex-row"
             >
               {/* Drag handle / Actions sidebar */}
-              <div className="bg-slate-50 border-r border-slate-200 p-3 flex flex-row md:flex-col items-center justify-center gap-2">
+              <div className="bg-[var(--color-surface-muted)]/30 border-r border-[var(--color-border-subtle)] p-3 flex flex-row md:flex-col items-center justify-center gap-2">
                 <button
                   onClick={() => moveField(idx, 'up')}
                   disabled={idx === 0}
-                  className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30"
+                  className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] disabled:opacity-30"
                 >
                   <ArrowUp className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-xs font-bold text-[var(--color-text-muted)]">
                   {idx + 1}
                 </span>
                 <button
                   onClick={() => moveField(idx, 'down')}
                   disabled={idx === fields.length - 1}
-                  className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30"
+                  className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-base)] disabled:opacity-30"
                 >
                   <ArrowDown className="w-4 h-4" />
                 </button>
@@ -206,7 +209,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
               <div className="p-5 flex-1 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                    <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-1.5">
                       Field Label
                     </label>
                     <input
@@ -215,19 +218,19 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                       onChange={(e) =>
                         updateField(idx, 'label', e.target.value)
                       }
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                      className="input py-2 text-sm"
                       placeholder="e.g. Identity Document Front"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                    <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-1.5">
                       Database Key
                     </label>
                     <input
                       type="text"
                       value={field.key || field.fieldKey}
                       onChange={(e) => updateField(idx, 'key', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 font-mono text-indigo-700 focus:ring-2 focus:ring-indigo-500"
+                      className="input py-2 text-sm bg-transparent font-mono text-primary outline-dashed outline-1 outline-[var(--color-border-subtle)] focus:outline-primary border-none"
                       placeholder="e.g. id_front"
                     />
                   </div>
@@ -235,32 +238,32 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                    <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-1.5">
                       Input Type
                     </label>
                     <select
                       value={field.type}
                       onChange={(e) => updateField(idx, 'type', e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 bg-white rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-indigo-500"
+                      className="input py-2 text-sm max-w-full"
                     >
                       {FIELD_TYPES.map((ft) => (
-                        <option key={ft.value} value={ft.value}>
+                        <option key={ft.value} value={ft.value} className="bg-[var(--color-surface-base)] text-[var(--color-text-base)]">
                           {ft.label}
                         </option>
                       ))}
                     </select>
                   </div>
                   <div className="flex items-center pt-6">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={field.isRequired || field.required}
                         onChange={(e) =>
                           updateField(idx, 'isRequired', e.target.checked)
                         }
-                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500"
+                        className="w-4 h-4 text-primary rounded border-[var(--color-border-subtle)] focus:ring-primary focus:ring-offset-[var(--color-surface-container-low)] bg-transparent"
                       />
-                      <span className="text-sm font-semibold text-slate-700">
+                      <span className="text-sm font-semibold text-[var(--color-text-base)] group-hover:text-primary transition-colors">
                         Required Field
                       </span>
                     </label>
@@ -268,17 +271,17 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                 </div>
 
                 {/* Granular RBAC */}
-                <div className="pt-3 mt-3 border-t border-slate-100">
+                <div className="pt-3 mt-3 border-t border-[var(--color-border-subtle)]">
                   <div className="flex items-center gap-2 mb-3">
                     <Shield className="w-4 h-4 text-emerald-500" />
-                    <h4 className="text-sm font-bold text-slate-800">
+                    <h4 className="text-sm font-bold text-[var(--color-text-base)]">
                       Field-Level Security (RBAC)
                     </h4>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 mb-2">
+                      <label className="block text-xs font-semibold text-[var(--color-text-muted)] mb-2">
                         Read Access (Who can view this?)
                       </label>
                       <div className="flex gap-2 flex-wrap">
@@ -286,7 +289,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                           <label
                             key={role.value}
                             className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer transition-colors
-                                  ${(field.visibleTo || field.readRoles)?.includes(role.value) ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
+                                  ${(field.visibleTo || field.readRoles)?.includes(role.value) ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-transparent border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:border-[var(--color-border-base)]'}
                                `}
                           >
                             <input
@@ -313,7 +316,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-500 mb-2">
+                      <label className="block text-xs font-semibold text-[var(--color-text-muted)] mb-2">
                         Write Access (Who can fill this?)
                       </label>
                       <div className="flex gap-2 flex-wrap">
@@ -322,7 +325,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                             <label
                               key={role.value}
                               className={`px-2.5 py-1 text-xs font-medium rounded-full border cursor-pointer transition-colors
-                                  ${(field.editableBy || field.writeRoles)?.includes(role.value) ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}
+                                  ${(field.editableBy || field.writeRoles)?.includes(role.value) ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-transparent border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:border-[var(--color-border-base)]'}
                                `}
                             >
                               <input
@@ -358,7 +361,7 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
 
                 {/* Sub-config based on type */}
                 {['photo-request'].includes(field.type) && (
-                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg mt-3">
+                  <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg mt-3">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
                         type="checkbox"
@@ -369,13 +372,13 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
                             requireGeoTag: e.target.checked,
                           })
                         }
-                        className="w-4 h-4 text-amber-600 rounded border-amber-300 focus:ring-amber-500"
+                        className="w-4 h-4 text-amber-500 rounded border-[var(--color-border-subtle)] bg-transparent focus:ring-amber-500 focus:ring-offset-[var(--color-surface-container-low)]"
                       />
-                      <span className="text-sm font-semibold text-amber-900">
+                      <span className="text-sm font-semibold text-amber-500">
                         Enforce Hard-GPS Geotagging
                       </span>
                     </label>
-                    <p className="text-xs text-amber-700 ml-6 mt-1">
+                    <p className="text-xs text-amber-500/60 ml-6 mt-1">
                       If enabled, Field Executives cannot submit without
                       matching active GPS location.
                     </p>
@@ -384,10 +387,10 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
               </div>
 
               {/* Delete Action */}
-              <div className="p-3 border-t md:border-t-0 md:border-l border-slate-100 flex items-center justify-center bg-slate-50">
+              <div className="p-3 border-t md:border-t-0 md:border-l border-[var(--color-border-subtle)] flex items-center justify-center bg-[var(--color-surface-muted)]/30">
                 <button
                   onClick={() => removeField(idx)}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-[var(--color-text-muted)] hover:text-rose-400 hover:bg-rose-400/10 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
@@ -398,10 +401,34 @@ export function WorkflowBuilderTab({ projectId }: { projectId: string }) {
 
         <button
           onClick={addField}
-          className="w-full py-4 border-2 border-dashed border-indigo-200 rounded-xl text-indigo-600 font-semibold hover:bg-indigo-50 hover:border-indigo-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-4 border-2 border-dashed border-primary/40 rounded-xl text-primary font-semibold hover:bg-primary/5 hover:border-primary/60 transition-colors flex items-center justify-center gap-2 mb-8"
         >
           <Plus className="w-5 h-5" /> Add New Field
         </button>
+      </div>
+      </div>
+      
+      {/* Live Preview */}
+      <div className="hidden lg:block sticky top-0 self-start">
+        <MobileSchemaPreview 
+          typeName={schemaId ? `Protocol: ${schemaId.substring(0,6).toUpperCase()}` : "Dynamic Schema"} 
+          columns={fields.map((f, i) => ({
+            id: f.key || `field_${i}`,
+            projectId: projectId,
+            typeId: schemaId || '',
+            name: f.label || 'Untitled Field',
+            key: f.key || f.fieldKey || `field_${i}`,
+            columnType: 
+              f.type === 'boolean' ? ColumnType.CHECKBOX : 
+              f.type === 'photo-request' ? ColumnType.PHOTO_CAPTURE : 
+              f.type === 'signature' ? ColumnType.SIGNATURE : 
+              f.type === 'pdf-upload' ? ColumnType.FILE_UPLOAD : 
+              f.type === 'textarea' ? ColumnType.LONG_TEXT :
+              ColumnType.TEXT,
+            order: i,
+            settings: { required: f.isRequired || f.required }
+          }))} 
+        />
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ function GeneralDashboard({
 
   // Extract first name from fullName with null-safety
   const firstName = useMemo(() => {
-    if (!user || !user.fullName) return 'Enterprise User';
+    if (!user || !user.fullName || user.fullName === 'null' || user.fullName.trim() === '') return 'Enterprise User';
     const parts = user.fullName.trim().split(' ');
     return parts[0] || user.fullName;
   }, [user]);
