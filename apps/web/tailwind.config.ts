@@ -1,5 +1,14 @@
 import type { Config } from 'tailwindcss';
 
+function asColor(variable: string) {
+  return ({ opacityValue }: { opacityValue?: string | number }) => {
+    if (opacityValue !== undefined) {
+      return `color-mix(in srgb, var(${variable}) ${Number(opacityValue) * 100}%, transparent)`;
+    }
+    return `var(${variable})`;
+  };
+}
+
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,68 +19,68 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'var(--color-surface-base)',
-        foreground: 'var(--color-text-base)',
+        background: asColor('--color-surface-base'),
+        foreground: asColor('--color-text-base'),
         primary: {
-          DEFAULT: 'var(--color-accent-base)',
-          foreground: 'var(--color-accent-text)',
-          container: 'var(--color-accent-strong)',
+          DEFAULT: asColor('--color-accent-base'),
+          foreground: asColor('--color-accent-text'),
+          container: asColor('--color-accent-strong'),
           glow: '#adc6ff',
         },
         secondary: {
-          DEFAULT: 'var(--color-surface-muted)',
-          foreground: 'var(--color-text-base)',
-          container: 'var(--color-secondary-container)',
-          'on-container': 'var(--color-on-secondary-container)',
+          DEFAULT: asColor('--color-surface-muted'),
+          foreground: asColor('--color-text-base'),
+          container: asColor('--color-secondary-container'),
+          'on-container': asColor('--color-on-secondary-container'),
         },
         tertiary: {
-          DEFAULT: 'var(--color-tertiary-base)',
+          DEFAULT: asColor('--color-tertiary-base'),
           foreground: '#0c1324',
         },
         surface: {
-          base: 'var(--color-surface-base)',
-          soft: 'var(--color-surface-soft)',
-          muted: 'var(--color-surface-muted)',
-          lowest: 'var(--color-surface-lowest)',
-          'container-lowest': 'var(--color-surface-container-lowest)',
-          'container-low': 'var(--color-surface-container-low)',
-          container: 'var(--color-surface-container)',
-          'container-highest': 'var(--color-surface-container-highest)',
-          bright: 'var(--color-surface-bright)',
-          inverse: 'var(--color-surface-inverse)',
+          base: asColor('--color-surface-base'),
+          soft: asColor('--color-surface-soft'),
+          muted: asColor('--color-surface-muted'),
+          lowest: asColor('--color-surface-lowest'),
+          'container-lowest': asColor('--color-surface-container-lowest'),
+          'container-low': asColor('--color-surface-container-low'),
+          container: asColor('--color-surface-container'),
+          'container-highest': asColor('--color-surface-container-highest'),
+          bright: asColor('--color-surface-bright'),
+          inverse: asColor('--color-surface-inverse'),
         },
         text: {
-          base: 'var(--color-text-base)',
-          subtle: 'var(--color-text-subtle)',
-          muted: 'var(--color-text-muted)',
-          inverse: 'var(--color-text-inverse)',
+          base: asColor('--color-text-base'),
+          subtle: asColor('--color-text-subtle'),
+          muted: asColor('--color-text-muted'),
+          inverse: asColor('--color-text-inverse'),
         },
         border: {
-          base: 'var(--color-border-base)',
-          subtle: 'var(--color-border-subtle)',
-          strong: 'var(--color-border-strong)',
+          base: asColor('--color-border-base'),
+          subtle: asColor('--color-border-subtle'),
+          strong: asColor('--color-border-strong'),
         },
         success: {
-          base: 'var(--color-positive-base)',
-          subtle: 'var(--color-positive-subtle)',
-          strong: 'var(--color-positive-strong)',
-          text: 'var(--color-positive-text)',
+          base: asColor('--color-positive-base'),
+          subtle: asColor('--color-positive-subtle'),
+          strong: asColor('--color-positive-strong'),
+          text: asColor('--color-positive-text'),
         },
         warning: {
-          base: 'var(--color-warning-base)',
-          subtle: 'var(--color-warning-subtle)',
-          strong: 'var(--color-warning-strong)',
-          text: 'var(--color-warning-text)',
+          base: asColor('--color-warning-base'),
+          subtle: asColor('--color-warning-subtle'),
+          strong: asColor('--color-warning-strong'),
+          text: asColor('--color-warning-text'),
         },
         danger: {
-          base: 'var(--color-critical-base)',
-          subtle: 'var(--color-critical-subtle)',
-          strong: 'var(--color-critical-strong)',
-          text: 'var(--color-critical-text)',
+          base: asColor('--color-critical-base'),
+          subtle: asColor('--color-critical-subtle'),
+          strong: asColor('--color-critical-strong'),
+          text: asColor('--color-critical-text'),
         },
         error: {
-          container: 'var(--color-error-container)',
-          'on-container': 'var(--color-on-error-container)',
+          container: asColor('--color-error-container'),
+          'on-container': asColor('--color-on-error-container'),
         },
       },
       fontFamily: {
