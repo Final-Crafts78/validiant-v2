@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 
-function asColor(variable: string) {
+function asColor(variable: string): any {
   return ({ opacityValue }: { opacityValue?: string | number }) => {
     if (opacityValue !== undefined) {
       return `color-mix(in srgb, var(${variable}) ${Number(opacityValue) * 100}%, transparent)`;
