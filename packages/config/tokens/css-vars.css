@@ -17,8 +17,10 @@
   --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
   --color-surface-base: #FFFFFF;
   --color-surface-subtle: #F9FAFB;
+  --color-surface-soft: #F9FAFB;
   --color-surface-muted: #F3F4F6;
   --color-surface-inverse: #111827;
+  --color-surface-lowest: #ffffff;
   --color-text-base: #111827;
   --color-text-subtle: #4B5563;
   --color-text-muted: #9CA3AF;
@@ -63,8 +65,10 @@
 [data-theme="dark"] {
   --color-surface-base: #0B0C0E;
   --color-surface-subtle: #141619;
+  --color-surface-soft: #141619;
   --color-surface-muted: #1C1F23;
   --color-surface-inverse: #FFFFFF;
+  --color-surface-lowest: #070d1f;
   --color-text-base: #F9FAFB;
   --color-text-subtle: #D1D5DB;
   --color-text-muted: #9CA3AF;
@@ -104,4 +108,27 @@
   --color-on-secondary-container: #9fb5e7;
   --color-on-surface: #dce1fb;
   --color-on-surface-variant: #c2c6d6;
+}
+
+/* ==========================================================================
+   LEGACY ALIASES
+   Backwards compatibility for components omitting the "color-" prefix
+   ========================================================================== */
+:root, [data-theme="dark"] {
+  --surface-base: var(--color-surface-base);
+  --surface-subtle: var(--color-surface-subtle);
+  --surface-soft: var(--color-surface-soft);
+  --surface-muted: var(--color-surface-muted);
+  --surface-lowest: var(--color-surface-lowest);
+  --surface-container-lowest: var(--color-surface-container-lowest);
+  --surface-container-low: var(--color-surface-container-low);
+  --surface-container: var(--color-surface-container);
+  --surface-container-high: var(--color-surface-container-high);
+  --surface-container-highest: var(--color-surface-container-highest);
+  --text-base: var(--color-text-base);
+  --text-subtle: var(--color-text-subtle);
+  --text-muted: var(--color-text-muted);
+  --border-base: var(--color-border-base);
+  --border-subtle: var(--color-border-subtle);
+  --primary: var(--color-accent-base);
 }

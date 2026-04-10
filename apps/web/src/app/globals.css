@@ -16,7 +16,6 @@
   :root {
     --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
-    --surface-bright: #33394c;
   }
 
   /* HTML & Body defaults */
@@ -36,14 +35,14 @@
 
   /* Selection (The Glow Selection) */
   ::selection {
-    background-color: rgba(173, 198, 255, 0.3);
-    color: var(--primary);
+    background-color: var(--color-accent-subtle);
+    color: var(--color-accent-strong);
   }
 
   /* Scrollbar (The Obsidian Minimalist) */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: var(--color-surface-container-high) transparent;
   }
 
   ::-webkit-scrollbar {
@@ -56,13 +55,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-surface-container-high);
     border-radius: 20px;
     transition: background 0.3s;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--color-surface-container-highest);
   }
 
   /* Monospace Precision */
@@ -90,8 +89,8 @@
 
   /* Fix for autocomplete backgrounds */
   input:-webkit-autofill {
-    -webkit-text-fill-color: #ffffff !important;
-    -webkit-box-shadow: 0 0 0px 1000px var(--surface-lowest) inset !important;
+    -webkit-text-fill-color: var(--color-text-base) !important;
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-surface-base) inset !important;
   }
 }
 
@@ -105,15 +104,15 @@
   }
 
   .btn-primary {
-    @apply bg-glow-gradient text-background shadow-[0_0_15px_rgba(173,198,255,0.2)] hover:shadow-[0_0_25px_rgba(173,198,255,0.4)];
+    @apply bg-primary text-primary-foreground shadow hover:shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-surface-container-highest text-white hover:bg-surface-bright;
+    @apply bg-surface-container-highest text-text-base hover:bg-surface-bright;
   }
 
   .btn-ghost {
-    @apply text-text-subtle hover:text-white hover:bg-white/5;
+    @apply text-text-subtle hover:text-text-base hover:bg-surface-muted;
   }
 
   .btn-danger {
@@ -123,7 +122,7 @@
   /* Input styles (The Ink Trap) */
   .input {
     @apply w-full px-4 py-2.5 rounded-lg transition-all duration-300 outline-none;
-    @apply bg-surface-container-highest border-b-2 border-transparent text-white;
+    @apply bg-surface-container-highest border-b-2 border-transparent text-text-base;
   }
 
   .input:focus {
@@ -151,7 +150,7 @@
   /* Badge styles (Glassmorphic chips) */
   .badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider;
-    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+    @apply bg-surface-muted border border-border-subtle;
   }
 
   .badge-dot {
@@ -181,7 +180,7 @@
   }
   .verification-node::after {
     content: '';
-    @apply absolute -left-[26px] top-1.5 w-4 h-4 rounded-full bg-surface-base border-2 border-primary shadow-[0_0_10px_rgba(173,198,255,0.5)];
+    @apply absolute -left-[26px] top-1.5 w-4 h-4 rounded-full bg-surface-base border-2 border-primary shadow-sm;
   }
 }
 

@@ -81,9 +81,15 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
   }
 
   const handleCreateType = async () => {
-    await createType.mutateAsync(newTypeData);
-    setShowTypeModal(false);
-    setNewTypeData({ name: '', description: '', color: '#adc6ff' });
+    console.info(`[SchemaArchitect] Initializing new archetype: ${newTypeData.name}`, { newTypeData });
+    try {
+      await createType.mutateAsync(newTypeData);
+      console.info(`[SchemaArchitect] Archetype injected successfully: ${newTypeData.name}`);
+      setShowTypeModal(false);
+      setNewTypeData({ name: '', description: '', color: '#adc6ff' });
+    } catch (err) {
+      console.error(`[SchemaArchitect] Archetype creation blocked:`, err);
+    }
   };
 
   const handleCreateElement = async () => {
@@ -383,36 +389,54 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
           <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
             <div className="absolute top-0 right-0 p-12 bg-primary/5 blur-[100px] -mr-32 -mt-32" />
             <div className="p-10 space-y-10 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
-                    CREATION_GATE
-                  </span>
-                  <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
-                    New Archetype
-                  </h3>
+              <div className="flex items-start justify-between">
+                <div className="space-y-2 max-w-sm">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                      CREATION_GATE
+                    </span>
+                    <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
+                      New Archetype
+                    </h3>
+                  </div>
+                  <p className="text-[11px] text-[var(--color-text-muted)] leading-relaxed">
+                    Archetypes define the fundamental structure and verification requirements for records in your project. Establish your data blueprint here.
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowTypeModal(false)}
-                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--color-border-subtle)] transition-all"
                 >
-                  <X className="w-5 h-5 text-[var(--text-muted)]" />
+                  <X className="w-5 h-5 text-[var(--color-text-muted)]" />
                 </button>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
-                    Protocol Name
-                  </label>
+                  <div className="flex items-center justify-between px-1">
+                    <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">
+                      Protocol Name
+                    </label>
+                  </div>
                   <input
-                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
-                    placeholder="E.G. SITE_INSPECTION"
+                    className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--color-text-muted)]/30"
+                    placeholder="e.g. EMPLOYEE_VERIFICATION"
                     value={newTypeData.name}
                     onChange={(e) =>
                       setNewTypeData({ ...newTypeData, name: e.target.value })
                     }
                   />
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {['SITE_INSPECTION', 'EMPLOYEE_VERIFICATION', 'ASSET_AUDIT'].map(preset => (
+                      <button 
+                        key={preset}
+                        onClick={() => setNewTypeData({ ...newTypeData, name: preset })}
+                        className="px-2.5 py-1 rounded-md text-[9px] font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-colors uppercase tracking-widest"
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-3">
                   <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">

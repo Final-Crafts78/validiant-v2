@@ -50,16 +50,16 @@ function GeneralDashboard({
       =================================================================== */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-[var(--color-text-base)] tracking-tight">
+          <h1 className="text-3xl font-black text-text-base tracking-tight font-display">
             Welcome back, {firstName}
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)] font-medium">
+          <p className="mt-1 text-sm text-text-muted font-medium">
             Project status:{' '}
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+            <span className="text-success-strong font-bold">
               Operational
             </span>{' '}
             · SLA compliance:{' '}
-            <span className="text-primary-600 dark:text-primary-400 font-bold">
+            <span className="text-primary font-bold">
               98.2%
             </span>
           </p>
@@ -133,10 +133,10 @@ function GuestDashboard({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-[var(--color-text-base)]">
+        <h1 className="text-2xl font-extrabold text-text-base font-display">
           Your Tasks
         </h1>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">
+        <p className="text-sm text-text-muted mt-1">
           You have guest access. You can view and update tasks assigned to you.
         </p>
       </div>

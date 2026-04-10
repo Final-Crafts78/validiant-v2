@@ -112,6 +112,12 @@ export default async function OrgLayout({
     timestamp: new Date().toISOString(),
   });
 
+  // Normalize URL to Slug if matched by ID mapping
+  if (matchMethod === 'BY_ID_FALLBACK' && activeOrg) {
+    logger.info(`[Org Layout] Normalizing URL from UUID ${params.orgSlug} to Slug ${activeOrg.slug}`);
+    redirect(ROUTES.DASHBOARD(activeOrg.slug));
+  }
+
   // If org doesn't exist or slug is invalid for this user, check if we should redirect
   // For now, if not found, we redirect to onboarding or global dashboard
   if (!activeOrg && params.orgSlug !== 'new') {
