@@ -131,4 +131,10 @@
   --border-base: var(--color-border-base);
   --border-subtle: var(--color-border-subtle);
   --primary: var(--color-accent-base);
+  --surface-bright: var(--color-surface-bright);
+  --surface-container-high: var(--color-surface-container-high);
+  --primary-glow: var(--color-accent-subtle);
+  --border-strong: var(--color-border-strong);
+  --background: var(--color-surface-base);
+  --primary-foreground: var(--color-accent-text);
 }

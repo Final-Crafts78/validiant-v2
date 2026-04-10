@@ -107,13 +107,13 @@ export default function CommandCenterShell({
           OBSIDIAN HEADER 
           Editorial layout with glassmorphism and tonal layering.
       */}
-      <header className="z-30 relative bg-[var(--surface-lowest)]/80 backdrop-blur-xl border-b border-white/[0.03]">
+      <header className="z-30 relative bg-[var(--color-surface-lowest)]/80 backdrop-blur-xl border-b border-[var(--color-border-base)]/10">
         <div className="px-10 pt-8 pb-4">
           {/* Breadcrumbs - High Detail */}
           <nav className="flex items-center gap-2 mb-6">
             <button
               onClick={() => router.push(`/${orgSlug}/projects`)}
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] hover:text-primary transition-all flex items-center gap-1.5"
+              className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)] hover:text-primary transition-all flex items-center gap-1.5"
             >
               <Globe className="w-3 h-3" />
               Universe
@@ -129,7 +129,7 @@ export default function CommandCenterShell({
               {/* Identity Nucleus */}
               <div className="relative group p-1">
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#adc6ff] to-transparent rounded-[1.75rem] blur opacity-0 group-hover:opacity-20 transition duration-500" />
-                <div className="relative w-16 h-16 rounded-[1.5rem] bg-[var(--surface-container-low)] border border-[var(--color-border-base)]/20 flex items-center justify-center text-primary font-black text-2xl shadow-inner active:scale-95 transition-transform cursor-pointer">
+                <div className="relative w-16 h-16 rounded-[1.5rem] bg-[var(--color-surface-container-low)] border border-[var(--color-border-base)]/20 flex items-center justify-center text-primary font-black text-2xl shadow-inner active:scale-95 transition-transform cursor-pointer">
                   {project.name.charAt(0)}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default function CommandCenterShell({
                     {project.status}
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
                   <span className="flex items-center gap-1.5 underline decoration-white/10 underline-offset-4">
                     COMMAND_NODE_PRECISION
                   </span>
@@ -164,7 +164,7 @@ export default function CommandCenterShell({
             {/* Contextual Actions */}
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <div className="flex items-center gap-2 bg-[var(--surface-container-low)]/50 p-1.5 rounded-[1.25rem] border border-[var(--color-border-base)]/20 shadow-inner">
+              <div className="flex items-center gap-2 bg-[var(--color-surface-container-low)]/50 p-1.5 rounded-[1.25rem] border border-[var(--color-border-base)]/20 shadow-inner">
                 <select
                   value={project.status}
                   onChange={(e) =>
@@ -178,7 +178,7 @@ export default function CommandCenterShell({
                     <option
                       key={o.value}
                       value={o.value}
-                      className="bg-[var(--surface-lowest)] text-[var(--color-text-base)]"
+                      className="bg-[var(--color-surface-lowest)] text-[var(--color-text-base)]"
                     >
                       {o.label.toUpperCase()}
                     </option>
@@ -187,7 +187,7 @@ export default function CommandCenterShell({
                 <div className="w-px h-5 bg-[var(--color-surface-muted)]/50" />
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className="p-2.5 text-[var(--text-muted)] hover:text-primary transition-all rounded-xl hover:bg-[var(--color-surface-muted)]/50"
+                  className="p-2.5 text-[var(--color-text-muted)] hover:text-primary transition-all rounded-xl hover:bg-[var(--color-surface-muted)]/50"
                 >
                   <Settings className="w-5 h-5" />
                 </button>
@@ -205,8 +205,8 @@ export default function CommandCenterShell({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-3 px-6 py-4 rounded-t-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 relative group overflow-hidden ${
                   activeTab === tab.id
-                    ? 'bg-[var(--surface-container-low)] text-primary'
-                    : 'text-[var(--text-muted)]/60 hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]/50'
+                    ? 'bg-[var(--color-surface-container-low)] text-primary'
+                    : 'text-[var(--color-text-muted)]/60 hover:text-[var(--color-text-base)] hover:bg-[var(--color-surface-muted)]/50'
                 }`}
               >
                 <tab.icon
@@ -230,7 +230,7 @@ export default function CommandCenterShell({
           MAIN VIEWPORT 
           Tonal fluid background with deep surface containers.
       */}
-      <main className="flex-1 overflow-y-auto bg-[var(--surface-container-low)] z-10 relative">
+      <main className="flex-1 overflow-y-auto bg-[var(--color-surface-container-low)] z-10 relative">
         {/* Subtle Background Glows */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 blur-[150px] pointer-events-none rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/5 blur-[120px] pointer-events-none rounded-full" />

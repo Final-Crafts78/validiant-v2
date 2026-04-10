@@ -27,7 +27,7 @@ export function WorkspaceSidebar({
     <aside
       className={cn(
         'fixed left-16 top-0 bottom-0 border-r border-[var(--color-border-base)] bg-[var(--color-surface-base)] transition-all duration-300 ease-in-out z-40 overflow-hidden',
-        collapsed ? 'w-0 border-none' : 'w-60'
+        collapsed ? 'w-0 border-none opacity-0 pointer-events-none' : 'w-60 opacity-100'
       )}
     >
       <div className="flex h-full w-60 flex-col">
@@ -85,7 +85,7 @@ export function SidebarExpandTrigger({
   return (
     <button
       onClick={onToggle}
-      className="fixed left-20 top-4 z-30 rounded-lg border border-[var(--color-border-base)] bg-[var(--color-surface-base)] p-2 text-[var(--color-text-muted)] shadow-sm transition-all hover:scale-105 hover:text-[var(--color-text-base)]"
+      className="fixed left-[72px] top-4 z-30 rounded-lg border border-[var(--color-border-base)] bg-[var(--color-surface-base)] p-2 text-[var(--color-text-muted)] shadow-premium transition-all duration-300 delay-150 hover:scale-105 hover:text-[var(--color-text-base)] animate-in fade-in slide-in-from-left-2"
       title="Expand Sidebar"
     >
       <PanelLeftOpen className="h-5 w-5" />

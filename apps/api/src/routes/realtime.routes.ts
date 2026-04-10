@@ -132,6 +132,7 @@ router.get('/stream', async (c) => {
     });
 
     // ELITE: Extreme Visibility for SSE Lifecycles
+    const streamStartTime = Date.now();
     const { readable, writable } = new TransformStream({
       start() {
         logger.info(
@@ -149,10 +150,12 @@ router.get('/stream', async (c) => {
         controller.enqueue(chunk);
       },
       flush() {
+        const streamDuration = ((Date.now() - streamStartTime) / 1000).toFixed(2);
         logger.info('[Realtime:Stream] Connection CLOSED (Pipeline Flushed)', {
           orgId,
           userId: user?.userId,
           requestId,
+          duration: `${streamDuration}s`,
           timestamp: new Date().toISOString(),
         });
       },

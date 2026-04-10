@@ -144,7 +144,8 @@
 
   .card-premium {
     @apply relative hover:-translate-y-1 hover:bg-surface-bright;
-    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px -20px var(--color-surface-inverse);
+    opacity: 0.9;
   }
 
   /* Badge styles (Glassmorphic chips) */
@@ -187,20 +188,22 @@
 /* Utilities Layer */
 @layer utilities {
   .bg-glass {
-    @apply backdrop-blur-xl border border-white/10;
-    background-color: rgba(21, 27, 45, 0.6);
+    @apply backdrop-blur-xl border;
+    border-color: color-mix(in srgb, var(--color-border-base) 10%, transparent);
+    background-color: color-mix(in srgb, var(--color-surface-base) 60%, transparent);
   }
 
   .shadow-obsidian {
-    box-shadow: 0 48px 100px -20px rgba(7, 13, 31, 0.8);
+    box-shadow: 0 48px 100px -20px color-mix(in srgb, var(--color-surface-inverse) 15%, transparent);
   }
 
   .transition-premium {
     @apply transition-all duration-500 ease-premium;
   }
 
-  /* Ghost border fallback (15% opacity) */
+  /* Ghost border fallback (10% opacity) */
   .ghost-border {
-    @apply border border-white/5;
+    @apply border;
+    border-color: color-mix(in srgb, var(--color-border-base) 10%, transparent);
   }
 }

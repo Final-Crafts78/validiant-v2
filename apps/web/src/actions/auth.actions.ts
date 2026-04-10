@@ -390,10 +390,12 @@ export const getCurrentUserAction = cache(
 
     try {
       const accessToken = cookieStore.get('accessToken')?.value;
+      const allCookies = cookieStore.getAll().map(c => c.name);
 
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${!!accessToken}`
+        `[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${!!accessToken}, cookieCount=${allCookies.length}`,
+        { names: allCookies }
       );
 
       if (!accessToken) {
@@ -427,7 +429,7 @@ export const getCurrentUserAction = cache(
       if (response.status === 401 || response.status === 403) {
         // eslint-disable-next-line no-console
         console.warn(
-          `[BFF:GetUser] [${Date.now()}] EP-U3.WARN: Auth failure, status=${response.status}`
+          `[BFF:GetUser] [${Date.now()}] EP-U3.WARN: Auth failure, status=${response.status}, took ${duration}ms`
         );
         return {
           success: false,

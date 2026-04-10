@@ -55,6 +55,8 @@ export function useRealtime() {
   const activeOrgId = useWorkspaceStore((s) => s.activeOrgId);
   const userId = useAuthStore((s) => s.user?.id);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectCountRef = useRef(0);
+  const sessionStartTimeRef = useRef<number | null>(null);
 
   const hasHydrated = useWorkspaceStore((s) => s._hasHydrated);
 
@@ -124,10 +126,12 @@ export function useRealtime() {
 
       // Handle connection state transitions
       es.onopen = () => {
+        sessionStartTimeRef.current = Date.now();
         console.log('[Realtime] SSE Connection OPEN (Success)', {
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
           readyState: es.readyState,
           readyStateDesc: 'OPEN',
+          reconnectCount: reconnectCountRef.current,
           timestamp: new Date().toISOString(),
         });
       };
@@ -151,7 +155,13 @@ export function useRealtime() {
       };
 
       es.onerror = (error) => {
-        console.error('[Realtime] SSE CRITICAL ERROR', {
+        const sessionDuration = sessionStartTimeRef.current 
+          ? ((Date.now() - sessionStartTimeRef.current) / 1000).toFixed(2)
+          : '0.00';
+          
+        reconnectCountRef.current += 1;
+        
+        console.error('[Realtime] SSE CRITICAL ERROR / DISCONNECT', {
           readyState: es.readyState,
           readyStateDesc:
             es.readyState === 0
@@ -162,14 +172,15 @@ export function useRealtime() {
                   ? 'CLOSED'
                   : 'UNKNOWN',
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
-          errorType: error.type,
-          errorIsTrusted: error.isTrusted,
-          // Capture as much from the error event as possible
-          eventPhase: (error as any).eventPhase,
+          errorType: (error as any).type,
+          sessionDuration: `${sessionDuration}s`,
+          reconnectCount: reconnectCountRef.current,
           timestamp: new Date().toISOString(),
           windowOnline:
             typeof window !== 'undefined' ? window.navigator.onLine : 'N/A',
         });
+        
+        sessionStartTimeRef.current = null;
       };
 
       es.addEventListener('connected', (e: any) => {

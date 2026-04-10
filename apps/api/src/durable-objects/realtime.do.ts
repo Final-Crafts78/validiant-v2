@@ -36,12 +36,24 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
   }
 
   /**
+   * Handle Durable Object Alarms
+   */
+  async alarm() {
+    // eslint-disable-next-line no-console
+    console.warn('[Realtime:DO] ALARM_TRIGGER', {
+      timestamp: new Date().toISOString(),
+      activeSessions: this.sessions.size,
+    });
+  }
+
+  /**
    * Establish SSE connection and pipe stream to client
    */
   private handleSSE(): Response {
     const encoder = new TextEncoder();
     let currentController: ReadableStreamDefaultController | null = null;
     const sessionId = crypto.randomUUID().substring(0, 8);
+    const sessionStartTime = Date.now();
 
     const stream = new ReadableStream({
       start: (controller) => {
@@ -73,9 +85,13 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         if (currentController) {
           this.sessions.delete(currentController);
         }
+        
+        const sessionDuration = ((Date.now() - sessionStartTime) / 1000).toFixed(2);
+        
         // eslint-disable-next-line no-console
-        console.info('[Realtime:DO] Session REMOVED', {
+        console.info('[Realtime:DO] Session REMOVED / SESSION_LIFETIME', {
           sessionId,
+          duration: `${sessionDuration}s`,
           reason: reason || 'CLIENT_DISCONNECT',
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),

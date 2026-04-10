@@ -27,10 +27,12 @@ async function getData(): Promise<{
   orgs: import('@/types/auth.types').Organization[];
   accessToken: string;
 }> {
-  console.debug('[Org:Layout] Starting getData() diagnostic fetch');
+  console.debug('[Org:Layout] Starting getData() diagnostic fetch', { timestamp: new Date().toISOString() });
   
   try {
+    console.debug('[Org:Layout] CALLING getCurrentUserAction()');
     const result = await getCurrentUserAction();
+    console.debug('[Org:Layout] RETURNED getCurrentUserAction()', { success: result.success });
 
     console.debug('[Org:Layout] getCurrentUserAction result', {
       success: result.success,
@@ -52,12 +54,9 @@ async function getData(): Promise<{
       );
     }
 
-    console.debug('[Org:Layout] Fetching organizations for user', {
-      email: result.user.email,
-      timestamp: new Date().toISOString()
-    });
-
+    console.debug('[Org:Layout] CALLING getUserOrganizationsAction()');
     const orgs = await getUserOrganizationsAction(result.accessToken);
+    console.debug('[Org:Layout] RETURNED getUserOrganizationsAction()', { count: orgs.length });
 
     console.debug('[Org:Layout] fetchOrganizations success', {
       count: orgs.length,
@@ -99,11 +98,12 @@ export default async function OrgLayout({
 
   // Validate the slug exists in user's orgs
   // Logic: Try slug match first, then fallback to ID match for legacy/desynced links
-  const activeOrg = orgs.find((o) => o.slug === params.orgSlug) || 
-                    orgs.find((o) => o.id === params.orgSlug);
+  const matchedBySlug = orgs.find((o) => o.slug === params.orgSlug);
+  const matchedById = orgs.find((o) => o.id === params.orgSlug);
+  const activeOrg = matchedBySlug || matchedById;
 
-  const matchMethod = orgs.find((o) => o.slug === params.orgSlug) ? 'BY_SLUG' : 
-                    orgs.find((o) => o.id === params.orgSlug) ? 'BY_ID_FALLBACK' : 'NO_MATCH';
+  const matchMethod = matchedBySlug ? 'BY_SLUG' : 
+                    matchedById ? 'BY_ID_FALLBACK' : 'NO_MATCH';
 
   console.info('[Org:Layout] SLUG RESOLUTION DECISION', {
     matchMethod,

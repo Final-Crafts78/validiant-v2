@@ -230,4 +230,25 @@ app.patch(
   taskController.bulkUpdateStatus
 );
 
+/**
+ * GET /:id/stats
+ * Project statistics stub - prevent 404s until full analytics is implemented.
+ */
+app.get('/:id/stats', (c) => {
+  const id = c.req.param('id');
+  logger.info(`[Project:Routes] Serving /stats STUB for project: ${id}`);
+  return c.json({
+    success: true,
+    data: {
+      stats: {
+        totalTasks: 0,
+        completedTasks: 0,
+        pendingTasks: 0,
+        efficiency: 100,
+        lastActivity: new Date().toISOString()
+      }
+    }
+  });
+});
+
 export default app;

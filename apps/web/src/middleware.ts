@@ -163,7 +163,7 @@ export async function middleware(request: NextRequest) {
 
     // eslint-disable-next-line no-console
     console.log(
-      `[MW:Edge] [${requestId}] EP-1.0.2: ENV check complete`
+      `[MW:Edge] [${requestId}] EP-1.0.2: Env Audit COMPLETE (success)`
     );
 
     // eslint-disable-next-line no-console
