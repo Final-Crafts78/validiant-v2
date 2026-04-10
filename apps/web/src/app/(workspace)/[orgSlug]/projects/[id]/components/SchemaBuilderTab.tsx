@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useProjectTypes } from '@/hooks/useProjectTypes';
 import { useTypeColumns } from '@/hooks/useTypeColumns';
 import { ProjectType, TypeColumn, ColumnType } from '@validiant/shared';
@@ -41,6 +42,11 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
   const [activeTab, setActiveTab] = useState<'elements' | 'workflow'>(
     'elements'
   );
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 🔍 UI AUDIT (Finding 48)
   const toggleTypeModal = (open: boolean) => {
@@ -377,7 +383,7 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
       />
 
       {/* 4. Side Panel - Field Configurator */}
-      {editingColumn && (
+      {editingColumn && mounted && createPortal(
         <FieldConfigurator
           column={editingColumn}
           allColumns={columns || []}
@@ -389,12 +395,13 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
             deleteColumn.mutate(id);
             setEditingFieldId(null);
           }}
-        />
+        />,
+        document.body
       )}
 
       {/* New Archetype Modal - High Fidelity */}
-      {showTypeModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+      {showTypeModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
           <div className="w-full max-w-md bg-[var(--color-surface-container-low)] rounded-3xl shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
             <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-start justify-between">
@@ -478,12 +485,13 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* New Element Modal - High Fidelity */}
-      {showElementModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl animate-in fade-in duration-500">
+      {showElementModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
           <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
             <div className="p-10 space-y-10 relative z-10">
               <div className="flex items-center justify-between">
@@ -563,7 +571,8 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
