@@ -143,7 +143,9 @@ export const lockRecord = async (
   const response = await post<APIResponse<{ record: ProjectRecord }>>(
     `/projects/${projectId}/records/${recordId}/lock`
   );
-  return response.data.data?.record!;
+  const record = response.data.data?.record;
+  if (!record) throw new Error('Failed to lock record');
+  return record;
 };
 
 /**
@@ -156,7 +158,9 @@ export const unlockRecord = async (
   const response = await del<APIResponse<{ record: ProjectRecord }>>(
     `/projects/${projectId}/records/${recordId}/lock`
   );
-  return response.data.data?.record!;
+  const record = response.data.data?.record;
+  if (!record) throw new Error('Failed to unlock record');
+  return record;
 };
 
 /**

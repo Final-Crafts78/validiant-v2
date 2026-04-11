@@ -5,7 +5,7 @@ import { neon } from '@neondatabase/serverless';
 async function applyDDL() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('No DATABASE_URL');
-  
+
   const sql = neon(url);
   console.log('🚀 Applying Project Universe DDL...');
 

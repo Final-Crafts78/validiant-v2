@@ -54,11 +54,26 @@ const brandingSchema = z.object({
   displayName: z.string().min(2).max(50),
   subtext: z.string().max(100).optional(),
   accentPrimary: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format'),
-  surfaceBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
-  surfaceSubtle: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
-  textBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
-  borderBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
-  criticalBase: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format').optional(),
+  surfaceBase: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format')
+    .optional(),
+  surfaceSubtle: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format')
+    .optional(),
+  textBase: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format')
+    .optional(),
+  borderBase: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format')
+    .optional(),
+  criticalBase: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format')
+    .optional(),
   logoUrl: z.string().optional(),
 });
 
@@ -339,49 +354,100 @@ export default function BrandingSettings() {
                 </div>
               </div>
               <p className="text-xs text-[var(--color-text-muted)] flex items-center gap-1 mb-6">
-                <AlertCircle className="w-3 h-3" /> WCAG AA compliance requires at least 4.5:1 contrast against background surfaces.
+                <AlertCircle className="w-3 h-3" /> WCAG AA compliance requires
+                at least 4.5:1 contrast against background surfaces.
               </p>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-6 border-t border-[var(--color-border-base)]/50">
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Surface Base (Main BG)</label>
-                   <div className="flex items-center gap-2">
-                      <input type="color" {...register('surfaceBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
-                      <input type="text" {...register('surfaceBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
-                   </div>
-                 </div>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Surface Subtle (Cards)</label>
-                   <div className="flex items-center gap-2">
-                      <input type="color" {...register('surfaceSubtle')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
-                      <input type="text" {...register('surfaceSubtle')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
-                   </div>
-                 </div>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Text Base (Primary)</label>
-                   <div className="flex items-center gap-2">
-                      <input type="color" {...register('textBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
-                      <input type="text" {...register('textBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
-                   </div>
-                 </div>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Border Base</label>
-                   <div className="flex items-center gap-2">
-                      <input type="color" {...register('borderBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
-                      <input type="text" {...register('borderBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
-                   </div>
-                 </div>
-                 
-                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">Critical Base (Error)</label>
-                   <div className="flex items-center gap-2">
-                      <input type="color" {...register('criticalBase')} className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent" />
-                      <input type="text" {...register('criticalBase')} className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none" />
-                   </div>
-                 </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    Surface Base (Main BG)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      {...register('surfaceBase')}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      {...register('surfaceBase')}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    Surface Subtle (Cards)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      {...register('surfaceSubtle')}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      {...register('surfaceSubtle')}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    Text Base (Primary)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      {...register('textBase')}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      {...register('textBase')}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    Border Base
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      {...register('borderBase')}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      {...register('borderBase')}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    Critical Base (Error)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      {...register('criticalBase')}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      {...register('criticalBase')}
+                      className="flex-1 min-w-0 px-2 py-1 text-xs font-mono bg-transparent border border-transparent hover:border-[var(--color-border-base)] rounded outline-none"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 

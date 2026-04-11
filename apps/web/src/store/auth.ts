@@ -8,6 +8,7 @@
 
 import { create } from 'zustand';
 import type { AuthUser } from '@/types/auth.types';
+import { logger } from '@/lib/logger';
 
 /**
  * Auth state interface
@@ -46,7 +47,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Initialize store (called on app mount)
   initialize: () => {
     try {
-      console.debug('[AuthStore] Initializing store', {
+      logger.debug('[AuthStore] Initializing store', {
         hasWindow: typeof window !== 'undefined',
       });
       // Since we use server-side auth, we don't need to fetch anything here
@@ -55,7 +56,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         isLoading: false,
       });
     } catch (error) {
-      console.error('[Auth] Initialization error:', error);
+      logger.error('[Auth] Initialization error:', error);
       set({
         isLoading: false,
         isAuthenticated: false,
@@ -66,7 +67,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set full auth data (login/register)
   setAuth: ({ user, accessToken }) => {
-    console.debug('[AuthStore] setAuth called', {
+    logger.debug('[AuthStore] setAuth called', {
       userId: user.id,
       email: user.email,
       activeOrganizationId: user.activeOrganizationId || 'MISSING',
@@ -83,7 +84,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set user data only
   setUser: (user, accessToken) => {
-    console.debug('[AuthStore] setUser called', {
+    logger.debug('[AuthStore] setUser called', {
       userId: user.id,
       email: user.email,
       activeOrganizationId: user.activeOrganizationId || 'MISSING',
@@ -107,7 +108,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       newActiveOrgId &&
       newActiveOrgId !== currentUser?.activeOrganizationId
     ) {
-      console.info(
+      logger.info(
         `[AuthStore:Org] CHANGING ACTIVE ORG: ${currentUser?.activeOrganizationId ?? 'NONE'} -> ${newActiveOrgId}`,
         {
           userId: currentUser?.id,
@@ -116,7 +117,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       );
     }
 
-    console.debug('[AuthStore] updateUser called', {
+    logger.debug('[AuthStore] updateUser called', {
       updates,
       prevActiveOrgId: currentUser?.activeOrganizationId,
       newActiveOrgId:
@@ -133,7 +134,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   // Clear auth state (logout)
   clearAuth: () => {
     const stack = new Error().stack?.split('\n').slice(0, 5).join('\n');
-    console.warn('[AuthStore] clearAuth called - WIPING CLIENT STATE', {
+    logger.warn('[AuthStore] clearAuth called - WIPING CLIENT STATE', {
       caller: stack,
       timestamp: new Date().toISOString(),
     });
@@ -147,7 +148,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   // Set loading state
   setLoading: (isLoading) => {
-    console.debug('[AuthStore] setLoading', { isLoading });
+    logger.debug('[AuthStore] setLoading', { isLoading });
     set({ isLoading });
   },
 
@@ -161,7 +162,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         get().setAuth({ user: result.user, accessToken: result.accessToken });
       }
     } catch (error) {
-      console.error('[AuthStore] fetchUser failed:', error);
+      logger.error('[AuthStore] fetchUser failed:', error);
     }
   },
 }));

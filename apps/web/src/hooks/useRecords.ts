@@ -30,7 +30,7 @@ export const useRecords = (projectId?: string) => {
       });
       toast.success('Record created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(`Creation failed: ${error.message}`);
     },
   });
@@ -45,7 +45,7 @@ export const useRecords = (projectId?: string) => {
       });
       toast.success(`Record #${updated.number} updated`);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(`Update failed: ${error.message}`);
     },
   });
@@ -82,7 +82,7 @@ export const useRecords = (projectId?: string) => {
         `Bulk operation complete: ${result.created} created, ${result.updated} updated`
       );
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(`Bulk ingestion failed: ${error.message}`);
     },
   });

@@ -1,5 +1,3 @@
-
-
 export default function WorkspaceLoading() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] space-y-4 animate-in fade-in duration-500">

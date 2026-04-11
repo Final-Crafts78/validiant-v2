@@ -48,7 +48,7 @@ export const deleteTypeColumn = async (c: Context) => {
 export const reorderColumns = async (c: Context) => {
   const typeId = c.req.param('typeId');
   const { columnIds } = await c.req.json();
-  
+
   if (!Array.isArray(columnIds)) {
     return c.json({ success: false, error: 'columnIds array required' }, 400);
   }

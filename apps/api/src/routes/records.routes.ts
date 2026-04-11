@@ -13,7 +13,10 @@ router.get('/:projectId/records', recordController.listRecords);
 router.get('/:projectId/records/stats', recordController.getProjectStats);
 router.get('/:projectId/records/media-url', recordController.getMediaUploadUrl);
 router.get('/:projectId/records/:recordId', recordController.getRecord);
-router.get('/:projectId/records/:recordId/history', recordController.getRecordHistory);
+router.get(
+  '/:projectId/records/:recordId/history',
+  recordController.getRecordHistory
+);
 
 router.post(
   '/:projectId/records',
@@ -21,10 +24,7 @@ router.post(
   recordController.createRecord
 );
 
-router.post(
-  '/:projectId/records/:recordId/lock',
-  recordController.lockRecord
-);
+router.post('/:projectId/records/:recordId/lock', recordController.lockRecord);
 
 router.delete(
   '/:projectId/records/:recordId/lock',

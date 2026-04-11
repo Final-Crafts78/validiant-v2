@@ -43,7 +43,7 @@ export const processInboundCase = async (
 
   // 2. Resource/Project Resolution
   let targetProjectId: string = '';
-  
+
   if (data.projectId) {
     const [project] = await db
       .select({ id: projects.id, ownerId: projects.ownerId })

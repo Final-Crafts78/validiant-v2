@@ -150,7 +150,9 @@ router.get('/stream', async (c) => {
         controller.enqueue(chunk);
       },
       flush() {
-        const streamDuration = ((Date.now() - streamStartTime) / 1000).toFixed(2);
+        const streamDuration = ((Date.now() - streamStartTime) / 1000).toFixed(
+          2
+        );
         logger.info('[Realtime:Stream] Connection CLOSED (Pipeline Flushed)', {
           orgId,
           userId: user?.userId,

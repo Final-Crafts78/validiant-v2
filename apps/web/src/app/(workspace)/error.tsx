@@ -22,11 +22,14 @@ export default function WorkspaceError({
         <div className="w-16 h-16 bg-critical-500/10 text-critical-600 rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-8 h-8" />
         </div>
-        
+
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-text-base tracking-tight">Something went wrong</h2>
+          <h2 className="text-xl font-bold text-text-base tracking-tight">
+            Something went wrong
+          </h2>
           <p className="text-sm text-text-muted">
-            We encountered an unexpected error while loading this workspace page.
+            We encountered an unexpected error while loading this workspace
+            page.
           </p>
         </div>
 

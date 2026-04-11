@@ -92,7 +92,12 @@ export function useUploadEvidence() {
       caseId: string;
       fieldKey: string;
       file: File;
-      geoTag: any;
+      geoTag: {
+        latitude: number;
+        longitude: number;
+        accuracy?: number;
+        timestamp?: number;
+      };
     }) => {
       // 1. Get Presigned URL
       const { data: urlData } = await post<{

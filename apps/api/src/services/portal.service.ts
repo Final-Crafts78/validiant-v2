@@ -8,7 +8,7 @@
 
 import { eq, and, desc } from 'drizzle-orm';
 import { db } from '../db';
-import { 
+import {
   orgSubAccounts,
   records,
   projects,
@@ -100,7 +100,7 @@ export const listPortalRecords = async (
   // 3. Fetch Scoped Records
   // If it's a client_viewer, optionally filter by their clientId
   const conditions = [eq(records.projectId, project.id)];
-  
+
   // High-trust filtering: if metadata contains a clientId, enforce it
   const metadata = (subAccount.metadata as { clientId?: string }) || {};
   const enforcedClientId = metadata.clientId || subAccount.name; // Fallback to name if client_viewer

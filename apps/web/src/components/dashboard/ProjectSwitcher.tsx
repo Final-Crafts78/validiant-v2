@@ -12,6 +12,7 @@ import { useWorkspaceStore } from '@/store/workspace';
 import apiClient from '@/lib/api';
 import { queryKeys } from '@/lib/query-keys';
 import { FolderKanban, ChevronDown, Check } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface Project {
   id: string;
@@ -40,7 +41,7 @@ export function ProjectSwitcher() {
     queryKey: queryKeys.projects.org(activeOrgId || ''),
     enabled: !!activeOrgId,
     queryFn: async () => {
-      console.debug('[ProjectSwitcher] Query firing', {
+      logger.debug('[ProjectSwitcher] Query firing', {
         activeOrgId,
         url: `/organizations/${activeOrgId}/projects`,
         cookieNames:
@@ -56,11 +57,11 @@ export function ProjectSwitcher() {
     staleTime: 5 * 60 * 1000,
     meta: {
       onError: (err: Error) => {
-        // eslint-disable-next-line no-console
-        console.error('[ProjectSwitcher] Query failed', {
-          status: (err as any)?.response?.status,
+        logger.error('[ProjectSwitcher] Query failed', {
+          status: (err as unknown as { response?: { status?: number } })
+            ?.response?.status,
           message: err.message,
-          url: (err as any)?.config?.url,
+          url: (err as unknown as { config?: { url?: string } })?.config?.url,
         });
       },
     },

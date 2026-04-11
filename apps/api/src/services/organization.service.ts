@@ -128,7 +128,7 @@ export const createOrganization = async (
     slug,
     ownerId: userId,
     industryType: data.industryType,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // Proceed without db.transaction() because neon-http does not support interactive transactions
@@ -168,7 +168,7 @@ export const createOrganization = async (
   console.info('[Service:Org:Create] DB INSERT success', {
     id: newOrg.id,
     slug: newOrg.slug,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   try {

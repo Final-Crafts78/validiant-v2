@@ -24,21 +24,23 @@ async function seedSystemTemplates() {
           fieldKey: 'id_front',
           type: 'photo-request',
           label: 'ID Card (Front)',
-          prompt: 'Take a clear, well-lit photo of the front of the government-issued ID card.',
+          prompt:
+            'Take a clear, well-lit photo of the front of the government-issued ID card.',
           required: true,
           readRoles: ['manager', 'executive', 'client'],
           writeRoles: ['executive'],
-          validationRules: { requireGeoTag: true }
+          validationRules: { requireGeoTag: true },
         },
         {
           fieldKey: 'id_back',
           type: 'photo-request',
           label: 'ID Card (Back)',
-          prompt: 'Take a clear, well-lit photo of the back of the government-issued ID card.',
+          prompt:
+            'Take a clear, well-lit photo of the back of the government-issued ID card.',
           required: true,
           readRoles: ['manager', 'executive', 'client'],
           writeRoles: ['executive'],
-          validationRules: { requireGeoTag: true }
+          validationRules: { requireGeoTag: true },
         },
         {
           fieldKey: 'id_number',
@@ -47,7 +49,7 @@ async function seedSystemTemplates() {
           prompt: 'Input the alphanumeric ID string found on the card.',
           required: true,
           readRoles: ['manager', 'executive', 'client'],
-          writeRoles: ['executive']
+          writeRoles: ['executive'],
         },
         {
           fieldKey: 'is_match',
@@ -57,21 +59,22 @@ async function seedSystemTemplates() {
           required: true,
           options: [
             { label: 'Yes', value: true, color: '#10B981' },
-            { label: 'No', value: false, color: '#EF4444' }
+            { label: 'No', value: false, color: '#EF4444' },
           ],
           readRoles: ['manager', 'executive', 'client'],
-          writeRoles: ['executive']
+          writeRoles: ['executive'],
         },
         {
           fieldKey: 'executive_obs',
           type: 'textarea',
           label: 'Executive Observations',
-          prompt: 'Note any anomalies, signs of tampering, or uncooperative behavior.',
+          prompt:
+            'Note any anomalies, signs of tampering, or uncooperative behavior.',
           required: false,
           readRoles: ['manager', 'executive'], // Invisible to client
-          writeRoles: ['executive']
-        }
-      ]
+          writeRoles: ['executive'],
+        },
+      ],
     },
     {
       code: 'DELIVERY_CHECK',
@@ -85,11 +88,12 @@ async function seedSystemTemplates() {
           fieldKey: 'door_photo',
           type: 'photo-request',
           label: 'Delivery Location Photo',
-          prompt: 'Take a wide-angle shot showing the package at the designated location (door/porch).',
+          prompt:
+            'Take a wide-angle shot showing the package at the designated location (door/porch).',
           required: true,
           readRoles: ['manager', 'executive', 'client'],
           writeRoles: ['executive'],
-          validationRules: { requireGeoTag: true }
+          validationRules: { requireGeoTag: true },
         },
         {
           fieldKey: 'recipient_signature',
@@ -98,7 +102,7 @@ async function seedSystemTemplates() {
           prompt: 'Have the recipient sign upon handover of the secured asset.',
           required: false,
           readRoles: ['manager', 'executive', 'client'],
-          writeRoles: ['executive']
+          writeRoles: ['executive'],
         },
         {
           fieldKey: 'recipient_name',
@@ -106,10 +110,10 @@ async function seedSystemTemplates() {
           label: 'Recipient Name',
           required: false,
           readRoles: ['manager', 'executive', 'client'],
-          writeRoles: ['executive']
-        }
-      ]
-    }
+          writeRoles: ['executive'],
+        },
+      ],
+    },
   ];
 
   for (const tpl of templates) {
@@ -118,12 +122,12 @@ async function seedSystemTemplates() {
       const existing = await db
         .select()
         .from(verificationTypes)
-        .where(
-          eq(verificationTypes.code, tpl.code)
-        );
-      
-      const isGlobalExists = existing.some((e: any) => e.isSystemTemplate === true && e.organizationId === null);
-      
+        .where(eq(verificationTypes.code, tpl.code));
+
+      const isGlobalExists = existing.some(
+        (e: any) => e.isSystemTemplate === true && e.organizationId === null
+      );
+
       if (!isGlobalExists) {
         // @ts-ignore - organizationId is marked nullable in schema
         await db.insert(verificationTypes).values(tpl);

@@ -26,9 +26,9 @@ async function applyProductionSchemaFix() {
 
     const fixStatements = [
       'ALTER TABLE projects ADD COLUMN IF NOT EXISTS auto_dispatch_verified BOOLEAN DEFAULT FALSE NOT NULL',
-      'ALTER TABLE projects ADD COLUMN IF NOT EXISTS theme_color VARCHAR(7) DEFAULT \'#4F46E5\'',
+      "ALTER TABLE projects ADD COLUMN IF NOT EXISTS theme_color VARCHAR(7) DEFAULT '#4F46E5'",
       'ALTER TABLE projects ADD COLUMN IF NOT EXISTS logo_url TEXT',
-      'ALTER TABLE verification_types ADD COLUMN IF NOT EXISTS is_system_template BOOLEAN DEFAULT FALSE NOT NULL'
+      'ALTER TABLE verification_types ADD COLUMN IF NOT EXISTS is_system_template BOOLEAN DEFAULT FALSE NOT NULL',
     ];
 
     log(`Applying ${fixStatements.length} schema fixes...`);

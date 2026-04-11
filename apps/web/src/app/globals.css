@@ -14,7 +14,9 @@
 @layer base {
   /* Rest of root variables override */
   :root {
-    --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans:
+      var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont,
+      'Segoe UI', Roboto, sans-serif;
     --font-mono: var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
   }
 
@@ -65,13 +67,20 @@
   }
 
   /* Monospace Precision */
-  .mono, [data-mono='true'], time {
+  .mono,
+  [data-mono='true'],
+  time {
     font-family: var(--font-mono);
     letter-spacing: -0.02em;
   }
 
   /* High-Precision Header Reset */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display font-black tracking-tight uppercase;
   }
 
@@ -81,7 +90,9 @@
   }
 
   /* Global Input/Select Polish (No more white-on-white) */
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     @apply bg-[var(--color-surface-base)] text-[var(--color-text-base)] border-[var(--color-border-base)] placeholder:text-[var(--color-text-muted)] border;
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -137,7 +148,7 @@
   .card {
     @apply bg-surface-container-low rounded-xl overflow-hidden transition-all duration-300;
   }
-  
+
   .card-nested {
     @apply bg-surface-container-highest;
   }
@@ -161,12 +172,16 @@
   .badge-primary {
     @apply text-primary bg-primary/10 border-primary/20;
   }
-  .badge-primary .badge-dot { @apply bg-primary; }
+  .badge-primary .badge-dot {
+    @apply bg-primary;
+  }
 
   .badge-tertiary {
     @apply text-tertiary bg-tertiary/10 border-tertiary/20;
   }
-  .badge-tertiary .badge-dot { @apply bg-tertiary; }
+  .badge-tertiary .badge-dot {
+    @apply bg-tertiary;
+  }
 
   /* Specialized Component: The Verification Stack */
   .verification-stack {
@@ -190,11 +205,16 @@
   .bg-glass {
     @apply backdrop-blur-xl border;
     border-color: color-mix(in srgb, var(--color-border-base) 10%, transparent);
-    background-color: color-mix(in srgb, var(--color-surface-base) 60%, transparent);
+    background-color: color-mix(
+      in srgb,
+      var(--color-surface-base) 60%,
+      transparent
+    );
   }
 
   .shadow-obsidian {
-    box-shadow: 0 48px 100px -20px color-mix(in srgb, var(--color-surface-inverse) 15%, transparent);
+    box-shadow: 0 48px 100px -20px
+      color-mix(in srgb, var(--color-surface-inverse) 15%, transparent);
   }
 
   .transition-premium {

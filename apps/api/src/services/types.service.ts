@@ -2,9 +2,7 @@ import { db } from '../db';
 import { projectTypes, typeColumns } from '../db/schema';
 import { eq, asc } from 'drizzle-orm';
 import { ApiError } from '../utils/errors';
-import { 
-  NewProjectType 
-} from '../db/schema';
+import { NewProjectType } from '../db/schema';
 
 /**
  * Project Types & Columns Service
@@ -42,7 +40,7 @@ export const createProjectType = async (
       name: data.name!,
     } as NewProjectType)
     .returning();
-  
+
   return newType;
 };
 
@@ -72,7 +70,7 @@ export const updateProjectType = async (
     .set({ ...data, updatedAt: new Date() })
     .where(eq(projectTypes.id, id))
     .returning();
-  
+
   if (!updated) throw new ApiError('Project type not found', 404);
   return updated;
 };

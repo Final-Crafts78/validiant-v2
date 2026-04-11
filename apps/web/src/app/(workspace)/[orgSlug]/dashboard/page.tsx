@@ -14,10 +14,7 @@ import { useRouter } from 'next/navigation';
 import { tasksApi } from '@/lib/api';
 import { Task } from '@validiant/shared';
 import { usePermissions } from '@/hooks/usePermissions';
-import {
-  CheckCircle2,
-  FolderKanban,
-} from 'lucide-react';
+import { CheckCircle2, FolderKanban } from 'lucide-react';
 
 import { useOrganizations } from '@/hooks/useOrganizations';
 import { useParams } from 'next/navigation';
@@ -38,7 +35,13 @@ function GeneralDashboard({
 
   // Extract first name from fullName with null-safety
   const firstName = useMemo(() => {
-    if (!user || !user.fullName || user.fullName === 'null' || user.fullName.trim() === '') return 'Enterprise User';
+    if (
+      !user ||
+      !user.fullName ||
+      user.fullName === 'null' ||
+      user.fullName.trim() === ''
+    )
+      return 'Enterprise User';
     const parts = user.fullName.trim().split(' ');
     return parts[0] || user.fullName;
   }, [user]);
@@ -55,13 +58,9 @@ function GeneralDashboard({
           </h1>
           <p className="mt-1 text-sm text-text-muted font-medium">
             Project status:{' '}
-            <span className="text-success-strong font-bold">
-              Operational
-            </span>{' '}
-            · SLA compliance:{' '}
-            <span className="text-primary font-bold">
-              98.2%
-            </span>
+            <span className="text-success-strong font-bold">Operational</span> ·
+            SLA compliance:{' '}
+            <span className="text-primary font-bold">98.2%</span>
           </p>
         </div>
 

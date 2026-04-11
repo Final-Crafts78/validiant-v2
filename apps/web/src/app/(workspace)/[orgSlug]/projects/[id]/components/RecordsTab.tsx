@@ -106,7 +106,10 @@ export function RecordsTab({ projectId }: { projectId: string }) {
       <div className="animate-pulse space-y-8 p-8">
         <div className="grid grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 bg-[var(--color-surface-muted)]/50 rounded-2xl" />
+            <div
+              key={i}
+              className="h-32 bg-[var(--color-surface-muted)]/50 rounded-2xl"
+            />
           ))}
         </div>
         <div className="h-10 bg-[var(--color-surface-muted)]/50 rounded-xl w-1/4" />
@@ -292,8 +295,9 @@ export function RecordsTab({ projectId }: { projectId: string }) {
           </h3>
           <p className="text-sm text-[var(--text-muted)] max-w-sm">
             Project is performing within healthy limits based on current volume
-            of <span className="text-[var(--color-text-base)]">{totalCount}</span> records. SLA
-            compliance is currently at{' '}
+            of{' '}
+            <span className="text-[var(--color-text-base)]">{totalCount}</span>{' '}
+            records. SLA compliance is currently at{' '}
             <span className="text-emerald-400 font-bold">{slaCompliant}%</span>.
           </p>
 
@@ -336,6 +340,12 @@ export function RecordsTab({ projectId }: { projectId: string }) {
               data: { status: label },
             });
             setIsSlideOverOpen(false);
+          }}
+          onUpdateRecord={async (data) => {
+            await updateRecord.mutateAsync({
+              id: selectedRecord.id,
+              data: data,
+            });
           }}
           isUpdating={updateRecord.isPending}
         />

@@ -9,10 +9,10 @@ import { eq, isNull, and } from 'drizzle-orm';
 
 /**
  * Migration Script: VerificationTypes → ProjectTypes
- * 
- * This script migrates legacy organization-level VerificationTypes 
+ *
+ * This script migrates legacy organization-level VerificationTypes
  * into the new Project-scoped "Data Universe" schema.
- * 
+ *
  * "Data Driven Perfection" - Phase 1.5 Induction.
  */
 
@@ -51,7 +51,8 @@ async function migrateVerificationTypes() {
 
     // Filter types belonging to this project's organization (or system types)
     const projectLegacyTypes = legacyTypes.filter(
-      (lt: any) => !lt.organizationId || lt.organizationId === project.organizationId
+      (lt: any) =>
+        !lt.organizationId || lt.organizationId === project.organizationId
     );
 
     for (const vt of projectLegacyTypes) {
@@ -69,15 +70,18 @@ async function migrateVerificationTypes() {
         continue;
       }
 
-      const [newType] = await db.insert(projectTypes).values({
-        projectId: project.id,
-        name: vt.name,
-        description: `Migrated from verification type: ${vt.code}`,
-        settings: {
-          slaHours: vt.slaOverrideHours ?? 72,
-          gpsRequired: false,
-        },
-      }).returning();
+      const [newType] = await db
+        .insert(projectTypes)
+        .values({
+          projectId: project.id,
+          name: vt.name,
+          description: `Migrated from verification type: ${vt.code}`,
+          settings: {
+            slaHours: vt.slaOverrideHours ?? 72,
+            gpsRequired: false,
+          },
+        })
+        .returning();
 
       console.log(`  ✅ Created type "${vt.name}" (ID: ${newType.id})`);
 
@@ -88,7 +92,7 @@ async function migrateVerificationTypes() {
         WHERE verification_type_id = ${vt.id} 
         ORDER BY version DESC LIMIT 1
       `);
-      
+
       const fields = (versionResult.rows[0]?.field_schema as any[]) || [];
 
       for (let i = 0; i < fields.length; i++) {

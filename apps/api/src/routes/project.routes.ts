@@ -245,9 +245,9 @@ app.get('/:id/stats', (c) => {
         completedTasks: 0,
         pendingTasks: 0,
         efficiency: 100,
-        lastActivity: new Date().toISOString()
-      }
-    }
+        lastActivity: new Date().toISOString(),
+      },
+    },
   });
 });
 

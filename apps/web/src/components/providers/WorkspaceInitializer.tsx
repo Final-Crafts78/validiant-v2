@@ -23,20 +23,23 @@ interface WorkspaceInitializerProps {
   urlOrgSlug?: string;
 }
 
-export function WorkspaceInitializer({ orgs, urlOrgSlug }: WorkspaceInitializerProps) {
+export function WorkspaceInitializer({
+  orgs,
+  urlOrgSlug,
+}: WorkspaceInitializerProps) {
   useEffect(() => {
     function syncOrgFromUrl() {
       const state = useWorkspaceStore.getState();
       const currentOrgId = state.activeOrgId;
-      
+
       let targetOrg = null;
       if (urlOrgSlug && urlOrgSlug !== 'new') {
         targetOrg = orgs?.find((o) => o.slug === urlOrgSlug);
       } else if (orgs && orgs.length > 0) {
-        if (!currentOrgId || !orgs.find(o => o.id === currentOrgId)) {
+        if (!currentOrgId || !orgs.find((o) => o.id === currentOrgId)) {
           targetOrg = orgs[0];
         } else {
-          targetOrg = orgs.find(o => o.id === currentOrgId);
+          targetOrg = orgs.find((o) => o.id === currentOrgId);
         }
       }
 
@@ -46,14 +49,26 @@ export function WorkspaceInitializer({ orgs, urlOrgSlug }: WorkspaceInitializerP
         urlOrgSlug,
         currentOrgId,
         currentSlug,
-        targetOrg: targetOrg ? { id: targetOrg.id, slug: targetOrg.slug, name: targetOrg.name } : 'NONE',
+        targetOrg: targetOrg
+          ? { id: targetOrg.id, slug: targetOrg.slug, name: targetOrg.name }
+          : 'NONE',
         isSlugUUID: urlOrgSlug ? /^[0-9a-f]{8}-/.test(urlOrgSlug) : false,
         timestamp: new Date().toISOString(),
       });
 
-      if (targetOrg && (targetOrg.id !== currentOrgId || targetOrg.slug !== currentSlug)) {
-        console.info('[Workspace] Syncing org context from URL:', targetOrg.slug);
-        state.setActiveOrg(targetOrg.id, targetOrg.slug || '', targetOrg.settings?.brandConfig);
+      if (
+        targetOrg &&
+        (targetOrg.id !== currentOrgId || targetOrg.slug !== currentSlug)
+      ) {
+        console.info(
+          '[Workspace] Syncing org context from URL:',
+          targetOrg.slug
+        );
+        state.setActiveOrg(
+          targetOrg.id,
+          targetOrg.slug || '',
+          targetOrg.settings?.brandConfig
+        );
       }
     }
 

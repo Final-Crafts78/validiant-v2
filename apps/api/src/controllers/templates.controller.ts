@@ -15,8 +15,11 @@ export const listTemplates = async (c: Context) => {
   try {
     const orgId = c.req.header('X-Org-Id');
     const industry = c.req.query('industry');
-    
-    const templates = await templateService.getAvailableTemplates(orgId, industry);
+
+    const templates = await templateService.getAvailableTemplates(
+      orgId,
+      industry
+    );
 
     return c.json({
       success: true,
@@ -42,7 +45,7 @@ export const createTemplate = async (c: Context) => {
     const orgId = c.req.header('X-Org-Id');
     const user = c.get('user');
     const body = await c.req.json();
-    
+
     const validated = typeTemplateCreateSchema.parse(body);
 
     const template = await templateService.createTemplate(user.id, {

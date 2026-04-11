@@ -27,7 +27,9 @@ export function WorkspaceSidebar({
     <aside
       className={cn(
         'fixed left-16 top-0 bottom-0 border-r border-[var(--color-border-base)] bg-[var(--color-surface-base)] transition-all duration-300 ease-in-out z-40 overflow-hidden',
-        collapsed ? 'w-0 border-none opacity-0 pointer-events-none' : 'w-60 opacity-100'
+        collapsed
+          ? 'w-0 border-none opacity-0 pointer-events-none'
+          : 'w-60 opacity-100'
       )}
     >
       <div className="flex h-full w-60 flex-col">

@@ -107,9 +107,9 @@ export function CreateProjectModal({
     } catch (err: any) {
       console.error('[CreateProjectModal] Submission error:', err);
       // Extract the most descriptive message possible
-      const errorMessage = 
-        err.response?.data?.message || 
-        err.message || 
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
         'Failed to create project. Please verify organization and try again.';
       setError(errorMessage);
     } finally {

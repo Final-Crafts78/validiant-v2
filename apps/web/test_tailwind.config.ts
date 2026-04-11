@@ -5,9 +5,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: 'color-mix(in srgb, var(--color-accent-base) calc(<alpha-value> * 100%), transparent)'
-      }
-    }
-  }
+        primary:
+          'color-mix(in srgb, var(--color-accent-base) calc(<alpha-value> * 100%), transparent)',
+      },
+    },
+  },
 };
 export default config;

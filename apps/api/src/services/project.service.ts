@@ -9,15 +9,15 @@
 
 import { eq, and, isNull, sql, or, desc, SQL } from 'drizzle-orm';
 import { db } from '../db';
-import { 
+import {
   projects,
   projectMembers,
   organizations,
   users,
-  records, 
+  records,
   projectTypes,
   typeTemplates,
-  typeColumns
+  typeColumns,
 } from '../db/schema';
 import { cache } from '../config/redis.config';
 import { ConflictError, BadRequestError, assertExists } from '../utils/errors';
@@ -138,21 +138,29 @@ export const createProject = async (
       // Attempt to include these only if we are sure the schema is migrated
       // If the migration hasn't been run, the INSERT will fail.
       // We keep them here but ensure the SQL is run.
-      ...(data.themeColor !== undefined && { themeColor: data.themeColor || '#4F46E5' }),
+      ...(data.themeColor !== undefined && {
+        themeColor: data.themeColor || '#4F46E5',
+      }),
       ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
-      ...(data.autoDispatchVerified !== undefined && { autoDispatchVerified: data.autoDispatchVerified || false }),
+      ...(data.autoDispatchVerified !== undefined && {
+        autoDispatchVerified: data.autoDispatchVerified || false,
+      }),
       settings: {},
       createdBy: userId,
     })
     .catch((err) => {
       // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
-      const isMissingColumn = err.message.includes('column') || err.message.includes('not found');
+      const isMissingColumn =
+        err.message.includes('column') || err.message.includes('not found');
       if (isMissingColumn) {
-        logger.warn('DEGRADED MODE: Project created without branding columns due to missing DB migration.', {
-          error: err.message,
-          suggestion: 'Run the Phase 1 SQL to fix this permanently.'
-        });
-        
+        logger.warn(
+          'DEGRADED MODE: Project created without branding columns due to missing DB migration.',
+          {
+            error: err.message,
+            suggestion: 'Run the Phase 1 SQL to fix this permanently.',
+          }
+        );
+
         // Fallback: Try insert WITHOUT the new columns to at least get the project created
         return db.insert(projects).values({
           organizationId,
@@ -204,27 +212,30 @@ export const createProject = async (
       userId,
       role: 'owner',
     });
-    
+
     // 3. PHASE 6: Archetype Marketplace Integration
     // If a templateId is provided, initialize the project with that archetype
     if (data.templateId) {
       const template = await db.query.typeTemplates.findFirst({
-        where: eq(typeTemplates.id, data.templateId)
+        where: eq(typeTemplates.id, data.templateId),
       });
-      
+
       if (template) {
         const def = template.typeDefinition as any;
-        
+
         // A. Create Project Type
-        const [newType] = await db.insert(projectTypes).values({
-          projectId: newProject.id,
-          name: def.typeName || template.name,
-          icon: def.typeIcon || 'Layers',
-          color: def.typeColor || '#4F46E5',
-          settings: def.settings || {},
-          createdBy: userId
-        }).returning();
-        
+        const [newType] = await db
+          .insert(projectTypes)
+          .values({
+            projectId: newProject.id,
+            name: def.typeName || template.name,
+            icon: def.typeIcon || 'Layers',
+            color: def.typeColor || '#4F46E5',
+            settings: def.settings || {},
+            createdBy: userId,
+          })
+          .returning();
+
         // B. Create Columns
         if (def.columns && Array.isArray(def.columns)) {
           const columnValues = def.columns.map((col: any, index: number) => ({
@@ -236,17 +247,17 @@ export const createProject = async (
             options: col.options || [],
             settings: col.settings || {},
             order: index,
-            isRequired: col.isRequired || false
+            isRequired: col.isRequired || false,
           }));
-          
+
           if (columnValues.length > 0) {
             await db.insert(typeColumns).values(columnValues);
           }
         }
-        
-        logger.info('Project initialized from archetype', { 
-          projectId: newProject.id, 
-          templateId: data.templateId 
+
+        logger.info('Project initialized from archetype', {
+          projectId: newProject.id,
+          templateId: data.templateId,
         });
       }
     }

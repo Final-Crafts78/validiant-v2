@@ -36,16 +36,22 @@ async function verifySchemaFix() {
     console.log('--- SCHEMA VERIFICATION RESULTS ---');
     console.log(JSON.stringify(results, null, 2));
 
-    const missingProjects = ['auto_dispatch_verified', 'theme_color', 'logo_url'].filter(
-      c => !results.projects.includes(c)
-    );
-    const missingVT = !results.verification_types.includes('is_system_template');
+    const missingProjects = [
+      'auto_dispatch_verified',
+      'theme_color',
+      'logo_url',
+    ].filter((c) => !results.projects.includes(c));
+    const missingVT =
+      !results.verification_types.includes('is_system_template');
 
     if (missingProjects.length === 0 && !missingVT) {
       console.log('✅ ALL COLUMNS VERIFIED!');
       process.exit(0);
     } else {
-      console.log('❌ MISSING COLUMNS:', { projects: missingProjects, vt: missingVT ? ['is_system_template'] : [] });
+      console.log('❌ MISSING COLUMNS:', {
+        projects: missingProjects,
+        vt: missingVT ? ['is_system_template'] : [],
+      });
       process.exit(1);
     }
   } catch (error) {

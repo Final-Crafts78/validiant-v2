@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-// A robust dynamic theme applier that converts runtime configuration 
+// A robust dynamic theme applier that converts runtime configuration
 // into absolute CSS roots to bypass Tailwind static overrides.
 export function DynamicThemeInjector({
   orgs,
@@ -24,7 +24,8 @@ export function DynamicThemeInjector({
 
     if (!targetOrg) return;
 
-    const brandConfig = targetOrg.settings?.brandConfig || targetOrg.brandConfig;
+    const brandConfig =
+      targetOrg.settings?.brandConfig || targetOrg.brandConfig;
     if (!brandConfig) return;
 
     const TOKEN_MAP: Record<string, string[]> = {
@@ -48,7 +49,6 @@ export function DynamicThemeInjector({
         });
       }
     });
-
   }, [orgs, urlOrgSlug]);
 
   return null;

@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 
 /**
  * Global Projects Redirect
- * 
+ *
  * Redirects to the workspace-scoped projects page.
  * Per Masterplan Phase 3: users should always land in the workspace-scoped view.
  */

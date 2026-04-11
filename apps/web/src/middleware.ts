@@ -143,10 +143,15 @@ export async function middleware(request: NextRequest) {
     try {
       jwtPresent = !!process.env.JWT_SECRET;
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-1.0.1.A: JWT_SECRET check done: ${jwtPresent}`);
+      console.log(
+        `[MW:Edge] [${requestId}] EP-1.0.1.A: JWT_SECRET check done: ${jwtPresent}`
+      );
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(`[MW:Edge] [${requestId}] EP-1.0.1.ERROR: JWT_SECRET access failed`, e);
+      console.error(
+        `[MW:Edge] [${requestId}] EP-1.0.1.ERROR: JWT_SECRET access failed`,
+        e
+      );
     }
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'MISSING';
@@ -172,11 +177,16 @@ export async function middleware(request: NextRequest) {
     try {
       secretFP = await getSecretFingerprint();
       // eslint-disable-next-line no-console
-      console.log(`[MW:Edge] [${requestId}] EP-1.0.4: FP Value Success: ${secretFP}`);
+      console.log(
+        `[MW:Edge] [${requestId}] EP-1.0.4: FP Value Success: ${secretFP}`
+      );
     } catch (fpErr) {
-       // eslint-disable-next-line no-console
-       console.error(`[MW:Edge] [${requestId}] EP-1.0.4.ERROR: FP Calc failed`, fpErr);
-       secretFP = 'ERROR';
+      // eslint-disable-next-line no-console
+      console.error(
+        `[MW:Edge] [${requestId}] EP-1.0.4.ERROR: FP Calc failed`,
+        fpErr
+      );
+      secretFP = 'ERROR';
     }
 
     // eslint-disable-next-line no-console

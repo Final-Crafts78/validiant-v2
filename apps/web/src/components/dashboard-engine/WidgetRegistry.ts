@@ -1,6 +1,13 @@
 import React from 'react';
 import { WidgetDefinition } from './types';
-import { PieChart, Activity, Grip, FolderKanban, CheckSquare, Users } from 'lucide-react';
+import {
+  PieChart,
+  Activity,
+  Grip,
+  FolderKanban,
+  CheckSquare,
+  Users,
+} from 'lucide-react';
 
 // Using dynamic imports for widgets to keep dashboard payload small
 const ProjectStatusMatrix = React.lazy(
@@ -14,9 +21,7 @@ const PriorityDistribution = React.lazy(
 );
 const RecentActivity = React.lazy(() => import('./widgets/RecentActivity'));
 const QuickActions = React.lazy(() => import('./widgets/QuickActions'));
-const TimelineOverview = React.lazy(
-  () => import('./widgets/TimelineOverview')
-);
+const TimelineOverview = React.lazy(() => import('./widgets/TimelineOverview'));
 
 export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
   'project-status-matrix': {
@@ -103,6 +108,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
 
 export const getAllWidgets = () => Object.values(WIDGET_REGISTRY);
 
-export const getWidgetDefinition = (id: string): WidgetDefinition | undefined => {
+export const getWidgetDefinition = (
+  id: string
+): WidgetDefinition | undefined => {
   return WIDGET_REGISTRY[id];
 };

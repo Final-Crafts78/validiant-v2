@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import { TypeColumn, ColumnType } from '@validiant/shared';
 import {
@@ -10,7 +9,48 @@ import {
   Trash2,
   Plus,
   ShieldCheck,
+  List,
+  Calculator,
 } from 'lucide-react';
+
+const VALIDATION_PRESETS = [
+  {
+    value: 'pan_card',
+    label: 'PAN Card (India)',
+    regex: '^[A-Z]{5}[0-9]{4}[A-Z]$',
+    message: 'Invalid PAN format',
+  },
+  {
+    value: 'aadhaar',
+    label: 'Aadhaar (India)',
+    regex: '^[2-9]{1}[0-9]{11}$',
+    message: 'Invalid Aadhaar number',
+  },
+  {
+    value: 'gstin',
+    label: 'GSTIN (India)',
+    regex: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+    message: 'Invalid GSTIN format',
+  },
+  {
+    value: 'ifsc',
+    label: 'IFSC Code',
+    regex: '^[A-Z]{4}0[A-Z0-9]{6}$',
+    message: 'Invalid IFSC code',
+  },
+  {
+    value: 'pincode',
+    label: 'PIN Code (India)',
+    regex: '^[1-9][0-9]{5}$',
+    message: 'Invalid PIN code',
+  },
+  {
+    value: 'mobile_in',
+    label: 'Mobile Number (India)',
+    regex: '^[6-9]\\d{9}$',
+    message: 'Invalid Indian mobile number',
+  },
+];
 
 interface FieldConfiguratorProps {
   column: TypeColumn;
@@ -99,6 +139,110 @@ export function FieldConfigurator({
           </div>
         </div>
 
+        {/* Section: Select / Multi-Select Choices */}
+        {(column.columnType === ColumnType.SELECT ||
+          column.columnType === ColumnType.MULTI_SELECT) && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-2 mb-4">
+              <List className="w-4 h-4 text-[#adc6ff]" />
+              <h4 className="text-[11px] font-black text-[var(--color-text-base)]/60 uppercase tracking-widest">
+                Choice Manager
+              </h4>
+            </div>
+            <div className="space-y-2">
+              {(column.options?.choices || []).map((choice, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <input
+                    className="flex-1 bg-[#151b2d] border border-[var(--color-border-base)]/20 rounded-xl p-3 text-xs font-bold text-[var(--color-text-base)] outline-none"
+                    value={choice.label}
+                    onChange={(e) => {
+                      const newChoices = (column.options?.choices || []).map(
+                        (choice, i) =>
+                          i === idx
+                            ? {
+                                ...choice,
+                                label: e.target.value,
+                                value: e.target.value
+                                  .toLowerCase()
+                                  .replace(/[^a-z0-9]/g, '_'),
+                              }
+                            : choice
+                      );
+                      onUpdate({
+                        options: { ...column.options, choices: newChoices },
+                      });
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      const newChoices = [...(column.options?.choices || [])];
+                      newChoices.splice(idx, 1);
+                      onUpdate({
+                        options: { ...column.options, choices: newChoices },
+                      });
+                    }}
+                    className="p-3 bg-rose-500/10 text-rose-400 rounded-xl hover:bg-rose-500 hover:text-white transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  const newChoices = [
+                    ...(column.options?.choices || []),
+                    {
+                      label: `Option ${(column.options?.choices?.length || 0) + 1}`,
+                      value: `opt_${(column.options?.choices?.length || 0) + 1}`,
+                    },
+                  ];
+                  onUpdate({
+                    options: { ...column.options, choices: newChoices },
+                  });
+                }}
+                className="w-full mt-2 p-3 border border-dashed border-[var(--color-border-base)]/40 rounded-xl text-[10px] font-black text-[var(--color-text-base)]/40 hover:text-[#adc6ff] hover:border-[#adc6ff]/40 transition-all flex items-center justify-center gap-2"
+              >
+                <Plus className="w-3 h-3" /> ADD CHOICE
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Section: Formula Engine */}
+        {column.columnType === ColumnType.FORMULA && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Calculator className="w-4 h-4 text-[#adc6ff]" />
+              <h4 className="text-[11px] font-black text-[var(--color-text-base)]/60 uppercase tracking-widest">
+                Formula Engine
+              </h4>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-[var(--color-text-base)]/20 uppercase tracking-widest ml-1">
+                Expression
+              </label>
+              <textarea
+                className="w-full h-24 bg-[#151b2d] border border-[#adc6ff]/20 rounded-xl p-4 text-[var(--color-text-base)] text-sm font-mono focus:border-[#adc6ff]/50 transition-all outline-none resize-none"
+                placeholder="{unit_price} * {quantity}"
+                value={column.settings?.formulaExpression || ''}
+                onChange={(e) =>
+                  onUpdate({
+                    settings: {
+                      ...column.settings,
+                      formulaExpression: e.target.value,
+                    },
+                  })
+                }
+              />
+              <p className="text-[9px] text-[var(--color-text-base)]/30 px-2 leading-relaxed">
+                Use <strong className="text-[#adc6ff]">{'{field_key}'}</strong>{' '}
+                to reference other attributes. Math operations (+, -, *, /) are
+                natively evaluated.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Section: Validation & UI */}
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-4">
@@ -146,6 +290,57 @@ export function FieldConfigurator({
                   })
                 }
               />
+            </div>
+
+            {/* Validation Rules Panel */}
+            <div className="pt-4 mt-2 border-t border-[var(--color-border-subtle)] space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-black text-[var(--color-text-base)]/40 uppercase tracking-widest ml-1">
+                  Validation Presets
+                </label>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {VALIDATION_PRESETS.map((preset) => {
+                  const isActive = column.settings?.validationRules?.some(
+                    (r) => r.preset === preset.value
+                  );
+                  return (
+                    <button
+                      key={preset.value}
+                      onClick={() => {
+                        let newRules = [
+                          ...(column.settings?.validationRules || []),
+                        ];
+                        if (isActive) {
+                          newRules = newRules.filter(
+                            (r) => r.preset !== preset.value
+                          );
+                        } else {
+                          newRules.push({
+                            type: 'preset',
+                            preset: preset.value as any,
+                            value: preset.regex,
+                            message: preset.message,
+                          });
+                        }
+                        onUpdate({
+                          settings: {
+                            ...column.settings,
+                            validationRules: newRules,
+                          },
+                        });
+                      }}
+                      className={`p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all text-left ${
+                        isActive
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                          : 'bg-[#151b2d] border-[var(--color-border-base)]/20 text-[var(--color-text-base)]/40 hover:border-emerald-500/20 hover:text-emerald-500/60'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

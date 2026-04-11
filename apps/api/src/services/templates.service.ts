@@ -16,17 +16,17 @@ import { CreateTypeTemplateInput } from '@validiant/shared';
  * Get templates available for an organization
  * Includes public templates and org-specific ones.
  */
-export const getAvailableTemplates = async (orgId?: string, industry?: string) => {
+export const getAvailableTemplates = async (
+  orgId?: string,
+  industry?: string
+) => {
   const orgFilter = orgId ? [eq(typeTemplates.orgId, orgId)] : [];
   const publicFilter = eq(typeTemplates.isPublic, true);
-  
+
   const filters = or(publicFilter, ...orgFilter);
-  
-  const query = db
-    .select()
-    .from(typeTemplates)
-    .where(filters);
-    
+
+  const query = db.select().from(typeTemplates).where(filters);
+
   if (industry) {
     return await query.where(eq(typeTemplates.industry, industry));
   }
@@ -72,7 +72,7 @@ export const getTemplateById = async (id: string) => {
     .from(typeTemplates)
     .where(eq(typeTemplates.id, id))
     .limit(1);
-    
+
   assertExists(template, 'Type Template');
   return template;
 };
@@ -85,7 +85,7 @@ export const deleteTemplate = async (id: string) => {
     .delete(typeTemplates)
     .where(eq(typeTemplates.id, id))
     .returning();
-    
+
   assertExists(deleted, 'Type Template');
   logger.info('Type template deleted', { templateId: id });
   return deleted;

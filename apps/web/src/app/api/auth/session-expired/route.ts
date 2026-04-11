@@ -43,7 +43,8 @@ export async function GET(request: Request) {
   };
 
   console.debug('[SessionExpired] Resolved Cookie Options', {
-    domain: (COOKIE_OPTIONS as { domain?: string }).domain || 'UNDEFINED (Host-only)',
+    domain:
+      (COOKIE_OPTIONS as { domain?: string }).domain || 'UNDEFINED (Host-only)',
     path: COOKIE_OPTIONS.path,
     secure: COOKIE_OPTIONS.secure,
     sameSite: COOKIE_OPTIONS.sameSite,

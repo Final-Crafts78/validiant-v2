@@ -2,9 +2,7 @@ import { db } from '../db';
 import { typeColumns } from '../db/schema';
 import { eq, asc } from 'drizzle-orm';
 import { ApiError } from '../utils/errors';
-import { 
-  NewTypeColumn 
-} from '../db/schema';
+import { NewTypeColumn } from '../db/schema';
 
 /**
  * Type Columns Service
@@ -40,7 +38,7 @@ export const createTypeColumn = async (
       columnType: data.columnType!,
     } as NewTypeColumn)
     .returning();
-  
+
   return newColumn;
 };
 
@@ -56,7 +54,7 @@ export const updateTypeColumn = async (
     .set(data)
     .where(eq(typeColumns.id, id))
     .returning();
-  
+
   if (!updated) throw new ApiError('Column not found', 404);
   return updated;
 };
@@ -71,10 +69,7 @@ export const deleteTypeColumn = async (id: string) => {
 /**
  * Reorder columns for a type
  */
-export const reorderColumns = async (
-  _typeId: string,
-  columnIds: string[]
-) => {
+export const reorderColumns = async (_typeId: string, columnIds: string[]) => {
   return await db.transaction(async (tx: any) => {
     for (let i = 0; i < columnIds.length; i++) {
       await tx

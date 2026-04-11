@@ -3,13 +3,15 @@ import {
   X,
   ShieldCheck,
   Calendar,
-  Fingerprint,
   ChevronRight,
   Expand,
+  Loader2,
+  Save,
 } from 'lucide-react';
 import { ProjectRecord, ProjectType } from '@validiant/shared';
 import { StatusActionBar } from './StatusActionBar';
 import { AuditTimeline, AuditEvent } from './AuditTimeline';
+import { ExecutiveSelector } from './ExecutiveSelector';
 import { format } from 'date-fns';
 
 interface VerificationSlideOverProps {
@@ -18,6 +20,7 @@ interface VerificationSlideOverProps {
   record: ProjectRecord;
   projectType: ProjectType;
   onStatusUpdate: (label: string) => Promise<void>;
+  onUpdateRecord?: (data: Partial<ProjectRecord>) => Promise<void>;
   isUpdating?: boolean;
 }
 
@@ -33,9 +36,14 @@ export function VerificationSlideOver({
   record,
   projectType,
   onStatusUpdate,
+  onUpdateRecord,
   isUpdating = false,
 }: VerificationSlideOverProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'audit'>('details');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState<Record<string, any>>(
+    record.data || {}
+  );
 
   if (!isOpen || !record) return null;
 
@@ -101,12 +109,18 @@ export function VerificationSlideOver({
                 </button>
               </div>
               <button
-                onClick={onClose}
-                className="p-3 hover:bg-[var(--surface-container-low)]/40 rounded-2xl border border-[var(--border-subtle)] transition-all group"
+                onClick={() => setIsEditing(!isEditing)}
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${isEditing ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-primary/10 border-primary/50 text-primary hover:bg-primary/20'}`}
               >
-                <X className="w-6 h-6 text-[var(--text-muted)] group-hover:text-[var(--color-text-base)] group-hover:rotate-90 transition-all duration-500" />
+                {isEditing ? 'CANCEL_EDIT' : 'EDIT_PROTOCOL'}
               </button>
             </div>
+            <button
+              onClick={onClose}
+              className="p-3 hover:bg-[var(--surface-container-low)]/40 rounded-2xl border border-[var(--border-subtle)] transition-all group"
+            >
+              <X className="w-6 h-6 text-[var(--text-muted)] group-hover:text-[var(--color-text-base)] group-hover:rotate-90 transition-all duration-500" />
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto px-10 py-10 space-y-12 custom-scrollbar pb-32">
@@ -136,17 +150,13 @@ export function VerificationSlideOver({
                       </span>
                     </div>
                   </div>
-                  <div className="bg-surface-container-low p-6 rounded-[2rem] border border-[var(--border-subtle)] space-y-2 group hover:border-primary/20 transition-all">
-                    <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-[0.3em]">
-                      DATA_SOURCE
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <Fingerprint className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-black text-[var(--color-text-base)] italic uppercase tracking-tighter">
-                        {record.createdVia || 'MANUAL_ENTRY'}
-                      </span>
-                    </div>
-                  </div>
+                  <ExecutiveSelector
+                    currentAssignee={record.assignedTo}
+                    onAssign={(userId) =>
+                      onUpdateRecord?.({ assignedTo: userId })
+                    }
+                    isUpdating={isUpdating}
+                  />
                 </div>
 
                 {/* 2. Responsive Record Details Layout */}
@@ -159,43 +169,105 @@ export function VerificationSlideOver({
                   </div>
 
                   {/* DUAL-LAYOUT RECTIFICATION: Web Grid vs Mobile Form */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 animate-in fade-in slide-in-from-top-4 duration-700">
-                    {projectType.columns?.map((col) => {
-                      const value = (record.data as Record<string, unknown>)?.[
-                        col.key
-                      ];
-                      return (
-                        <div
-                          key={col.key}
-                          className="space-y-3 group/field relative"
-                        >
-                          <div className="flex items-center justify-between">
-                            <label className="text-[9px] font-black text-[var(--text-muted)]/20 uppercase tracking-[0.2em] group-focus-within/field:text-primary transition-colors italic">
-                              {col.name}
-                            </label>
-                            <div className="opacity-0 group-hover/field:opacity-100 transition-opacity">
-                              <span className="text-[8px] font-mono text-[var(--color-text-base)]/10 uppercase tracking-widest">
-                                {col.columnType}
+                  <div className="space-y-12">
+                    {(() => {
+                      // Group fields by section name
+                      const sections: Record<
+                        string,
+                        typeof projectType.columns
+                      > = {};
+                      projectType.columns?.forEach((col) => {
+                        const sName =
+                          col.settings?.sectionName || 'UNSPECIFIED_REGION';
+                        if (!sections[sName]) sections[sName] = [];
+                        sections[sName].push(col);
+                      });
+
+                      return Object.entries(sections).map(
+                        ([sectionName, cols]) => (
+                          <div
+                            key={sectionName}
+                            className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-700"
+                          >
+                            <div className="bg-[#009688]/10 border-l-4 border-[#009688] p-4 rounded-r-2xl flex items-center justify-between group">
+                              <h4 className="text-[10px] font-black text-[#009688] uppercase tracking-[0.2em]">
+                                {sectionName}
+                              </h4>
+                              <span className="text-[8px] font-mono text-[#009688]/40 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                // SECTION_BLOCK_{sectionName.slice(0, 3)}
                               </span>
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                              {cols?.map((col) => {
+                                const value = isEditing
+                                  ? editedData[col.key]
+                                  : (record.data as Record<string, unknown>)?.[
+                                      col.key
+                                    ];
+                                const isFullWidth = col.settings?.isFullWidth;
+
+                                return (
+                                  <div
+                                    key={col.key}
+                                    className={`space-y-3 group/field relative ${isFullWidth ? 'md:col-span-2' : ''}`}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <label className="text-[9px] font-black text-[var(--text-muted)]/20 uppercase tracking-[0.2em] group-focus-within/field:text-primary transition-colors italic">
+                                        {col.name}
+                                      </label>
+                                      <div className="opacity-0 group-hover/field:opacity-100 transition-opacity flex gap-2">
+                                        {col.settings?.required && (
+                                          <span className="text-[8px] text-rose-500 font-black">
+                                            REQUIRED
+                                          </span>
+                                        )}
+                                        <span className="text-[8px] font-mono text-[var(--color-text-base)]/10 uppercase tracking-widest">
+                                          {col.columnType}
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <div
+                                      className={`bg-surface-lowest p-5 rounded-[1.5rem] border transition-all min-h-[64px] flex items-center ${isEditing ? 'border-amber-500/20 shadow-inner' : 'border-[var(--border-subtle)] group-hover/field:border-primary/20'}`}
+                                    >
+                                      {isEditing ? (
+                                        <input
+                                          className="w-full bg-transparent outline-none text-sm font-bold text-amber-500 placeholder-amber-500/20"
+                                          value={String(value || '')}
+                                          onChange={(e) =>
+                                            setEditedData({
+                                              ...editedData,
+                                              [col.key]: e.target.value,
+                                            })
+                                          }
+                                          placeholder={`Enter ${col.name}...`}
+                                        />
+                                      ) : (
+                                        <span className="text-sm font-medium text-[var(--color-text-base)]/80 tracking-tight leading-relaxed">
+                                          {value === undefined ||
+                                          value === null ||
+                                          value === '' ? (
+                                            <span className="opacity-10 font-mono text-[10px] uppercase tracking-widest italic">
+                                              VOID_NULL
+                                            </span>
+                                          ) : (
+                                            String(value)
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div
+                                      className={`absolute -left-4 top-4 bottom-4 w-0.5 transition-all duration-500 ${isEditing ? 'bg-amber-500' : 'bg-primary/0 group-hover/field:bg-primary'}`}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                          <div className="bg-surface-lowest p-5 rounded-[1.5rem] border border-[var(--border-subtle)] group-hover/field:border-primary/20 transition-all min-h-[64px] flex items-center">
-                            <span className="text-sm font-medium text-[var(--color-text-base)]/80 tracking-tight leading-relaxed">
-                              {value === undefined ||
-                              value === null ||
-                              value === '' ? (
-                                <span className="opacity-10 font-mono text-[10px] uppercase tracking-widest italic">
-                                  VOID_NULL
-                                </span>
-                              ) : (
-                                String(value)
-                              )}
-                            </span>
-                          </div>
-                          <div className="absolute -left-4 top-4 bottom-4 w-0.5 bg-primary/0 group-hover/field:bg-primary transition-all duration-500" />
-                        </div>
+                        )
                       );
-                    })}
+                    })()}
                   </div>
                 </div>
 
@@ -223,12 +295,40 @@ export function VerificationSlideOver({
           </div>
 
           {/* Fixed Status Bar */}
-          <StatusActionBar
-            projectType={projectType}
-            currentStatus={record.status}
-            onUpdateStatus={onStatusUpdate}
-            isUpdating={isUpdating}
-          />
+          <div className="sticky bottom-0 z-30">
+            {isEditing ? (
+              <div className="p-8 bg-surface-lowest/90 backdrop-blur-2xl border-t border-amber-500/20 flex gap-4 animate-in slide-in-from-bottom duration-500">
+                <button
+                  onClick={async () => {
+                    await onUpdateRecord?.({ data: editedData });
+                    setIsEditing(false);
+                  }}
+                  disabled={isUpdating}
+                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-[#0c1324] font-black py-4 rounded-[1.5rem] flex items-center justify-center gap-3 transition-all shadow-xl shadow-amber-500/20"
+                >
+                  {isUpdating ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5" />
+                  )}
+                  COMMIT_CHANGES
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-8 bg-surface-container-low text-[var(--text-muted)] font-black py-4 rounded-[1.5rem] border border-[var(--border-subtle)]"
+                >
+                  DISCARD
+                </button>
+              </div>
+            ) : (
+              <StatusActionBar
+                projectType={projectType}
+                currentStatus={record.status}
+                onUpdateStatus={onStatusUpdate}
+                isUpdating={isUpdating}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

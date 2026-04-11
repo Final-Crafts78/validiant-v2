@@ -89,7 +89,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
         set({ activeOrgId: null, activeOrgSlug: null, activeProjectId: null });
       },
     }),
-    { 
+    {
       name: 'validiant-workspace-storage',
       onRehydrateStorage: () => (state) => {
         if (state) state._hasHydrated = true;

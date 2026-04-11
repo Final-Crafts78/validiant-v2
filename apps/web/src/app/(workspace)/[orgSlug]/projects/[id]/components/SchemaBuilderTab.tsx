@@ -17,7 +17,6 @@ import {
   Loader2,
   Workflow,
   Layers,
-  ArrowRight,
 } from 'lucide-react';
 import { MobileSchemaPreview } from './schema/MobileSchemaPreview';
 import { FieldConfigurator } from './schema/FieldConfigurator';
@@ -50,9 +49,9 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
 
   // 🔍 UI AUDIT (Finding 48)
   const toggleTypeModal = (open: boolean) => {
-    console.debug(`[SchemaArchitect] Modal ${open ? 'OPENED' : 'CLOSED'}`, { 
-      projectId, 
-      timestamp: new Date().toISOString() 
+    console.debug(`[SchemaArchitect] Modal ${open ? 'OPENED' : 'CLOSED'}`, {
+      projectId,
+      timestamp: new Date().toISOString(),
     });
     setShowTypeModal(open);
   };
@@ -96,10 +95,15 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
   }
 
   const handleCreateType = async () => {
-    console.info(`[SchemaArchitect] Initializing new archetype: ${newTypeData.name}`, { newTypeData });
+    console.info(
+      `[SchemaArchitect] Initializing new archetype: ${newTypeData.name}`,
+      { newTypeData }
+    );
     try {
       await createType.mutateAsync(newTypeData);
-      console.info(`[SchemaArchitect] Archetype injected successfully: ${newTypeData.name}`);
+      console.info(
+        `[SchemaArchitect] Archetype injected successfully: ${newTypeData.name}`
+      );
       setShowTypeModal(false);
       setNewTypeData({ name: '', description: '', color: '#adc6ff' });
     } catch (err) {
@@ -306,54 +310,140 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
 
                   <div className="grid grid-cols-1 gap-6 max-w-2xl">
                     <div className="bg-[var(--color-surface-container-low)] rounded-[2.5rem] p-8 border border-[var(--color-border-subtle)] space-y-6">
-                      <div className="flex items-center gap-4 text-primary">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Shield className="w-5 h-5" />
+                      <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border-subtle)]">
+                        <div className="flex items-center gap-4 text-[#adc6ff]">
+                          <div className="w-10 h-10 rounded-full bg-[#adc6ff]/10 flex items-center justify-center">
+                            <Workflow className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="text-[12px] font-black uppercase tracking-widest text-[#adc6ff]">
+                              Lifecycle Stages
+                            </p>
+                            <p className="text-[8px] font-mono text-[var(--color-text-muted)]/40 uppercase">
+                              Define the exact pipeline for this archetype
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest">
-                            Internal Status:{' '}
-                            <span className="text-[var(--color-text-base)]">
-                              COMPLETED
-                            </span>
-                          </p>
-                          <p className="text-[8px] font-mono text-[var(--color-text-muted)]/20 uppercase">
-                            Global Success State
-                          </p>
-                        </div>
+                        <button
+                          onClick={() => {
+                            const current =
+                              selectedType.settings?.statusLifecycle || [];
+                            updateType.mutate({
+                              id: selectedType.id,
+                              data: {
+                                settings: {
+                                  ...selectedType.settings,
+                                  statusLifecycle: [
+                                    ...current,
+                                    {
+                                      key: `stage_${current.length + 1}`,
+                                      label: 'New Stage',
+                                      color: '#009688',
+                                      icon: 'check',
+                                    },
+                                  ],
+                                },
+                              },
+                            });
+                          }}
+                          className="px-4 py-2 bg-[#adc6ff]/10 text-[#adc6ff] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#adc6ff]/20 transition-all flex items-center gap-2 border border-[#adc6ff]/20"
+                        >
+                          <Plus className="w-3 h-3" /> Add Stage
+                        </button>
                       </div>
 
-                      <div className="flex items-center gap-6">
-                        <ArrowRight className="w-4 h-4 text-[var(--color-text-base)]/10" />
-                        <div className="flex-1 space-y-2">
-                          <label className="text-[9px] font-black text-[var(--color-text-muted)] uppercase tracking-widest ml-1">
-                            Custom Display Label
-                          </label>
-                          <input
-                            className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all"
-                            placeholder="E.G. OWNERSHIP_VERIFIED"
-                            value={
-                              selectedType.settings?.customVerificationLabels?.[
-                                'completed'
-                              ] || ''
-                            }
-                            onChange={(e) => {
-                              updateType.mutate({
-                                id: selectedType.id,
-                                data: {
-                                  settings: {
-                                    ...selectedType.settings,
-                                    customVerificationLabels: {
-                                      ...selectedType.settings
-                                        ?.customVerificationLabels,
-                                      completed: e.target.value,
-                                    },
-                                  },
-                                },
-                              });
-                            }}
-                          />
-                        </div>
+                      <div className="space-y-3">
+                        {!selectedType.settings?.statusLifecycle ||
+                        selectedType.settings.statusLifecycle.length === 0 ? (
+                          <div className="text-center p-6 border border-dashed border-[var(--color-border-subtle)] rounded-2xl opacity-40">
+                            <p className="text-[10px] font-black uppercase tracking-widest">
+                              No custom stages defined. Defaults will be used.
+                            </p>
+                          </div>
+                        ) : (
+                          selectedType.settings.statusLifecycle.map(
+                            (stage: any, idx: number) => (
+                              <div
+                                key={idx}
+                                className="flex gap-3 items-center bg-[#070d1f] p-4 rounded-2xl border border-[var(--color-border-base)]/20 hover:border-[#adc6ff]/30 transition-all"
+                              >
+                                <div className="w-6 h-6 rounded-full bg-[var(--color-surface-muted)] flex items-center justify-center text-[10px] font-black opacity-50">
+                                  {idx + 1}
+                                </div>
+                                <input
+                                  className="flex-1 bg-transparent text-[11px] font-bold text-[var(--color-text-base)] outline-none"
+                                  value={stage.label}
+                                  onChange={(e) => {
+                                    const newLifecycle = [
+                                      ...(selectedType.settings
+                                        ?.statusLifecycle || []),
+                                    ];
+                                    if (newLifecycle[idx]) {
+                                      newLifecycle[idx]!.label = e.target.value;
+                                      newLifecycle[idx]!.key = e.target.value
+                                        .toLowerCase()
+                                        .replace(/[^a-z0-9]/g, '_');
+                                      updateType.mutate({
+                                        id: selectedType.id,
+                                        data: {
+                                          settings: {
+                                            ...selectedType.settings,
+                                            statusLifecycle: newLifecycle,
+                                          },
+                                        },
+                                      });
+                                    }
+                                  }}
+                                  placeholder="Stage Name"
+                                />
+                                <input
+                                  type="color"
+                                  value={stage.color || '#009688'}
+                                  onChange={(e) => {
+                                    const newLifecycle = [
+                                      ...(selectedType.settings
+                                        ?.statusLifecycle || []),
+                                    ];
+                                    if (newLifecycle[idx]) {
+                                      newLifecycle[idx]!.color = e.target.value;
+                                      updateType.mutate({
+                                        id: selectedType.id,
+                                        data: {
+                                          settings: {
+                                            ...selectedType.settings,
+                                            statusLifecycle: newLifecycle,
+                                          },
+                                        },
+                                      });
+                                    }
+                                  }}
+                                  className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const newLifecycle = [
+                                      ...(selectedType.settings
+                                        ?.statusLifecycle || []),
+                                    ];
+                                    newLifecycle.splice(idx, 1);
+                                    updateType.mutate({
+                                      id: selectedType.id,
+                                      data: {
+                                        settings: {
+                                          ...selectedType.settings,
+                                          statusLifecycle: newLifecycle,
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="p-2 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
@@ -383,197 +473,211 @@ export function SchemaBuilderTab({ projectId }: { projectId: string }) {
       />
 
       {/* 4. Side Panel - Field Configurator */}
-      {editingColumn && mounted && createPortal(
-        <FieldConfigurator
-          column={editingColumn}
-          allColumns={columns || []}
-          onClose={() => setEditingFieldId(null)}
-          onUpdate={(data) =>
-            updateColumn.mutate({ id: editingColumn.id, data })
-          }
-          onDelete={(id) => {
-            deleteColumn.mutate(id);
-            setEditingFieldId(null);
-          }}
-        />,
-        document.body
-      )}
+      {editingColumn &&
+        mounted &&
+        createPortal(
+          <FieldConfigurator
+            column={editingColumn}
+            allColumns={columns || []}
+            onClose={() => setEditingFieldId(null)}
+            onUpdate={(data) =>
+              updateColumn.mutate({ id: editingColumn.id, data })
+            }
+            onDelete={(id) => {
+              deleteColumn.mutate(id);
+              setEditingFieldId(null);
+            }}
+          />,
+          document.body
+        )}
 
       {/* New Archetype Modal - High Fidelity */}
-      {showTypeModal && mounted && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
-          <div className="w-full max-w-md bg-[var(--color-surface-container-low)] rounded-3xl shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
-            <div className="p-10 space-y-10 relative z-10">
-              <div className="flex items-start justify-between">
-                <div className="space-y-2 max-w-sm">
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
-                      CREATION_GATE
-                    </span>
-                    <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
-                      New Archetype
-                    </h3>
+      {showTypeModal &&
+        mounted &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
+            <div className="w-full max-w-md bg-[var(--color-surface-container-low)] rounded-3xl shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
+              <div className="p-10 space-y-10 relative z-10">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2 max-w-sm">
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                        CREATION_GATE
+                      </span>
+                      <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
+                        New Archetype
+                      </h3>
+                    </div>
+                    <p className="text-[11px] text-[var(--color-text-muted)] leading-relaxed">
+                      Archetypes define the fundamental structure and
+                      verification requirements for records in your project.
+                      Establish your data blueprint here.
+                    </p>
                   </div>
-                  <p className="text-[11px] text-[var(--color-text-muted)] leading-relaxed">
-                    Archetypes define the fundamental structure and verification requirements for records in your project. Establish your data blueprint here.
-                  </p>
+                  <button
+                    onClick={() => toggleTypeModal(false)}
+                    className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--color-border-subtle)] transition-all"
+                  >
+                    <X className="w-5 h-5 text-[var(--color-text-muted)]" />
+                  </button>
                 </div>
+
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                      <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">
+                        Protocol Name
+                      </label>
+                    </div>
+                    <input
+                      className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--color-text-muted)]/30"
+                      placeholder="e.g. EMPLOYEE_VERIFICATION"
+                      value={newTypeData.name}
+                      onChange={(e) =>
+                        setNewTypeData({ ...newTypeData, name: e.target.value })
+                      }
+                    />
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {[
+                        'SITE_INSPECTION',
+                        'EMPLOYEE_VERIFICATION',
+                        'ASSET_AUDIT',
+                      ].map((preset) => (
+                        <button
+                          key={preset}
+                          onClick={() =>
+                            setNewTypeData({ ...newTypeData, name: preset })
+                          }
+                          className="px-2.5 py-1 rounded-md text-[9px] font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-colors uppercase tracking-widest"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest px-1">
+                      Narrative Definition
+                    </label>
+                    <textarea
+                      className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-medium text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--color-text-muted)]/10 min-h-[100px]"
+                      placeholder="Define the scope of this verification archetype..."
+                      value={newTypeData.description}
+                      onChange={(e) =>
+                        setNewTypeData({
+                          ...newTypeData,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
                 <button
-                  onClick={() => toggleTypeModal(false)}
-                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--color-border-subtle)] transition-all"
+                  onClick={handleCreateType}
+                  disabled={createType.isPending}
+                  className="w-full py-5 bg-primary text-[var(--color-surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
-                  <X className="w-5 h-5 text-[var(--color-text-muted)]" />
+                  {createType.isPending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Shield className="w-5 h-5" />
+                  )}
+                  INITIALIZE ARCHETYPE
                 </button>
               </div>
-
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between px-1">
-                    <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest">
-                      Protocol Name
-                    </label>
-                  </div>
-                  <input
-                    className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--color-text-muted)]/30"
-                    placeholder="e.g. EMPLOYEE_VERIFICATION"
-                    value={newTypeData.name}
-                    onChange={(e) =>
-                      setNewTypeData({ ...newTypeData, name: e.target.value })
-                    }
-                  />
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {['SITE_INSPECTION', 'EMPLOYEE_VERIFICATION', 'ASSET_AUDIT'].map(preset => (
-                      <button 
-                        key={preset}
-                        onClick={() => setNewTypeData({ ...newTypeData, name: preset })}
-                        className="px-2.5 py-1 rounded-md text-[9px] font-bold text-primary bg-primary/10 hover:bg-primary/20 transition-colors uppercase tracking-widest"
-                      >
-                        {preset}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-[var(--color-text-muted)] uppercase tracking-widest px-1">
-                    Narrative Definition
-                  </label>
-                  <textarea
-                    className="w-full bg-[var(--color-surface-lowest)] border border-[var(--color-border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-medium text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--color-text-muted)]/10 min-h-[100px]"
-                    placeholder="Define the scope of this verification archetype..."
-                    value={newTypeData.description}
-                    onChange={(e) =>
-                      setNewTypeData({
-                        ...newTypeData,
-                        description: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={handleCreateType}
-                disabled={createType.isPending}
-                className="w-full py-5 bg-primary text-[var(--color-surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-              >
-                {createType.isPending ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Shield className="w-5 h-5" />
-                )}
-                INITIALIZE ARCHETYPE
-              </button>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* New Element Modal - High Fidelity */}
-      {showElementModal && mounted && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
-          <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
-            <div className="p-10 space-y-10 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
-                    INJECTION_PROTOCOL
-                  </span>
-                  <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
-                    New Element
-                  </h3>
+      {showElementModal &&
+        mounted &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-500">
+            <div className="w-full max-w-md bg-[var(--surface-container-low)] rounded-[3rem] shadow-obsidian-2xl border border-[var(--color-border-base)]/40 overflow-hidden relative">
+              <div className="p-10 space-y-10 relative z-10">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-black text-primary uppercase tracking-[0.3em]">
+                      INJECTION_PROTOCOL
+                    </span>
+                    <h3 className="text-2xl font-black text-[var(--color-text-base)] tracking-tight uppercase">
+                      New Element
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowElementModal(false)}
+                    className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--border-subtle)] transition-all"
+                  >
+                    <X className="w-5 h-5 text-[var(--text-muted)]" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowElementModal(false)}
-                  className="p-3 hover:bg-[var(--color-surface-muted)]/50 rounded-2xl border border-[var(--border-subtle)] transition-all"
-                >
-                  <X className="w-5 h-5 text-[var(--text-muted)]" />
-                </button>
-              </div>
 
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
-                    Element Label
-                  </label>
-                  <input
-                    className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
-                    placeholder="E.G. SITE_PHOTOGRAPH"
-                    value={newElementData.name}
-                    onChange={(e) => {
-                      const name = e.target.value;
-                      const key = name
-                        .toLowerCase()
-                        .replace(/\s+/g, '_')
-                        .replace(/[^a-z0-9_]/g, '');
-                      setNewElementData({ ...newElementData, name, key });
-                    }}
-                  />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
-                    Data Archetype
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {Object.values(ColumnType).map((type) => (
-                      <button
-                        key={type}
-                        onClick={() =>
-                          setNewElementData({
-                            ...newElementData,
-                            columnType: type as ColumnType,
-                          })
-                        }
-                        className={`p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${
-                          newElementData.columnType === type
-                            ? 'bg-primary/20 border-primary text-primary'
-                            : 'bg-[var(--surface-lowest)] border-[var(--border-subtle)] text-[var(--text-muted)]/20 hover:text-[var(--text-muted)]/40'
-                        }`}
-                      >
-                        {type.replace('_', ' ')}
-                      </button>
-                    ))}
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                      Element Label
+                    </label>
+                    <input
+                      className="w-full bg-[var(--surface-lowest)] border border-[var(--border-subtle)] rounded-2xl p-4 text-[var(--color-text-base)] font-black text-sm outline-none focus:border-primary/50 transition-all placeholder:text-[var(--text-muted)]/10"
+                      placeholder="E.G. SITE_PHOTOGRAPH"
+                      value={newElementData.name}
+                      onChange={(e) => {
+                        const name = e.target.value;
+                        const key = name
+                          .toLowerCase()
+                          .replace(/\s+/g, '_')
+                          .replace(/[^a-z0-9_]/g, '');
+                        setNewElementData({ ...newElementData, name, key });
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest px-1">
+                      Data Archetype
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {Object.values(ColumnType).map((type) => (
+                        <button
+                          key={type}
+                          onClick={() =>
+                            setNewElementData({
+                              ...newElementData,
+                              columnType: type as ColumnType,
+                            })
+                          }
+                          className={`p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${
+                            newElementData.columnType === type
+                              ? 'bg-primary/20 border-primary text-primary'
+                              : 'bg-[var(--surface-lowest)] border-[var(--border-subtle)] text-[var(--text-muted)]/20 hover:text-[var(--text-muted)]/40'
+                          }`}
+                        >
+                          {type.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <button
-                onClick={handleCreateElement}
-                disabled={createColumn.isPending}
-                className="w-full py-5 bg-primary text-[var(--surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-              >
-                {createColumn.isPending ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Plus className="w-5 h-5" />
-                )}
-                INJECT CORE ELEMENT
-              </button>
+                <button
+                  onClick={handleCreateElement}
+                  disabled={createColumn.isPending}
+                  className="w-full py-5 bg-primary text-[var(--surface-lowest)] rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {createColumn.isPending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Plus className="w-5 h-5" />
+                  )}
+                  INJECT CORE ELEMENT
+                </button>
+              </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

@@ -154,8 +154,6 @@ apiClient.interceptors.request.use(
       }
     );
 
-
-
     return config;
   },
   (error) => {
@@ -386,8 +384,6 @@ apiClient.interceptors.response.use(
         timestamp: new Date().toISOString(),
       });
     }
-
-
 
     // Return structured error
     const apiError: APIError = {
@@ -740,16 +736,16 @@ export const verificationApi = {
 
   create: (
     orgId: string,
-    data: any
-  ): Promise<AxiosResponse<APIResponse<any>>> =>
-    post<APIResponse<any>>(`/verifications/${orgId}`, data),
+    data: Record<string, unknown>
+  ): Promise<AxiosResponse<APIResponse<unknown>>> =>
+    post<APIResponse<unknown>>(`/verifications/${orgId}`, data),
 
   update: (
     orgId: string,
     id: string,
-    data: any
-  ): Promise<AxiosResponse<APIResponse<any>>> =>
-    put<APIResponse<any>>(`/verifications/${orgId}/${id}`, data),
+    data: Record<string, unknown>
+  ): Promise<AxiosResponse<APIResponse<unknown>>> =>
+    put<APIResponse<unknown>>(`/verifications/${orgId}/${id}`, data),
 };
 
 // ---------------------------------------------------------------------------
@@ -759,23 +755,54 @@ export const verificationApi = {
 export const analyticsApi = {
   /** Fetch the latest materialized metrics for the current organization */
   getLatest: (): Promise<
-    AxiosResponse<APIResponse<{ data: any; recordedAt: string }>>
-  > => get<APIResponse<{ data: any; recordedAt: string }>>('/analytics/latest'),
+    AxiosResponse<
+      APIResponse<{
+        data: {
+          tasks: {
+            completed: number;
+            pending: number;
+            byStatus: Record<string, number>;
+          };
+          sla: { breached: number };
+        };
+        recordedAt: string;
+      }>
+    >
+  > => get('/analytics/latest'),
 
   /** Fetch metric history for the current organization */
   getHistory: (
     days: number = 7
   ): Promise<
-    AxiosResponse<APIResponse<{ data: { metrics: any; recordedAt: string }[] }>>
-  > =>
-    get<APIResponse<{ data: { metrics: any; recordedAt: string }[] }>>(
-      `/analytics/history?days=${days}`
-    ),
+    AxiosResponse<
+      APIResponse<{
+        data: {
+          metrics: { tasks: { completed: number; pending: number } };
+          recordedAt: string;
+        }[];
+      }>
+    >
+  > => get(`/analytics/history?days=${days}`),
 };
 
 // ---------------------------------------------------------------------------
 // Activity (Audit Log) API Service
 // ---------------------------------------------------------------------------
+
+export interface AuditLog {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  userId: string | null;
+  ipAddress: string | null;
+  deviceType: string | null;
+  details: string | null;
+  oldValue: Record<string, unknown> | null;
+  newValue: Record<string, unknown> | null;
+  createdAt: string;
+  isChainBroken?: boolean;
+}
 
 export const activityApi = {
   /** Fetch paginated audit logs */
@@ -784,7 +811,7 @@ export const activityApi = {
     limit: number = 50
   ): Promise<
     AxiosResponse<
-      APIResponse<{ data: any[]; meta: { page: number; limit: number } }>
+      APIResponse<{ data: AuditLog[]; meta: { page: number; limit: number } }>
     >
   > => get(`/activity?page=${page}&limit=${limit}`),
 
@@ -801,7 +828,7 @@ export const activityApi = {
       '/api/v1'
     );
 
-    console.debug('[API:getExportUrl] Generated URL', {
+    logger.debug('[API:getExportUrl] Generated URL', {
       baseUrl,
       finalUrl,
       isDoublePrefixed: finalUrl.includes('/api/v1/api/v1'),

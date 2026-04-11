@@ -12,7 +12,7 @@ const app = new Hono();
 app.post('/checkout', async (c) => {
   try {
     const { orgId, plan, successUrl, cancelUrl } = await c.req.json();
-    
+
     if (!orgId || !plan) {
       return c.json({ error: 'Missing orgId or plan' }, 400);
     }
@@ -28,7 +28,10 @@ app.post('/checkout', async (c) => {
     return c.json({ success: true, url: session.url });
   } catch (err: any) {
     logger.error('Checkout error', err);
-    return c.json({ error: 'Failed to create checkout session', message: err.message }, 500);
+    return c.json(
+      { error: 'Failed to create checkout session', message: err.message },
+      500
+    );
   }
 });
 

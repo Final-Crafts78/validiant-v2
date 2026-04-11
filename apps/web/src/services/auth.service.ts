@@ -68,7 +68,11 @@ export const login = async (
   return post<APIResponse<AuthResponse>>(
     API_CONFIG.ENDPOINTS.AUTH.LOGIN,
     credentials
-  ).then((res) => res.data.data!);
+  ).then((res) => {
+    if (!res.data.data)
+      throw new Error('Login failed: No data returned from server');
+    return res.data.data;
+  });
 };
 
 /**
@@ -78,7 +82,11 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
   return post<APIResponse<AuthResponse>>(
     API_CONFIG.ENDPOINTS.AUTH.REGISTER,
     data
-  ).then((res) => res.data.data!);
+  ).then((res) => {
+    if (!res.data.data)
+      throw new Error('Registration failed: No data returned from server');
+    return res.data.data;
+  });
 };
 
 /**
@@ -99,7 +107,11 @@ export const refreshToken = async (
   return post<APIResponse<{ accessToken: string; message: string }>>(
     API_CONFIG.ENDPOINTS.AUTH.REFRESH,
     { refreshToken }
-  ).then((res) => ({ accessToken: res.data.data!.accessToken }));
+  ).then((res) => {
+    if (!res.data.data)
+      throw new Error('Token refresh failed: No data returned from server');
+    return { accessToken: res.data.data.accessToken };
+  });
 };
 
 /**
@@ -108,7 +120,11 @@ export const refreshToken = async (
  */
 export const getCurrentUser = async (): Promise<User> => {
   return get<APIResponse<{ user: User }>>(API_CONFIG.ENDPOINTS.AUTH.ME).then(
-    (res) => res.data.data!.user
+    (res) => {
+      if (!res.data.data?.user)
+        throw new Error('User data missing from response');
+      return res.data.data.user;
+    }
   );
 };
 

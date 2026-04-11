@@ -68,7 +68,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             })}
           </div>
         ) : (
-          <span className="text-[var(--color-text-base)]/20">{placeholder}</span>
+          <span className="text-[var(--color-text-base)]/20">
+            {placeholder}
+          </span>
         )}
         <div className="ml-auto flex items-center">
           <ChevronDown className="w-4 h-4 text-[var(--color-text-base)]/20 group-hover:text-primary transition-colors" />

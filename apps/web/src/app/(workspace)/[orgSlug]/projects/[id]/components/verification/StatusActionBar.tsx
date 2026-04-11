@@ -22,26 +22,32 @@ export function StatusActionBar({
   onUpdateStatus,
   isUpdating = false,
 }: StatusActionBarProps) {
-  // Extract custom verification labels from projectType (Fallbacks provided)
-  // Normalize verification labels with custom overrides from projectType settings
-  const labels = [
-    {
-      id: 'verified',
-      label:
-        projectType.settings?.customVerificationLabels?.['completed'] ||
-        'Verified',
-      color: 'var(--success)',
-      icon: 'check',
-    },
-    {
-      id: 'rejected',
-      label:
-        projectType.settings?.customVerificationLabels?.['rejected'] ||
-        'Rejected',
-      color: 'var(--error)',
-      icon: 'x',
-    },
-  ];
+  // Prioritize new statusLifecycle array over deprecated customVerificationLabels
+  const labels = projectType.settings?.statusLifecycle?.length
+    ? projectType.settings.statusLifecycle.map((status) => ({
+        id: status.key,
+        label: status.label,
+        color: status.color || '#adc6ff',
+        icon: status.icon || 'check',
+      }))
+    : [
+        {
+          id: 'verified',
+          label:
+            projectType.settings?.customVerificationLabels?.['completed'] ||
+            'Verified',
+          color: '#10b981', // emerald-500
+          icon: 'check',
+        },
+        {
+          id: 'rejected',
+          label:
+            projectType.settings?.customVerificationLabels?.['rejected'] ||
+            'Rejected',
+          color: '#f43f5e', // rose-500
+          icon: 'x',
+        },
+      ];
 
   return (
     <div className="absolute bottom-0 left-0 right-0 p-6 bg-surface-container-low/80 backdrop-blur-2xl border-t border-[var(--color-border-base)]/20 flex items-center justify-between z-10 animate-in slide-in-from-bottom-10 duration-700 delay-300">

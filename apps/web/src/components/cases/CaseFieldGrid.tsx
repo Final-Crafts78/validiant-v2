@@ -49,7 +49,7 @@ export const CaseFieldGrid: React.FC<CaseFieldGridProps> = ({ task }) => {
   );
   const [isDirty, setIsDirty] = useState(false);
 
-  const schema = (task.verificationType?.fieldSchema as FieldSchema[]) || [];
+  const schema = (task.verificationType?.fieldSchema as unknown as FieldSchema[]) || [];
 
   const handleValueChange = (key: string, value: unknown) => {
     setLocalValues((prev) => ({ ...prev, [key]: value }));

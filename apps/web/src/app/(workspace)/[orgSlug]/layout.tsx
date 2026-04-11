@@ -27,26 +27,33 @@ async function getData(): Promise<{
   orgs: import('@/types/auth.types').Organization[];
   accessToken: string;
 }> {
-  console.debug('[Org:Layout] Starting getData() diagnostic fetch', { timestamp: new Date().toISOString() });
-  
+  console.debug('[Org:Layout] Starting getData() diagnostic fetch', {
+    timestamp: new Date().toISOString(),
+  });
+
   try {
     console.debug('[Org:Layout] CALLING getCurrentUserAction()');
     const result = await getCurrentUserAction();
-    console.debug('[Org:Layout] RETURNED getCurrentUserAction()', { success: result.success });
+    console.debug('[Org:Layout] RETURNED getCurrentUserAction()', {
+      success: result.success,
+    });
 
     console.debug('[Org:Layout] getCurrentUserAction result', {
       success: result.success,
       hasUser: !!result.user,
       error: result.error,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     if (!result.success || !result.user || !result.accessToken) {
       const loginReason = result.error || 'AUTH_FAILURE_ORG_LAYOUT';
-      console.warn(`[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED`, {
-        reason: loginReason,
-        timestamp: new Date().toISOString(),
-      });
+      console.warn(
+        `[Org:Layout] [EP-AUTH-FAIL] Redirecting to SESSION-EXPIRED`,
+        {
+          reason: loginReason,
+          timestamp: new Date().toISOString(),
+        }
+      );
 
       // 🔍 EXTREME VISIBILITY: Using session-expired route to prevent loops
       redirect(
@@ -56,11 +63,13 @@ async function getData(): Promise<{
 
     console.debug('[Org:Layout] CALLING getUserOrganizationsAction()');
     const orgs = await getUserOrganizationsAction(result.accessToken);
-    console.debug('[Org:Layout] RETURNED getUserOrganizationsAction()', { count: orgs.length });
+    console.debug('[Org:Layout] RETURNED getUserOrganizationsAction()', {
+      count: orgs.length,
+    });
 
     console.debug('[Org:Layout] fetchOrganizations success', {
       count: orgs.length,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return {
@@ -72,7 +81,7 @@ async function getData(): Promise<{
     console.error('[Org:Layout] CRITICAL getData() CRASH', {
       message: err instanceof Error ? err.message : String(err),
       stack: err instanceof Error ? err.stack : undefined,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
     throw err;
   }
@@ -91,7 +100,7 @@ export default async function OrgLayout({
   console.debug('[Org:Layout] SLUG RESOLUTION START', {
     urlOrgSlug: params.orgSlug,
     orgCount: orgs.length,
-    orgSlugs: orgs.map(o => ({ id: o.id, slug: o.slug })),
+    orgSlugs: orgs.map((o) => ({ id: o.id, slug: o.slug })),
     isUUID: /^[0-9a-f]{8}-/.test(params.orgSlug),
     timestamp: new Date().toISOString(),
   });
@@ -102,19 +111,26 @@ export default async function OrgLayout({
   const matchedById = orgs.find((o) => o.id === params.orgSlug);
   const activeOrg = matchedBySlug || matchedById;
 
-  const matchMethod = matchedBySlug ? 'BY_SLUG' : 
-                    matchedById ? 'BY_ID_FALLBACK' : 'NO_MATCH';
+  const matchMethod = matchedBySlug
+    ? 'BY_SLUG'
+    : matchedById
+      ? 'BY_ID_FALLBACK'
+      : 'NO_MATCH';
 
   console.info('[Org:Layout] SLUG RESOLUTION DECISION', {
     matchMethod,
-    activeOrg: activeOrg ? { id: activeOrg.id, slug: activeOrg.slug } : 'NOT_FOUND',
+    activeOrg: activeOrg
+      ? { id: activeOrg.id, slug: activeOrg.slug }
+      : 'NOT_FOUND',
     urlOrgSlug: params.orgSlug,
     timestamp: new Date().toISOString(),
   });
 
   // Normalize URL to Slug if matched by ID mapping
   if (matchMethod === 'BY_ID_FALLBACK' && activeOrg) {
-    logger.info(`[Org Layout] Normalizing URL from UUID ${params.orgSlug} to Slug ${activeOrg.slug}`);
+    logger.info(
+      `[Org Layout] Normalizing URL from UUID ${params.orgSlug} to Slug ${activeOrg.slug}`
+    );
     redirect(ROUTES.DASHBOARD(activeOrg.slug));
   }
 

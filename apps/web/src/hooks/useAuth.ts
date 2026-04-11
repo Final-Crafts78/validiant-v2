@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, post } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { queryKeys } from '@/lib/query-keys';
+import { logger } from '@/lib/logger';
 
 /**
  * User Interface
@@ -38,35 +39,42 @@ interface AuthMeResponse {
  */
 const fetchCurrentUser = async (): Promise<User | null> => {
   try {
-    console.debug('[useAuth] Fetching current user...', {
+    logger.debug('[useAuth] Fetching current user...', {
       timestamp: new Date().toISOString(),
       currentPath:
         typeof window !== 'undefined' ? window.location.pathname : 'SERVER',
     });
     const response = await get<AuthMeResponse>('/auth/me');
-    console.debug('[useAuth] Fetch user SUCCESS', {
+    logger.debug('[useAuth] Fetch user SUCCESS', {
       userEmail: response.data?.data?.user?.email || 'MISSING',
       userId: response.data?.data?.user?.id || 'MISSING',
       fullResponse: response.data,
       timestamp: new Date().toISOString(),
     });
     return response.data?.data?.user || null;
-  } catch (error: any) {
-    const statusCode = error.statusCode || error.response?.status;
-    const errorBody = error.response?.data || error.details;
+  } catch (error: unknown) {
+    const errorWithStatus = error as {
+      statusCode?: number;
+      response?: { status?: number; data?: unknown };
+      details?: unknown;
+      message?: string;
+    };
+    const statusCode =
+      errorWithStatus.statusCode || errorWithStatus.response?.status;
+    const errorBody = errorWithStatus.response?.data || errorWithStatus.details;
 
     // 401 means not authenticated (expected)
     if (statusCode === 401) {
-      console.debug('[useAuth] Fetch user 401 (Not Authenticated)', {
+      logger.debug('[useAuth] Fetch user 401 (Not Authenticated)', {
         errorBody,
         timestamp: new Date().toISOString(),
       });
       return null;
     }
-    console.error('[useAuth] Error fetching user Detail', {
+    logger.error('[useAuth] Error fetching user Detail', {
       error,
       statusCode,
-      message: error.message,
+      message: errorWithStatus.message,
       errorBody,
       timestamp: new Date().toISOString(),
     });
@@ -109,7 +117,7 @@ export function useAuth() {
       router.push('/login');
     },
     onError: (error) => {
-      console.error('[useAuth] Logout error:', error);
+      logger.error('[useAuth] Logout error:', error);
       queryClient.setQueryData(queryKeys.auth.me(), null);
       queryClient.clear();
       router.push('/login');

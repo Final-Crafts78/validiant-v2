@@ -24,6 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 // Metadata configuration
 export const metadata: Metadata = {
+  metadataBase: new URL('https://validiant.com'),
   title: {
     default: 'Validiant - Project Management Platform',
     template: '%s | Validiant',

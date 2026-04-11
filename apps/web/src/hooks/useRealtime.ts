@@ -16,6 +16,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query-keys';
 import { useWorkspaceStore } from '@/store/workspace';
 import { useAuthStore } from '@/store/auth';
+import { logger } from '@/lib/logger';
 
 /**
  * Event Types from Backend
@@ -62,7 +63,7 @@ export function useRealtime() {
 
   // Helper for state logging
   const logStateTransition = (state: string, url?: string) => {
-    console.log(`[Realtime:State] ${state}`, {
+    logger.log(`[Realtime:State] ${state}`, {
       url: url?.replace(/token=[^&]+/, 'token=REDACTED'),
       timestamp: new Date().toISOString(),
       orgId: activeOrgId,
@@ -87,7 +88,7 @@ export function useRealtime() {
 
     // Close existing connection if any
     if (eventSourceRef.current) {
-      console.log('[Realtime] Closing stale connection');
+      logger.log('[Realtime] Closing stale connection');
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
@@ -103,7 +104,7 @@ export function useRealtime() {
       const apiBase = rawApiBase.replace(/\/+$/, '').replace(/\/api\/v1$/, '');
       const sseUrl = `${apiBase}/api/v1/realtime/stream?token=${accessToken}&orgId=${activeOrgId}`;
 
-      console.info('[Realtime] CONNECTION ATTEMPT', {
+      logger.info('[Realtime] CONNECTION ATTEMPT', {
         activeOrgId,
         userId,
         tokenLength: accessToken.length,
@@ -127,7 +128,7 @@ export function useRealtime() {
       // Handle connection state transitions
       es.onopen = () => {
         sessionStartTimeRef.current = Date.now();
-        console.log('[Realtime] SSE Connection OPEN (Success)', {
+        logger.log('[Realtime] SSE Connection OPEN (Success)', {
           url: es.url.replace(/token=[^&]+/, 'token=REDACTED'),
           readyState: es.readyState,
           readyStateDesc: 'OPEN',
@@ -138,7 +139,7 @@ export function useRealtime() {
 
       // Handle incoming messages
       es.onmessage = (event) => {
-        console.debug('[Realtime] Received message:', {
+        logger.debug('[Realtime] Received message:', {
           data: event.data,
           lastEventId: event.lastEventId,
           timestamp: new Date().toISOString(),
@@ -147,7 +148,7 @@ export function useRealtime() {
           const data: RealtimeMessage = JSON.parse(event.data);
           handleMessage(data, queryClient, userId);
         } catch (error) {
-          console.error('[Realtime] Failed to parse SSE message:', error, {
+          logger.error('[Realtime] Failed to parse SSE message:', error, {
             rawData: event.data,
             timestamp: new Date().toISOString(),
           });
@@ -155,13 +156,13 @@ export function useRealtime() {
       };
 
       es.onerror = (error) => {
-        const sessionDuration = sessionStartTimeRef.current 
+        const sessionDuration = sessionStartTimeRef.current
           ? ((Date.now() - sessionStartTimeRef.current) / 1000).toFixed(2)
           : '0.00';
-          
+
         reconnectCountRef.current += 1;
-        
-        console.error('[Realtime] SSE CRITICAL ERROR / DISCONNECT', {
+
+        logger.error('[Realtime] SSE CRITICAL ERROR / DISCONNECT', {
           readyState: es.readyState,
           readyStateDesc:
             es.readyState === 0
@@ -179,12 +180,12 @@ export function useRealtime() {
           windowOnline:
             typeof window !== 'undefined' ? window.navigator.onLine : 'N/A',
         });
-        
+
         sessionStartTimeRef.current = null;
       };
 
       es.addEventListener('connected', (e: any) => {
-        console.log('[Realtime] SSE Connected Event Received', {
+        logger.log('[Realtime] SSE Connected Event Received', {
           data: e.data,
           timestamp: new Date().toISOString(),
         });
@@ -199,7 +200,7 @@ export function useRealtime() {
           : 'UNMOUNT';
       clearTimeout(connectionTimeout);
       if (eventSourceRef.current) {
-        console.log('[Realtime] Cleaning up SSE connection', {
+        logger.log('[Realtime] Cleaning up SSE connection', {
           reason: cleanupReason,
           orgId: activeOrgId,
           readyState: eventSourceRef.current.readyState,
@@ -224,7 +225,7 @@ function handleMessage(
 ) {
   const { eventType, payload } = message;
 
-  console.log('[Realtime] Event Received:', eventType, payload);
+  logger.log('[Realtime] Event Received:', eventType, payload);
 
   switch (eventType) {
     case RealtimeEvent.TASK_CREATED:

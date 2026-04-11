@@ -91,7 +91,7 @@ export const PermissionKey = [
   'portal:client_access',
 
   // Field-Level Visibility (Perfection Phase)
-  'field:view_internal',   // View data visible to project members
+  'field:view_internal', // View data visible to project members
   'field:view_restricted', // View data visible to admins/leads
 ] as const;
 

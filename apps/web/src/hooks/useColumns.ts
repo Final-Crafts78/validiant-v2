@@ -22,7 +22,7 @@ export const useColumns = (projectId: string, typeId: string) => {
       });
       toast.success('Column added');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(`Failed to add column: ${error.message}`);
     },
   });

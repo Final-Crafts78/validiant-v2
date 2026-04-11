@@ -7,11 +7,11 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, options, onValueChange, onChange, ...props }, ref) => {
+  ({ options, onValueChange, onChange, ...props }, ref) => {
     return (
       <div className="relative group">
         <select
-          className="flex h-12 w-full appearance-none rounded-[1.5rem] bg-surface-lowest/50 border border-white/[0.03] px-6 py-2 text-sm text-[var(--color-text-base)] placeholder:text-[var(--color-text-base)]/20 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 shadow-obsidian inset-shadow-sm cursor-pointer pr-12"
+          className={`flex h-12 w-full appearance-none rounded-[1.5rem] bg-surface-lowest/50 border border-white/[0.03] px-6 py-2 text-sm text-[var(--color-text-base)] placeholder:text-[var(--color-text-base)]/20 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 shadow-obsidian inset-shadow-sm cursor-pointer pr-12 ${props.className || ''}`}
           onChange={(e) => {
             onChange?.(e);
             onValueChange?.(e.target.value);

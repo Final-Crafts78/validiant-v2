@@ -94,7 +94,8 @@ export function optimizeRoute(
     let nearestIdx = 0;
     let minDist = Infinity;
 
-    console.debug( // eslint-disable-line no-console
+    console.debug(
+      // eslint-disable-line no-console
       `[OptimizeRoute] Step ${route.length + 1}: ${unvisited.length} points remaining`
     );
 
@@ -111,7 +112,8 @@ export function optimizeRoute(
 
     const [next] = unvisited.splice(nearestIdx, 1);
     if (!next) {
-      console.warn( // eslint-disable-line no-console
+      console.warn(
+        // eslint-disable-line no-console
         '[OptimizeRoute] Failed to retrieve next point. Terminating optimization.'
       );
       break;

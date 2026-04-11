@@ -85,9 +85,12 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         if (currentController) {
           this.sessions.delete(currentController);
         }
-        
-        const sessionDuration = ((Date.now() - sessionStartTime) / 1000).toFixed(2);
-        
+
+        const sessionDuration = (
+          (Date.now() - sessionStartTime) /
+          1000
+        ).toFixed(2);
+
         // eslint-disable-next-line no-console
         console.info('[Realtime:DO] Session REMOVED / SESSION_LIFETIME', {
           sessionId,

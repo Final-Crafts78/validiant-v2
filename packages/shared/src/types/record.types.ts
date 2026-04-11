@@ -32,6 +32,37 @@ export enum ColumnType {
   RATING = 'rating',
   STATUS = 'status',
   TIMER = 'timer',
+  HEADING = 'heading',
+  OTP = 'otp',
+}
+
+/**
+ * Field-level mapping of validation rules
+ */
+export interface ValidationRule {
+  type:
+    | 'regex'
+    | 'min_length'
+    | 'max_length'
+    | 'min_value'
+    | 'max_value'
+    | 'email'
+    | 'phone'
+    | 'preset';
+  value: string | number;
+  message?: string;
+  preset?: 'pan_card' | 'aadhaar' | 'gstin' | 'ifsc' | 'pincode' | 'mobile_in';
+}
+
+/**
+ * Defines a custom verification status for a specific archetype
+ */
+export interface StatusDefinition {
+  key: string;
+  label: string;
+  color: string;
+  icon?: string;
+  isFinal?: boolean;
 }
 
 /**
@@ -60,8 +91,13 @@ export interface ProjectTypeSettings {
   allowedCreators?: ('admin' | 'member' | 'field_agent')[];
   /**
    * Custom mapping for verification states (e.g., 'completed' -> 'Ownership Verified')
+   * @deprecated use statusLifecycle instead for advanced workflows
    */
   customVerificationLabels?: Record<string, string>;
+  /**
+   * Defines the ordered lifecycle of statuses a record can transition through in this archetype
+   */
+  statusLifecycle?: StatusDefinition[];
 }
 
 /**
@@ -101,6 +137,14 @@ export interface ColumnSettings {
   maxRating?: number;
   validation?: { [rule: string]: unknown };
   /**
+   * Advanced array of data-driven validation rules applied upon submission
+   */
+  validationRules?: ValidationRule[];
+  /**
+   * Excel-like formula expression for calculation engine
+   */
+  formulaExpression?: string;
+  /**
    * Conditional logic for field visibility.
    * Format: Show this field IF another field matches a specific criteria.
    */
@@ -112,9 +156,13 @@ export interface ColumnSettings {
       | 'contains'
       | 'not_contains'
       | 'is_set'
-      | 'is_not_set';
+      | 'is_not_set'
+      | 'is_checked';
     value: unknown;
   }[];
+  sectionId?: string;
+  sectionName?: string;
+  isFullWidth?: boolean;
 }
 
 /**

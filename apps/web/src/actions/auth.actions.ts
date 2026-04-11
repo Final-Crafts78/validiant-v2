@@ -390,7 +390,7 @@ export const getCurrentUserAction = cache(
 
     try {
       const accessToken = cookieStore.get('accessToken')?.value;
-      const allCookies = cookieStore.getAll().map(c => c.name);
+      const allCookies = cookieStore.getAll().map((c) => c.name);
 
       // eslint-disable-next-line no-console
       console.log(
@@ -407,7 +407,9 @@ export const getCurrentUserAction = cache(
       }
 
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U2: Fetching /auth/me from ${API_BASE_URL}`);
+      console.log(
+        `[BFF:GetUser] [${Date.now()}] EP-U2: Fetching /auth/me from ${API_BASE_URL}`
+      );
 
       const startTime = Date.now();
       const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -506,7 +508,9 @@ export const getUserOrganizationsAction = cache(
   async (accessToken: string): Promise<Organization[]> => {
     try {
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetOrgs] [${Date.now()}] EP-O1: Fetching orgs from ${API_BASE_URL}`);
+      console.log(
+        `[BFF:GetOrgs] [${Date.now()}] EP-O1: Fetching orgs from ${API_BASE_URL}`
+      );
       const startTime = Date.now();
       const response = await fetch(`${API_BASE_URL}/organizations/my`, {
         method: 'GET',

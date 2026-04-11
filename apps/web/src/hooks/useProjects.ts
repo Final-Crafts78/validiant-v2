@@ -33,7 +33,7 @@ export function useProjects() {
       });
       return projects;
     },
-    enabled: (!!activeOrgId && activeOrgId.length === 36) && hasHydrated,
+    enabled: !!activeOrgId && activeOrgId.length === 36 && hasHydrated,
     staleTime: 2 * 60 * 1000,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),

@@ -24,7 +24,7 @@ export function WidgetShell({
         ${isEditing ? 'ring-2 ring-primary/30 ring-offset-2 ring-offset-[var(--color-background)]' : ''}`}
     >
       {/* Header bar - visible consistently during edit mode, or on hover otherwise */}
-      <div 
+      <div
         className={`shrink-0 flex items-center justify-between px-6 py-4 border-b border-[var(--color-border-base)]/10 bg-[var(--color-surface-subtle)] ${
           isEditing ? 'cursor-move drag-handle' : ''
         }`}

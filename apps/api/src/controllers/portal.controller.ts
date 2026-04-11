@@ -47,7 +47,8 @@ const getPortalContext = async (c: Context) => {
     throw new ForbiddenError('Missing authorization token');
   }
 
-  const { subAccount, organization } = await portalService.verifyPortalToken(token);
+  const { subAccount, organization } =
+    await portalService.verifyPortalToken(token);
 
   return { subAccount, organization };
 };

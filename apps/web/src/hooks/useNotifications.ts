@@ -16,7 +16,7 @@ export interface Notification {
   body: string;
   priority: 'urgent' | 'high' | 'normal';
   actionUrl: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   groupKey: string | null;
   isGrouped: boolean;
   readAt: string | null;

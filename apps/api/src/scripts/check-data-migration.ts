@@ -13,9 +13,13 @@ import { count } from 'drizzle-orm';
 async function checkData() {
   console.log('🏁 Starting data check...');
   try {
-    const [vtCount] = await db.select({ value: count() }).from(verificationTypes);
+    const [vtCount] = await db
+      .select({ value: count() })
+      .from(verificationTypes);
     const [taskCount] = await db.select({ value: count() }).from(tasks);
-    const [fieldCount] = await db.select({ value: count() }).from(caseFieldValues);
+    const [fieldCount] = await db
+      .select({ value: count() })
+      .from(caseFieldValues);
 
     console.log('--- Data Stats ---');
     console.log('Verification Types:', vtCount.value);

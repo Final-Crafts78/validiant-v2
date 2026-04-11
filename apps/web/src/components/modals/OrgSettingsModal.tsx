@@ -151,7 +151,7 @@ export function OrgSettingsModal({
                 className="input w-full min-h-[100px] py-2"
               />
             </div>
-            
+
             {organization.slug && (
               <div className="pt-4 border-t border-border-base mt-4">
                 <Link
@@ -164,11 +164,17 @@ export function OrgSettingsModal({
                       <Palette className="w-5 h-5" />
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-bold text-text-base group-hover:text-primary-600 transition-colors">Theme & Branding</p>
-                      <p className="text-xs text-text-muted">Customize colors, logo, and identity</p>
+                      <p className="text-sm font-bold text-text-base group-hover:text-primary-600 transition-colors">
+                        Theme & Branding
+                      </p>
+                      <p className="text-xs text-text-muted">
+                        Customize colors, logo, and identity
+                      </p>
                     </div>
                   </div>
-                  <span className="text-text-muted group-hover:translate-x-1 transition-transform">→</span>
+                  <span className="text-text-muted group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
                 </Link>
               </div>
             )}

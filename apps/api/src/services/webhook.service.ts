@@ -54,7 +54,10 @@ export async function queueWebhookDispatch(
     .from(bgvPartners)
     .where(
       and(
-        eq(bgvPartners.organizationId, (await getOrgByProject(projectId)) ?? ''),
+        eq(
+          bgvPartners.organizationId,
+          (await getOrgByProject(projectId)) ?? ''
+        ),
         eq(bgvPartners.isActive, true)
       )
     );
@@ -71,17 +74,20 @@ export async function queueWebhookDispatch(
     .from(caseFieldValues)
     .where(eq(caseFieldValues.taskId, taskId));
 
-  const customDataStringified = eavFields.reduce((acc: Record<string, any>, field: any) => {
-    // Basic hydration strategy
-    let val: any = field.valueText;
-    if (field.valueBoolean !== null) val = field.valueBoolean;
-    if (field.valueNumber !== null) val = field.valueNumber;
-    if (field.valueJson !== null) val = field.valueJson;
-    if (field.mediaUrl !== null) val = field.mediaUrl;
-    
-    acc[field.fieldKey] = val;
-    return acc;
-  }, {} as Record<string, any>);
+  const customDataStringified = eavFields.reduce(
+    (acc: Record<string, any>, field: any) => {
+      // Basic hydration strategy
+      let val: any = field.valueText;
+      if (field.valueBoolean !== null) val = field.valueBoolean;
+      if (field.valueNumber !== null) val = field.valueNumber;
+      if (field.valueJson !== null) val = field.valueJson;
+      if (field.mediaUrl !== null) val = field.mediaUrl;
+
+      acc[field.fieldKey] = val;
+      return acc;
+    },
+    {} as Record<string, any>
+  );
 
   const payload = {
     event: 'case.verified',
@@ -165,20 +171,22 @@ export async function processWebhookQueue(batch: any) {
           deliveredAt: new Date(),
         })
         .where(eq(outboundDeliveryLogs.id, job.logId));
-        
+
       msg.ack();
-      console.log(`[Webhook:Success] Sent logId ${job.logId} to ${job.targetUrl}`);
+      console.log(
+        `[Webhook:Success] Sent logId ${job.logId} to ${job.targetUrl}`
+      );
     } catch (e: any) {
       console.error(`[Webhook:Error] logId ${job.logId}:`, e.message);
-      
+
       // We read attempt number and increment if it failed.
       const [existing] = await db
-         .select({ attemptNumber: outboundDeliveryLogs.attemptNumber })
-         .from(outboundDeliveryLogs)
-         .where(eq(outboundDeliveryLogs.id, job.logId));
-         
+        .select({ attemptNumber: outboundDeliveryLogs.attemptNumber })
+        .from(outboundDeliveryLogs)
+        .where(eq(outboundDeliveryLogs.id, job.logId));
+
       const newAttempt = (existing?.attemptNumber || 1) + 1;
-      
+
       await db
         .update(outboundDeliveryLogs)
         .set({
@@ -191,7 +199,7 @@ export async function processWebhookQueue(batch: any) {
         .where(eq(outboundDeliveryLogs.id, job.logId));
 
       // Retry logic relies on Cloudflare max_retries
-      msg.retry(); 
+      msg.retry();
     }
   }
 }

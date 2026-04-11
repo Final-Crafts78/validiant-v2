@@ -26,7 +26,7 @@ interface ArchetypePickerProps {
   onSelect: (id: string | null) => void;
 }
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, React.ElementType> = {
   UserCheck,
   ShieldCheck,
   HardHat,

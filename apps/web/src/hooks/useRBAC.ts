@@ -27,13 +27,16 @@ interface ProjectMembership {
  */
 export function useRBAC(orgId?: string, projectId?: string) {
   const { user } = useAuth();
-  const isSuperAdmin = (user as any)?.role === 'superadmin';
+  const isSuperAdmin =
+    (user as unknown as { role?: string })?.role === 'superadmin';
 
   // Fetch org membership
   const orgQuery = useQuery<OrgMembership>({
     queryKey: queryKeys.memberships.org(orgId ?? ''),
     queryFn: async () => {
-      const { data } = await get<any>(`/organizations/${orgId}/my-membership`);
+      const { data } = await get<{ data: OrgMembership }>(
+        `/organizations/${orgId}/my-membership`
+      );
       return data.data;
     },
     enabled: !!orgId && !!user,
@@ -44,7 +47,9 @@ export function useRBAC(orgId?: string, projectId?: string) {
   const projectQuery = useQuery<ProjectMembership>({
     queryKey: queryKeys.memberships.project(projectId ?? ''),
     queryFn: async () => {
-      const { data } = await get<any>(`/projects/${projectId}/my-membership`);
+      const { data } = await get<{ data: ProjectMembership }>(
+        `/projects/${projectId}/my-membership`
+      );
       return data.data;
     },
     enabled: !!projectId && !!user,

@@ -16,6 +16,7 @@ import {
 import { get, patch, post, del } from '@/lib/api';
 import { queryKeys, setQueryData, getQueryData } from '@/lib/query-client';
 import { TaskStatus, TaskPriority } from '@validiant/shared';
+import { logger } from '@/lib/logger';
 
 /**
  * Task Interface
@@ -59,7 +60,7 @@ export interface Task {
   verificationType?: {
     id: string;
     name: string;
-    fieldSchema?: any;
+    fieldSchema?: Record<string, unknown>[];
   };
   caseId?: string;
   slaMetrics?: {
@@ -131,7 +132,7 @@ const fetchTasks = async ({
   const paramsString = params.toString();
   const url = `/projects/${projectId}/tasks${paramsString ? `?${paramsString}` : ''}`;
 
-  console.debug('[Tasks:FetchInitiated]', {
+  logger.debug('[Tasks:FetchInitiated]', {
     url,
     projectId,
     hasFilters: !!filters,
@@ -184,7 +185,7 @@ export function useUpdateTask() {
       data: Partial<Task>;
     }) => {
       if (!taskId || taskId === 'undefined') {
-        console.error(
+        logger.error(
           '[useUpdateTask] CRITICAL: Attempted to update task with invalid ID',
           { taskId, data }
         );
@@ -251,7 +252,7 @@ export function useAssignTask() {
       assign?: boolean;
     }) => {
       if (!taskId || taskId === 'undefined') {
-        console.error(
+        logger.error(
           '[useAssignTask] CRITICAL: Attempted to assign task with invalid ID',
           { taskId, userId, assign }
         );

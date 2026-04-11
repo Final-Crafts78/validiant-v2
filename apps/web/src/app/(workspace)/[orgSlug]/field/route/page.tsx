@@ -74,7 +74,7 @@ export default function FieldRoutePage() {
         <div className="relative">
           {/* Vertical Path Line */}
           <div className="absolute left-[27px] top-4 bottom-4 w-1 flex flex-col items-center">
-             <div className="w-full h-full bg-gradient-to-b from-primary via-[var(--color-surface-container-high)] to-transparent" />
+            <div className="w-full h-full bg-gradient-to-b from-primary via-[var(--color-surface-container-high)] to-transparent" />
           </div>
 
           <div className="space-y-6">
@@ -97,13 +97,13 @@ export default function FieldRoutePage() {
                       {task.title}
                     </h3>
                     {task.priority === 'high' ? (
-                        <div className="px-2 py-0.5 bg-error-container text-on-error-container rounded text-[10px] font-black uppercase tracking-tighter shrink-0 border border-error-container">
-                          High
-                        </div>
+                      <div className="px-2 py-0.5 bg-error-container text-on-error-container rounded text-[10px] font-black uppercase tracking-tighter shrink-0 border border-error-container">
+                        High
+                      </div>
                     ) : (
-                        <div className="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded text-[10px] font-black uppercase tracking-tighter shrink-0 border border-secondary-container">
-                          Std
-                        </div>
+                      <div className="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded text-[10px] font-black uppercase tracking-tighter shrink-0 border border-secondary-container">
+                        Std
+                      </div>
                     )}
                   </div>
 
@@ -163,7 +163,8 @@ export default function FieldRoutePage() {
             Fleet Optimization
           </p>
           <p className="text-[11px] font-medium text-[var(--color-on-surface)] leading-relaxed">
-            Routes are recalibrated every 15 minutes based on live traffic and priority updates.
+            Routes are recalibrated every 15 minutes based on live traffic and
+            priority updates.
           </p>
         </div>
       </div>

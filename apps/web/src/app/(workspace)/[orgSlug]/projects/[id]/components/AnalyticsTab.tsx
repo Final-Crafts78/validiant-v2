@@ -362,7 +362,9 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               At-Risk Nodes
             </p>
-            <p className="text-lg font-black text-[var(--color-text-base)]">4 Cases</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">
+              4 Cases
+            </p>
           </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
@@ -373,7 +375,9 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               Avg. Processing
             </p>
-            <p className="text-lg font-black text-[var(--color-text-base)]">12.4 Hours</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">
+              12.4 Hours
+            </p>
           </div>
         </div>
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 p-6 rounded-[2rem] flex items-center gap-5">
@@ -384,7 +388,9 @@ export function AnalyticsTab({ projectId }: { projectId: string }) {
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
               Active Archetypes
             </p>
-            <p className="text-lg font-black text-[var(--color-text-base)]">3 Active</p>
+            <p className="text-lg font-black text-[var(--color-text-base)]">
+              3 Active
+            </p>
           </div>
         </div>
       </div>

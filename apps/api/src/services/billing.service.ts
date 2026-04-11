@@ -66,7 +66,11 @@ export const createCheckoutSession = async (
   return session;
 };
 
-export const handleStripeWebhook = async (c: any, body: string, signature: string) => {
+export const handleStripeWebhook = async (
+  c: any,
+  body: string,
+  signature: string
+) => {
   const stripe = getStripeClient(c);
   const webhookSecret = c.env?.STRIPE_WEBHOOK_SECRET;
 
@@ -96,7 +100,7 @@ export const handleStripeWebhook = async (c: any, body: string, signature: strin
             subscriptionStatus: 'active',
           })
           .where(eq(organizations.id, orgId));
-        
+
         logger.info(`Organization ${orgId} upgraded to ${plan}`);
       }
       break;

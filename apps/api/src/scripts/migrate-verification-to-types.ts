@@ -7,14 +7,14 @@ dotenv.config();
 };
 
 import { db } from '../db/index';
-import { 
-  verificationTypes, 
-  tasks, 
+import {
+  verificationTypes,
+  tasks,
   caseFieldValues,
   projectTypes,
   typeColumns,
   records,
-  projects
+  projects,
 } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,18 +36,21 @@ async function migrate() {
         continue;
       }
 
-      const orgProjects = await db.select()
+      const orgProjects = await db
+        .select()
         .from(projects)
         .where(eq(projects.organizationId, vt.organizationId));
 
-      console.log(`Found ${orgProjects.length} projects in organization ${vt.organizationId}`);
+      console.log(
+        `Found ${orgProjects.length} projects in organization ${vt.organizationId}`
+      );
 
       for (const project of orgProjects) {
         console.log(`  Migrating to Project: ${project.name} (${project.id})`);
 
         // Check if project_type already exists for this project/code
         // Simplification: just create it for now or check by name if needed.
-        
+
         const typeId = uuidv4();
         await db.insert(projectTypes).values({
           id: typeId,
@@ -67,7 +70,7 @@ async function migrate() {
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i];
           const columnId = uuidv4();
-          
+
           await db.insert(typeColumns).values({
             id: columnId,
             typeId: typeId,
@@ -78,13 +81,14 @@ async function migrate() {
             order: i,
             options: field.options || null,
           });
-          
+
           columnMap.set(field.key, columnId);
           console.log(`      Created TypeColumn: ${field.key}`);
         }
 
         // 4. Migrate Tasks for this VT and Project
-        const projectTasks = await db.select()
+        const projectTasks = await db
+          .select()
           .from(tasks)
           .where(eq(tasks.projectId, project.id))
           .where(eq(tasks.verificationTypeId, vt.id));
@@ -93,14 +97,20 @@ async function migrate() {
 
         for (const task of projectTasks) {
           // Fetch case field values for this task
-          const fieldValues = await db.select()
+          const fieldValues = await db
+            .select()
             .from(caseFieldValues)
             .where(eq(caseFieldValues.taskId, task.id));
 
           const recordData: Record<string, any> = {};
           for (const fv of fieldValues) {
             // Pick the non-null value based on our old EAV pattern
-            const val = fv.valueText ?? fv.valueNumber ?? fv.valueDate ?? fv.valueBoolean ?? fv.valueJson;
+            const val =
+              fv.valueText ??
+              fv.valueNumber ??
+              fv.valueDate ??
+              fv.valueBoolean ??
+              fv.valueJson;
             recordData[fv.fieldKey] = val;
           }
 
@@ -117,7 +127,7 @@ async function migrate() {
             createdAt: task.createdAt,
             updatedAt: task.updatedAt,
           });
-          
+
           console.log(`      Migrated Task ${task.id} → Record`);
         }
       }
@@ -133,15 +143,15 @@ async function migrate() {
 
 function mapFieldType(oldType: string): string {
   const map: Record<string, string> = {
-    'text': 'TEXT',
-    'number': 'NUMBER',
-    'date': 'DATE',
-    'boolean': 'BOOLEAN',
-    'select': 'SELECT',
+    text: 'TEXT',
+    number: 'NUMBER',
+    date: 'DATE',
+    boolean: 'BOOLEAN',
+    select: 'SELECT',
     'multi-select': 'MULTI_SELECT',
-    'photo': 'PHOTO',
-    'gps': 'GPS',
-    'signature': 'SIGNATURE',
+    photo: 'PHOTO',
+    gps: 'GPS',
+    signature: 'SIGNATURE',
   };
   return map[oldType] || 'TEXT';
 }

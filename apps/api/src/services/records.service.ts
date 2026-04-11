@@ -261,11 +261,7 @@ export const createRecord = async (
 /**
  * Update Record with Audit Trail
  */
-export const updateRecord = async (
-  id: string,
-  userId: string,
-  data: any
-) => {
+export const updateRecord = async (id: string, userId: string, data: any) => {
   return await db.transaction(async (tx: any) => {
     const existing = await tx.query.records.findFirst({
       where: eq(records.id, id),
@@ -379,12 +375,16 @@ export const getRecordProjectStats = async (projectId: string) => {
   });
 
   const total = allRecords.length;
-  const verified = allRecords.filter((r: any) => r.status === 'verified').length;
+  const verified = allRecords.filter(
+    (r: any) => r.status === 'verified'
+  ).length;
   const pending = allRecords.filter((r: any) => r.status === 'pending').length;
-  const inProgress = allRecords.filter((r: any) => r.status === 'in_progress')
-    .length;
-  const submitted = allRecords.filter((r: any) => r.status === 'submitted')
-    .length;
+  const inProgress = allRecords.filter(
+    (r: any) => r.status === 'in_progress'
+  ).length;
+  const submitted = allRecords.filter(
+    (r: any) => r.status === 'submitted'
+  ).length;
 
   const now = new Date();
   let breachedCount = 0;

@@ -90,7 +90,8 @@ const config: Config = {
       },
       backgroundImage: {
         'glow-gradient': 'linear-gradient(135deg, #adc6ff 0%, #4d8eff 100%)',
-        'obsidian-glass': 'linear-gradient(180deg, rgba(46, 52, 71, 0.6) 0%, rgba(21, 27, 45, 0.6) 100%)',
+        'obsidian-glass':
+          'linear-gradient(180deg, rgba(46, 52, 71, 0.6) 0%, rgba(21, 27, 45, 0.6) 100%)',
       },
       spacing: {
         '18': '4.5rem',

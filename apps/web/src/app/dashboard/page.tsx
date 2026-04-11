@@ -215,10 +215,12 @@ export default function BasicDashboard() {
               <div className="mt-8 pt-5 border-t border-border-subtle flex items-center justify-between">
                 <div className="flex items-center gap-4 text-[11px] font-bold text-text-muted">
                   <span className="flex items-center gap-1">
-                    <Briefcase className="w-3 h-3 text-text-subtle" /> {org.projectCount || 0}
+                    <Briefcase className="w-3 h-3 text-text-subtle" />{' '}
+                    {org.projectCount || 0}
                   </span>
                   <span className="flex items-center gap-1">
-                    <Users className="w-3 h-3 text-text-subtle" /> {org.memberCount || 0}
+                    <Users className="w-3 h-3 text-text-subtle" />{' '}
+                    {org.memberCount || 0}
                   </span>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all shadow-lg shadow-[var(--color-primary)]/40">

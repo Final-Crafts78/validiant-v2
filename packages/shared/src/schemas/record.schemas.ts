@@ -84,11 +84,14 @@ export const typeColumnCreateSchema = z.object({
               'not_contains',
               'is_set',
               'is_not_set',
+              'is_checked',
             ]),
             value: z.unknown(),
           })
         )
         .optional(),
+      validationRules: z.array(z.any()).optional(),
+      formulaExpression: z.string().optional(),
     })
     .optional(),
   order: z.number().int().optional(),
@@ -121,6 +124,17 @@ export const projectTypeCreateSchema = z.object({
         .array(z.enum(['admin', 'member', 'field_agent']))
         .optional(),
       customVerificationLabels: z.record(z.string(), z.string()).optional(),
+      statusLifecycle: z
+        .array(
+          z.object({
+            key: z.string(),
+            label: z.string(),
+            color: z.string(),
+            icon: z.string().optional(),
+            isFinal: z.boolean().optional(),
+          })
+        )
+        .optional(),
     })
     .optional(),
 });

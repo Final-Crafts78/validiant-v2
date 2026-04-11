@@ -7,7 +7,10 @@ import { FolderKanban } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
+export default function ProjectStatusMatrix({
+  orgId: _orgId,
+  isEditing,
+}: WidgetProps) {
   const params = useParams();
   const orgSlug = params?.orgSlug as string;
   const { data: projects, isLoading } = useProjects();
@@ -37,17 +40,23 @@ export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
             key={project.id}
             href={`/${orgSlug}/projects/${project.id}`}
             onClick={(e) => {
-               if (isEditing) e.preventDefault();
+              if (isEditing) e.preventDefault();
             }}
             className={`p-4 rounded-2xl bg-[var(--color-surface-subtle)] border border-[var(--color-border-base)]/10 hover:border-primary/30 transition-colors ${isEditing ? 'pointer-events-none' : ''}`}
           >
             <div className="flex justify-between items-start mb-2">
-              <h4 className="font-bold text-[var(--color-text-base)] truncate pr-2">{project.name}</h4>
-              <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
-                project.status === 'completed' ? 'bg-green-500/10 text-green-500' :
-                project.status === 'archived' ? 'bg-gray-500/10 text-gray-500' :
-                'bg-blue-500/10 text-blue-500'
-              }`}>
+              <h4 className="font-bold text-[var(--color-text-base)] truncate pr-2">
+                {project.name}
+              </h4>
+              <span
+                className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
+                  project.status === 'completed'
+                    ? 'bg-green-500/10 text-green-500'
+                    : project.status === 'archived'
+                      ? 'bg-gray-500/10 text-gray-500'
+                      : 'bg-blue-500/10 text-blue-500'
+                }`}
+              >
                 {project.status || 'Active'}
               </span>
             </div>
@@ -58,7 +67,7 @@ export default function ProjectStatusMatrix({ orgId, isEditing }: WidgetProps) {
         ))}
       </div>
       <div className="mt-auto flex justify-end">
-        <Link 
+        <Link
           href={`/${orgSlug}/projects`}
           className={`text-xs font-bold text-primary hover:text-primary/80 ${isEditing ? 'pointer-events-none' : ''}`}
         >

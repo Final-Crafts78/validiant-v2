@@ -10,7 +10,7 @@ import {
   Moon,
   Sun,
   User,
-  ChevronLeft
+  ChevronLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -82,19 +82,19 @@ export default function FieldAppLayout({
       {/* Mobile-First Header (TopAppBar) */}
       <header className="sticky top-0 z-30 bg-[var(--color-surface-container-lowest)]/80 backdrop-blur-md px-4 py-3 flex items-center justify-between shadow-[0_12px_40px_rgba(15,23,42,0.06)]">
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => router.push(`/${orgSlug}/dashboard`)}
             className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-text-muted)] hover:bg-[var(--color-surface-container-high)] transition-all"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex flex-col">
-             <h1 className="text-sm font-black text-[var(--color-text-base)] tracking-tight font-display uppercase">
-               Validiant <span className="text-primary">Field</span>
-             </h1>
-             <p className="text-[9px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase">
-               Executive Console
-             </p>
+            <h1 className="text-sm font-black text-[var(--color-text-base)] tracking-tight font-display uppercase">
+              Validiant <span className="text-primary">Field</span>
+            </h1>
+            <p className="text-[9px] font-bold text-[var(--color-text-muted)] tracking-widest uppercase">
+              Executive Console
+            </p>
           </div>
         </div>
 
@@ -112,7 +112,7 @@ export default function FieldAppLayout({
               <Moon className="w-5 h-5" />
             )}
           </button>
-          
+
           <div className="w-8 h-8 rounded-full bg-[var(--color-surface-container-highest)] border-2 border-[var(--color-surface-container-lowest)] shadow-sm flex items-center justify-center text-[10px] font-bold text-[var(--color-text-base)] uppercase overflow-hidden">
             {user?.fullName?.substring(0, 2) || 'FE'}
           </div>
@@ -138,7 +138,9 @@ export default function FieldAppLayout({
                 href={item.href}
                 className={cn(
                   'flex flex-col items-center gap-1 p-2 transition-all',
-                  isActive ? 'text-primary' : 'text-[var(--color-on-surface-variant)]'
+                  isActive
+                    ? 'text-primary'
+                    : 'text-[var(--color-on-surface-variant)]'
                 )}
               >
                 <div
@@ -148,13 +150,15 @@ export default function FieldAppLayout({
                   )}
                 >
                   <Icon
-                    className={cn(
-                      'w-5 h-5',
-                      isActive ? 'fill-primary/20' : ''
-                    )}
+                    className={cn('w-5 h-5', isActive ? 'fill-primary/20' : '')}
                   />
                 </div>
-                <span className={cn('text-[10px] font-bold tracking-tighter', isActive ? 'text-primary' : 'text-[var(--color-text-muted)]')}>
+                <span
+                  className={cn(
+                    'text-[10px] font-bold tracking-tighter',
+                    isActive ? 'text-primary' : 'text-[var(--color-text-muted)]'
+                  )}
+                >
                   {item.name}
                 </span>
               </Link>

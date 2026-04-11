@@ -24,7 +24,8 @@ const Badge: React.FC<BadgeProps> = ({
       'bg-[#64FFDA] text-slate-950 shadow-[0_0_12px_rgba(100,255,218,0.2)]',
     secondary: 'bg-[var(--color-surface-muted)] text-[var(--color-text-base)]',
     destructive: 'bg-rose-500/10 text-rose-500 border border-rose-500/20',
-    outline: 'text-[var(--color-text-base)]/40 border border-[var(--color-border-base)]/20',
+    outline:
+      'text-[var(--color-text-base)]/40 border border-[var(--color-border-base)]/20',
     verified: 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20',
     pending: 'bg-amber-500/10 text-amber-500 border border-amber-500/20',
     in_progress: 'bg-cyan-500/10 text-cyan-500 border border-cyan-500/20',

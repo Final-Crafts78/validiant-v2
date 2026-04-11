@@ -101,9 +101,10 @@ export default async function DashboardLayout({
   console.debug('[Dashboard:Layout] ONBOARDING DECISION', {
     orgCount: orgs.length,
     currentPath,
-    willRedirect: orgs.length === 0 && !currentPath.includes('/dashboard/onboarding'),
-    orgIds: orgs.map(o => o.id),
-    orgSlugs: orgs.map(o => o.slug),
+    willRedirect:
+      orgs.length === 0 && !currentPath.includes('/dashboard/onboarding'),
+    orgIds: orgs.map((o) => o.id),
+    orgSlugs: orgs.map((o) => o.slug),
     timestamp: new Date().toISOString(),
   });
 
@@ -121,11 +122,7 @@ export default async function DashboardLayout({
       timestamp: new Date().toISOString(),
     });
 
-    return (
-      <>
-        {children}
-      </>
-    );
+    return <>{children}</>;
   } catch (renderErr: unknown) {
     const error = renderErr as Error;
     console.error('[Dashboard:Layout] CRITICAL RENDER FAILURE', {

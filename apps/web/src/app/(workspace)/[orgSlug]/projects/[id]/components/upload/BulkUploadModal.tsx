@@ -10,10 +10,7 @@ import {
   Loader2,
   Database,
 } from 'lucide-react';
-import {
-  ProjectType,
-  CreateRecordDataInput,
-} from '@validiant/shared';
+import { ProjectType, CreateRecordDataInput } from '@validiant/shared';
 import { useTypeColumns } from '@/hooks/useTypeColumns';
 import { useRecords } from '@/hooks/useRecords';
 import { toast } from 'react-hot-toast';
@@ -60,14 +57,14 @@ export function BulkUploadModal({
       try {
         const bstr = evt.target?.result;
         if (!bstr) throw new Error('File read failed');
-        
+
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
         if (!wsname) throw new Error('No sheets found in workbook');
-        
+
         const ws = wb.Sheets[wsname];
         if (!ws) throw new Error('Sheet not found');
-        
+
         const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
         if (!data || data.length < 2) {
@@ -188,7 +185,9 @@ export function BulkUploadModal({
                     {s}
                   </span>
                 </div>
-                {i < 3 && <ArrowRight className="w-4 h-4 text-[var(--color-text-base)]/5" />}
+                {i < 3 && (
+                  <ArrowRight className="w-4 h-4 text-[var(--color-text-base)]/5" />
+                )}
               </React.Fragment>
             ))}
           </div>

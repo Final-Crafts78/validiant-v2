@@ -5,8 +5,15 @@ import { useGeoLocation } from '@/hooks/useGeoLocation';
 import { applyWatermark } from '@/lib/watermark';
 import { toast } from 'react-hot-toast';
 
+export interface GeoTag {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: number;
+}
+
 interface EvidenceUploadFieldProps {
-  onUpload: (file: File, geoTag: unknown) => void;
+  onUpload: (file: File, geoTag: GeoTag) => void;
   label: string;
   watermarkEnabled?: boolean;
   isPending?: boolean;
@@ -21,7 +28,7 @@ export const EvidenceUploadField: React.FC<EvidenceUploadFieldProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const [capturedGeo, setCapturedGeo] = useState<unknown | null>(null);
+  const [capturedGeo, setCapturedGeo] = useState<GeoTag | null>(null);
   const { getLocation, isLoading: isLocating } = useGeoLocation();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

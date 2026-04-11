@@ -50,7 +50,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ task }) => {
   const validateTransition = (targetStatus: string): boolean => {
     if (targetStatus === 'PENDING_REVIEW') {
       const fieldSchema =
-        (task.verificationType?.fieldSchema as FieldSchema[]) || [];
+        (task.verificationType?.fieldSchema as unknown as FieldSchema[]) || [];
       const values = (task as any).customFields || {};
       const missingFields = fieldSchema
         .filter((f) => f.required && !values[f.key])
@@ -216,7 +216,9 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ task }) => {
                 <ChevronRight
                   className={cn(
                     'w-4 h-4 transition-transform duration-300 group-hover:translate-x-1',
-                    isPrimary ? 'text-[var(--color-text-base)]/40' : 'text-gray-300'
+                    isPrimary
+                      ? 'text-[var(--color-text-base)]/40'
+                      : 'text-gray-300'
                   )}
                 />
               )}
