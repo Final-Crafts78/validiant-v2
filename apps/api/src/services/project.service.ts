@@ -120,7 +120,7 @@ export const createProject = async (
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Create project
   let newProjectResult;
-  
+
   // 🔍 ELITE: Diagnostic trace for DB insertion
   logger.info('[Service:Project:Create] Attempting project record insertion', {
     name: data.name,
@@ -129,33 +129,31 @@ export const createProject = async (
   });
 
   try {
-    const query = db
-      .insert(projects)
-      .values({
-        organizationId,
-        ownerId: userId,
-        name: data.name,
-        description: data.description,
-        status: data.status || ProjectStatus.PLANNING,
-        priority: data.priority || ProjectPriority.MEDIUM,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        estimatedHours: data.estimatedHours,
-        budget: data.budget,
-        color: data.color,
-        icon: data.icon,
-        // PHASE 1: BRANDING SAFETY WRAP
-        // Attempt to include these only if we are sure the schema is migrated
-        ...(data.themeColor !== undefined && {
-          themeColor: data.themeColor || '#4F46E5',
-        }),
-        ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
-        ...(data.autoDispatchVerified !== undefined && {
-          autoDispatchVerified: data.autoDispatchVerified || false,
-        }),
-        settings: {},
-        createdBy: userId,
-      });
+    const query = db.insert(projects).values({
+      organizationId,
+      ownerId: userId,
+      name: data.name,
+      description: data.description,
+      status: data.status || ProjectStatus.PLANNING,
+      priority: data.priority || ProjectPriority.MEDIUM,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      estimatedHours: data.estimatedHours,
+      budget: data.budget,
+      color: data.color,
+      icon: data.icon,
+      // PHASE 1: BRANDING SAFETY WRAP
+      // Attempt to include these only if we are sure the schema is migrated
+      ...(data.themeColor !== undefined && {
+        themeColor: data.themeColor || '#4F46E5',
+      }),
+      ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+      ...(data.autoDispatchVerified !== undefined && {
+        autoDispatchVerified: data.autoDispatchVerified || false,
+      }),
+      settings: {},
+      createdBy: userId,
+    });
 
     // ✅ ABSOLUTE SAFETY: Finalize chain with returning and await
     newProjectResult = await query.returning({
@@ -184,68 +182,104 @@ export const createProject = async (
     logger.debug('[Service:Project:Create] Primary INSERT success', {
       projectId: newProjectResult[0]?.id,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const dbErr = err as {
+      message?: string;
+      stack?: string;
+      code?: string;
+      detail?: string;
+      hint?: string;
+    };
     // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
     const isMissingColumn =
-      err.message?.includes('column') || err.message?.includes('not found');
+      dbErr.message?.includes('column') || dbErr.message?.includes('not found');
+
+    logger.error('[Service:Project:Create] INSERT FAILURE', {
+      error: dbErr.message,
+      isMissingColumn,
+      detail: dbErr.detail,
+      hint: dbErr.hint,
+      code: dbErr.code,
+      stack: dbErr.stack,
+      timestamp: new Date().toISOString(),
+    });
 
     if (isMissingColumn) {
       logger.warn(
         'DEGRADED MODE: Project created without branding columns due to missing DB migration.',
         {
-          error: err.message,
+          error: dbErr.message,
           suggestion: 'Run the Phase 1 SQL to fix this permanently.',
         }
       );
 
-      // Fallback: Try insert WITHOUT the new columns to at least get the project created
-      newProjectResult = await db
-        .insert(projects)
-        .values({
-          organizationId,
-          ownerId: userId,
-          name: data.name,
-          description: data.description,
-          status: data.status || ProjectStatus.PLANNING,
-          priority: data.priority || ProjectPriority.MEDIUM,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          estimatedHours: data.estimatedHours,
-          budget: data.budget,
-          color: data.color,
-          icon: data.icon,
-          settings: {},
-          createdBy: userId,
-        })
-        .returning({
-          id: projects.id,
-          organizationId: projects.organizationId,
-          name: projects.name,
-          description: projects.description,
-          status: projects.status,
-          priority: projects.priority,
-          startDate: projects.startDate,
-          endDate: projects.endDate,
-          estimatedHours: projects.estimatedHours,
-          actualHours: projects.actualHours,
-          budget: projects.budget,
-          color: projects.color,
-          icon: projects.icon,
-          themeColor: projects.themeColor,
-          logoUrl: projects.logoUrl,
-          autoDispatchVerified: projects.autoDispatchVerified,
-          settings: projects.settings,
-          createdBy: projects.createdBy,
-          createdAt: projects.createdAt,
-          updatedAt: projects.updatedAt,
+      try {
+        // Fallback: Try insert WITHOUT the new columns to at least get the project created
+        newProjectResult = await db
+          .insert(projects)
+          .values({
+            organizationId,
+            ownerId: userId,
+            name: data.name,
+            description: data.description,
+            status: data.status || ProjectStatus.PLANNING,
+            priority: data.priority || ProjectPriority.MEDIUM,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            estimatedHours: data.estimatedHours,
+            budget: data.budget,
+            color: data.color,
+            icon: data.icon,
+            settings: {},
+            createdBy: userId,
+          })
+          .returning({
+            id: projects.id,
+            organizationId: projects.organizationId,
+            name: projects.name,
+            description: projects.description,
+            status: projects.status,
+            priority: projects.priority,
+            startDate: projects.startDate,
+            endDate: projects.endDate,
+            estimatedHours: projects.estimatedHours,
+            actualHours: projects.actualHours,
+            budget: projects.budget,
+            color: projects.color,
+            icon: projects.icon,
+            themeColor: projects.themeColor,
+            logoUrl: projects.logoUrl,
+            autoDispatchVerified: projects.autoDispatchVerified,
+            settings: projects.settings,
+            createdBy: projects.createdBy,
+            createdAt: projects.createdAt,
+            updatedAt: projects.updatedAt,
+          });
+
+        logger.info('[Service:Project:Create] Fallback INSERT success', {
+          projectId: newProjectResult[0]?.id,
         });
+      } catch (fallbackErr: unknown) {
+        const dbFallbackErr = fallbackErr as {
+          message?: string;
+          code?: string;
+          detail?: string;
+        };
+        logger.error('[Service:Project:Create] FALLBACK INSERT FAILURE', {
+          error: dbFallbackErr.message,
+          code: dbFallbackErr.code,
+          detail: dbFallbackErr.detail,
+          timestamp: new Date().toISOString(),
+        });
+        throw dbFallbackErr;
+      }
     } else {
       logger.error('[Service:Project:Create] TERMINAL INSERT FAILURE', {
-        error: err.message,
-        stack: err.stack,
+        error: dbErr.message,
+        stack: dbErr.stack,
         timestamp: new Date().toISOString(),
       });
-      throw err;
+      throw dbErr;
     }
   }
   const newProject = newProjectResult[0];
@@ -266,7 +300,7 @@ export const createProject = async (
       });
 
       if (template) {
-        const def = template.typeDefinition as any;
+        const def = template.typeDefinition as Record<string, unknown>;
 
         // A. Create Project Type
         const [newType] = await db
@@ -283,7 +317,16 @@ export const createProject = async (
 
         // B. Create Columns
         if (def.columns && Array.isArray(def.columns)) {
-          const columnValues = def.columns.map((col: any, index: number) => ({
+          const columnValues = (
+            def.columns as Array<{
+              name: string;
+              key: string;
+              columnType: string;
+              options?: unknown[];
+              settings?: Record<string, unknown>;
+              isRequired?: boolean;
+            }>
+          ).map((col, index: number) => ({
             projectId: newProject.id,
             typeId: newType.id,
             name: col.name,
@@ -650,7 +693,9 @@ export const listOrganizationProjects = async (
       projects: projectList.map((p: (typeof projectList)[number]) => ({
         ...p,
         memberCount: Number(p.memberCount),
-        recordCount: Number((p as any).recordCount || 0),
+        recordCount: Number(
+          (p as { recordCount?: string | number }).recordCount || 0
+        ),
       })) as ProjectWithStats[],
       pagination: {
         total,

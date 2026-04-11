@@ -7,6 +7,7 @@
  * 3. Render the Obsidian Command Shell
  */
 
+import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
@@ -27,8 +28,15 @@ async function getData(): Promise<{
   orgs: import('@/types/auth.types').Organization[];
   accessToken: string;
 }> {
+  const headerStore = headers();
+  const cookieStore = cookies();
+
   console.debug('[Org:Layout] Starting getData() diagnostic fetch', {
     timestamp: new Date().toISOString(),
+    hasAuthorizationHeader: headerStore.has('authorization'),
+    hasCookieAccessToken: cookieStore.has('accessToken'),
+    userAgent: headerStore.get('user-agent'),
+    host: headerStore.get('host'),
   });
 
   try {
