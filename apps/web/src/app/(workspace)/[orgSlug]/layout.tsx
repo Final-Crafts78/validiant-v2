@@ -7,6 +7,8 @@
  * 3. Render the Obsidian Command Shell
  */
 
+/* eslint-disable no-console */
+
 import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect';
@@ -155,10 +157,26 @@ export default async function OrgLayout({
     activeOrg &&
     activeOrg.slug
   ) {
-    logger.info(
-      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug} (Method: ${matchMethod})`
+    // 🔍 PATH PRESERVATION: Ensure we don't drop the sub-route (Issue #19)
+    const headerStore = headers();
+    const currentPath = headerStore.get('x-pathname') || `/${params.orgSlug}`;
+
+    // Replace the identifier segment while preserving the rest of the path
+    const normalizedPath = currentPath.replace(
+      new RegExp(`^/${params.orgSlug}`, 'i'),
+      `/${activeOrg.slug}`
     );
-    redirect(ROUTES.DASHBOARD(activeOrg.slug));
+
+    logger.info(
+      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug} (Method: ${matchMethod}). Path: ${currentPath} -> ${normalizedPath}`,
+      {
+        original: currentPath,
+        normalized: normalizedPath,
+        timestamp: new Date().toISOString(),
+      }
+    );
+
+    redirect(normalizedPath);
   }
 
   if (!activeOrg && params.orgSlug !== 'new') {

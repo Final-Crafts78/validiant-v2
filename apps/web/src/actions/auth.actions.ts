@@ -440,25 +440,35 @@ export const getCurrentUserAction = cache(
 
       const startTime = Date.now();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
       // eslint-disable-next-line no-console
       console.log(`[BFF:GetUser] [${Date.now()}] EP-U2.1: Fetch starting`, {
         url: `${API_BASE_URL}/auth/me`,
-        timeout: '8s',
+        timeout: '12s',
       });
 
       let response;
+      const fetchStart = Date.now();
       try {
         response = await fetch(`${API_BASE_URL}/auth/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
+            'X-BFF-Trace': `bff-${Date.now()}`,
           },
           credentials: 'include',
           cache: 'no-store',
           signal: controller.signal,
+        });
+
+        const fetchEnd = Date.now();
+        // eslint-disable-next-line no-console
+        console.log(`[BFF:GetUser] [${Date.now()}] EP-U2.2: Fetch returned`, {
+          status: response.status,
+          duration: `${fetchEnd - fetchStart}ms`,
+          contentType: response.headers.get('content-type'),
         });
       } finally {
         clearTimeout(timeoutId);
@@ -562,14 +572,23 @@ export const getUserOrganizationsAction = cache(
         `[BFF:GetOrgs] [${Date.now()}] EP-O1: Fetching orgs from ${API_BASE_URL}`
       );
       const startTime = Date.now();
-      const response = await fetch(`${API_BASE_URL}/organizations/my`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout for orgs
+
+      let response;
+      try {
+        response = await fetch(`${API_BASE_URL}/organizations/my`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!response.ok) {
         // eslint-disable-next-line no-console
@@ -578,6 +597,7 @@ export const getUserOrganizationsAction = cache(
           {
             url: `${API_BASE_URL}/organizations/my`,
             statusText: response.statusText,
+            duration: `${Date.now() - startTime}ms`,
           }
         );
         return [];

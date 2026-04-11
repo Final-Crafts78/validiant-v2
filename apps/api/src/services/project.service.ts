@@ -119,7 +119,7 @@ export const createProject = async (
 ): Promise<Project> => {
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Create project
-  let newProjectResult;
+  let newProjectResult: (typeof projects.$inferSelect)[];
 
   // 🔍 ELITE: Diagnostic trace for DB insertion
   logger.info('[Service:Project:Create] Attempting project record insertion', {
@@ -222,64 +222,97 @@ export const createProject = async (
 
     if (isMissingColumn) {
       logger.warn(
-        'DEGRADED MODE: Project created without branding columns due to missing DB migration.',
+        'DEGRADED MODE: Project created without branding columns due to missing DB migration (Fallback v2 failed, attempting v3 Ultra-Deep).',
         {
           error: dbErr.message,
           suggestion: 'Run the Phase 1 SQL to fix this permanently.',
         }
       );
 
-      const fallbackQuery = db.insert(projects).values({
-        organizationId,
-        ownerId: userId,
-        name: data.name,
-        description: data.description,
-        status: data.status || ProjectStatus.PLANNING,
-        priority: data.priority || ProjectPriority.MEDIUM,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        estimatedHours: data.estimatedHours,
-        budget: data.budget,
-        color: data.color,
-        icon: data.icon,
-        settings: {},
-        createdBy: userId,
-      });
-
+      // 🔍 v3 ULTRA-DEEP FALLBACK: RAW SQL TEMPLATES
+      // This bypasses Drizzle's schema-aware column injection which was poisoning Fallback v2
       try {
-        newProjectResult = await fallbackQuery.returning({
-          id: projects.id,
-          organizationId: projects.organizationId,
-          name: projects.name,
-          description: projects.description,
-          status: projects.status,
-          priority: projects.priority,
-          // 🔍 MINIMAL RETURN: Exclude all brand columns that might trigger error
-          createdBy: projects.createdBy,
-          createdAt: projects.createdAt,
-          updatedAt: projects.updatedAt,
-        });
+        logger.info(
+          '[Service:Project:Create] Attempting v3 Raw SQL Injection...'
+        );
 
-        logger.info('[Service:Project:Create] Fallback INSERT success', {
+        const rawSql = sql`
+          INSERT INTO "projects" (
+            "organization_id", 
+            "owner_id", 
+            "name", 
+            "description", 
+            "status", 
+            "priority", 
+            "created_by"
+          ) VALUES (
+            ${organizationId}, 
+            ${userId}, 
+            ${data.name}, 
+            ${data.description || null},
+            ${data.status || ProjectStatus.PLANNING}, 
+            ${data.priority || ProjectPriority.MEDIUM}, 
+            ${userId}
+          ) RETURNING "id", "organization_id", "name", "description", "status", "priority", "created_by", "created_at", "updated_at"
+        `;
+
+        const result = await db.execute(rawSql);
+
+        // Normalize result format for downstream logic
+        // ELITE: Map snake_case from raw SQL to camelCase expected by Drizzle types
+        interface RawProjectRow {
+          id: string;
+          organization_id: string;
+          name: string;
+          description: string | null;
+          status: string;
+          priority: string;
+          created_by: string;
+          created_at: string | Date;
+          updated_at: string | Date;
+        }
+
+        newProjectResult = (result.rows as unknown as RawProjectRow[]).map(
+          (row) => ({
+            id: row.id,
+            organizationId: row.organization_id,
+            name: row.name,
+            description: row.description,
+            status: row.status as ProjectStatus,
+            priority: row.priority as ProjectPriority,
+            createdBy: row.created_by,
+            createdAt:
+              typeof row.created_at === 'string'
+                ? new Date(row.created_at)
+                : row.created_at,
+            updatedAt:
+              typeof row.updated_at === 'string'
+                ? new Date(row.updated_at)
+                : row.updated_at,
+          })
+        ) as (typeof projects.$inferSelect)[];
+
+        if (!newProjectResult || newProjectResult.length === 0) {
+          throw new Error('v3 Fallback returned empty result set');
+        }
+
+        logger.info('[Service:Project:Create] v3 Fallback SUCCESS', {
           projectId: newProjectResult[0]?.id,
+          timestamp: new Date().toISOString(),
         });
-      } catch (fallbackErr: unknown) {
-        const dbFallbackErr = fallbackErr as {
+      } catch (v3Err: unknown) {
+        const v3ErrDetail = v3Err as {
           message?: string;
           code?: string;
           detail?: string;
         };
-        logger.error('[Service:Project:Create] FALLBACK INSERT FAILURE', {
-          error: dbFallbackErr.message,
-          code: dbFallbackErr.code,
-          detail: dbFallbackErr.detail,
+        logger.error('[Service:Project:Create] v3 Fallback CRITICAL FAILURE', {
+          error: v3ErrDetail.message,
+          code: v3ErrDetail.code,
+          detail: v3ErrDetail.detail,
           timestamp: new Date().toISOString(),
-          // 🔍 TRACE: Why did the fallback fail?
-          fallbackSql: fallbackQuery
-            ? fallbackQuery.toSQL().sql
-            : 'FALLBACK SQL NOT PREPARED',
         });
-        throw dbFallbackErr;
+        throw v3Err;
       }
     } else {
       logger.error('[Service:Project:Create] TERMINAL INSERT FAILURE', {
