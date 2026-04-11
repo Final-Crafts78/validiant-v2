@@ -25,6 +25,7 @@ import {
   ProjectStatus,
   ProjectPriority,
 } from '@validiant/shared';
+import { logger } from '../utils/logger';
 
 /**
  * Check organization access
@@ -72,14 +73,18 @@ export const createProject = async (c: Context) => {
       typeof createProjectSchema
     >;
 
-    console.info(`[ProjectController] Creating project with data:`, {
+    const extendedData = validatedData as Record<string, unknown>;
+    logger.info(`[ProjectController] Creating project with data:`, {
       organizationId: validatedData.organizationId,
       name: validatedData.name,
-      description: validatedData.description,
-      visibility: validatedData.visibility,
+      description: validatedData.description?.substring(0, 50),
       priority: validatedData.priority,
       startDate: validatedData.startDate,
       endDate: validatedData.endDate,
+      // 🔍 ELITE: Detect if newer branding fields are even present in request
+      hasTheme: !!extendedData.themeColor,
+      hasLogo: !!extendedData.logoUrl,
+      hasAutoDispatch: !!extendedData.autoDispatchVerified,
     });
 
     // Check organization access
@@ -122,7 +127,7 @@ export const createProject = async (c: Context) => {
       201
     );
   } catch (error) {
-    console.error('Create project error:', error);
+    logger.error('Create project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -160,7 +165,7 @@ export const getMyProjects = async (c: Context) => {
       data: { projects },
     });
   } catch (error) {
-    console.error('Get my projects error:', error);
+    logger.error('Get my projects error:', error as Error);
     return c.json(
       {
         success: false,
@@ -223,7 +228,7 @@ export const getProjectById = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Get project by ID error:', error);
+    logger.error('Get project by ID error:', error as Error);
     return c.json(
       {
         success: false,
@@ -304,7 +309,7 @@ export const updateProject = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Update project error:', error);
+    logger.error('Update project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -378,7 +383,7 @@ export const updateProjectSettings = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Update project settings error:', error);
+    logger.error('Update project settings error:', error as Error);
     return c.json(
       {
         success: false,
@@ -464,7 +469,7 @@ export const deleteProject = async (c: Context) => {
       data: null,
     });
   } catch (error) {
-    console.error('Delete project error:', error);
+    logger.error('Delete project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -517,7 +522,7 @@ export const listOrganizationProjects = async (c: Context) => {
 
     // 🔍 EXTREME VISIBILITY: Track project list permission resolution
     // eslint-disable-next-line no-console
-    console.debug('[Controller:Project:List] Permission check', {
+    logger.debug('[Controller:Project:List] Permission check', {
       organizationId,
       userId: user.userId,
       hasAccess,
@@ -556,7 +561,7 @@ export const listOrganizationProjects = async (c: Context) => {
       data: result,
     });
   } catch (error) {
-    console.error('List organization projects error:', error);
+    logger.error('List organization projects error:', error as Error);
     return c.json(
       {
         success: false,
@@ -619,7 +624,7 @@ export const getProjectMembers = async (c: Context) => {
       data: { members },
     });
   } catch (error) {
-    console.error('Get project members error:', error);
+    logger.error('Get project members error:', error as Error);
     return c.json(
       {
         success: false,
@@ -715,7 +720,7 @@ export const addProjectMember = async (c: Context) => {
       201
     );
   } catch (error) {
-    console.error('Add project member error:', error);
+    logger.error('Add project member error:', error as Error);
     return c.json(
       {
         success: false,
@@ -804,7 +809,7 @@ export const removeProjectMember = async (c: Context) => {
       data: null,
     });
   } catch (error) {
-    console.error('Remove project member error:', error);
+    logger.error('Remove project member error:', error as Error);
     return c.json(
       {
         success: false,
@@ -855,7 +860,7 @@ export const leaveProject = async (c: Context) => {
       data: null,
     });
   } catch (error) {
-    console.error('Leave project error:', error);
+    logger.error('Leave project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -921,7 +926,7 @@ export const archiveProject = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Archive project error:', error);
+    logger.error('Archive project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -987,7 +992,7 @@ export const unarchiveProject = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Unarchive project error:', error);
+    logger.error('Unarchive project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -1053,7 +1058,7 @@ export const completeProject = async (c: Context) => {
       data: { project },
     });
   } catch (error) {
-    console.error('Complete project error:', error);
+    logger.error('Complete project error:', error as Error);
     return c.json(
       {
         success: false,
@@ -1118,7 +1123,7 @@ export const getMyProjectRole = async (c: Context) => {
       },
     });
   } catch (error) {
-    console.error('Get my project role error:', error);
+    logger.error('Get my project role error:', error as Error);
     return c.json(
       {
         success: false,

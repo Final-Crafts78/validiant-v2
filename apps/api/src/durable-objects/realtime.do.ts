@@ -29,7 +29,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
 
     // 2. Handle SSE connection request
     if (url.pathname === '/stream') {
-      return this.handleSSE();
+      return this.handleSSE(request);
     }
 
     return new Response('Not Found', { status: 404 });
@@ -49,7 +49,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
   /**
    * Establish SSE connection and pipe stream to client
    */
-  private handleSSE(): Response {
+  private handleSSE(request: Request): Response {
     const encoder = new TextEncoder();
     const sessionId = crypto.randomUUID().substring(0, 8);
     const sessionStartTime = Date.now();
@@ -63,6 +63,10 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           sessionId,
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
+          // 🔍 PROXY-AWARE: Capture metadata to track edge drops
+          ray: request.headers.get('cf-ray') || 'NONE',
+          country: request.headers.get('cf-ipcountry') || 'UNKNOWN',
+          ua: request.headers.get('user-agent')?.substring(0, 50) || 'NONE',
         });
 
         // Start heartbeat if not running

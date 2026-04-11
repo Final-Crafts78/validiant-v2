@@ -170,6 +170,13 @@ export const createProject = async (
       budget: projects.budget,
       color: projects.color,
       icon: projects.icon,
+      // 🔍 TRACE: Schema presence test
+      _trace: {
+        hasTheme: projects.themeColor !== undefined,
+        hasLogo: projects.logoUrl !== undefined,
+        hasAuto: projects.autoDispatchVerified !== undefined,
+        hasClientKey: projects.clientApiKey !== undefined
+      },
       themeColor: projects.themeColor,
       logoUrl: projects.logoUrl,
       autoDispatchVerified: projects.autoDispatchVerified,
@@ -240,17 +247,7 @@ export const createProject = async (
             description: projects.description,
             status: projects.status,
             priority: projects.priority,
-            startDate: projects.startDate,
-            endDate: projects.endDate,
-            estimatedHours: projects.estimatedHours,
-            actualHours: projects.actualHours,
-            budget: projects.budget,
-            color: projects.color,
-            icon: projects.icon,
-            themeColor: projects.themeColor,
-            logoUrl: projects.logoUrl,
-            autoDispatchVerified: projects.autoDispatchVerified,
-            settings: projects.settings,
+            // 🔍 MINIMAL RETURN: Exclude all brand columns that might trigger error
             createdBy: projects.createdBy,
             createdAt: projects.createdAt,
             updatedAt: projects.updatedAt,
@@ -611,6 +608,13 @@ export const listOrganizationProjects = async (
     timestamp: new Date().toISOString(),
   });
 
+  // 🔍 TRACE: Schema sanity check before heavy select
+  logger.debug('[Service:Project:List] Execution Entry', {
+    hasSearch: !!params?.search,
+    hasStatus: !!params?.status,
+    hasPriority: !!params?.priority
+  });
+
   try {
     const page = params?.page || 1;
     const perPage = Math.min(params?.perPage || 20, 100);
@@ -740,6 +744,8 @@ export const getUserProjects = async (
     timestamp: new Date().toISOString(),
   });
 
+  try {
+
   const projectList = await db
     .select({
       id: projects.id,
@@ -786,6 +792,16 @@ export const getUserProjects = async (
     ...p,
     memberCount: Number(p.memberCount),
   })) as ProjectWithStats[];
+  } catch (error) {
+    logger.error('[ProjectService] getUserProjects CRITICAL FAILURE', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      isSchemaError: error instanceof Error && error.message.includes('column'),
+      userId,
+      timestamp: new Date().toISOString(),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    throw error;
+  }
 };
 
 /**
