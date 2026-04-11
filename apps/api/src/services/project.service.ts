@@ -125,35 +125,36 @@ export const createProject = async (
   logger.info('[Service:Project:Create] Attempting project record insertion', {
     name: data.name,
     organizationId,
+    userId,
     timestamp: new Date().toISOString(),
   });
 
-  try {
-    const query = db.insert(projects).values({
-      organizationId,
-      ownerId: userId,
-      name: data.name,
-      description: data.description,
-      status: data.status || ProjectStatus.PLANNING,
-      priority: data.priority || ProjectPriority.MEDIUM,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      estimatedHours: data.estimatedHours,
-      budget: data.budget,
-      color: data.color,
-      icon: data.icon,
-      // PHASE 1: BRANDING SAFETY WRAP
-      // Attempt to include these only if we are sure the schema is migrated
-      ...(data.themeColor !== undefined && {
-        themeColor: data.themeColor || '#4F46E5',
-      }),
-      ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
-      ...(data.autoDispatchVerified !== undefined && {
-        autoDispatchVerified: data.autoDispatchVerified || false,
-      }),
-      createdBy: userId,
-    });
+  const query = db.insert(projects).values({
+    organizationId,
+    ownerId: userId,
+    name: data.name,
+    description: data.description,
+    status: data.status || ProjectStatus.PLANNING,
+    priority: data.priority || ProjectPriority.MEDIUM,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    estimatedHours: data.estimatedHours,
+    budget: data.budget,
+    color: data.color,
+    icon: data.icon,
+    // PHASE 1: BRANDING SAFETY WRAP
+    // Attempt to include these only if we are sure the schema is migrated
+    ...(data.themeColor !== undefined && {
+      themeColor: data.themeColor || '#4F46E5',
+    }),
+    ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+    ...(data.autoDispatchVerified !== undefined && {
+      autoDispatchVerified: data.autoDispatchVerified || false,
+    }),
+    createdBy: userId,
+  });
 
+  try {
     // 🔍 ULTRA-DEEP: Export SQL for diagnostic trace
     const sqlTrace = query.toSQL();
     logger.debug('[Service:Project:Create] Prepared SQL Trace', {
@@ -181,7 +182,7 @@ export const createProject = async (
         hasTheme: projects.themeColor !== undefined,
         hasLogo: projects.logoUrl !== undefined,
         hasAuto: projects.autoDispatchVerified !== undefined,
-        hasClientKey: projects.clientApiKey !== undefined
+        hasClientKey: projects.clientApiKey !== undefined,
       },
       themeColor: projects.themeColor,
       logoUrl: projects.logoUrl,
@@ -216,7 +217,7 @@ export const createProject = async (
       stack: dbErr.stack,
       timestamp: new Date().toISOString(),
       // 🔍 TRACE: Include the failing SQL in the error log
-      failedSql: query.toSQL().sql,
+      failedSql: query ? query.toSQL().sql : 'SQL NOT PREPARED',
     });
 
     if (isMissingColumn) {
@@ -228,39 +229,36 @@ export const createProject = async (
         }
       );
 
-      try {
-        const fallbackQuery = db
-          .insert(projects)
-          .values({
-            organizationId,
-            ownerId: userId,
-            name: data.name,
-            description: data.description,
-            status: data.status || ProjectStatus.PLANNING,
-            priority: data.priority || ProjectPriority.MEDIUM,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            estimatedHours: data.estimatedHours,
-            budget: data.budget,
-            color: data.color,
-            icon: data.icon,
-            settings: {},
-            createdBy: userId,
-          });
+      const fallbackQuery = db.insert(projects).values({
+        organizationId,
+        ownerId: userId,
+        name: data.name,
+        description: data.description,
+        status: data.status || ProjectStatus.PLANNING,
+        priority: data.priority || ProjectPriority.MEDIUM,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        estimatedHours: data.estimatedHours,
+        budget: data.budget,
+        color: data.color,
+        icon: data.icon,
+        settings: {},
+        createdBy: userId,
+      });
 
-        newProjectResult = await fallbackQuery
-          .returning({
-            id: projects.id,
-            organizationId: projects.organizationId,
-            name: projects.name,
-            description: projects.description,
-            status: projects.status,
-            priority: projects.priority,
-            // 🔍 MINIMAL RETURN: Exclude all brand columns that might trigger error
-            createdBy: projects.createdBy,
-            createdAt: projects.createdAt,
-            updatedAt: projects.updatedAt,
-          });
+      try {
+        newProjectResult = await fallbackQuery.returning({
+          id: projects.id,
+          organizationId: projects.organizationId,
+          name: projects.name,
+          description: projects.description,
+          status: projects.status,
+          priority: projects.priority,
+          // 🔍 MINIMAL RETURN: Exclude all brand columns that might trigger error
+          createdBy: projects.createdBy,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
+        });
 
         logger.info('[Service:Project:Create] Fallback INSERT success', {
           projectId: newProjectResult[0]?.id,
@@ -277,7 +275,9 @@ export const createProject = async (
           detail: dbFallbackErr.detail,
           timestamp: new Date().toISOString(),
           // 🔍 TRACE: Why did the fallback fail?
-          fallbackSql: fallbackQuery.toSQL().sql,
+          fallbackSql: fallbackQuery
+            ? fallbackQuery.toSQL().sql
+            : 'FALLBACK SQL NOT PREPARED',
         });
         throw dbFallbackErr;
       }
@@ -623,7 +623,7 @@ export const listOrganizationProjects = async (
   logger.debug('[Service:Project:List] Execution Entry', {
     hasSearch: !!params?.search,
     hasStatus: !!params?.status,
-    hasPriority: !!params?.priority
+    hasPriority: !!params?.priority,
   });
 
   try {
@@ -756,53 +756,52 @@ export const getUserProjects = async (
   });
 
   try {
-
-  const projectList = await db
-    .select({
-      id: projects.id,
-      organizationId: projects.organizationId,
-      name: projects.name,
-      description: projects.description,
-      status: projects.status,
-      priority: projects.priority,
-      color: projects.color,
-      icon: projects.icon,
-      themeColor: projects.themeColor,
-      logoUrl: projects.logoUrl,
-      autoDispatchVerified: projects.autoDispatchVerified,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
-      // Subquery for member count
-      memberCount: sql<number>`(
+    const projectList = await db
+      .select({
+        id: projects.id,
+        organizationId: projects.organizationId,
+        name: projects.name,
+        description: projects.description,
+        status: projects.status,
+        priority: projects.priority,
+        color: projects.color,
+        icon: projects.icon,
+        themeColor: projects.themeColor,
+        logoUrl: projects.logoUrl,
+        autoDispatchVerified: projects.autoDispatchVerified,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+        // Subquery for member count
+        memberCount: sql<number>`(
         SELECT COUNT(*)
         FROM ${projectMembers}
         WHERE ${projectMembers.projectId} = ${projects.id}
         AND ${projectMembers.deletedAt} IS NULL
       )`,
-      // Organization as nested object
-      organization: {
-        id: organizations.id,
-        name: organizations.name,
-        slug: organizations.slug,
-      },
-    })
-    .from(projects)
-    .innerJoin(projectMembers, eq(projects.id, projectMembers.projectId))
-    .innerJoin(organizations, eq(projects.organizationId, organizations.id))
-    .where(
-      and(
-        eq(projectMembers.userId, userId),
-        isNull(projects.deletedAt),
-        isNull(projectMembers.deletedAt),
-        isNull(organizations.deletedAt)
+        // Organization as nested object
+        organization: {
+          id: organizations.id,
+          name: organizations.name,
+          slug: organizations.slug,
+        },
+      })
+      .from(projects)
+      .innerJoin(projectMembers, eq(projects.id, projectMembers.projectId))
+      .innerJoin(organizations, eq(projects.organizationId, organizations.id))
+      .where(
+        and(
+          eq(projectMembers.userId, userId),
+          isNull(projects.deletedAt),
+          isNull(projectMembers.deletedAt),
+          isNull(organizations.deletedAt)
+        )
       )
-    )
-    .orderBy(desc(projects.updatedAt));
+      .orderBy(desc(projects.updatedAt));
 
-  return projectList.map((p: (typeof projectList)[number]) => ({
-    ...p,
-    memberCount: Number(p.memberCount),
-  })) as ProjectWithStats[];
+    return projectList.map((p: (typeof projectList)[number]) => ({
+      ...p,
+      memberCount: Number(p.memberCount),
+    })) as ProjectWithStats[];
   } catch (error) {
     logger.error('[ProjectService] getUserProjects CRITICAL FAILURE', {
       error: error instanceof Error ? error.message : 'Unknown error',

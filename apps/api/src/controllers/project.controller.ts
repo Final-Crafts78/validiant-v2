@@ -76,6 +76,7 @@ export const createProject = async (c: Context) => {
     const extendedData = validatedData as Record<string, unknown>;
     logger.info(`[ProjectController] Creating project with data:`, {
       organizationId: validatedData.organizationId,
+      userId: user.userId,
       name: validatedData.name,
       description: validatedData.description?.substring(0, 50),
       priority: validatedData.priority,
@@ -85,7 +86,10 @@ export const createProject = async (c: Context) => {
       hasTheme: !!extendedData.themeColor,
       hasLogo: !!extendedData.logoUrl,
       hasAutoDispatch: !!extendedData.autoDispatchVerified,
+      requestKeys: Object.keys(extendedData),
     });
+
+    logger.debug('[ProjectController] Transitioning to Service Layer...');
 
     // Check organization access
     const hasAccess = await checkOrganizationAccess(
