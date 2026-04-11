@@ -439,15 +439,30 @@ export const getCurrentUserAction = cache(
       );
 
       const startTime = Date.now();
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        cache: 'no-store',
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+      // eslint-disable-next-line no-console
+      console.log(`[BFF:GetUser] [${Date.now()}] EP-U2.1: Fetch starting`, {
+        url: `${API_BASE_URL}/auth/me`,
+        timeout: '8s',
       });
+
+      let response;
+      try {
+        response = await fetch(`${API_BASE_URL}/auth/me`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       const duration = Date.now() - startTime;
       // eslint-disable-next-line no-console
@@ -518,14 +533,22 @@ export const getCurrentUserAction = cache(
       };
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(
-        `[BFF:GetUser] [${Date.now()}] EP-U.ERROR: CRITICAL`,
-        error
-      );
+      console.error(`[BFF:GetUser] [${Date.now()}] EP-U.ERROR: CRITICAL`, {
+        name: error instanceof Error ? error.name : 'UnknownError',
+        msg: error instanceof Error ? error.message : String(error),
+        isTimeout: error instanceof Error && error.name === 'AbortError',
+        timestamp: new Date().toISOString(),
+      });
       return {
         success: false,
-        error: 'NetworkError',
-        message: 'Unable to connect to authentication server',
+        error:
+          error instanceof Error && error.name === 'AbortError'
+            ? 'TimeoutError'
+            : 'NetworkError',
+        message:
+          error instanceof Error && error.name === 'AbortError'
+            ? 'Authentication request timed out'
+            : 'Unable to connect to authentication server',
       };
     }
   }

@@ -151,8 +151,14 @@ export const createProject = async (
       ...(data.autoDispatchVerified !== undefined && {
         autoDispatchVerified: data.autoDispatchVerified || false,
       }),
-      settings: {},
       createdBy: userId,
+    });
+
+    // 🔍 ULTRA-DEEP: Export SQL for diagnostic trace
+    const sqlTrace = query.toSQL();
+    logger.debug('[Service:Project:Create] Prepared SQL Trace', {
+      sql: sqlTrace.sql,
+      paramsCount: sqlTrace.params?.length,
     });
 
     // ✅ ABSOLUTE SAFETY: Finalize chain with returning and await
@@ -209,6 +215,8 @@ export const createProject = async (
       code: dbErr.code,
       stack: dbErr.stack,
       timestamp: new Date().toISOString(),
+      // 🔍 TRACE: Include the failing SQL in the error log
+      failedSql: query.toSQL().sql,
     });
 
     if (isMissingColumn) {
@@ -221,8 +229,7 @@ export const createProject = async (
       );
 
       try {
-        // Fallback: Try insert WITHOUT the new columns to at least get the project created
-        newProjectResult = await db
+        const fallbackQuery = db
           .insert(projects)
           .values({
             organizationId,
@@ -239,7 +246,9 @@ export const createProject = async (
             icon: data.icon,
             settings: {},
             createdBy: userId,
-          })
+          });
+
+        newProjectResult = await fallbackQuery
           .returning({
             id: projects.id,
             organizationId: projects.organizationId,
@@ -267,6 +276,8 @@ export const createProject = async (
           code: dbFallbackErr.code,
           detail: dbFallbackErr.detail,
           timestamp: new Date().toISOString(),
+          // 🔍 TRACE: Why did the fallback fail?
+          fallbackSql: fallbackQuery.toSQL().sql,
         });
         throw dbFallbackErr;
       }

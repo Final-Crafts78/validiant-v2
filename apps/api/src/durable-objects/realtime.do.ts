@@ -135,9 +135,14 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         return;
       }
 
+      const now = Date.now();
+      const drift = now - (this.lastHeartbeatAt || now) - 12000;
+      this.lastHeartbeatAt = now;
+
       // eslint-disable-next-line no-console
       console.debug(
-        `[Realtime:DO] Sending HEARTBEAT to ${this.sessions.size} sessions`
+        `[Realtime:DO] Sending HEARTBEAT to ${this.sessions.size} sessions`,
+        { drift: `${drift}ms`, timestamp: new Date().toISOString() }
       );
 
       for (const [sid, session] of this.sessions.entries()) {
@@ -147,7 +152,8 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           // eslint-disable-next-line no-console
           console.error('[Realtime:DO] HEARTBEAT_DISCONNECT', {
             sessionId: sid,
-            error: err instanceof Error ? err.message : String(err),
+            error:
+              err instanceof Error ? err.stack || err.message : String(err),
             timestamp: new Date().toISOString(),
           });
           this.sessions.delete(sid);
@@ -155,6 +161,8 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
       }
     }, 12000); // 12 seconds - Edge Friendly
   }
+
+  private lastHeartbeatAt: number = 0;
 
   /**
    * Broadcast message to all connected sessions
