@@ -386,7 +386,25 @@ export async function logoutAction(): Promise<LogoutActionResult> {
 
 export const getCurrentUserAction = cache(
   async (): Promise<GetCurrentUserActionResult> => {
-    const cookieStore = cookies();
+    // eslint-disable-next-line no-console
+    console.log(`[BFF:GetUser] [${Date.now()}] EP-U0: ENTRY`);
+
+    let cookieStore;
+    try {
+      cookieStore = cookies();
+      // eslint-disable-next-line no-console
+      console.log(`[BFF:GetUser] [${Date.now()}] EP-U0.1: Native cookies() accessed`);
+    } catch (cookieErr) {
+      // eslint-disable-next-line no-console
+      console.error(`[BFF:GetUser] [${Date.now()}] EP-U0.ERROR: cookies() failed`, {
+        msg: cookieErr instanceof Error ? cookieErr.message : String(cookieErr)
+      });
+      return {
+        success: false,
+        error: 'CookieAccessError',
+        message: 'Unable to access cookies in current context',
+      };
+    }
 
     try {
       const accessToken = cookieStore.get('accessToken')?.value;

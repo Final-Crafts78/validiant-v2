@@ -120,8 +120,16 @@ export const createProject = async (
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Create project
   let newProjectResult;
+  
+  // 🔍 ELITE: Diagnostic trace for DB insertion
+  logger.info('[Service:Project:Create] Attempting project record insertion', {
+    name: data.name,
+    organizationId,
+    timestamp: new Date().toISOString(),
+  });
+
   try {
-    newProjectResult = await db
+    const query = db
       .insert(projects)
       .values({
         organizationId,
@@ -147,29 +155,35 @@ export const createProject = async (
         }),
         settings: {},
         createdBy: userId,
-      })
-      .returning({
-        id: projects.id,
-        organizationId: projects.organizationId,
-        name: projects.name,
-        description: projects.description,
-        status: projects.status,
-        priority: projects.priority,
-        startDate: projects.startDate,
-        endDate: projects.endDate,
-        estimatedHours: projects.estimatedHours,
-        actualHours: projects.actualHours,
-        budget: projects.budget,
-        color: projects.color,
-        icon: projects.icon,
-        themeColor: projects.themeColor,
-        logoUrl: projects.logoUrl,
-        autoDispatchVerified: projects.autoDispatchVerified,
-        settings: projects.settings,
-        createdBy: projects.createdBy,
-        createdAt: projects.createdAt,
-        updatedAt: projects.updatedAt,
       });
+
+    // ✅ ABSOLUTE SAFETY: Finalize chain with returning and await
+    newProjectResult = await query.returning({
+      id: projects.id,
+      organizationId: projects.organizationId,
+      name: projects.name,
+      description: projects.description,
+      status: projects.status,
+      priority: projects.priority,
+      startDate: projects.startDate,
+      endDate: projects.endDate,
+      estimatedHours: projects.estimatedHours,
+      actualHours: projects.actualHours,
+      budget: projects.budget,
+      color: projects.color,
+      icon: projects.icon,
+      themeColor: projects.themeColor,
+      logoUrl: projects.logoUrl,
+      autoDispatchVerified: projects.autoDispatchVerified,
+      settings: projects.settings,
+      createdBy: projects.createdBy,
+      createdAt: projects.createdAt,
+      updatedAt: projects.updatedAt,
+    });
+
+    logger.debug('[Service:Project:Create] Primary INSERT success', {
+      projectId: newProjectResult[0]?.id,
+    });
   } catch (err: any) {
     // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
     const isMissingColumn =
@@ -226,6 +240,11 @@ export const createProject = async (
           updatedAt: projects.updatedAt,
         });
     } else {
+      logger.error('[Service:Project:Create] TERMINAL INSERT FAILURE', {
+        error: err.message,
+        stack: err.stack,
+        timestamp: new Date().toISOString(),
+      });
       throw err;
     }
   }

@@ -94,6 +94,8 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           reason: reason || 'CLIENT_OR_NETWORK_DISCONNECT',
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
+          // ELITE: Trace cancellation source
+          isSystemCancel: !!reason && typeof reason === 'string' && reason.includes('System'),
         });
 
         if (this.sessions.size === 0 && this.heartbeatInterval) {
@@ -146,7 +148,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           this.sessions.delete(sid);
         }
       }
-    }, 20000); // 20 seconds
+    }, 12000); // 12 seconds - Edge Friendly
   }
 
   /**

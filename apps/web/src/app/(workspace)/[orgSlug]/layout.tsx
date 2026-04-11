@@ -143,7 +143,7 @@ export default async function OrgLayout({
     activeOrg.slug
   ) {
     logger.info(
-      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug}`
+      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug} (Method: ${matchMethod})`
     );
     redirect(ROUTES.DASHBOARD(activeOrg.slug));
   }
