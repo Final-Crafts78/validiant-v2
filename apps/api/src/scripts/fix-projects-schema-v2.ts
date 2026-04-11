@@ -63,6 +63,11 @@ async function fixProjectsSchema() {
         sql: sql`ALTER TABLE projects ADD COLUMN "auto_dispatch_verified" BOOLEAN DEFAULT FALSE NOT NULL;`,
         condition: !existingColumns.includes('auto_dispatch_verified'),
       },
+      {
+        name: 'client_api_key',
+        sql: sql`ALTER TABLE projects ADD COLUMN "client_api_key" TEXT UNIQUE;`,
+        condition: !existingColumns.includes('client_api_key'),
+      },
     ];
 
     for (const migration of migrations) {

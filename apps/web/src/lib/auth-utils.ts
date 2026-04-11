@@ -179,16 +179,18 @@ export function getCookieDomain(requestHostname?: string): string | undefined {
   return undefined;
 }
 
+export interface AuthCookieOptions {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: 'lax' | 'strict' | 'none';
+  path: string;
+  domain?: string;
+}
+
 /**
  * Base cookie options for authentication tokens.
- *
- * CRITICAL:
- * - httpOnly: true (XSS protection)
- * - secure: true (Required for SameSite=None)
- * - sameSite: 'none' (Enables cross-subdomain authentication)
- * - path: '/' (Available across the entire app)
  */
-export const getBaseCookieOptions = (hostname?: string) => {
+export const getBaseCookieOptions = (hostname?: string): AuthCookieOptions => {
   const isProduction = hostname
     ? !hostname.includes('localhost') && !hostname.includes('127.0.0.1')
     : process.env.NODE_ENV === 'production';

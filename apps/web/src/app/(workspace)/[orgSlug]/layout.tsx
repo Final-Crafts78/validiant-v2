@@ -9,6 +9,7 @@
 
 import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 import { WorkspaceLayoutContent } from '@/components/workspace/WorkspaceLayoutContent';
 import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 import { WorkspaceInitializer } from '@/components/providers/WorkspaceInitializer';
@@ -88,6 +89,10 @@ async function getData(): Promise<{
       accessToken: result.accessToken,
     };
   } catch (err) {
+    if (isRedirectError(err)) {
+      throw err;
+    }
+
     console.error('[Org:Layout] CRITICAL getData() CRASH', {
       message: err instanceof Error ? err.message : String(err),
       stack: err instanceof Error ? err.stack : undefined,

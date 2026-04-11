@@ -14,10 +14,7 @@ console.log(`[BFF:Module] [${Date.now()}] EP-0.1: Module loading started`);
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-/* eslint-disable @typescript-eslint/prefer-ts-expect-error */
-// @ts-ignore - 'cache' is available in React 18 for RSC but may not be recognized by all environments/types
 import { cache } from 'react';
-/* eslint-enable @typescript-eslint/prefer-ts-expect-error */
 import { getBaseCookieOptions } from '@/lib/auth-utils';
 import type {
   AuthUser,
@@ -56,7 +53,7 @@ function clearAuthCookies() {
 
   // eslint-disable-next-line no-console
   console.warn('[BFF:ClearCookies] DOMAIN CHECK', {
-    domain: (COOKIE_OPTIONS as any).domain || 'UNDEFINED (Host-only)',
+    domain: COOKIE_OPTIONS.domain || 'UNDEFINED (Host-only)',
     path: COOKIE_OPTIONS.path,
     beforeNames,
     beforeCount,
@@ -94,7 +91,7 @@ function clearAuthCookies() {
   console.debug('[BFF:ClearCookies] STATE AFTER DELETE', {
     afterNames,
     afterCount,
-    domainUsed: (COOKIE_OPTIONS as any).domain || 'HOST_ONLY',
+    domainUsed: COOKIE_OPTIONS.domain || 'HOST_ONLY',
     timestamp: new Date().toISOString(),
   });
 }
@@ -146,7 +143,7 @@ export async function loginAction(
     }
 
     const cookieStore = cookies();
-    const domain = (COOKIE_OPTIONS as any).domain || 'HOST_ONLY';
+    const domain = COOKIE_OPTIONS.domain || 'HOST_ONLY';
 
     // eslint-disable-next-line no-console
     console.log(
@@ -270,7 +267,7 @@ export async function updateProfileAction(payload: {
 
   try {
     // ELITE: Clean payload - remove empty strings and poison markers ("$undefined", "null")
-    const cleanPayload: any = {};
+    const cleanPayload: Record<string, unknown> = {};
     Object.entries(payload).forEach(([key, value]) => {
       if (
         value !== '' &&
@@ -393,12 +390,18 @@ export const getCurrentUserAction = cache(
     try {
       cookieStore = cookies();
       // eslint-disable-next-line no-console
-      console.log(`[BFF:GetUser] [${Date.now()}] EP-U0.1: Native cookies() accessed`);
+      console.log(
+        `[BFF:GetUser] [${Date.now()}] EP-U0.1: Native cookies() accessed`
+      );
     } catch (cookieErr) {
       // eslint-disable-next-line no-console
-      console.error(`[BFF:GetUser] [${Date.now()}] EP-U0.ERROR: cookies() failed`, {
-        msg: cookieErr instanceof Error ? cookieErr.message : String(cookieErr)
-      });
+      console.error(
+        `[BFF:GetUser] [${Date.now()}] EP-U0.ERROR: cookies() failed`,
+        {
+          msg:
+            cookieErr instanceof Error ? cookieErr.message : String(cookieErr),
+        }
+      );
       return {
         success: false,
         error: 'CookieAccessError',
@@ -408,12 +411,18 @@ export const getCurrentUserAction = cache(
 
     try {
       const accessToken = cookieStore.get('accessToken')?.value;
-      const allCookies = cookieStore.getAll().map((c) => c.name);
+      const allCookies = cookieStore
+        .getAll()
+        .map((c) => ({ name: c.name, size: c.value?.length }));
 
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${!!accessToken}, cookieCount=${allCookies.length}`,
-        { names: allCookies }
+        `[BFF:GetUser] [${Date.now()}] EP-U1: Access token=${accessToken ? 'PRESENT' : 'MISSING'}, count=${allCookies.length}`,
+        {
+          cookieNames: allCookies.map((c) => c.name),
+          tokenSize: accessToken?.length || 0,
+          timestamp: new Date().toISOString(),
+        }
       );
 
       if (!accessToken) {
@@ -551,16 +560,22 @@ export const getUserOrganizationsAction = cache(
         return [];
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        data: { organizations: Organization[] };
+      };
       const duration = Date.now() - startTime;
       const organizations = data?.data?.organizations || [];
       const orgCount = organizations.length;
-      
+
       // eslint-disable-next-line no-console
       console.log(
         `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${orgCount}, took ${duration}ms`,
         {
-          orgs: organizations.map((o: any) => ({ id: o.id, slug: o.slug, name: o.name })),
+          orgs: organizations.map((o: Organization) => ({
+            id: o.id,
+            slug: o.slug,
+            name: o.name,
+          })),
         }
       );
       return organizations;
