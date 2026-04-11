@@ -65,6 +65,8 @@ async function getData(): Promise<{
     const orgs = await getUserOrganizationsAction(result.accessToken);
     console.debug('[Org:Layout] RETURNED getUserOrganizationsAction()', {
       count: orgs.length,
+      orgIds: orgs.map((o) => o.id),
+      timestamp: new Date().toISOString(),
     });
 
     console.debug('[Org:Layout] fetchOrganizations success', {
@@ -100,22 +102,29 @@ export default async function OrgLayout({
   console.debug('[Org:Layout] SLUG RESOLUTION START', {
     urlOrgSlug: params.orgSlug,
     orgCount: orgs.length,
-    orgSlugs: orgs.map((o) => ({ id: o.id, slug: o.slug })),
+    orgSlugs: orgs.map((o) => ({ id: o.id, slug: o.slug, name: o.name })),
     isUUID: /^[0-9a-f]{8}-/.test(params.orgSlug),
     timestamp: new Date().toISOString(),
   });
 
-  // Validate the slug exists in user's orgs
-  // Logic: Try slug match first, then fallback to ID match for legacy/desynced links
-  const matchedBySlug = orgs.find((o) => o.slug === params.orgSlug);
+  // If org doesn't exist or slug is invalid for this user, check if we should redirect
+  // Logic: Try slug match first (exact), then case-insensitive, then fallback to ID match
+  const matchedBySlugExact = orgs.find((o) => o.slug === params.orgSlug);
+  const matchedBySlugCaseInsensitive = orgs.find(
+    (o) => o.slug?.toLowerCase() === params.orgSlug?.toLowerCase()
+  );
   const matchedById = orgs.find((o) => o.id === params.orgSlug);
-  const activeOrg = matchedBySlug || matchedById;
 
-  const matchMethod = matchedBySlug
-    ? 'BY_SLUG'
-    : matchedById
-      ? 'BY_ID_FALLBACK'
-      : 'NO_MATCH';
+  const activeOrg =
+    matchedBySlugExact || matchedBySlugCaseInsensitive || matchedById;
+
+  const matchMethod = matchedBySlugExact
+    ? 'BY_SLUG_EXACT'
+    : matchedBySlugCaseInsensitive
+      ? 'BY_SLUG_CASE_INSENSITIVE'
+      : matchedById
+        ? 'BY_ID_FALLBACK'
+        : 'NO_MATCH';
 
   console.info('[Org:Layout] SLUG RESOLUTION DECISION', {
     matchMethod,
@@ -126,19 +135,30 @@ export default async function OrgLayout({
     timestamp: new Date().toISOString(),
   });
 
-  // Normalize URL to Slug if matched by ID mapping
-  if (matchMethod === 'BY_ID_FALLBACK' && activeOrg) {
+  // Normalize URL to Slug if matched by ID or Case Mapping
+  if (
+    (matchMethod === 'BY_ID_FALLBACK' ||
+      matchMethod === 'BY_SLUG_CASE_INSENSITIVE') &&
+    activeOrg &&
+    activeOrg.slug
+  ) {
     logger.info(
-      `[Org Layout] Normalizing URL from UUID ${params.orgSlug} to Slug ${activeOrg.slug}`
+      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug}`
     );
     redirect(ROUTES.DASHBOARD(activeOrg.slug));
   }
 
-  // If org doesn't exist or slug is invalid for this user, check if we should redirect
-  // For now, if not found, we redirect to onboarding or global dashboard
   if (!activeOrg && params.orgSlug !== 'new') {
     logger.warn(
-      `[Org Layout] Org slug/ID ${params.orgSlug} not found in user orgs - REDIRECTING TO ONBOARDING`
+      `[Org Layout] Org slug/ID ${params.orgSlug} not found in user orgs - REDIRECTING TO ONBOARDING`,
+      {
+        requestedSlug: params.orgSlug,
+        orgCount: orgs.length,
+        availableSlugs: orgs.map((o) => o.slug),
+        availableIds: orgs.map((o) => o.id),
+        userId: user.id,
+        timestamp: new Date().toISOString(),
+      }
     );
     redirect(ROUTES.ONBOARDING);
   }

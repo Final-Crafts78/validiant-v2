@@ -524,19 +524,28 @@ export const getUserOrganizationsAction = cache(
       if (!response.ok) {
         // eslint-disable-next-line no-console
         console.error(
-          `[BFF:GetOrgs] [${Date.now()}] EP-O2.ERROR: Status ${response.status}`
+          `[BFF:GetOrgs] [${Date.now()}] EP-O2.ERROR: Status ${response.status}`,
+          {
+            url: `${API_BASE_URL}/organizations/my`,
+            statusText: response.statusText,
+          }
         );
         return [];
       }
 
       const data = await response.json();
       const duration = Date.now() - startTime;
-      const orgCount = data?.data?.organizations?.length || 0;
+      const organizations = data?.data?.organizations || [];
+      const orgCount = organizations.length;
+      
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${orgCount}, took ${duration}ms`
+        `[BFF:GetOrgs] [${Date.now()}] EP-O3: SUCCESS, count=${orgCount}, took ${duration}ms`,
+        {
+          orgs: organizations.map((o: any) => ({ id: o.id, slug: o.slug, name: o.name })),
+        }
       );
-      return data?.data?.organizations ?? [];
+      return organizations;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(

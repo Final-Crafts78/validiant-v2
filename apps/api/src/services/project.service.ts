@@ -119,50 +119,75 @@ export const createProject = async (
 ): Promise<Project> => {
   // Proceed without db.transaction() because neon-http does not support interactive transactions
   // 1. Create project
-  const newProjectResult = await db
-    .insert(projects)
-    .values({
-      organizationId,
-      ownerId: userId,
-      name: data.name,
-      description: data.description,
-      status: data.status || ProjectStatus.PLANNING,
-      priority: data.priority || ProjectPriority.MEDIUM,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      estimatedHours: data.estimatedHours,
-      budget: data.budget,
-      color: data.color,
-      icon: data.icon,
-      // PHASE 1: BRANDING SAFETY WRAP
-      // Attempt to include these only if we are sure the schema is migrated
-      // If the migration hasn't been run, the INSERT will fail.
-      // We keep them here but ensure the SQL is run.
-      ...(data.themeColor !== undefined && {
-        themeColor: data.themeColor || '#4F46E5',
-      }),
-      ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
-      ...(data.autoDispatchVerified !== undefined && {
-        autoDispatchVerified: data.autoDispatchVerified || false,
-      }),
-      settings: {},
-      createdBy: userId,
-    })
-    .catch((err) => {
-      // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
-      const isMissingColumn =
-        err.message.includes('column') || err.message.includes('not found');
-      if (isMissingColumn) {
-        logger.warn(
-          'DEGRADED MODE: Project created without branding columns due to missing DB migration.',
-          {
-            error: err.message,
-            suggestion: 'Run the Phase 1 SQL to fix this permanently.',
-          }
-        );
+  let newProjectResult;
+  try {
+    newProjectResult = await db
+      .insert(projects)
+      .values({
+        organizationId,
+        ownerId: userId,
+        name: data.name,
+        description: data.description,
+        status: data.status || ProjectStatus.PLANNING,
+        priority: data.priority || ProjectPriority.MEDIUM,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        estimatedHours: data.estimatedHours,
+        budget: data.budget,
+        color: data.color,
+        icon: data.icon,
+        // PHASE 1: BRANDING SAFETY WRAP
+        // Attempt to include these only if we are sure the schema is migrated
+        ...(data.themeColor !== undefined && {
+          themeColor: data.themeColor || '#4F46E5',
+        }),
+        ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
+        ...(data.autoDispatchVerified !== undefined && {
+          autoDispatchVerified: data.autoDispatchVerified || false,
+        }),
+        settings: {},
+        createdBy: userId,
+      })
+      .returning({
+        id: projects.id,
+        organizationId: projects.organizationId,
+        name: projects.name,
+        description: projects.description,
+        status: projects.status,
+        priority: projects.priority,
+        startDate: projects.startDate,
+        endDate: projects.endDate,
+        estimatedHours: projects.estimatedHours,
+        actualHours: projects.actualHours,
+        budget: projects.budget,
+        color: projects.color,
+        icon: projects.icon,
+        themeColor: projects.themeColor,
+        logoUrl: projects.logoUrl,
+        autoDispatchVerified: projects.autoDispatchVerified,
+        settings: projects.settings,
+        createdBy: projects.createdBy,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+      });
+  } catch (err: any) {
+    // ELITE DIAGNOSTIC: Detect missing columns from Phase 1 SQL failure
+    const isMissingColumn =
+      err.message?.includes('column') || err.message?.includes('not found');
 
-        // Fallback: Try insert WITHOUT the new columns to at least get the project created
-        return db.insert(projects).values({
+    if (isMissingColumn) {
+      logger.warn(
+        'DEGRADED MODE: Project created without branding columns due to missing DB migration.',
+        {
+          error: err.message,
+          suggestion: 'Run the Phase 1 SQL to fix this permanently.',
+        }
+      );
+
+      // Fallback: Try insert WITHOUT the new columns to at least get the project created
+      newProjectResult = await db
+        .insert(projects)
+        .values({
           organizationId,
           ownerId: userId,
           name: data.name,
@@ -177,32 +202,33 @@ export const createProject = async (
           icon: data.icon,
           settings: {},
           createdBy: userId,
+        })
+        .returning({
+          id: projects.id,
+          organizationId: projects.organizationId,
+          name: projects.name,
+          description: projects.description,
+          status: projects.status,
+          priority: projects.priority,
+          startDate: projects.startDate,
+          endDate: projects.endDate,
+          estimatedHours: projects.estimatedHours,
+          actualHours: projects.actualHours,
+          budget: projects.budget,
+          color: projects.color,
+          icon: projects.icon,
+          themeColor: projects.themeColor,
+          logoUrl: projects.logoUrl,
+          autoDispatchVerified: projects.autoDispatchVerified,
+          settings: projects.settings,
+          createdBy: projects.createdBy,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
         });
-      }
+    } else {
       throw err;
-    })
-    .returning({
-      id: projects.id,
-      organizationId: projects.organizationId,
-      name: projects.name,
-      description: projects.description,
-      status: projects.status,
-      priority: projects.priority,
-      startDate: projects.startDate,
-      endDate: projects.endDate,
-      estimatedHours: projects.estimatedHours,
-      actualHours: projects.actualHours,
-      budget: projects.budget,
-      color: projects.color,
-      icon: projects.icon,
-      themeColor: projects.themeColor,
-      logoUrl: projects.logoUrl,
-      autoDispatchVerified: projects.autoDispatchVerified,
-      settings: projects.settings,
-      createdBy: projects.createdBy,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
-    });
+    }
+  }
   const newProject = newProjectResult[0];
 
   try {

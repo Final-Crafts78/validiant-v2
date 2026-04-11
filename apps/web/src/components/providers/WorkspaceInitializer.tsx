@@ -60,10 +60,15 @@ export function WorkspaceInitializer({
         targetOrg &&
         (targetOrg.id !== currentOrgId || targetOrg.slug !== currentSlug)
       ) {
+        // 🔍 ELITE TRACING: Detect where multiple syncs originate from
+        console.group('[Workspace:Sync] Performing Organization Sync');
         console.info(
           '[Workspace] Syncing org context from URL:',
           targetOrg.slug
         );
+        console.trace('[Workspace] Sync Trace');
+        console.groupEnd();
+
         state.setActiveOrg(
           targetOrg.id,
           targetOrg.slug || '',

@@ -7,7 +7,7 @@ import { DurableObject } from 'cloudflare:workers';
  * One instance per organization ID.
  */
 export class RealtimeRoom extends DurableObject<import('../app').Env> {
-  private sessions = new Set<ReadableStreamDefaultController>();
+  private sessions = new Map<string, ReadableStreamDefaultController>();
   private heartbeatInterval: any = null;
 
   constructor(state: DurableObjectState, env: import('../app').Env) {
@@ -51,17 +51,15 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
    */
   private handleSSE(): Response {
     const encoder = new TextEncoder();
-    let currentController: ReadableStreamDefaultController | null = null;
     const sessionId = crypto.randomUUID().substring(0, 8);
     const sessionStartTime = Date.now();
 
     const stream = new ReadableStream({
       start: (controller) => {
-        currentController = controller;
-        this.sessions.add(controller);
+        this.sessions.set(sessionId, controller);
 
         // eslint-disable-next-line no-console
-        console.info('[Realtime:DO] Session ADDED', {
+        console.info('[Realtime:DO] Session ESTABLISHED', {
           sessionId,
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
@@ -82,9 +80,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         );
       },
       cancel: (reason) => {
-        if (currentController) {
-          this.sessions.delete(currentController);
-        }
+        this.sessions.delete(sessionId);
 
         const sessionDuration = (
           (Date.now() - sessionStartTime) /
@@ -92,10 +88,10 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         ).toFixed(2);
 
         // eslint-disable-next-line no-console
-        console.info('[Realtime:DO] Session REMOVED / SESSION_LIFETIME', {
+        console.info('[Realtime:DO] Session CLOSED / TERMINATED', {
           sessionId,
           duration: `${sessionDuration}s`,
-          reason: reason || 'CLIENT_DISCONNECT',
+          reason: reason || 'CLIENT_OR_NETWORK_DISCONNECT',
           activeSessions: this.sessions.size,
           timestamp: new Date().toISOString(),
         });
@@ -137,11 +133,17 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
         `[Realtime:DO] Sending HEARTBEAT to ${this.sessions.size} sessions`
       );
 
-      for (const session of this.sessions) {
+      for (const [sid, session] of this.sessions.entries()) {
         try {
           session.enqueue(heartbeat);
-        } catch {
-          this.sessions.delete(session);
+        } catch (err: any) {
+          // eslint-disable-next-line no-console
+          console.error('[Realtime:DO] HEARTBEAT_DISCONNECT', {
+            sessionId: sid,
+            error: err.message,
+            timestamp: new Date().toISOString(),
+          });
+          this.sessions.delete(sid);
         }
       }
     }, 20000); // 20 seconds
@@ -155,12 +157,18 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
     const message = `event: message\ndata: ${JSON.stringify(data)}\n\n`;
     const encoded = encoder.encode(message);
 
-    for (const session of this.sessions) {
+    for (const [sid, session] of this.sessions.entries()) {
       try {
         session.enqueue(encoded);
-      } catch {
+      } catch (err: any) {
         // Session closed or error - cleanup
-        this.sessions.delete(session);
+        // eslint-disable-next-line no-console
+        console.error('[Realtime:DO] BROADCAST_DISCONNECT', {
+          sessionId: sid,
+          error: err.message,
+          timestamp: new Date().toISOString(),
+        });
+        this.sessions.delete(sid);
       }
     }
   }
