@@ -409,6 +409,8 @@ export const getCurrentUserAction = cache(
       };
     }
 
+    const requestId = `bff-${Math.random().toString(36).substring(7)}`;
+
     try {
       const accessToken = cookieStore.get('accessToken')?.value;
       const allCookies = cookieStore
@@ -451,12 +453,23 @@ export const getCurrentUserAction = cache(
       let response;
       const fetchStart = Date.now();
       try {
+        // 🔍 AUDIT: Request lifecycle timing
+        // eslint-disable-next-line no-console
+        console.debug(`[EP-U2.1] [BFF:Auth:Fetch] Dispatching request`, {
+          url: `${API_BASE_URL}/auth/me`,
+          requestId,
+          timestamp: new Date().toISOString(),
+          startTime: fetchStart,
+        });
+
         response = await fetch(`${API_BASE_URL}/auth/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
             'X-BFF-Trace': `bff-${Date.now()}`,
+            'X-BFF-Timestamp': fetchStart.toString(),
+            'X-Request-Id': requestId || 'unknown',
           },
           credentials: 'include',
           cache: 'no-store',
@@ -464,11 +477,16 @@ export const getCurrentUserAction = cache(
         });
 
         const fetchEnd = Date.now();
+        const fetchDuration = fetchEnd - fetchStart;
+
+        // 🔍 AUDIT: Log response status and timing
         // eslint-disable-next-line no-console
-        console.log(`[BFF:GetUser] [${Date.now()}] EP-U2.2: Fetch returned`, {
+        console.debug(`[EP-U2.2] [BFF:Auth:Fetch] Returned`, {
           status: response.status,
-          duration: `${fetchEnd - fetchStart}ms`,
-          contentType: response.headers.get('content-type'),
+          duration: `${fetchDuration}ms`,
+          requestId,
+          serverTiming: response.headers.get('Server-Timing') || 'NONE',
+          cfRay: response.headers.get('cf-ray') || 'NONE',
         });
       } finally {
         clearTimeout(timeoutId);
@@ -477,7 +495,7 @@ export const getCurrentUserAction = cache(
       const duration = Date.now() - startTime;
       // eslint-disable-next-line no-console
       console.log(
-        `[BFF:GetUser] [${Date.now()}] EP-U3: Response status=${response.status}, took ${duration}ms`
+        `[BFF:GetUser] [${Date.now()}] EP-U3: Total lifecycle status=${response?.status}, took ${duration}ms`
       );
 
       if (response.status === 401 || response.status === 403) {

@@ -317,6 +317,16 @@ export const getTaskById = async (taskId: string): Promise<TaskWithDetails> => {
     return cached;
   }
 
+  // 🔍 SCHEMA AUDIT: Confirm task table columns
+  logger.debug('[Service:Task:Get] Schema Audit Entry', {
+    taskId,
+    schemaState: {
+      hasId: !!tasks.id,
+      hasStatus: !!tasks.statusKey,
+      hasVerificationId: !!tasks.verificationTypeId,
+    },
+  });
+
   // Main task query
   const taskResult = await db
     .select({
@@ -634,6 +644,16 @@ export const listProjectTasks = async (
   }
 ): Promise<{ tasks: TaskWithDetails[]; nextCursor: string | null }> => {
   const perPage = Math.min(params?.perPage || 50, 100);
+
+  // 🔍 SCHEMA AUDIT: Confirm task list schema
+  logger.debug('[Service:Task:List] Schema Audit Entry', {
+    projectId,
+    schemaState: {
+      hasId: !!tasks.id,
+      hasPosition: !!tasks.position,
+      hasStatus: !!tasks.statusKey,
+    },
+  });
 
   // Build WHERE conditions
   const conditions: (SQL | undefined)[] = [

@@ -136,7 +136,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
       }
 
       const now = Date.now();
-      const drift = now - (this.lastHeartbeatAt || now) - 8000;
+      const drift = now - (this.lastHeartbeatAt || now) - 5000;
       this.lastHeartbeatAt = now;
 
       // eslint-disable-next-line no-console
@@ -159,7 +159,7 @@ export class RealtimeRoom extends DurableObject<import('../app').Env> {
           this.sessions.delete(sid);
         }
       }
-    }, 8000); // 8 seconds - More aggressive for strict Edge Proxies (Issue #20)
+    }, 5000); // 5 seconds - ULTRA-Aggressive for strict Edge Proxies (Issue #20)
   }
 
   private lastHeartbeatAt: number = 0;

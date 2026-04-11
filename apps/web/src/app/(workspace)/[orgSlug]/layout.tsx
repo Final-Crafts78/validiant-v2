@@ -159,7 +159,33 @@ export default async function OrgLayout({
   ) {
     // 🔍 PATH PRESERVATION: Ensure we don't drop the sub-route (Issue #19)
     const headerStore = headers();
-    const currentPath = headerStore.get('x-pathname') || `/${params.orgSlug}`;
+    // 🔍 Issue #19/22: Preserve sub-path during normalization
+    const xPathname = headerStore.get('x-pathname');
+    const xUrl = headerStore.get('x-url');
+    const referer = headerStore.get('referer');
+
+    let currentPath = xPathname || `/${params.orgSlug}`;
+
+    // If x-pathname is missing (can happen in some Edge contexts), try Referer parsing
+    if (!xPathname && referer) {
+      try {
+        const refUrl = new URL(referer);
+        // Only use referer if it's from the same origin to avoid open redirects
+        if (refUrl.hostname === headerStore.get('host')) {
+          currentPath = refUrl.pathname;
+        }
+      } catch (e) {
+        // Fallback to params
+      }
+    }
+
+    console.debug(`[Org:Layout] PATH RESOLUTION`, {
+      xPathname: xPathname || 'MISSING',
+      xUrl: xUrl || 'MISSING',
+      referer: referer ? 'PRESENT' : 'MISSING',
+      resolvedPath: currentPath,
+      orgSlug: params.orgSlug,
+    });
 
     // Replace the identifier segment while preserving the rest of the path
     const normalizedPath = currentPath.replace(
@@ -167,16 +193,19 @@ export default async function OrgLayout({
       `/${activeOrg.slug}`
     );
 
+    const redirectUrl = `${normalizedPath}${normalizedPath.includes('?') ? '&' : '?'}reason=normalized&m=${matchMethod}`;
+
     logger.info(
-      `[Org Layout] Normalizing URL from ${params.orgSlug} to Canonical Slug ${activeOrg.slug} (Method: ${matchMethod}). Path: ${currentPath} -> ${normalizedPath}`,
+      `[Org Layout] Normalizing URL: ${currentPath} -> ${redirectUrl}`,
       {
-        original: currentPath,
-        normalized: normalizedPath,
+        original: params.orgSlug,
+        canonical: activeOrg.slug,
+        method: matchMethod,
         timestamp: new Date().toISOString(),
       }
     );
 
-    redirect(normalizedPath);
+    redirect(redirectUrl);
   }
 
   if (!activeOrg && params.orgSlug !== 'new') {

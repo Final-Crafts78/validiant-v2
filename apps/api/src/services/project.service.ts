@@ -195,6 +195,8 @@ export const createProject = async (
 
     logger.debug('[Service:Project:Create] Primary INSERT success', {
       projectId: newProjectResult[0]?.id,
+      // 🔍 ELITE: Log exactly what columns we got back to detect schema desync
+      returnedColumns: Object.keys(newProjectResult[0] || {}),
     });
   } catch (err: unknown) {
     const dbErr = err as {
@@ -657,6 +659,13 @@ export const listOrganizationProjects = async (
     hasSearch: !!params?.search,
     hasStatus: !!params?.status,
     hasPriority: !!params?.priority,
+    // 🔍 SCHEMA AUDIT: Confirm column mapping in Drizzle
+    drizzleSchemaState: {
+      projectId: !!projects.id,
+      clientApiKey: !!projects.clientApiKey,
+      isApiEnabled: !!projects.isApiEnabled,
+      themeColor: !!projects.themeColor,
+    },
   });
 
   try {
@@ -754,12 +763,15 @@ export const listOrganizationProjects = async (
     };
 
     // 🔍 EXTREME VISIBILITY: Track database results for project list
-    // eslint-disable-next-line no-console
-    console.debug('[Service:Project:List] Database results retrieved', {
+    logger.debug('[Service:Project:List] Database results retrieved', {
       organizationId,
       count: result.projects.length,
       total,
       hasParams: !!params,
+      // 🔍 SCHEMA AUDIT: Check first row for expected columns
+      firstRowSample: result.projects[0]
+        ? Object.keys(result.projects[0]).filter((k) => !k.startsWith('_'))
+        : 'EMPTY',
       timestamp: new Date().toISOString(),
     });
 

@@ -123,7 +123,7 @@ export const createOrganization = async (
   const slug = await generateSlug(data.name);
 
   // Procedural debugging: EXTREME VISIBILITY for organization creation
-  console.debug('[Service:Org:Create] Starting DB INSERT attempt', {
+  logger.debug('[Service:Org:Create] Starting DB INSERT attempt', {
     name: data.name,
     slug,
     ownerId: userId,
@@ -161,11 +161,11 @@ export const createOrganization = async (
 
   const newOrg = newOrgResult[0];
   if (!newOrg) {
-    console.error('[Service:Org:Create] DB INSERT returned empty result');
+    logger.error('[Service:Org:Create] DB INSERT returned empty result');
     throw new Error('FAILED_TO_CREATE_ORGANIZATION_DB');
   }
 
-  console.info('[Service:Org:Create] DB INSERT success', {
+  logger.info('[Service:Org:Create] DB INSERT success', {
     id: newOrg.id,
     slug: newOrg.slug,
     timestamp: new Date().toISOString(),
@@ -212,6 +212,17 @@ export const getOrganizationById = async (
   if (cached) {
     return cached;
   }
+
+  // 🔍 SCHEMA AUDIT: Confirm organization schema
+  logger.debug('[Service:Org:Get] Schema Audit Entry', {
+    organizationId,
+    schemaState: {
+      hasId: !!organizations.id,
+      hasSlug: !!organizations.slug,
+      hasAutoDispatch: !!organizations.autoDispatchVerified,
+      hasIndustry: !!organizations.industryType,
+    },
+  });
 
   const organizationResult = await db
     .select({
@@ -421,7 +432,16 @@ export const deleteOrganization = async (
 export const getUserOrganizations = async (
   userId: string
 ): Promise<OrganizationWithRole[]> => {
-  // ✅ CATEGORY 5 FIX: Subquery for member count
+  // 🔍 SCHEMA AUDIT: Confirm user orgs list schema
+  logger.debug('[Service:Org:UserList] Schema Audit Entry', {
+    userId,
+    schemaState: {
+      hasId: !!organizations.id,
+      hasSlug: !!organizations.slug,
+      hasSettings: !!organizations.settings,
+    },
+  });
+
   const results = await db
     .select({
       id: organizations.id,
@@ -718,8 +738,7 @@ export const createCustomRole = async (
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
-  // eslint-disable-next-line no-console
-  console.info('[Service:Org:Role] Creating custom role', {
+  logger.info('[Service:Org:Role] Creating custom role', {
     organizationId,
     name: data.name,
     generatedKey: key,
@@ -740,8 +759,7 @@ export const createCustomRole = async (
     })
     .returning();
 
-  // eslint-disable-next-line no-console
-  console.info('[Service:Org:Role] SUCCESS', {
+  logger.info('[Service:Org:Role] SUCCESS', {
     roleId: role.id,
     name: role.name,
     key: role.key,
@@ -763,8 +781,7 @@ export const updateCustomRole = async (
   }
 ) => {
   // 🔍 EXTREME VISIBILITY LOGGING
-  // eslint-disable-next-line no-console
-  console.info('[Service:Org:Role] Updating custom role', {
+  logger.info('[Service:Org:Role] Updating custom role', {
     roleId,
     updates: Object.keys(data),
     permissionCount: data.permissions?.length,
@@ -781,16 +798,14 @@ export const updateCustomRole = async (
     .returning();
 
   if (role) {
-    // eslint-disable-next-line no-console
-    console.info('[Service:Org:Role] UPDATE SUCCESS', {
+    logger.info('[Service:Org:Role] UPDATE SUCCESS', {
       roleId: role.id,
       name: role.name,
       permissions: role.permissions?.length || 0,
       timestamp: new Date().toISOString(),
     });
   } else {
-    // eslint-disable-next-line no-console
-    console.error(
+    logger.error(
       '[Service:Org:Role] UPDATE FAILED - Role not found or no rows affected',
       {
         roleId,
