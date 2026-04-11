@@ -20,6 +20,7 @@ import {
   getCurrentUserAction,
   getUserOrganizationsAction,
 } from '@/actions/auth.actions';
+import { AuthStoreInitializer } from '@/components/providers/AuthStoreInitializer';
 
 // Explicitly opt into dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -122,7 +123,12 @@ export default async function DashboardLayout({
       timestamp: new Date().toISOString(),
     });
 
-    return <>{children}</>;
+    return (
+      <>
+        <AuthStoreInitializer user={user} accessToken={accessToken} />
+        {children}
+      </>
+    );
   } catch (renderErr: unknown) {
     const error = renderErr as Error;
     console.error('[Dashboard:Layout] CRITICAL RENDER FAILURE', {

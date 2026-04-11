@@ -24,13 +24,13 @@
   html {
     @apply antialiased;
     scroll-behavior: smooth;
-    background-color: var(--background);
-    color: var(--text-base);
+    background-color: var(--color-surface-base);
+    color: var(--color-text-base);
   }
 
   body {
-    background-color: var(--background);
-    color: var(--text-base);
+    background-color: var(--color-surface-base);
+    color: var(--color-text-base);
     font-family: var(--font-inter), sans-serif;
     overflow-x: hidden;
   }
