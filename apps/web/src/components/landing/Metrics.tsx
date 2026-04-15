@@ -6,14 +6,14 @@ import ScrollReveal from '@/components/ui/ScrollReveal';
 const METRICS = [
   {
     label: 'Verified Identities',
-    value: 250,
+    value: 10,
     suffix: 'K+',
     delay: 0,
   },
   {
     label: 'Field Audits Completed',
-    value: 1.2,
-    suffix: 'M',
+    value: 80,
+    suffix: 'K',
     duration: 3000,
     delay: 100,
   },
