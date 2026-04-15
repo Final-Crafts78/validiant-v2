@@ -7,7 +7,6 @@ import { ROUTES } from '@/lib/config';
 
 import Navbar from '@/components/landing/Navbar';
 import Hero from '@/components/landing/Hero';
-import TrustBand from '@/components/landing/TrustBand';
 import Metrics from '@/components/landing/Metrics';
 import Capabilities from '@/components/landing/Capabilities';
 import HowItWorks from '@/components/landing/HowItWorks';
@@ -42,7 +41,6 @@ export default function HomePage() {
       <Navbar />
       <main>
         <Hero />
-        <TrustBand />
         <Metrics />
         <Capabilities />
         <HowItWorks />

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Play, ArrowRight } from 'lucide-react';
 import { ROUTES } from '@/lib/config';
+import { logger } from '@/lib/logger';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function Hero() {
@@ -30,20 +31,20 @@ export default function Hero() {
             <ScrollReveal>
               {/* Eyebrow Badge */}
               <span className="inline-block mb-8 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600 bg-blue-50 border border-blue-100 rounded-full">
-                Enterprise Field Compliance OS
+                Enterprise Background Verification Platform
               </span>
 
               {/* Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-8">
                 The Operating System for <br className="hidden md:block" />
-                <span className="text-blue-600">Field Compliance Teams</span>
+                <span className="text-blue-600">Background Verification</span>
               </h1>
 
               {/* Sub-headline */}
               <p className="text-xl text-slate-500 max-w-xl mb-12 leading-relaxed">
-                Manage multiple organizations, track real-time field tasks, and
-                maintain a tamper-proof audit chain. Built for scale, verified
-                by forensics, trusted by global enterprises.
+                Automate your identity checks, track real-time verifications,
+                and maintain a tamper-proof audit chain. Built for scale,
+                verified by forensics, trusted by global enterprises.
               </p>
 
               {/* CTAs */}
@@ -52,7 +53,7 @@ export default function Hero() {
                   href={ROUTES.REGISTER}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold bg-blue-600 text-[var(--color-text-base)] rounded-xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all gap-2"
                 >
-                  Start Free
+                  Start Verification
                   <ArrowRight size={20} />
                 </Link>
                 <a
@@ -68,28 +69,28 @@ export default function Hero() {
               <div className="flex flex-wrap items-center gap-x-12 gap-y-6 text-slate-400">
                 <div className="flex flex-col">
                   <span className="text-slate-900 font-bold text-lg">
-                    10,000+
+                    10,500+
                   </span>
                   <span className="text-[10px] uppercase tracking-widest font-bold">
-                    Tasks Tracked
+                    Profiles Screened
                   </span>
                 </div>
                 <div className="w-px h-8 bg-slate-100 hidden sm:block" />
                 <div className="flex flex-col">
                   <span className="text-slate-900 font-bold text-lg">
-                    99.9%
+                    99.99%
                   </span>
                   <span className="text-[10px] uppercase tracking-widest font-bold">
-                    Uptime SLA
+                    Verification Accuracy
                   </span>
                 </div>
                 <div className="w-px h-8 bg-slate-100 hidden sm:block" />
                 <div className="flex flex-col">
                   <span className="text-slate-900 font-bold text-lg">
-                    &lt;2s
+                    &lt;1m
                   </span>
                   <span className="text-[10px] uppercase tracking-widest font-bold">
-                    Avg. API Response
+                    Audit Trail Sync
                   </span>
                 </div>
               </div>
@@ -101,19 +102,19 @@ export default function Hero() {
             <ScrollReveal delay={200} className="relative z-10">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
                 <Image
-                  src="/images/hero_field_compliance.png"
-                  alt="Field Compliance Professional"
+                  src="/images/hero_bgv_styled.png"
+                  alt="Enterprise Background Verification Dashboard"
                   width={800}
-                  height={600}
+                  height={800}
                   className="w-full h-auto transform object-cover transition-transform duration-700 hover:scale-105"
                   onLoadingComplete={() =>
-                    console.log(
-                      '[ASSET:DEBUG] Hero image loaded successfully: /images/hero_field_compliance.png'
+                    logger.debug(
+                      '[ASSET:DEBUG] Hero image loaded successfully: /images/hero_bgv_styled.png'
                     )
                   }
                   onError={() =>
-                    console.error(
-                      '[ASSET:ERROR] Hero image failed to load: /images/hero_field_compliance.png'
+                    logger.error(
+                      '[ASSET:ERROR] Hero image failed to load: /images/hero_bgv_styled.png'
                     )
                   }
                 />
@@ -132,7 +133,7 @@ export default function Hero() {
                       Identity Verified
                     </div>
                     <div className="text-[10px] text-slate-500 font-medium leading-none">
-                      Forensic ID Match: 99.8%
+                      Forensic ID Match: 99.9%
                     </div>
                   </div>
                 </div>
